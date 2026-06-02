@@ -9,9 +9,9 @@ import (
 )
 
 type FilterInput struct {
-	Budget    int
-	Who       string
-	Priority  string
+	Budget   int
+	Who      string
+	Priority string
 }
 
 type ScoredPackage struct {
@@ -24,14 +24,20 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 	var allPackages []models.Package
 	repositories.DB.Preload("Travel").Preload("Details").Find(&allPackages)
 
+	maxBudget := input.Budget + 10000000
+
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
+		if pkg.Price > maxBudget {
+			continue
+		}
+
 		score := 0
 
 		if pkg.Price <= input.Budget {
-			score += 40
+			score += 50
 		} else if pkg.Price <= input.Budget+5000000 {
-			score += 20
+			score += 25
 		}
 
 		switch input.Who {
@@ -51,30 +57,30 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 			}
 		case "couple":
 			if pkg.GroupSize <= 30 {
-				score += 10
+				score += 15
 			}
 		case "alone":
-			score += 0
+			score += 5
 		}
 
 		switch input.Priority {
 		case "near_haram":
 			if pkg.IsNearHaram {
-				score += 20
+				score += 30
 			}
 			if pkg.HotelDistance <= 300 {
 				score += 10
 			}
 		case "family_friendly":
 			if pkg.IsKidFriendly || pkg.IsSeniorFriendly {
-				score += 20
+				score += 30
 			}
 			if pkg.IsFamily || pkg.IsSenior {
 				score += 10
 			}
 		case "full_activity":
 			if pkg.IsKajian || pkg.IsSunnah {
-				score += 20
+				score += 30
 			}
 			if pkg.SunnahScore >= 8 {
 				score += 10
@@ -82,7 +88,7 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 		}
 
 		if pkg.SunnahScore >= 8 {
-			score += 10
+			score += 5
 		}
 		if pkg.HotelDistance <= 500 {
 			score += 5
