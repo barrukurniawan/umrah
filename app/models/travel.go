@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Travel struct {
 	gorm.Model
@@ -53,4 +57,12 @@ type DetailPackage struct {
 	AddonDouble       int     `json:"addon_double"`
 	Guide             string  `json:"guide"`
 	Package           Package `gorm:"foreignKey:PackageID"`
+}
+
+func (d DetailPackage) DPDeadline() string {
+	t, err := time.Parse("2006-01-02", d.DepartureDate)
+	if err != nil {
+		return ""
+	}
+	return t.AddDate(0, -1, 0).Format("2006-01-02")
 }

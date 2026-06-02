@@ -20,12 +20,17 @@
 </style>
 {{if .Results}}
 <div>
-    <h2 class="text-xl font-bold text-gray-900 mb-2">Hasil Rekomendasi</h2>
+    <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xl font-bold text-gray-900">Hasil Rekomendasi</h2>
+        <select id="monthFilter" class="border border-gray-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-emerald-500">
+            <option value="">Semua Bulan</option>
+        </select>
+    </div>
     <p class="text-sm text-gray-500 mb-6">Budget: Rp {{formatCurrency .Budget}}</p>
 
     {{range $i, $v := .Results}}
     <div
-        class="border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow {{if eq $i 0}}card-top{{end}}">
+        class="package-card border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow {{if eq $i 0}}card-top{{end}}">
         <div class="flex justify-between items-start mb-3">
             <div>
                 <h3 class="font-bold text-lg text-gray-900">{{$v.Travel.Name}}</h3>
@@ -63,7 +68,7 @@
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>📆</span> <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDateID
-                    $v.PaymentDeadline}}</span>
+                    (index $v.Details 0).DPDeadline}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>👥</span> <span>{{(index $v.Details 0).RoomType}}</span>
@@ -96,6 +101,7 @@
             </summary>
             <div class="mt-2 bg-gray-50 rounded-lg p-3">
                 {{range $v.Details}}
+                <div class="detail-row mb-3" data-departure="{{.DepartureDate}}">
                 <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
                     <div><span class="text-gray-400">Berangkat:</span> <span
                             class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
@@ -117,6 +123,7 @@
                 <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mt-1">
                     <div><span class="text-gray-400">Add-on Double:</span> Rp {{formatCurrency .AddonDouble}}</div>
                     <div><span class="text-gray-400">Pembimbing:</span> {{.Guide}}</div>
+                </div>
                 </div>
                 {{end}}
             </div>

@@ -201,6 +201,67 @@
             const num = parseInt(val);
             document.getElementById('budgetDisplay').innerText = 'Rp ' + num.toLocaleString('id-ID');
         }
+
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id === 'results') {
+                setTimeout(initMonthFilter, 50);
+            }
+        });
+
+        function initMonthFilter() {
+            const filter = document.getElementById('monthFilter');
+            if (!filter) return;
+
+            const monthNames = {
+                '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+                '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+                '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+            };
+
+            filter.innerHTML = '<option value="">Semua Bulan</option>';
+            for (let i = 1; i <= 12; i++) {
+                const m = i.toString().padStart(2, '0');
+                filter.innerHTML += '<option value="' + m + '">' + monthNames[m] + '</option>';
+            }
+
+            filter.onchange = function() {
+                filterByMonth(this.value);
+            };
+
+            if (filter.value) filterByMonth(filter.value);
+        }
+
+        function filterByMonth(month) {
+            const cards = document.querySelectorAll('.package-card');
+            const rows = document.querySelectorAll('.detail-row');
+
+            if (!month) {
+                cards.forEach(c => c.style.display = '');
+                rows.forEach(r => r.style.display = '');
+                return;
+            }
+
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear();
+            const selMonth = parseInt(month);
+            const targetYear = selMonth < currentMonth ? currentYear + 1 : currentYear;
+            const targetPrefix = targetYear + '-' + month;
+
+            cards.forEach(card => {
+                let hasMatch = false;
+                card.querySelectorAll('.detail-row').forEach(row => {
+                    const date = row.dataset.departure;
+                    if (date && date.startsWith(targetPrefix)) {
+                        row.style.display = '';
+                        hasMatch = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                card.style.display = hasMatch ? '' : 'none';
+            });
+        }
     </script>
 </body>
 
