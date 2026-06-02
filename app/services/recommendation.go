@@ -24,21 +24,13 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 	var allPackages []models.Package
 	repositories.DB.Preload("Travel").Preload("Details").Find(&allPackages)
 
-	maxBudget := input.Budget + 10000000
-
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
-		if pkg.Price > maxBudget {
+		if pkg.Price > input.Budget {
 			continue
 		}
 
 		score := 0
-
-		if pkg.Price <= input.Budget {
-			score += 50
-		} else if pkg.Price <= input.Budget+5000000 {
-			score += 25
-		}
 
 		switch input.Who {
 		case "family":
