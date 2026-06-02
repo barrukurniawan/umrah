@@ -1,0 +1,56 @@
+{{if .Results}}
+<div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Hasil Rekomendasi</h2>
+    <p class="text-sm text-gray-500 mb-6">Budget: Rp {{formatCurrency .Budget}}</p>
+
+    {{range .Results}}
+    <div class="border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-3">
+            <div>
+                <h3 class="font-bold text-lg text-gray-900">{{.Travel.Name}}</h3>
+                <p class="text-sm text-gray-500">{{.Name}}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-amber-400 text-sm">⭐</span>
+                <span class="text-sm font-semibold text-gray-700">{{.Travel.Rating}}</span>
+            </div>
+        </div>
+
+        <div class="text-2xl font-bold text-emerald-600 mb-3">
+            Rp {{formatCurrency .Price}}
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-3">
+            <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
+                🏨 {{.HotelDistance}}m dari Haram
+            </span>
+            {{if .IsFamily}}
+            <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full">
+                👨‍👩‍👧 Cocok Keluarga
+            </span>
+            {{end}}
+            {{if .IsSenior}}
+            <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">
+                👴 Ramah Lansia
+            </span>
+            {{end}}
+            {{if ge .SunnahScore 8}}
+            <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">
+                📖 Kajian Sunnah
+            </span>
+            {{end}}
+        </div>
+
+        <div class="flex items-center gap-4 text-xs text-gray-400">
+            <span>👥 Grup {{.GroupSize}} orang</span>
+            <span class="text-emerald-500 font-semibold">Score: {{.Score}}</span>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{else}}
+<div class="text-center py-8 text-gray-400">
+    <p class="text-lg">🔍</p>
+    <p>Silakan pilih kriteria dan klik "Cari Paket Umrah"</p>
+</div>
+{{end}}

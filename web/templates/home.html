@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umrohku - Rekomendasi Travel Umroh</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕋</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #d1fae5;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #059669;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .facility-card {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen">
+
+    <nav class="bg-white shadow-sm border-b border-emerald-100">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" class="text-2xl font-bold text-emerald-700">🕋 Umrohku</a>
+            <div class="text-sm text-gray-500">Temukan travel umroh terbaik untuk Anda</div>
+        </div>
+    </nav>
+
+    <section class="max-w-3xl mx-auto px-4 pt-16 pb-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Temukan Umrah yang Cocok untuk Anda
+        </h1>
+        <p class="text-lg text-gray-600 mb-12">
+            Geser budget, pilih kebutuhan, dan dapatkan rekomendasi paket terbaik
+        </p>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-4 pb-16">
+        <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-8">
+            <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML" hx-indicator="#loading">
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-semibold text-gray-700">Budget</label>
+                        <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 30.000.000</span>
+                    </div>
+                    <input type="range" name="budget" id="budgetSlider" min="20000000" max="50000000" step="1000000"
+                        value="30000000" class="w-full" oninput="updateBudget(this.value)" />
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>Rp 20 jt</span>
+                        <span>Rp 50 jt</span>
+                    </div>
+                </div>
+
+                <div id="facilityEstimation" class="mb-10 bg-emerald-50 rounded-xl p-5">
+                    <h3 class="text-sm font-semibold text-emerald-800 mb-3">Estimasi Fasilitas</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="facility-card bg-white rounded-lg p-3 text-center shadow-sm" id="estFlight">✈️
+                            Transit</div>
+                        <div class="facility-card bg-white rounded-lg p-3 text-center shadow-sm" id="estHotel">🏨
+                            800-1200m</div>
+                        <div class="facility-card bg-white rounded-lg p-3 text-center shadow-sm" id="estFood">🍽️
+                            Standar</div>
+                        <div class="facility-card bg-white rounded-lg p-3 text-center shadow-sm" id="estGroup">👥 Grup
+                            besar</div>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Siapa yang Berangkat?</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="whoOptions">
+                        <label class="who-option cursor-pointer">
+                            <input type="radio" name="who" value="alone" class="peer hidden" checked>
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-2xl block">🧑</span>
+                                <span class="text-sm font-medium">Sendiri</span>
+                            </div>
+                        </label>
+                        <label class="who-option cursor-pointer">
+                            <input type="radio" name="who" value="couple" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-2xl block">👫</span>
+                                <span class="text-sm font-medium">Pasangan</span>
+                            </div>
+                        </label>
+                        <label class="who-option cursor-pointer">
+                            <input type="radio" name="who" value="family" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-2xl block">👨‍👩‍👧</span>
+                                <span class="text-sm font-medium">Keluarga</span>
+                            </div>
+                        </label>
+                        <label class="who-option cursor-pointer">
+                            <input type="radio" name="who" value="senior" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-2xl block">👴</span>
+                                <span class="text-sm font-medium">Lansia</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Prioritas</label>
+                    <div class="grid grid-cols-3 gap-3" id="priorityOptions">
+                        <label class="priority-option cursor-pointer">
+                            <input type="radio" name="priority" value="near_haram" class="peer hidden" checked>
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-lg block">🕌</span>
+                                <span class="text-sm font-medium">Hotel Dekat Haram</span>
+                            </div>
+                        </label>
+                        <label class="priority-option cursor-pointer">
+                            <input type="radio" name="priority" value="family_friendly" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-lg block">👨‍👩‍👧</span>
+                                <span class="text-sm font-medium">Ramah Anak/Lansia</span>
+                            </div>
+                        </label>
+                        <label class="priority-option cursor-pointer">
+                            <input type="radio" name="priority" value="full_activity" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
+                                <span class="text-lg block">📋</span>
+                                <span class="text-sm font-medium">Full Aktivitas</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
+                    Cari Paket Umrah
+                </button>
+            </form>
+
+            <div id="loading" class="htmx-indicator text-center py-8">
+                <div
+                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-200 border-t-emerald-600">
+                </div>
+                <p class="mt-2 text-gray-500">Mencari paket terbaik...</p>
+            </div>
+
+            <div id="results" class="mt-10"></div>
+        </div>
+    </section>
+
+    <footer class="text-center text-gray-400 text-sm py-8">
+        &copy; 2026 Umrohku by Jago Institute - Rekomendasi Travel Umroh
+    </footer>
+
+    <script>
+        function updateBudget(val) {
+            const num = parseInt(val);
+            document.getElementById('budgetDisplay').innerText = 'Rp ' + num.toLocaleString('id-ID');
+
+            const estFlight = document.getElementById('estFlight');
+            const estHotel = document.getElementById('estHotel');
+            const estFood = document.getElementById('estFood');
+            const estGroup = document.getElementById('estGroup');
+
+            if (num <= 25000000) {
+                estFlight.innerHTML = '✈️ Transit';
+                estHotel.innerHTML = '🏨 800-1200m';
+                estFood.innerHTML = '🍽️ Standar';
+                estGroup.innerHTML = '👥 Grup besar';
+            } else if (num <= 30000000) {
+                estFlight.innerHTML = '✈️ Transit 1x';
+                estHotel.innerHTML = '🏨 500-800m';
+                estFood.innerHTML = '🍽️ Standar+';
+                estGroup.innerHTML = '👥 Grup sedang';
+            } else if (num <= 35000000) {
+                estFlight.innerHTML = '✈️ Nyaman';
+                estHotel.innerHTML = '🏨 300-500m';
+                estFood.innerHTML = '🍽️ Variatif';
+                estGroup.innerHTML = '👥 Grup sedang';
+            } else if (num <= 40000000) {
+                estFlight.innerHTML = '✈️ Direct';
+                estHotel.innerHTML = '🏨 200-300m';
+                estFood.innerHTML = '🍽️ Premium';
+                estGroup.innerHTML = '👥 Grup kecil';
+            } else {
+                estFlight.innerHTML = '✈️ Direct';
+                estHotel.innerHTML = '🏨 Dekat Haram';
+                estFood.innerHTML = '🍽️ Premium';
+                estGroup.innerHTML = '👥 Grup kecil';
+            }
+        }
+    </script>
+</body>
+
+</html>
