@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"sort"
 
 	"umrah/app/models"
@@ -15,12 +16,13 @@ type FilterInput struct {
 
 type ScoredPackage struct {
 	models.Package
-	Score int
+	Score        int
+	FacilityList []string
 }
 
 func GetRecommendations(input FilterInput) []ScoredPackage {
 	var allPackages []models.Package
-	repositories.DB.Preload("Travel").Find(&allPackages)
+	repositories.DB.Preload("Travel").Preload("Details").Find(&allPackages)
 
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
@@ -90,8 +92,9 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 		}
 
 		scored = append(scored, ScoredPackage{
-			Package: pkg,
-			Score:   score,
+			Package:      pkg,
+			Score:        score,
+			FacilityList: parseFacilities(pkg.Facilities),
 		})
 	}
 
@@ -104,4 +107,12 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 	}
 
 	return scored
+}
+
+func parseFacilities(raw string) []string {
+	var list []string
+	if err := json.Unmarshal([]byte(raw), &list); err != nil {
+		return []string{}
+	}
+	return list
 }

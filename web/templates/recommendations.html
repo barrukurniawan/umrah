@@ -20,30 +20,85 @@
             Rp {{formatCurrency .Price}}
         </div>
 
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>📅</span> <span>{{.Duration}} Hari</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>✈️</span> <span>{{.Airline}}</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                {{if .IsDirect}}<span>🛫 Direct</span>{{else}}<span>🔁 Transit</span>{{end}}
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>🕌</span> <span>{{.HotelDistance}}m</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>💳</span> <span>DP Rp {{formatCurrency .DownPayment}}</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>📆</span> <span>{{.PaymentDeadline}}</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>👥</span> <span>{{.GroupSize}} orang</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-600">
+                <span>🎓</span> <span class="truncate">{{.Guide}}</span>
+            </div>
+        </div>
+
         <div class="flex flex-wrap gap-2 mb-3">
-            <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                🏨 {{.HotelDistance}}m dari Haram
-            </span>
             {{if .IsFamily}}
-            <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                👨‍👩‍👧 Cocok Keluarga
-            </span>
+            <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full">👨‍👩‍👧 Keluarga</span>
             {{end}}
             {{if .IsSenior}}
-            <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                👴 Ramah Lansia
-            </span>
+            <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">👴 Lansia</span>
             {{end}}
             {{if ge .SunnahScore 8}}
-            <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                📖 Kajian Sunnah
-            </span>
+            <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">📖 Sunnah</span>
             {{end}}
         </div>
 
-        <div class="flex items-center gap-4 text-xs text-gray-400">
-            <span>👥 Grup {{.GroupSize}} orang</span>
-            <span class="text-emerald-500 font-semibold">Score: {{.Score}}</span>
+        <details class="mt-2">
+            <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">🏨 Detail Paket</summary>
+            <div class="mt-2 bg-gray-50 rounded-lg p-3">
+            {{range .Details}}
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
+                    <div><span class="text-gray-400">Berangkat:</span> {{.DepartureDate}}</div>
+                    <div><span class="text-gray-400">Pulang:</span> {{.ReturnDate}}</div>
+                    <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
+                    <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
+                    <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}} ⭐{{.StarsMakkah}}</div>
+                    <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}} ⭐{{.StarsMadinah}}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
+                    <div><span class="text-gray-400">Tipe Kamar:</span> {{.RoomType}}</div>
+                    <div><span class="text-gray-400">Add-on Triple:</span> Rp {{formatCurrency .AddonTriple}}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mt-1">
+                    <div><span class="text-gray-400">Add-on Double:</span> Rp {{formatCurrency .AddonDouble}}</div>
+                    <div><span class="text-gray-400">Pembimbing:</span> {{.Guide}}</div>
+                </div>
+            {{end}}
+            </div>
+        </details>
+
+        <details class="mt-2">
+            <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat Fasilitas</summary>
+            <div class="mt-2 flex flex-wrap gap-1">
+                {{range $i, $v := .FacilityList}}
+                <span class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$v}}</span>
+                {{end}}
+            </div>
+        </details>
+
+        <div class="mt-2 text-xs text-gray-400">
+            Score: <span class="text-emerald-500 font-semibold">{{.Score}}</span>
         </div>
     </div>
     {{end}}
