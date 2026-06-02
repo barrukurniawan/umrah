@@ -1,63 +1,70 @@
+<style>
+    @keyframes glow-green {
+        0%, 100% { box-shadow: 0 0 5px #10b981, 0 0 10px #10b98133; border-color: #10b981; }
+        50% { box-shadow: 0 0 15px #059669, 0 0 25px #05966955; border-color: #059669; }
+    }
+    .card-top { animation: glow-green 2s ease-in-out infinite; border-width: 2px; }
+</style>
 {{if .Results}}
 <div>
     <h2 class="text-xl font-bold text-gray-900 mb-2">Hasil Rekomendasi</h2>
     <p class="text-sm text-gray-500 mb-6">Budget: Rp {{formatCurrency .Budget}}</p>
 
-    {{range .Results}}
-    <div class="border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow">
+    {{range $i, $v := .Results}}
+    <div class="border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow {{if eq $i 0}}card-top{{end}}">
         <div class="flex justify-between items-start mb-3">
             <div>
-                <h3 class="font-bold text-lg text-gray-900">{{.Travel.Name}}</h3>
-                <p class="text-sm text-gray-500">{{.Name}}</p>
+                <h3 class="font-bold text-lg text-gray-900">{{$v.Travel.Name}}</h3>
+                <p class="text-sm text-gray-500">{{$v.Name}}</p>
             </div>
             <div class="flex items-center gap-2">
                 <span class="text-amber-400 text-sm">⭐</span>
-                <span class="text-sm font-semibold text-gray-700">{{.Travel.Rating}}</span>
+                <span class="text-sm font-semibold text-gray-700">{{$v.Travel.Rating}}</span>
             </div>
         </div>
 
         <div class="text-2xl font-bold text-emerald-600 mb-3">
-            Rp {{formatCurrency .Price}}
+            Rp {{formatCurrency $v.Price}}
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📅</span> <span>{{.Duration}} Hari</span>
+                <span>📅</span> <span>{{$v.Duration}} Hari</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>✈️</span> <span>{{.Airline}}</span>
+                <span>✈️</span> <span>{{$v.Airline}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                {{if .IsDirect}}<span>🛫 Direct</span>{{else}}<span>🔁 Transit</span>{{end}}
+                {{if $v.IsDirect}}<span>🛫 Direct</span>{{else}}<span>🔁 Transit</span>{{end}}
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>🕌</span> <span>{{.HotelDistance}}m</span>
+                <span>🕌</span> <span>{{$v.HotelDistance}}m</span>
             </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
             <div class="flex items-center gap-1 text-gray-600">
-                <span>💳</span> <span>DP Rp {{formatCurrency .DownPayment}}</span>
+                <span>💳</span> <span>DP Rp {{formatCurrency $v.DownPayment}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📆</span> <span>{{.PaymentDeadline}}</span>
+                <span>📆</span> <span>{{$v.PaymentDeadline}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>👥</span> <span>{{.GroupSize}} orang</span>
+                <span>👥</span> <span>{{$v.GroupSize}} orang</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>🎓</span> <span class="truncate">{{.Guide}}</span>
+                <span>🎓</span> <span class="truncate">{{$v.Guide}}</span>
             </div>
         </div>
 
         <div class="flex flex-wrap gap-2 mb-3">
-            {{if .IsFamily}}
+            {{if $v.IsFamily}}
             <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full">👨‍👩‍👧 Keluarga</span>
             {{end}}
-            {{if .IsSenior}}
+            {{if $v.IsSenior}}
             <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">👴 Lansia</span>
             {{end}}
-            {{if ge .SunnahScore 8}}
+            {{if ge $v.SunnahScore 8}}
             <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">📖 Sunnah</span>
             {{end}}
         </div>
@@ -65,7 +72,7 @@
         <details class="mt-2">
             <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">🏨 Detail Paket</summary>
             <div class="mt-2 bg-gray-50 rounded-lg p-3">
-            {{range .Details}}
+            {{range $v.Details}}
                 <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
                     <div><span class="text-gray-400">Berangkat:</span> {{.DepartureDate}}</div>
                     <div><span class="text-gray-400">Pulang:</span> {{.ReturnDate}}</div>
@@ -91,14 +98,14 @@
         <details class="mt-2">
             <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat Fasilitas</summary>
             <div class="mt-2 flex flex-wrap gap-1">
-                {{range $i, $v := .FacilityList}}
-                <span class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$v}}</span>
+                {{range $fac := $v.FacilityList}}
+                <span class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$fac}}</span>
                 {{end}}
             </div>
         </details>
 
         <div class="mt-2 text-xs text-gray-400">
-            Score: <span class="text-emerald-500 font-semibold">{{.Score}}</span>
+            Score: <span class="text-emerald-500 font-semibold">{{$v.Score}}</span>
         </div>
     </div>
     {{end}}
