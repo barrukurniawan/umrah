@@ -47,7 +47,7 @@
                 <span>💳</span> <span>DP Rp {{formatCurrency $v.DownPayment}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📆</span> <span>{{$v.PaymentDeadline}}</span>
+                <span>📆</span> <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDateID $v.PaymentDeadline}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>👥</span> <span>{{$v.GroupSize}} orang</span>
@@ -74,8 +74,8 @@
             <div class="mt-2 bg-gray-50 rounded-lg p-3">
             {{range $v.Details}}
                 <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                    <div><span class="text-gray-400">Berangkat:</span> {{.DepartureDate}}</div>
-                    <div><span class="text-gray-400">Pulang:</span> {{.ReturnDate}}</div>
+                    <div><span class="text-gray-400">Berangkat:</span> <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate .DepartureDate}}</span></div>
+                    <div><span class="text-gray-400">Pulang:</span> <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate .ReturnDate}}</span></div>
                     <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
                     <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
                 </div>
@@ -103,10 +103,6 @@
                 {{end}}
             </div>
         </details>
-
-        <div class="mt-2 text-xs text-gray-400">
-            Score: <span class="text-emerald-500 font-semibold">{{$v.Score}}</span>
-        </div>
     </div>
     {{end}}
 </div>

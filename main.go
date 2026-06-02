@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"umrah/app/handlers"
 	"umrah/app/repositories"
@@ -26,6 +27,27 @@ func main() {
 			parts = append([]string{s}, parts...)
 		}
 		return strings.Join(parts, ".")
+	})
+
+	engine.AddFunc("formatDate", func(dateStr string) string {
+		t, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return dateStr
+		}
+		return fmt.Sprintf("%d %s %d", t.Day(), t.Month().String()[:3], t.Year())
+	})
+
+	engine.AddFunc("formatDateID", func(dateStr string) string {
+		t, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return dateStr
+		}
+		months := map[string]string{
+			"Jan": "Jan", "Feb": "Feb", "Mar": "Mar", "Apr": "Apr",
+			"May": "Mei", "Jun": "Jun", "Jul": "Jul", "Aug": "Agu",
+			"Sep": "Sep", "Oct": "Okt", "Nov": "Nov", "Dec": "Des",
+		}
+		return fmt.Sprintf("%d %s %d", t.Day(), months[t.Month().String()[:3]], t.Year())
 	})
 
 	app := fiber.New(fiber.Config{
