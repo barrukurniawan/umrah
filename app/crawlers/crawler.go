@@ -40,6 +40,8 @@ func NewCollector(domain string) *colly.Collector {
 
 	c.SetRequestTimeout(30 * time.Second)
 
+	c.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+
 	c.OnRequest(func(r *colly.Request) {
 		log.Println("[crawler] visiting:", r.URL.String())
 	})

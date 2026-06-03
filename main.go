@@ -11,9 +11,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
+
 	engine := html.New("./web/templates", ".html")
 
 	engine.AddFunc("formatCurrency", func(price int) string {

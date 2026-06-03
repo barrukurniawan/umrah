@@ -67,11 +67,11 @@
                 <span>💳</span> <span>DP Rp {{formatCurrency $v.DownPayment}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📆</span> <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDateID
-                    (index $v.Details 0).DPDeadline}}</span>
+                <span>📆</span>
+                {{if $v.Details}}<span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDateID (index $v.Details 0).DPDeadline}}</span>{{end}}
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>👥</span> <span>{{(index $v.Details 0).RoomType}}</span>
+                <span>👥</span> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>🎓</span> <span class="truncate">{{$v.Guide}}</span>
@@ -89,13 +89,14 @@
                 class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">👴
                 Lansia</span>
             {{end}}
-            {{if ge $v.SunnahScore 8}}
+            {{if ge $v.SunnahScore 0}}
             <span
                 class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">📖
                 Sunnah</span>
             {{end}}
         </div>
 
+        {{if $v.Details}}
         <details class="mt-2">
             <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">🏨 Detail Paket
             </summary>
@@ -128,6 +129,7 @@
                 {{end}}
             </div>
         </details>
+        {{end}}
 
         <details class="mt-2">
             <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat

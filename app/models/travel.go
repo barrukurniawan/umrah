@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -60,9 +58,5 @@ type DetailPackage struct {
 }
 
 func (d DetailPackage) DPDeadline() string {
-	t, err := time.Parse("2006-01-02", d.DepartureDate)
-	if err != nil {
-		return ""
-	}
-	return t.AddDate(0, -1, 0).Format("2006-01-02")
+	return d.DepartureDate
 }

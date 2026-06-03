@@ -1,27 +1,15 @@
 [
-  {
-    "name": "Hamdan Tour",
-    "url": "https://hamdantour.id/transaksi/paket-umrah",
-    "parser": "hamdan"
-  },
-  {
-    "name": "Taiba Medina",
-    "url": "https://taibamedina.com/paket-umroh",
-    "parser": "taiba"
-  },
-  {
-    "name": "Al Hijaz",
-    "url": "https://alhijaz.co/",
-    "parser": "alhijaz"
-  },
-  {
-    "name": "Umrah Bisa",
-    "url": "https://umrahbisa.com/paket-umrah/",
-    "parser": "alhijaz"
-  },
-  {
-    "name": "Payung Madinah",
-    "url": "https://payungmadinah.id/umroh",
-    "parser": "alhijaz"
-  }
+  { "name": "Hamdan Tour", "url": "https://hamdantour.id/transaksi/paket-umrah", "parser": "hamdan" },
+  { "name": "Taiba Medina", "url": "https://taibamedina.com/paket-umroh", "parser": "taiba" },
+  { "name": "Al Hijaz", "url": "https://alhijaz.co/", "parser": "alhijaz" },
+  { "name": "Mustajab", "url": "https://umrohmustajab.com/listings", "parser": "mustajab", "travel_name": "Marwa Mustajab" },
+  { "name": "Namira", "url": "https://namira.travel/listings", "parser": "muslimpergi", "travel_name": "Namira Travel" },
+  { "name": "UMI Travel", "url": "https://umi.travel/listings", "parser": "muslimpergi", "travel_name": "UMI Tour & Travel" },
+  { "name": "Rabbani - Hemat Transit", "url": "https://rabbanitour.com/program-umroh/umroh-hemat-transit/", "parser": "rabbani" },
+  { "name": "Rabbani - Hemat Direct", "url": "https://rabbanitour.com/program-umroh/umroh-hemat-direct/", "parser": "rabbani" },
+  { "name": "Rabbani - Pelataran", "url": "https://rabbanitour.com/program-umroh/umroh-pelataran/", "parser": "rabbani" },
+  { "name": "Rabbani - Hebat", "url": "https://rabbanitour.com/program-umroh/umroh-hebat/", "parser": "rabbani" },
+  { "name": "Rabbani - Premium", "url": "https://rabbanitour.com/program-umroh/umroh-premium/", "parser": "rabbani" },
+  { "name": "Rabbani - Plus Turki Cappadocia", "url": "https://rabbanitour.com/program-umroh/umroh-plus-turki-cappadocia-hebat/", "parser": "rabbani" },
+  { "name": "Rabbani - Plus Dubai", "url": "https://rabbanitour.com/program-umroh/umroh-plus-dubai/", "parser": "rabbani" }
 ]
