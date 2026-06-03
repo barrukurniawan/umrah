@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"log"
+	"os"
 
 	"umrah/app/models"
 
@@ -12,8 +13,13 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "data/umrah.db"
+	}
+
 	var err error
-	DB, err = gorm.Open(sqlite.Open("data/umrah.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		log.Fatal("failed to connect database:", err)
 	}
@@ -23,7 +29,7 @@ func InitDB() {
 	if DB.Migrator().HasTable(&models.Package{}) {
 		var count int64
 		DB.Model(&models.Package{}).Count(&count)
-		if count == 0 {
+		if count == 0 && dbPath == "data/umrah.db" {
 			seedData()
 		}
 	}

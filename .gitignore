@@ -1,10 +1,12 @@
 # Binary
 umrah-app
 crawler
+import
 *.exe
 
 # Database
 data/umrah.db
+data/crawled.db
 
 # Crawler output
 output/
