@@ -68,10 +68,10 @@
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>📆</span>
-                {{if $v.Details}}<span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDateID (index $v.Details 0).DPDeadline}}</span>{{end}}
+                <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{if $v.Details}}{{formatDateID (index $v.Details 0).DPDeadline}}{{else}}-{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>👥</span> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{end}}</span>
+                <span>👥</span> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{else}}Quad{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>🎓</span> <span class="truncate">{{$v.Guide}}</span>
