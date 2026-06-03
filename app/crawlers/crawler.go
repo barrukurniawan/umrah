@@ -70,9 +70,13 @@ func ParsePrice(priceStr string) int {
 
 func ParseDuration(s string) int {
 	lower := strings.ToLower(s)
-	idx := strings.Index(lower, "hari")
-	if idx < 0 {
-		idx = strings.Index(lower, "d ")
+
+	idxHR := strings.Index(lower, "hr")
+	idxHari := strings.Index(lower, "hari")
+
+	idx := idxHari
+	if idxHari < 0 || (idxHR >= 0 && idxHR < idxHari) {
+		idx = idxHR
 	}
 	if idx < 0 {
 		return 0
@@ -102,15 +106,34 @@ func ParseDuration(s string) int {
 }
 
 func ParseSeats(seatStr string) int {
-	cleaned := strings.Map(func(r rune) rune {
-		if r >= '0' && r <= '9' {
-			return r
+	lower := strings.ToLower(seatStr)
+
+	terisiIdx := strings.Index(lower, "terisi")
+	sisaIdx := strings.Index(lower, "sisa seat")
+
+	var sub string
+	if terisiIdx >= 0 {
+		sub = seatStr[terisiIdx+6:]
+	} else if sisaIdx >= 0 {
+		sub = seatStr[sisaIdx+9:]
+	} else {
+		return 0
+	}
+
+	for len(sub) > 0 && (sub[0] < '0' || sub[0] > '9') {
+		sub = sub[1:]
+	}
+	var numStr string
+	for _, c := range sub {
+		if c >= '0' && c <= '9' {
+			numStr += string(c)
+		} else {
+			break
 		}
-		return -1
-	}, seatStr)
+	}
 
 	var seats int
-	fmt.Sscanf(cleaned, "%d", &seats)
+	fmt.Sscanf(numStr, "%d", &seats)
 	return seats
 }
 

@@ -1,6 +1,14 @@
 package crawlers
 
-import "github.com/gocolly/colly/v2"
+import (
+	"context"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/chromedp"
+)
 
 type PayungMadinahParser struct {
 	URL string
@@ -8,29 +16,53 @@ type PayungMadinahParser struct {
 
 func (p *PayungMadinahParser) Crawl() ([]CrawledPackage, error) {
 	var packages []CrawledPackage
+	seen := make(map[string]bool)
 
-	c := NewCollector("payungmadinah.id")
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
 
-	c.OnHTML("[class*='card'], [class*='paket'], [class*='package']", func(e *colly.HTMLElement) {
+	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
+	var html string
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(p.URL),
+		chromedp.WaitVisible(`body`, chromedp.ByQuery),
+		chromedp.Sleep(3*time.Second),
+		chromedp.OuterHTML(`html`, &html),
+	)
+	if err != nil {
+		return packages, fmt.Errorf("chromedp: %w", err)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+	if err != nil {
+		return packages, err
+	}
+
+	doc.Find("[class*='card'], [class*='paket'], [class*='package']").Each(func(_ int, e *goquery.Selection) {
 		pkg := CrawledPackage{
 			TravelName: "Payung Madinah",
 			URL:        p.URL,
 		}
 
-		pkg.PackageName = CleanText(e.ChildText("h2, h3, [class*='title']"))
-		pkg.Price = ParsePrice(e.ChildText("[class*='price'], [class*='harga']"))
-		pkg.Duration = ParseDuration(e.ChildText("[class*='duration'], [class*='durasi']"))
-		pkg.Airline = CleanText(e.ChildText("[class*='airline'], [class*='maskapai']"))
-		pkg.HotelMakkah = CleanText(e.ChildText("[class*='makkah']"))
-		pkg.HotelMadinah = CleanText(e.ChildText("[class*='madinah']"))
-		pkg.Seats = ParseSeats(e.ChildText("[class*='seat'], [class*='kursi'], [class*='sisa']"))
+		pkg.PackageName = CleanText(e.Find("h2, h3, [class*='title']").First().Text())
+		pkg.Price = ParsePrice(e.Find("[class*='price'], [class*='harga']").First().Text())
+		pkg.Duration = ParseDuration(e.Find("[class*='duration'], [class*='durasi']").First().Text())
+		pkg.Airline = KnownAirline(e.Find("[class*='airline'], [class*='maskapai']").First().Text())
+
+		if pkg.Airline == "" {
+			pkg.Airline = KnownAirline(e.Text())
+		}
 
 		if pkg.PackageName != "" && pkg.Price > 0 {
-			packages = append(packages, pkg)
+			key := fmt.Sprintf("%s|%d", pkg.PackageName, pkg.Price)
+			if !seen[key] {
+				seen[key] = true
+				packages = append(packages, pkg)
+			}
 		}
 	})
 
-	c.Visit(p.URL)
-	c.Wait()
 	return packages, nil
 }
