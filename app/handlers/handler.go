@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"strconv"
+	"strings"
 
 	"umrah/app/services"
 
@@ -14,13 +15,13 @@ func HomePage(c *fiber.Ctx) error {
 
 func GetRecommendations(c *fiber.Ctx) error {
 	budget, _ := strconv.Atoi(c.FormValue("budget", "25000000"))
-	who := c.FormValue("who", "alone")
-	priority := c.FormValue("priority", "near_haram")
+	priority := c.FormValue("priority", "all")
+	advanced := c.FormValue("advanced", "")
 
 	input := services.FilterInput{
 		Budget:   budget,
-		Who:      who,
 		Priority: priority,
+		Advanced: strings.Split(advanced, ","),
 	}
 
 	results := services.GetRecommendations(input)

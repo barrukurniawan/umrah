@@ -115,51 +115,21 @@
                 </div>
 
                 <div class="mb-10">
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">Siapa yang Berangkat?</label>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="whoOptions">
-                        <label class="who-option cursor-pointer">
-                            <input type="radio" name="who" value="alone" class="peer hidden" checked>
-                            <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
-                                <span class="text-2xl block">🧔</span>
-                                <span class="text-sm font-medium">Sendiri</span>
-                            </div>
-                        </label>
-                        <label class="who-option cursor-pointer">
-                            <input type="radio" name="who" value="couple" class="peer hidden">
-                            <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
-                                <span class="text-2xl block">🧕🧔</span>
-                                <span class="text-sm font-medium">Pasangan</span>
-                            </div>
-                        </label>
-                        <label class="who-option cursor-pointer">
-                            <input type="radio" name="who" value="family" class="peer hidden">
-                            <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
-                                <span class="text-2xl block">👨‍👩‍👧</span>
-                                <span class="text-sm font-medium">Keluarga</span>
-                            </div>
-                        </label>
-                        <label class="who-option cursor-pointer">
-                            <input type="radio" name="who" value="senior" class="peer hidden">
-                            <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all">
-                                <span class="text-2xl block">👴</span>
-                                <span class="text-sm font-medium">Lansia</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="mb-10">
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Prioritas</label>
-                    <div class="grid grid-cols-3 gap-3" id="priorityOptions">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="priorityOptions">
                         <label class="priority-option cursor-pointer">
-                            <input type="radio" name="priority" value="near_haram" class="peer hidden" checked>
+                            <input type="radio" name="priority" value="all" class="peer hidden" checked>
                             <div
                                 class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">🕌</span>
+                                <span class="text-lg block">🧭</span>
+                                <span class="text-xs font-medium leading-tight">Tampilkan Semua</span>
+                            </div>
+                        </label>
+                        <label class="priority-option cursor-pointer">
+                            <input type="radio" name="priority" value="near_haram" class="peer hidden">
+                            <div
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
+                                <span class="text-lg block">🕋</span>
                                 <span class="text-xs font-medium leading-tight">Hotel Dekat Haram</span>
                             </div>
                         </label>
@@ -167,19 +137,21 @@
                             <input type="radio" name="priority" value="family_friendly" class="peer hidden">
                             <div
                                 class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">👨‍👩‍👧</span>
+                                <span class="text-lg block">❤️</span>
                                 <span class="text-xs font-medium leading-tight">Ramah Anak / Lansia</span>
                             </div>
                         </label>
-                        <label class="priority-option cursor-pointer">
-                            <input type="radio" name="priority" value="full_activity" class="peer hidden">
+                        <label class="cursor-pointer" onclick="openAdvancedFilter()">
+                            <input type="radio" name="priority" value="advanced" class="peer hidden"
+                                id="priorityAdvanced">
                             <div
                                 class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">📋</span>
-                                <span class="text-xs font-medium leading-tight">Full Aktivitas</span>
+                                <span class="text-lg block">🔎</span>
+                                <span class="text-xs font-medium leading-tight">Filter Lanjutan</span>
                             </div>
                         </label>
                     </div>
+                    <input type="hidden" name="advanced" id="advancedInput" value="">
                 </div>
 
                 <button type="submit"
@@ -195,6 +167,58 @@
     <footer class="text-center text-gray-400 text-sm py-8">
         &copy; 2026 Umrohku by Jago Institute
     </footer>
+
+    <div id="advancedFilterModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
+        onclick="closeAdvancedFilter(event)">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">🔍 Filter Lanjutan</h3>
+                <button onclick="document.getElementById('advancedFilterModal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2">✈️ Penerbangan</label>
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afDirect"
+                                onchange="if(this.checked)document.getElementById('afTransit').checked=false">
+                            Direct</label>
+                        <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afTransit"
+                                onchange="if(this.checked)document.getElementById('afDirect').checked=false">
+                            Transit</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2">🛏️ Tipe Kamar</label>
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afQuad"
+                                onchange="if(this.checked){document.getElementById('afTriple').checked=false;document.getElementById('afDouble').checked=false}">
+                            Quad</label>
+                        <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afTriple"
+                                onchange="if(this.checked){document.getElementById('afQuad').checked=false;document.getElementById('afDouble').checked=false}">
+                            Triple</label>
+                        <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afDouble"
+                                onchange="if(this.checked){document.getElementById('afQuad').checked=false;document.getElementById('afTriple').checked=false}">
+                            Double</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="afNearHaram"> 🕋 Hotel
+                        Dekat Haram</label>
+                </div>
+                <div>
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="afFamily"> ❤️ Ramah
+                        Anak / Lansia</label>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="applyAdvancedFilter()"
+                        class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Terapkan</button>
+                    <button onclick="resetAdvancedFilter()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg text-sm transition-colors">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="calculatorModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
         onclick="closeCalculator(event)">
@@ -303,13 +327,19 @@
 
         var _calcPrice = 0;
         var _calcDP = 0;
+        var _calcTravel = '';
 
         function openCalculator(btn) {
             _calcPrice = parseInt(btn.dataset.price) || 0;
             _calcDP = parseInt(btn.dataset.dp) || 0;
+            _calcTravel = btn.dataset.travel || '';
             document.getElementById('calcTitle').innerText = btn.dataset.name;
             document.getElementById('calcPeople').value = 1;
             document.getElementById('calcRoom').value = 'quad';
+            var triplePrice = _calcTravel === 'Hamdan Tour' ? '2.000.000' : '2.500.000';
+            var doublePrice = _calcTravel === 'Hamdan Tour' ? '3.000.000' : '3.500.000';
+            document.querySelector('#calcRoom option[value=triple]').innerText = 'Triple (+Rp ' + triplePrice + '/orang)';
+            document.querySelector('#calcRoom option[value=double]').innerText = 'Double (+Rp ' + doublePrice + '/orang)';
             document.getElementById('calculatorModal').classList.remove('hidden');
             calculateTotal();
         }
@@ -320,12 +350,43 @@
             }
         }
 
+        function openAdvancedFilter() {
+            document.getElementById('priorityAdvanced').checked = true;
+            document.getElementById('advancedFilterModal').classList.remove('hidden');
+        }
+
+        function closeAdvancedFilter(e) {
+            if (e.target === document.getElementById('advancedFilterModal')) {
+                document.getElementById('advancedFilterModal').classList.add('hidden');
+            }
+        }
+
+        function applyAdvancedFilter() {
+            var filters = [];
+            if (document.getElementById('afDirect').checked) filters.push('direct');
+            if (document.getElementById('afTransit').checked) filters.push('transit');
+            if (document.getElementById('afQuad').checked) filters.push('quad');
+            if (document.getElementById('afTriple').checked) filters.push('triple');
+            if (document.getElementById('afDouble').checked) filters.push('double');
+            if (document.getElementById('afNearHaram').checked) filters.push('near_haram');
+            if (document.getElementById('afFamily').checked) filters.push('family_friendly');
+            document.getElementById('advancedInput').value = filters.join(',');
+            document.getElementById('advancedFilterModal').classList.add('hidden');
+        }
+
+        function resetAdvancedFilter() {
+            document.querySelectorAll('#advancedFilterModal input[type=checkbox]').forEach(cb => cb.checked = false);
+            document.getElementById('advancedInput').value = '';
+        }
+
         function calculateTotal() {
             var people = parseInt(document.getElementById('calcPeople').value) || 1;
             var room = document.getElementById('calcRoom').value;
             var upgrade = 0;
-            if (room === 'triple') upgrade = 2500000;
-            if (room === 'double') upgrade = 3500000;
+            var triplePrice = _calcTravel === 'Hamdan Tour' ? 2000000 : 2500000;
+            var doublePrice = _calcTravel === 'Hamdan Tour' ? 3000000 : 3500000;
+            if (room === 'triple') upgrade = triplePrice;
+            if (room === 'double') upgrade = doublePrice;
 
             var perPerson = _calcPrice + upgrade;
             var total = perPerson * people;

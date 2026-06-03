@@ -152,24 +152,6 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 			db.Create(&detail)
 		}
 	}
-
-	if len(cp.DepartureDates) == 0 {
-		placeholder := time.Now().AddDate(0, 6, 0).Format("2006-01-02")
-		db.Create(&models.DetailPackage{
-			PackageID:         pkg.ID,
-			DepartureDate:     placeholder,
-			ReturnDate:        computeReturn(placeholder, cp.Duration),
-			HotelMakkah:       cleanHotel,
-			HotelMadinah:      cleanHotelMd,
-			StarsMakkah:       3,
-			StarsMadinah:      3,
-			RoomType:          "Quad",
-			TotalQuota:        cp.Seats,
-			AvailableQuota:    cp.Seats,
-			DepartureLocation: cp.Airport,
-			Guide:             pkg.Guide,
-		})
-	}
 }
 
 func splitDates(s string) []string {
