@@ -20,7 +20,18 @@ func (mp *MuslimPergiParser) Crawl() ([]CrawledPackage, error) {
 		mp.TravelName = "Muslim Pergi"
 	}
 
-	ctx, cancel := chromedp.NewContext(context.Background())
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("no-sandbox", true),
+		chromedp.Flag("disable-gpu", true),
+	)
+	if p := findChrome(); p != "" {
+		opts = append(opts, chromedp.ExecPath(p))
+	}
+
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer cancel()
+	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, 90*time.Second)
 	defer cancel()

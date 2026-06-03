@@ -22,7 +22,8 @@
 <div>
     <div class="flex justify-between items-center mb-2">
         <h2 class="text-xl font-bold text-gray-900">Hasil Rekomendasi</h2>
-        <select id="monthFilter" class="border border-gray-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-emerald-500">
+        <select id="monthFilter"
+            class="border border-gray-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-emerald-500">
             <option value="">Semua Bulan</option>
         </select>
     </div>
@@ -52,7 +53,7 @@
                     Hari</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>✈️</span> <span>{{$v.Airline}}</span>
+                <span>✈️</span> <span>{{if $v.Airline}}{{$v.Airline}}{{else}}To Be Confirmed{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 {{if $v.IsDirect}}<span>🛫 Direct</span>{{else}}<span>🔁 Transit</span>{{end}}
@@ -68,7 +69,8 @@
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>📆</span>
-                <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{if $v.Details}}{{formatDateID (index $v.Details 0).DPDeadline}}{{else}}-{{end}}</span>
+                <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{if $v.Details}}{{formatDateID
+                    (index $v.Details 0).DPDeadline}}{{else}}-{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
                 <span>👥</span> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{else}}Quad{{end}}</span>
@@ -103,44 +105,56 @@
             <div class="mt-2 bg-gray-50 rounded-lg p-3">
                 {{range $v.Details}}
                 <div class="detail-row mb-3" data-departure="{{.DepartureDate}}">
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                    <div><span class="text-gray-400">Berangkat:</span> <span
-                            class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
-                            .DepartureDate}}</span></div>
-                    <div><span class="text-gray-400">Pulang:</span> <span
-                            class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
-                            .ReturnDate}}</span></div>
-                    <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
-                    <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
-                </div>
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                    <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}} ⭐{{.StarsMakkah}}</div>
-                    <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}} ⭐{{.StarsMadinah}}</div>
-                </div>
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
-                    <div><span class="text-gray-400">Tipe Kamar:</span> {{.RoomType}}</div>
-                    <div><span class="text-gray-400">Add-on Triple:</span> Rp {{formatCurrency .AddonTriple}}</div>
-                </div>
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mt-1">
-                    <div><span class="text-gray-400">Add-on Double:</span> Rp {{formatCurrency .AddonDouble}}</div>
-                    <div><span class="text-gray-400">Pembimbing:</span> {{.Guide}}</div>
-                </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
+                        <div><span class="text-gray-400">Berangkat:</span> <span
+                                class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
+                                .DepartureDate}}</span></div>
+                        <div><span class="text-gray-400">Pulang:</span> <span
+                                class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
+                                .ReturnDate}}</span></div>
+                        <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
+                        <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
+                        <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}} ⭐{{.StarsMakkah}}</div>
+                        <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}} ⭐{{.StarsMadinah}}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
+                        <div><span class="text-gray-400">Tipe Kamar:</span> {{.RoomType}}</div>
+                        <div><span class="text-gray-400">Add-on Triple:</span> Rp {{formatCurrency .AddonTriple}}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mt-1">
+                        <div><span class="text-gray-400">Add-on Double:</span> Rp {{formatCurrency .AddonDouble}}</div>
+                        <div><span class="text-gray-400">Pembimbing:</span> {{.Guide}}</div>
+                    </div>
                 </div>
                 {{end}}
             </div>
         </details>
         {{end}}
 
-        <details class="mt-2">
-            <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat
-                Fasilitas</summary>
-            <div class="mt-2 flex flex-wrap gap-1">
-                {{range $fac := $v.FacilityList}}
-                <span
-                    class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$fac}}</span>
-                {{end}}
+        <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
+            <div class="flex gap-2">
+                <details class="inline">
+                    <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat
+                        Fasilitas</summary>
+                    <div class="mt-2 flex flex-wrap gap-1">
+                        {{range $fac := $v.FacilityList}}
+                        <span
+                            class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$fac}}</span>
+                        {{end}}
+                    </div>
+                </details>
             </div>
-        </details>
+            <button onclick="openCalculator(this)"
+                data-name="{{$v.Name}}"
+                data-price="{{$v.Price}}"
+                data-dp="{{$v.DownPayment}}"
+                class="text-xs bg-blue-50 text-blue-600 font-medium px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                🧮 Kalkulator
+            </button>
+        </div>
     </div>
     {{end}}
 </div>

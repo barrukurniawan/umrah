@@ -196,6 +196,34 @@
         &copy; 2026 Umrohku by Jago Institute
     </footer>
 
+    <div id="calculatorModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center" onclick="closeCalculator(event)">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg" id="calcTitle">Kalkulator Biaya</h3>
+                <button onclick="document.getElementById('calculatorModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div class="mb-3">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Orang</label>
+                <input type="number" id="calcPeople" value="1" min="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" oninput="calculateTotal()">
+            </div>
+            <div class="mb-3">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Tipe Kamar</label>
+                <select id="calcRoom" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" onchange="calculateTotal()">
+                    <option value="quad">Quad (Sekamar 4)</option>
+                    <option value="triple">Triple (+Rp 2.500.000/orang)</option>
+                    <option value="double">Double (+Rp 3.500.000/orang)</option>
+                </select>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 mb-3 text-sm space-y-2">
+                <div class="flex justify-between"><span>Harga Dasar</span> <span class="font-semibold" id="calcBasePrice">Rp 0</span></div>
+                <div class="flex justify-between"><span>Upgrade Kamar</span> <span class="font-semibold text-amber-600" id="calcUpgrade">Rp 0</span></div>
+                <div class="flex justify-between border-t border-gray-200 pt-2"><span>Harga per Orang</span> <span class="font-semibold" id="calcPerPerson">Rp 0</span></div>
+                <div class="flex justify-between text-lg font-bold text-emerald-600 border-t border-gray-200 pt-2"><span>Total</span> <span id="calcTotal">Rp 0</span></div>
+                <div class="flex justify-between text-sm text-blue-600"><span>Perkiraan DP</span> <span class="font-semibold" id="calcDP">Rp 0</span></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function updateBudget(val) {
             const num = parseInt(val);
@@ -261,6 +289,43 @@
                 });
                 card.style.display = hasMatch ? '' : 'none';
             });
+        }
+
+        var _calcPrice = 0;
+        var _calcDP = 0;
+
+        function openCalculator(btn) {
+            _calcPrice = parseInt(btn.dataset.price) || 0;
+            _calcDP = parseInt(btn.dataset.dp) || 0;
+            document.getElementById('calcTitle').innerText = btn.dataset.name;
+            document.getElementById('calcPeople').value = 1;
+            document.getElementById('calcRoom').value = 'quad';
+            document.getElementById('calculatorModal').classList.remove('hidden');
+            calculateTotal();
+        }
+
+        function closeCalculator(e) {
+            if (e.target === document.getElementById('calculatorModal')) {
+                document.getElementById('calculatorModal').classList.add('hidden');
+            }
+        }
+
+        function calculateTotal() {
+            var people = parseInt(document.getElementById('calcPeople').value) || 1;
+            var room = document.getElementById('calcRoom').value;
+            var upgrade = 0;
+            if (room === 'triple') upgrade = 2500000;
+            if (room === 'double') upgrade = 3500000;
+
+            var perPerson = _calcPrice + upgrade;
+            var total = perPerson * people;
+            var estDP = _calcDP * people;
+
+            document.getElementById('calcBasePrice').innerText = 'Rp ' + _calcPrice.toLocaleString('id-ID');
+            document.getElementById('calcUpgrade').innerText = '+Rp ' + (upgrade * people).toLocaleString('id-ID');
+            document.getElementById('calcPerPerson').innerText = 'Rp ' + perPerson.toLocaleString('id-ID');
+            document.getElementById('calcTotal').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('calcDP').innerText = 'Rp ' + estDP.toLocaleString('id-ID');
         }
     </script>
 </body>

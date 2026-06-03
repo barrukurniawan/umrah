@@ -3,6 +3,8 @@ package crawlers
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -15,7 +17,18 @@ type AlhijazParser struct {
 }
 
 func (a *AlhijazParser) Crawl() ([]CrawledPackage, error) {
-	ctx, cancel := chromedp.NewContext(context.Background())
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("no-sandbox", true),
+		chromedp.Flag("disable-gpu", true),
+	)
+	if p := findChrome(); p != "" {
+		opts = append(opts, chromedp.ExecPath(p))
+	}
+
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer cancel()
+	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
 
 	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
@@ -93,13 +106,19 @@ func (a *AlhijazParser) Crawl() ([]CrawledPackage, error) {
 			seatsText := seatsSection.Text()
 			pkg.Seats = ParseSeats(seatsText)
 
-			berangkatSpans := seatsSection.Find("span.text-sm, span.font-bold")
-			if berangkatSpans.Length() > 0 {
-				depDate := strings.TrimSpace(berangkatSpans.Last().Text())
-				if depDate != "" && !strings.HasPrefix(strings.ToLower(depDate), "berangkat") {
-					pkg.DepartureDates = append(pkg.DepartureDates, depDate)
+			seatsSection.Find("span").Each(func(_ int, sp *goquery.Selection) {
+				t := strings.TrimSpace(sp.Text())
+				lower := strings.ToLower(t)
+				if lower == "berangkat" {
+					next := sp.Next()
+					if next.Length() > 0 {
+						depDate := strings.TrimSpace(next.Text())
+						if depDate != "" && len(depDate) > 5 && countMonths(depDate) > 0 {
+							pkg.DepartureDates = append(pkg.DepartureDates, depDate)
+						}
+					}
 				}
-			}
+			})
 		}
 
 		if pkg.Duration == 0 && pkg.PackageName != "" {
@@ -135,4 +154,16 @@ func parseJutaStr(s string) int {
 	var num float64
 	fmt.Sscanf(numPart, "%f", &num)
 	return int(num * 1000000)
+}
+
+func findChrome() string {
+	for _, name := range []string{"chromium-browser", "chromium", "google-chrome", "google-chrome-stable"} {
+		if p, err := exec.LookPath(name); err == nil {
+			return p
+		}
+	}
+	if _, err := os.Stat("/snap/bin/chromium"); err == nil {
+		return "/snap/bin/chromium"
+	}
+	return ""
 }
