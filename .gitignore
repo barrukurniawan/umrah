@@ -1,9 +1,13 @@
 # Binary
 umrah-app
+crawler
 *.exe
 
 # Database
 data/umrah.db
+
+# Crawler output
+output/
 
 # IDE
 .idea/

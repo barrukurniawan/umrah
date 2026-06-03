@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Hamdan Tour",
+    "url": "https://hamdantour.id/transaksi/paket-umrah",
+    "parser": "hamdan"
+  },
+  {
+    "name": "Taiba Medina",
+    "url": "https://taibamedina.com/paket-umroh",
+    "parser": "taiba"
+  },
+  {
+    "name": "Al Hijaz",
+    "url": "https://alhijaz.co/",
+    "parser": "generic"
+  },
+  {
+    "name": "Umrah Bisa",
+    "url": "https://umrahbisa.com/paket-umrah/",
+    "parser": "generic"
+  },
+  {
+    "name": "Payung Madinah",
+    "url": "https://payungmadinah.id/umroh",
+    "parser": "generic"
+  }
+]
