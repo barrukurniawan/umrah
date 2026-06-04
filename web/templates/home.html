@@ -296,33 +296,48 @@
         function filterByMonth(month) {
             const cards = document.querySelectorAll('.package-card');
             const rows = document.querySelectorAll('.detail-row');
-
             if (!month) {
                 cards.forEach(c => c.style.display = '');
                 rows.forEach(r => r.style.display = '');
                 return;
             }
-
             const now = new Date();
             const currentMonth = now.getMonth() + 1;
             const currentYear = now.getFullYear();
             const selMonth = parseInt(month);
             const targetYear = selMonth < currentMonth ? currentYear + 1 : currentYear;
             const targetPrefix = targetYear + '-' + month;
-
             cards.forEach(card => {
                 let hasMatch = false;
                 card.querySelectorAll('.detail-row').forEach(row => {
                     const date = row.dataset.departure;
-                    if (date && date.startsWith(targetPrefix)) {
-                        row.style.display = '';
-                        hasMatch = true;
-                    } else {
-                        row.style.display = 'none';
-                    }
+                    if (date && date.startsWith(targetPrefix)) { row.style.display = ''; hasMatch = true; }
+                    else { row.style.display = 'none'; }
                 });
                 card.style.display = hasMatch ? '' : 'none';
             });
+        }
+
+        function sortCards() {
+            var val = document.getElementById('sortFilter').value;
+            var container = document.getElementById('results').querySelector('div');
+            if (!container) return;
+            var cards = container.querySelectorAll('.package-card');
+            var arr = Array.from(cards);
+            arr.sort(function(a, b) {
+                var av, bv;
+                switch(val) {
+                    case 'score': av = parseInt(a.dataset.score)||0; bv = parseInt(b.dataset.score)||0; return bv - av;
+                    case 'price_asc': av = parseInt(a.dataset.price)||0; bv = parseInt(b.dataset.price)||0; return av - bv;
+                    case 'price_desc': return (parseInt(b.dataset.price)||0) - (parseInt(a.dataset.price)||0);
+                    case 'distance_asc': return (parseInt(a.dataset.distance)||0) - (parseInt(b.dataset.distance)||0);
+                    case 'duration_asc': return (parseInt(a.dataset.duration)||0) - (parseInt(b.dataset.duration)||0);
+                    case 'duration_desc': return (parseInt(b.dataset.duration)||0) - (parseInt(a.dataset.duration)||0);
+                    case 'dp_asc': return (parseInt(a.dataset.dp)||0) - (parseInt(b.dataset.dp)||0);
+                }
+                return 0;
+            });
+            arr.forEach(function(c) { container.appendChild(c); });
         }
 
         var _calcPrice = 0;
