@@ -148,8 +148,8 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 		return scored[i].Score > scored[j].Score
 	})
 
-	if len(scored) > 10 {
-		scored = scored[:10]
+	if len(scored) > 50 {
+		scored = scored[:50]
 	}
 
 	return scored

@@ -176,6 +176,10 @@ var monthsID = map[string]string{
 	"januari": "01", "februari": "02", "maret": "03", "april": "04",
 	"mei": "05", "juni": "06", "juli": "07", "agustus": "08",
 	"september": "09", "oktober": "10", "november": "11", "desember": "12",
+	"jan": "01", "feb": "02", "mar": "03", "apr": "04",
+	"may": "05", "jun": "06", "jul": "07", "aug": "08",
+	"agu": "08", "sep": "09", "okt": "10", "oct": "10",
+	"nov": "11", "des": "12", "dec": "12",
 }
 
 func parseDeparture(s string) string {
@@ -227,7 +231,7 @@ func estimateDistance(price int) int {
 	case price >= 30000000:
 		return 400
 	case price >= 27000000:
-		return 600
+		return 800
 	case price >= 25000000:
 		return 800
 	default:

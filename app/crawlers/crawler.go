@@ -155,7 +155,10 @@ func KnownAirline(s string) string {
 		{"qatar", "Qatar Airways"},
 		{"emirates", "Emirates"},
 		{"etihad", "Etihad Airways"},
+		{"et /", "Etihad Airways"},
+		{"ey /", "Etihad Airways"},
 		{"oman", "Oman Air"},
+		{"wy /", "Oman Air"},
 		{"royal brunei", "Royal Brunei Airlines"},
 		{"scoot", "Scoot"},
 		{"indigo", "IndiGo"},
@@ -175,6 +178,8 @@ func countMonths(s string) int {
 	months := []string{
 		"januari", "februari", "maret", "april", "mei", "juni",
 		"juli", "agustus", "september", "oktober", "november", "desember",
+		"jan", "feb", "mar", "apr", "may", "jun",
+		"jul", "aug", "agu", "sep", "okt", "oct", "nov", "des", "dec",
 	}
 	count := 0
 	lower := strings.ToLower(s)

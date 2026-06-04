@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 )
 
@@ -19,117 +18,121 @@ func (r *RabbaniParser) Crawl() ([]CrawledPackage, error) {
 	c := NewCollector("rabbanitour.com")
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		var leaves []*goquery.Selection
-		e.DOM.Find(":contains('Harga Mulai'), :contains('Juta')").Each(func(_ int, s *goquery.Selection) {
-			text := strings.TrimSpace(s.Text())
-			if !strings.HasPrefix(text, "Harga Mulai") {
-				return
-			}
-			hasChild := false
-			s.Children().Each(func(_ int, child *goquery.Selection) {
-				if strings.HasPrefix(strings.TrimSpace(child.Text()), "Harga Mulai") {
-					hasChild = true
-				}
-			})
-			if !hasChild {
-				leaves = append(leaves, s)
-			}
-		})
-
-		for _, leaf := range leaves {
-			card := leaf.Closest("[class*='col-md'], [class*='col-lg'], [class*='col-sm'], [class*='card'], [class*='jadwal']")
-			if card.Length() == 0 {
-				card = leaf.ParentsFiltered("div").First()
-			}
-
-			text := card.Text()
-			lines := make([]string, 0)
-			for _, line := range strings.Split(text, "\n") {
-				line = CleanText(line)
-				if line != "" {
-					lines = append(lines, line)
-				}
-			}
-
-			pkg := CrawledPackage{
-				TravelName:     "Rabbani Tour",
-				URL:            r.URL,
-				DepartureDates: []string{},
-			}
-
-			var hotelMode string
-			for i, line := range lines {
-				lower := strings.ToLower(line)
-
-				switch {
-				case strings.HasPrefix(lower, "hotel madinah") && pkg.HotelMadinah == "":
-					pkg.HotelMadinah = CleanText(strings.TrimPrefix(line, "Hotel Madinah"))
-				case strings.HasPrefix(lower, "hotel mekkah") && pkg.HotelMakkah == "":
-					pkg.HotelMakkah = CleanText(strings.TrimPrefix(line, "Hotel Mekkah"))
-
-				case strings.HasPrefix(lower, "harga mulai"):
-					if i+1 < len(lines) {
-						pkg.Price = parseJutaStr(lines[i+1])
-					} else {
-						pkg.Price = parseJutaStr(CleanText(strings.TrimPrefix(line, "Harga Mulai")))
-					}
-
-				case strings.Contains(lower, "hari") && pkg.Duration == 0:
-					if d := ParseDuration(line); d > 0 && d < 100 {
-						pkg.Duration = d
-					}
-
-				case strings.Contains(lower, "juta") && pkg.Price == 0:
-					pkg.Price = parseJutaStr(line)
-
-				case strings.HasPrefix(lower, "hotel mekkah"):
-					hotelMode = "mekkah"
-				case strings.HasPrefix(lower, "hotel madinah"):
-					hotelMode = "madinah"
-
-				case isDateLine(line) && len(line) < 20:
-					pkg.DepartureDates = append(pkg.DepartureDates, line)
-
-				default:
-					if (hotelMode == "mekkah" && pkg.HotelMakkah == "" && len(line) > 3 &&
-						!strings.HasPrefix(lower, "booking") && !strings.HasPrefix(lower, "terbatas") &&
-						!strings.HasPrefix(lower, "segera") && !isDateLine(line)) {
-						pkg.HotelMakkah = line
-					}
-					if (hotelMode == "madinah" && pkg.HotelMadinah == "" && len(line) > 3 &&
-						!strings.HasPrefix(lower, "booking") && !strings.HasPrefix(lower, "terbatas") &&
-						!strings.HasPrefix(lower, "segera") && !isDateLine(line)) {
-						pkg.HotelMadinah = line
-					}
-
-					if pkg.PackageName == "" && len(line) > 5 &&
-						!strings.HasPrefix(lower, "harga") && !strings.HasPrefix(lower, "hotel") &&
-						!strings.HasPrefix(lower, "booking") && !strings.HasPrefix(lower, "terbatas") &&
-						!strings.HasPrefix(lower, "segera") && !isDateLine(line) &&
-						!strings.Contains(lower, "juta") && !strings.HasPrefix(lower, "all in") &&
-						!strings.HasPrefix(lower, "transit") && !strings.HasPrefix(lower, "thaif") &&
-						!strings.HasPrefix(lower, "direct") && !strings.HasPrefix(lower, "reguler") {
-						pkg.PackageName = line
-					}
-				}
-			}
-
-			if pkg.Price == 0 {
-				fullText := strings.Join(lines, " ")
-				idx := strings.Index(fullText, "Harga Mulai")
-				if idx >= 0 {
-					pkg.Price = parseJutaStr(strings.TrimSpace(fullText[idx+len("Harga Mulai"):]))
-				}
-			}
-
-			if pkg.PackageName != "" {
-				key := fmt.Sprintf("%s|%d", pkg.PackageName, pkg.Price)
-				if !seen[key] {
-					seen[key] = true
-					packages = append(packages, pkg)
-				}
+		lines := make([]string, 0)
+		for _, l := range strings.Split(e.Text, "\n") {
+			l = CleanText(l)
+			if l != "" {
+				lines = append(lines, l)
 			}
 		}
+
+		var pkg *CrawledPackage
+		for i, line := range lines {
+			lower := strings.ToLower(line)
+
+			if isDateLine(line) && len(line) < 20 && !strings.Contains(lower, "hari") {
+				if pkg != nil && pkg.PackageName != "" {
+					key := fmt.Sprintf("%s|%d|%s", pkg.PackageName, pkg.Price, line)
+					if !seen[key] {
+						seen[key] = true
+						packages = append(packages, *pkg)
+					}
+				}
+				pkg = &CrawledPackage{
+					TravelName:     "Rabbani Tour",
+					URL:            r.URL,
+					DepartureDates: []string{line},
+				}
+				continue
+			}
+
+			if pkg == nil {
+				continue
+			}
+
+			switch {
+			case strings.HasPrefix(lower, "harga mulai"):
+				if i+1 < len(lines) {
+					pkg.Price = parseJutaStr(lines[i+1])
+				}
+
+			case strings.Contains(lower, "juta") && pkg.Price == 0:
+				pkg.Price = parseJutaStr(line)
+
+			case strings.Contains(lower, "hari") && pkg.Duration == 0:
+				if d := ParseDuration(line); d > 0 && d < 100 {
+					pkg.Duration = d
+				}
+
+			case strings.HasPrefix(lower, "hotel madinah"):
+				pkg.HotelMadinah = strings.TrimPrefix(line, "Hotel Madinah")
+				pkg.HotelMadinah = strings.TrimSpace(pkg.HotelMadinah)
+				if pkg.HotelMadinah == "" && i+1 < len(lines) {
+					pkg.HotelMadinah = lines[i+1]
+				}
+
+			case strings.HasPrefix(lower, "hotel mekkah"):
+				pkg.HotelMakkah = strings.TrimPrefix(line, "Hotel Mekkah")
+				pkg.HotelMakkah = strings.TrimSpace(pkg.HotelMakkah)
+				if pkg.HotelMakkah == "" && i+1 < len(lines) {
+					pkg.HotelMakkah = lines[i+1]
+				}
+
+			case pkg.PackageName == "" && len(line) > 3 &&
+				!isDateLine(line) &&
+				!strings.HasPrefix(lower, "harga") &&
+				!strings.HasPrefix(lower, "hotel") &&
+				!strings.HasPrefix(lower, "booking") &&
+				!strings.HasPrefix(lower, "terbatas") &&
+				!strings.HasPrefix(lower, "segera") &&
+				!strings.Contains(lower, "juta") &&
+				!strings.HasPrefix(lower, "all in") &&
+				!strings.HasPrefix(lower, "transit") &&
+				!strings.HasPrefix(lower, "thaif") &&
+				!strings.HasPrefix(lower, "direct") &&
+				!strings.HasPrefix(lower, "et /") &&
+				!strings.HasPrefix(lower, "ey /") &&
+				!strings.HasPrefix(lower, "wy /"):
+				pkg.PackageName = line
+			}
+		}
+
+		if pkg != nil && pkg.PackageName != "" {
+			key := fmt.Sprintf("%s|%d", pkg.PackageName, pkg.Price)
+			if !seen[key] {
+				seen[key] = true
+				packages = append(packages, *pkg)
+			}
+		}
+
+		merged := make(map[string]*CrawledPackage)
+		for i := range packages {
+			p := &packages[i]
+			if len(p.DepartureDates) == 0 {
+				continue
+			}
+			dateKey := p.DepartureDates[0]
+			if existing, ok := merged[dateKey]; ok {
+				if p.Price > existing.Price { existing.Price = p.Price }
+				if p.Duration > existing.Duration { existing.Duration = p.Duration }
+				if p.HotelMakkah != "" && existing.HotelMakkah == "" { existing.HotelMakkah = p.HotelMakkah }
+				if p.HotelMadinah != "" && existing.HotelMadinah == "" { existing.HotelMadinah = p.HotelMadinah }
+				if p.Airline != "" && existing.Airline == "" { existing.Airline = p.Airline }
+				if p.PackageName != "" && (existing.PackageName == "" || strings.Contains(strings.ToLower(existing.PackageName), "/setaraf")) {
+					existing.PackageName = p.PackageName
+				}
+			} else {
+				merged[dateKey] = p
+			}
+		}
+
+		result := make([]CrawledPackage, 0)
+		for _, p := range merged {
+			if p.Price > 1000000 {
+				result = append(result, *p)
+			}
+		}
+		packages = result
 	})
 
 	c.Visit(r.URL)
