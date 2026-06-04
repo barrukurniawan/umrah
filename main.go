@@ -70,6 +70,21 @@ func main() {
 		return "#"
 	})
 
+	engine.AddFunc("whatsappURL", func(name string) string {
+		urls := map[string]string{
+			"Hamdan Tour":    "https://api.whatsapp.com/send/?phone=6282120009897&text=Assalamualaikum%2C+mohon+informasi+umrah+dari+HAMDAN+TOUR",
+			"Taiba Medina":   "https://api.whatsapp.com/send/?phone=6285380000883&text=Assalamu%27alaikum%2C+saya+ingin+bertanya+mengenai+layanan+Umroh+Taiba+Medina+Tour",
+			"Al Hijaz":       "https://api.whatsapp.com/send/?text=%2AALHIJAZ+INDOWISATA%2A%0AAssalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Marwa Mustajab": "https://api.whatsapp.com/send/?phone=6288214793139&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Rabbani Tour":   "https://api.whatsapp.com/send/?phone=6281297505402&text=Assalamu%27alaikum%2C+saya+ingin+konsultasi+umroh",
+			"Umrah Bisa":     "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+Boleh+info+lebih+lanjut+untuk+paket+umrahnya%3F",
+		}
+		if u, ok := urls[name]; ok {
+			return u
+		}
+		return "#"
+	})
+
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
