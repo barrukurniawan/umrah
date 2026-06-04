@@ -26,6 +26,10 @@ func (u *UmrahBisaProductParser) Crawl() ([]CrawledPackage, error) {
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
 
+	html = regexp.MustCompile(`<script[^>]*>[\s\S]*?</script>`).ReplaceAllString(html, "")
+	html = regexp.MustCompile(`<style[^>]*>[\s\S]*?</style>`).ReplaceAllString(html, "")
+	html = regexp.MustCompile(`<noscript[^>]*>[\s\S]*?</noscript>`).ReplaceAllString(html, "")
+
 	re := regexp.MustCompile(`<[^>]*>`)
 	text := re.ReplaceAllString(html, "\n")
 	text = regexp.MustCompile(`\n+`).ReplaceAllString(text, "\n")
@@ -52,6 +56,8 @@ func (u *UmrahBisaProductParser) Crawl() ([]CrawledPackage, error) {
 			end = 40
 		}
 		raw := strings.TrimSpace(sub[:end])
+		raw = CleanText(strings.SplitN(raw, "pesawat", 2)[0])
+		raw = CleanText(strings.SplitN(raw, "hotel", 2)[0])
 		if strings.Contains(raw, "-") {
 			parts := strings.Fields(raw)
 			if len(parts) >= 4 {
@@ -120,6 +126,12 @@ func (u *UmrahBisaProductParser) Crawl() ([]CrawledPackage, error) {
 		lowerLine := strings.ToLower(line)
 		if pkg.PackageName == "" && len(line) > 15 &&
 			(strings.HasPrefix(lowerLine, "dp umrah") || strings.HasPrefix(lowerLine, "umrah hemat")) {
+			if idx := strings.Index(line, ","); idx > 0 {
+				line = CleanText(line[:idx])
+			}
+			if idx := strings.Index(line, "sku"); idx > 0 {
+				line = CleanText(line[:idx])
+			}
 			pkg.PackageName = line
 		}
 	}

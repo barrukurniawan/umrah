@@ -277,6 +277,7 @@ func estimateRating(travelName string) float64 {
 		"Rabbani Tour":   4.6,
 		"UMI Tour & Travel": 4.1,
 		"Namira Travel":  4.2,
+		"Umrah Bisa":     4.5,
 	}
 	if r, ok := ratings[travelName]; ok {
 		return r
