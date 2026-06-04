@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"math"
 	"strconv"
 	"strings"
 
@@ -17,17 +18,26 @@ func GetRecommendations(c *fiber.Ctx) error {
 	budget, _ := strconv.Atoi(c.FormValue("budget", "25000000"))
 	priority := c.FormValue("priority", "all")
 	advanced := c.FormValue("advanced", "")
+	page, _ := strconv.Atoi(c.FormValue("page", "1"))
 
 	input := services.FilterInput{
 		Budget:   budget,
 		Priority: priority,
 		Advanced: strings.Split(advanced, ","),
+		Page:     page,
 	}
 
-	results := services.GetRecommendations(input)
+	results, total := services.GetRecommendations(input)
+	totalPages := int(math.Ceil(float64(total) / 5))
 
 	return c.Render("recommendations", fiber.Map{
-		"Results": results,
-		"Budget":  budget,
+		"Results":    results,
+		"Budget":     budget,
+		"Page":       page,
+		"TotalPages": totalPages,
+		"HasPrev":    page > 1,
+		"HasNext":    page < totalPages,
+		"PrevPage":   page - 1,
+		"NextPage":   page + 1,
 	})
 }

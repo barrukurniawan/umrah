@@ -182,6 +182,36 @@
         </div>
     </div>
     {{end}}
+
+    {{if gt .TotalPages 1}}
+    <div class="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-100">
+        {{if .HasPrev}}
+        <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
+            hx-include="[name='budget'],[name='priority'],[name='advanced']"
+            hx-vals='{"page":"{{.PrevPage}}"}'
+            class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
+            ← Sebelumnya
+        </button>
+        {{else}}
+        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">← Sebelumnya</span>
+        {{end}}
+
+        <span class="text-xs text-gray-500 font-medium">
+            Halaman {{.Page}} dari {{.TotalPages}}
+        </span>
+
+        {{if .HasNext}}
+        <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
+            hx-include="[name='budget'],[name='priority'],[name='advanced']"
+            hx-vals='{"page":"{{.NextPage}}"}'
+            class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
+            Selanjutnya →
+        </button>
+        {{else}}
+        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">Selanjutnya →</span>
+        {{end}}
+    </div>
+    {{end}}
 </div>
 {{else}}
 <div class="text-center py-8 text-gray-400">

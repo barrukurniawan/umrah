@@ -13,6 +13,7 @@ type FilterInput struct {
 	Budget   int
 	Priority string
 	Advanced []string
+	Page     int
 }
 
 type ScoredPackage struct {
@@ -21,7 +22,7 @@ type ScoredPackage struct {
 	FacilityList []string
 }
 
-func GetRecommendations(input FilterInput) []ScoredPackage {
+func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 	var allPackages []models.Package
 	repositories.DB.Preload("Travel").Preload("Details").Find(&allPackages)
 
@@ -148,11 +149,21 @@ func GetRecommendations(input FilterInput) []ScoredPackage {
 		return scored[i].Score > scored[j].Score
 	})
 
-	if len(scored) > 50 {
-		scored = scored[:50]
+	total := len(scored)
+
+	if input.Page < 1 {
+		input.Page = 1
+	}
+	start := (input.Page - 1) * 5
+	if start >= len(scored) {
+		return []ScoredPackage{}, total
+	}
+	end := start + 5
+	if end > len(scored) {
+		end = len(scored)
 	}
 
-	return scored
+	return scored[start:end], total
 }
 
 func parseFacilities(raw string) []string {
