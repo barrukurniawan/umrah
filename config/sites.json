@@ -11,5 +11,9 @@
   { "name": "Rabbani - Hebat", "url": "https://rabbanitour.com/program-umroh/umroh-hebat/", "parser": "rabbani" },
   { "name": "Rabbani - Premium", "url": "https://rabbanitour.com/program-umroh/umroh-premium/", "parser": "rabbani" },
   { "name": "Rabbani - Plus Turki Cappadocia", "url": "https://rabbanitour.com/program-umroh/umroh-plus-turki-cappadocia-hebat/", "parser": "rabbani" },
-  { "name": "Rabbani - Plus Dubai", "url": "https://rabbanitour.com/program-umroh/umroh-plus-dubai/", "parser": "rabbani" }
+  { "name": "Rabbani - Plus Dubai", "url": "https://rabbanitour.com/program-umroh/umroh-plus-dubai/", "parser": "rabbani" },
+  { "name": "Umrah Bisa - 5 Juli", "url": "https://daftar.umrahbisa.com/product/umrahhemat5juli", "parser": "umrahbisa_product" },
+  { "name": "Umrah Bisa - 16 Sep", "url": "https://daftar.umrahbisa.com/product/umrahhemat16sep", "parser": "umrahbisa_product" },
+  { "name": "Umrah Bisa - 3 Okt", "url": "https://daftar.umrahbisa.com/product/umrahhemat3okt", "parser": "umrahbisa_product" },
+  { "name": "Umrah Bisa - 29 Nov", "url": "https://daftar.umrahbisa.com/product/umrahhemat29nov", "parser": "umrahbisa_product" }
 ]

@@ -20,10 +20,10 @@
 </style>
 {{if .Results}}
 <div>
-    <div class="flex justify-between items-center mb-2">
-        <h2 class="text-xl font-bold text-gray-900">Hasil Rekomendasi</h2>
+    <div class="flex justify-between items-center mb-2 gap-2">
+        <h2 class="text-xl font-bold text-gray-900 shrink-0">Hasil Rekomendasi</h2>
         <select id="monthFilter"
-            class="border border-gray-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:border-emerald-500">
+            class="border border-gray-200 rounded-full pl-3 pr-7 py-1 text-xs text-center text-gray-600 bg-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 hover:border-gray-300 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%239ca3af%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:14px] bg-[right_6px_center] bg-no-repeat">
             <option value="">Semua Bulan</option>
         </select>
     </div>
@@ -147,14 +147,17 @@
                     </div>
                 </details>
             </div>
-            <button onclick="openCalculator(this)"
-                data-name="{{$v.Name}}"
-                data-price="{{$v.Price}}"
-                data-dp="{{$v.DownPayment}}"
-                data-travel="{{$v.Travel.Name}}"
-                class="text-xs bg-blue-50 text-blue-600 font-medium px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                🧮 Kalkulator
-            </button>
+            <div class="flex gap-2">
+                <a href="{{travelURL $v.Travel.Name}}" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-1 text-xs text-gray-500 font-medium px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-colors no-underline">
+                    🔗 Web
+                </a>
+                <button onclick="openCalculator(this)" data-name="{{$v.Name}}" data-price="{{$v.Price}}"
+                    data-dp="{{$v.DownPayment}}" data-travel="{{$v.Travel.Name}}"
+                    class="text-xs bg-blue-50 text-blue-600 font-medium px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                    🧮 Kalkulator
+                </button>
+            </div>
         </div>
     </div>
     {{end}}

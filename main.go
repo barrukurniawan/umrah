@@ -53,6 +53,23 @@ func main() {
 		return fmt.Sprintf("%d %s %d", t.Day(), months[t.Month().String()[:3]], t.Year())
 	})
 
+	engine.AddFunc("travelURL", func(name string) string {
+		urls := map[string]string{
+			"Hamdan Tour":    "https://hamdantour.id",
+			"Taiba Medina":   "https://taibamedina.com",
+			"Al Hijaz":       "https://alhijaz.co",
+			"Marwa Mustajab": "https://umrohmustajab.com",
+			"Namira Travel":  "https://namira.travel",
+			"UMI Tour & Travel": "https://umi.travel",
+			"Rabbani Tour":   "https://rabbanitour.com",
+			"Umrah Bisa":     "https://umrahbisa.com",
+		}
+		if u, ok := urls[name]; ok {
+			return u
+		}
+		return "#"
+	})
+
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
