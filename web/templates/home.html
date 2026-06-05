@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Umrohku - Rekomendasi Travel Umroh</title>
     <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕋</text></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F54B;</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -48,7 +49,13 @@
             border-radius: 50%;
             background: #059669;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
 
         .facility-card {
@@ -74,9 +81,13 @@
 <body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen">
 
     <nav class="bg-white shadow-sm border-b border-emerald-100">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-            <a href="/" class="text-2xl font-bold text-emerald-700 whitespace-nowrap flex items-center gap-1"><span
-                    class="relative -top-0.5">🕋</span>
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <a href="/" class="text-2xl font-bold text-emerald-700 whitespace-nowrap flex items-center gap-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 3000" class="w-10 h-10 text-emerald-700"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M 2163.261719 1020.28125 L 1505.371094 839.609375 L 839.550781 1022.460938 L 838.96875 1244.910156 L 1504.699219 1117.5 L 1505.039062 1258.578125 L 2162.789062 1373.691406 L 2162.679688 1454.511719 L 2143.199219 1452.359375 L 2142.261719 1565.300781 L 2162.53125 1568.171875 L 2161.828125 2089.578125 L 1502.179688 2160.390625 L 836.734375 2094.445312 L 838.121094 1567.691406 L 856.601562 1567.738281 L 857.347656 1452.550781 L 838.414062 1455.058594 L 838.621094 1375.488281 L 1504.359375 1258.578125 L 1504.699219 1117.5 L 2162.960938 1243.480469 Z M 2094.96875 1441.859375 L 2070.960938 1504.519531 L 2095.730469 1562.308594 L 2120.859375 1503.390625 Z M 1869.839844 1402.089844 L 1845.828125 1464.75 L 1870.589844 1522.53125 L 1895.730469 1463.621094 Z M 1611.699219 1360.058594 L 1587.691406 1422.71875 L 1612.449219 1480.5 L 1637.589844 1421.601562 Z M 1386.578125 1362.320312 L 1362.570312 1424.96875 L 1387.328125 1482.75 L 1412.46875 1423.851562 Z M 1563.128906 1352.320312 L 1503.96875 1344.378906 L 1438.179688 1352.320312 L 1438.179688 1477.511719 L 1503.96875 1469.578125 L 1563.128906 1477.511719 Z M 1920.320312 1529.871094 L 2046.578125 1551.238281 L 2046.578125 1432.011719 L 1920.320312 1410.640625 Z M 1666.871094 1495.789062 L 1822.589844 1518.21875 L 1822.589844 1393.019531 L 1666.871094 1370.578125 Z M 1129.378906 1405.648438 L 1105.359375 1468.308594 L 1130.121094 1526.089844 L 1155.261719 1467.179688 Z M 906.496094 1441.671875 L 882.488281 1504.328125 L 907.246094 1562.121094 L 932.386719 1503.210938 Z M 1180.789062 1395.089844 L 1336.5 1372.648438 L 1336.5 1497.851562 L 1180.789062 1520.28125 Z M 959.785156 1435.011719 L 1080.601562 1414.320312 L 1080.601562 1529.800781 L 959.785156 1550.5 L 959.785156 1435.011719 " />
+                </svg>
                 <span>Umrohku</span></a>
             <div class="text-sm text-gray-500 text-right max-w-[160px] leading-snug">Ikhtiar untuk kepulangan</div>
         </div>
@@ -90,10 +101,11 @@
             Geser budget, pilih kebutuhan, dan dapatkan rekomendasi paket terbaik
         </p>
         <div class="flex justify-center">
-            <div class="bg-pink-100 rounded-full px-4 py-1.5 mb-2 overflow-hidden max-w-xl w-full">
-                <p class="text-sm text-pink-700 font-medium whitespace-nowrap animate-marquee">
-                    🚨 Ada penyesuaian biaya mengikuti harga Avtur dunia. Silakan hubungi masing-masing travel
-                    untuk cek kebijakan terbaru.
+            <div class="bg-pink-100/50 rounded-full px-4 py-1.5 mb-2 overflow-hidden max-w-2xl w-full mx-auto">
+                <p class="text-sm text-pink-700 font-medium whitespace-nowrap animate-marquee flex items-center gap-2">
+                    <i data-lucide="triangle-alert" class="w-4 h-4 flex-shrink-0 inline-block"></i>
+                    Ada penyesuaian biaya mengikuti harga Avtur dunia. Silakan hubungi masing-masing travel untuk cek
+                    kebijakan terbaru.
                 </p>
             </div>
         </div>
@@ -121,34 +133,34 @@
                         <label class="priority-option cursor-pointer">
                             <input type="radio" name="priority" value="all" class="peer hidden" checked>
                             <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">🧭</span>
-                                <span class="text-xs font-medium leading-tight">Tampilkan<br>Semua</span>
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-600 peer-checked:text-emerald-800 peer-checked:font-semibold hover:border-emerald-300 transition-all h-full">
+                                <i data-lucide="compass" class="w-5 h-5 mx-auto mb-1"></i>
+                                <span class="text-xs leading-tight">Tampilkan<br>Semua</span>
                             </div>
                         </label>
                         <label class="priority-option cursor-pointer">
                             <input type="radio" name="priority" value="near_haram" class="peer hidden">
                             <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">🕋</span>
-                                <span class="text-xs font-medium leading-tight">Hotel Dekat<br>Haram</span>
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-600 peer-checked:text-emerald-800 peer-checked:font-semibold hover:border-emerald-300 transition-all h-full">
+                                <i data-lucide="map-pin" class="w-5 h-5 mx-auto mb-1"></i>
+                                <span class="text-xs leading-tight">Hotel Dekat<br>Haram</span>
                             </div>
                         </label>
                         <label class="priority-option cursor-pointer">
                             <input type="radio" name="priority" value="family_friendly" class="peer hidden">
                             <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">❤️</span>
-                                <span class="text-xs font-medium leading-tight">Ramah Anak /<br>Lansia</span>
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-600 peer-checked:text-emerald-800 peer-checked:font-semibold hover:border-emerald-300 transition-all h-full">
+                                <i data-lucide="users" class="w-5 h-5 mx-auto mb-1"></i>
+                                <span class="text-xs leading-tight">Ramah Anak /<br>Lansia</span>
                             </div>
                         </label>
                         <label class="cursor-pointer" onclick="openAdvancedFilter()">
                             <input type="radio" name="priority" value="advanced" class="peer hidden"
                                 id="priorityAdvanced">
                             <div
-                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 hover:border-emerald-300 transition-all h-full">
-                                <span class="text-lg block">🔎</span>
-                                <span class="text-xs font-medium leading-tight">Filter<br>Lanjutan</span>
+                                class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:ring-2 peer-checked:ring-emerald-600 peer-checked:text-emerald-800 peer-checked:font-semibold hover:border-emerald-300 transition-all h-full">
+                                <i data-lucide="search" class="w-5 h-5 mx-auto mb-1"></i>
+                                <span class="text-xs leading-tight">Filter<br>Lanjutan</span>
                             </div>
                         </label>
                     </div>
@@ -173,13 +185,19 @@
         onclick="closeAdvancedFilter(event)">
         <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg">🔍 Filter Lanjutan</h3>
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                    Filter Lanjutan
+                </h3>
                 <button onclick="document.getElementById('advancedFilterModal').classList.add('hidden')"
                     class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-2">✈️ Penerbangan</label>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1.5">
+                        <i data-lucide="plane" class="w-3.5 h-3.5"></i>
+                        Penerbangan
+                    </label>
                     <div class="flex gap-3">
                         <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afDirect"
                                 onchange="if(this.checked)document.getElementById('afTransit').checked=false">
@@ -190,7 +208,10 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-2">🛏️ Tipe Kamar</label>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1.5">
+                        <i data-lucide="bed" class="w-3.5 h-3.5"></i>
+                        Tipe Kamar
+                    </label>
                     <div class="flex gap-3">
                         <label class="flex items-center gap-1.5 text-sm"><input type="checkbox" id="afQuad"
                                 onchange="if(this.checked){document.getElementById('afTriple').checked=false;document.getElementById('afDouble').checked=false}">
@@ -204,12 +225,18 @@
                     </div>
                 </div>
                 <div>
-                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="afNearHaram"> 🕋 Hotel
-                        Dekat Haram</label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" id="afNearHaram">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        Hotel Dekat Haram
+                    </label>
                 </div>
                 <div>
-                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="afFamily"> ❤️ Ramah
-                        Anak / Lansia</label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" id="afFamily">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        Ramah Anak / Lansia
+                    </label>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button onclick="applyAdvancedFilter()"
@@ -260,6 +287,8 @@
     </div>
 
     <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
         function updateBudget(val) {
             const num = parseInt(val);
             document.getElementById('budgetDisplay').innerText = 'Rp ' + num.toLocaleString('id-ID');
@@ -267,7 +296,10 @@
 
         document.body.addEventListener('htmx:afterSwap', function (evt) {
             if (evt.detail.target.id === 'results') {
-                setTimeout(initMonthFilter, 50);
+                setTimeout(function () {
+                    initMonthFilter();
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }, 50);
             }
         });
 
@@ -321,7 +353,7 @@
 
         function sortCards() {
             var val = document.getElementById('sortFilter').value;
-            var container = document.getElementById('results').querySelector('div');
+            var container = document.getElementById('results').querySelector('.cards-container');
             if (!container) return;
             var cards = container.querySelectorAll('.package-card');
             var arr = Array.from(cards);

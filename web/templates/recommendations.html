@@ -39,6 +39,7 @@
         </select>
     </div>
 
+    <div class="cards-container">
     {{range $i, $v := .Results}}
     <div
         class="package-card border border-gray-200 rounded-xl p-5 mb-4 hover:shadow-md transition-shadow {{if eq $i 0}}card-top{{end}}"
@@ -53,7 +54,7 @@
                 <p class="text-sm text-gray-500">{{$v.Name}}</p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="text-amber-400 text-sm">⭐</span>
+                <i data-lucide="star" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
                 <span class="text-sm font-semibold text-gray-700">{{$v.Travel.Rating}}</span>
             </div>
         </div>
@@ -64,75 +65,76 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📅</span> <span class="bg-green-200 text-black font-bold px-1.5 py-0.5 rounded">{{$v.Duration}}
+                <i data-lucide="calendar" class="w-3.5 h-3.5 flex-shrink-0"></i> <span class="bg-green-200 text-black font-bold px-1.5 py-0.5 rounded">{{$v.Duration}}
                     Hari</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>✈️</span> <span>{{if $v.Airline}}{{$v.Airline}}{{else}}To Be Confirmed{{end}}</span>
+                <i data-lucide="plane" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{if $v.Airline}}{{$v.Airline}}{{else}}To Be Confirmed{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                {{if $v.IsDirect}}<span>🛫 Direct</span>{{else}}<span>🔁 Transit</span>{{end}}
+                {{if $v.IsDirect}}<i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i> Direct{{else}}<i data-lucide="arrow-left-right" class="w-3.5 h-3.5 flex-shrink-0"></i> Transit{{end}}
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>🕌</span> <span>{{$v.HotelDistance}}m</span>
+                <i data-lucide="building-2" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{$v.HotelDistance}}m</span>
             </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
             <div class="flex items-center gap-1 text-gray-600">
-                <span>💳</span> <span>DP Rp {{formatCurrency $v.DownPayment}}</span>
+                <i data-lucide="credit-card" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>DP Rp {{formatCurrency $v.DownPayment}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>📆</span>
-                <span class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{if $v.Details}}{{formatDateID
+                <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                <span class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{if $v.Details}}{{formatDateID
                     (index $v.Details 0).DPDeadline}}{{else}}-{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>👥</span> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{else}}Quad{{end}}</span>
+                <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{if $v.Details}}{{(index $v.Details 0).RoomType}}{{else}}Quad{{end}}</span>
             </div>
             <div class="flex items-center gap-1 text-gray-600">
-                <span>🎓</span> <span class="truncate">{{$v.Guide}}</span>
+                <i data-lucide="graduation-cap" class="w-3.5 h-3.5 flex-shrink-0"></i> <span class="truncate">{{$v.Guide}}</span>
             </div>
         </div>
 
         <div class="flex flex-wrap gap-2 mb-3">
             {{if $v.IsFamily}}
             <span
-                class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full">👨‍👩‍👧
+                class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full"><i data-lucide="users" class="w-3 h-3"></i>
                 Keluarga</span>
             {{end}}
             {{if $v.IsSenior}}
             <span
-                class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full">👴
+                class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full"><i data-lucide="heart" class="w-3 h-3"></i>
                 Lansia</span>
             {{end}}
             {{if ge $v.SunnahScore 0}}
             <span
-                class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full">📖
+                class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-1 rounded-full"><i data-lucide="book-open" class="w-3 h-3"></i>
                 Sunnah</span>
             {{end}}
         </div>
 
         {{if $v.Details}}
         <details class="mt-2">
-            <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">🏨 Detail Paket
+            <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700 flex items-center gap-1.5">
+                <i data-lucide="building-2" class="w-3.5 h-3.5"></i> Detail Paket
             </summary>
             <div class="mt-2 bg-gray-50 rounded-lg p-3">
                 {{range $v.Details}}
                 <div class="detail-row mb-3" data-departure="{{.DepartureDate}}">
                     <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
                         <div><span class="text-gray-400">Berangkat:</span> <span
-                                class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
+                                class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{formatDate
                                 .DepartureDate}}</span></div>
                         <div><span class="text-gray-400">Pulang:</span> <span
-                                class="bg-yellow-200 text-black font-bold px-1.5 py-0.5 rounded">{{formatDate
+                                class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{formatDate
                                 .ReturnDate}}</span></div>
                         <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
                         <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
                     </div>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                        <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}} ⭐{{.StarsMakkah}}</div>
-                        <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}} ⭐{{.StarsMadinah}}
+                        <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}} &#11088;{{.StarsMakkah}}</div>
+                        <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}} &#11088;{{.StarsMadinah}}
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
@@ -152,8 +154,9 @@
         <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
             <div class="flex gap-2">
                 <details class="inline">
-                    <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700">📋 Lihat
-                        Fasilitas</summary>
+                    <summary class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700 flex items-center gap-1.5">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> Lihat Fasilitas
+                    </summary>
                     <div class="mt-2 flex flex-wrap gap-1">
                         {{range $fac := $v.FacilityList}}
                         <span
@@ -175,13 +178,14 @@
                 </a>
                 <button onclick="openCalculator(this)" data-name="{{$v.Name}}" data-price="{{$v.Price}}"
                     data-dp="{{$v.DownPayment}}" data-travel="{{$v.Travel.Name}}"
-                    class="text-xs bg-blue-50 text-blue-600 font-medium px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                    🧮 Kalkulator
+                    class="text-xs bg-blue-50 text-blue-600 font-medium px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors inline-flex items-center gap-1">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Kalkulator
                 </button>
             </div>
         </div>
     </div>
     {{end}}
+    </div>
 
     {{if gt .TotalPages 1}}
     <div class="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-100">
@@ -190,10 +194,10 @@
             hx-include="[name='budget'],[name='priority'],[name='advanced']"
             hx-vals='{"page":"{{.PrevPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
-            ← Sebelumnya
+            &#8592; Sebelumnya
         </button>
         {{else}}
-        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">← Sebelumnya</span>
+        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">&#8592; Sebelumnya</span>
         {{end}}
 
         <span class="text-xs text-gray-500 font-medium">
@@ -205,17 +209,17 @@
             hx-include="[name='budget'],[name='priority'],[name='advanced']"
             hx-vals='{"page":"{{.NextPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
-            Selanjutnya →
+            Selanjutnya &#8594;
         </button>
         {{else}}
-        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">Selanjutnya →</span>
+        <span class="text-xs bg-gray-50 border border-gray-100 text-gray-300 font-medium px-4 py-2 rounded-full">Selanjutnya &#8594;</span>
         {{end}}
     </div>
     {{end}}
 </div>
 {{else}}
 <div class="text-center py-8 text-gray-400">
-    <p class="text-lg">🔍</p>
+    <i data-lucide="search" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
     <p>Silakan pilih kriteria dan klik "Cari Paket Umrah"</p>
 </div>
 {{end}}
