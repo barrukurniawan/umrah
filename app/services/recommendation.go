@@ -44,27 +44,32 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			continue
 		}
 
-		if input.Priority == "advanced" {
-			if advanceFilter["direct"] && !pkg.IsDirect {
-				continue
-			}
-			if advanceFilter["transit"] && pkg.IsDirect {
-				continue
-			}
-			if advanceFilter["quad"] || advanceFilter["triple"] || advanceFilter["double"] {
-				hasRoom := false
-				for _, d := range pkg.Details {
-					rt := strings.ToLower(d.RoomType)
-					if (advanceFilter["quad"] && rt == "quad") ||
-						(advanceFilter["triple"] && rt == "triple") ||
-						(advanceFilter["double"] && rt == "double") {
-						hasRoom = true
-						break
-					}
+		// Apply advanced filters always if set (regardless of priority)
+		if advanceFilter["direct"] && !pkg.IsDirect {
+			continue
+		}
+		if advanceFilter["transit"] && pkg.IsDirect {
+			continue
+		}
+		if advanceFilter["near_haram"] && !pkg.IsNearHaram {
+			continue
+		}
+		if advanceFilter["family_friendly"] && !pkg.IsKidFriendly && !pkg.IsSeniorFriendly {
+			continue
+		}
+		if advanceFilter["quad"] || advanceFilter["triple"] || advanceFilter["double"] {
+			hasRoom := false
+			for _, d := range pkg.Details {
+				rt := strings.ToLower(d.RoomType)
+				if (advanceFilter["quad"] && rt == "quad") ||
+					(advanceFilter["triple"] && rt == "triple") ||
+					(advanceFilter["double"] && rt == "double") {
+					hasRoom = true
+					break
 				}
-				if !hasRoom {
-					continue
-				}
+			}
+			if !hasRoom {
+				continue
 			}
 		}
 
