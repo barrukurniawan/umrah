@@ -182,8 +182,11 @@ func parseCrawlerDate(s string) (string, bool) {
 	lower := strings.ToLower(s)
 
 	monthMap := map[string]string{
+		"januari": "January", "februari": "February", "maret": "March", "april": "April",
+		"mei": "May", "juni": "June", "juli": "July", "agustus": "August",
+		"september": "September", "oktober": "October", "november": "November", "desember": "December",
 		"jan": "Jan", "feb": "Feb", "mar": "Mar", "apr": "Apr",
-		"mei": "May", "jun": "Jun", "jul": "Jul", "agu": "Aug",
+		"jun": "Jun", "jul": "Jul", "agu": "Aug",
 		"sep": "Sep", "okt": "Oct", "nov": "Nov", "des": "Dec",
 		"may": "May", "aug": "Aug", "oct": "Oct", "dec": "Dec",
 	}
@@ -192,11 +195,11 @@ func parseCrawlerDate(s string) (string, bool) {
 		lower = strings.ReplaceAll(lower, id, en)
 	}
 
-	// Handle formats: "4 Jul 2026", "1 Agu 2026", etc.
+	// Handle formats: "4 Jul 2026", "1 Agu 2026", "06 Juli 2026", "10 Agustus 2026", etc.
 	layout := "2 Jan 2006"
 	t, err := time.Parse(layout, lower)
 	if err != nil {
-		// Try "1 January 2026" format
+		// Try "1 January 2006" format (full month name after Indonesian conversion)
 		layout = "2 January 2006"
 		t, err = time.Parse(layout, lower)
 		if err != nil {

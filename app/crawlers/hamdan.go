@@ -139,7 +139,17 @@ func (h *HamdanParser) Crawl() ([]CrawledPackage, error) {
 				}
 				if isDateLine(line) &&
 					!strings.Contains(lower, "makkah") && !strings.Contains(lower, "madinah") {
-					pkg.DepartureDates = append(pkg.DepartureDates, line)
+					// Hamdan lists multiple dates comma-separated: "06 Juli 2026, 10 Agustus 2026 (+25 Tanggal Lainnya)"
+					for _, rawDate := range strings.Split(line, ",") {
+						rawDate = strings.TrimSpace(rawDate)
+						// Strip suffix like "(+25 Tanggal Lainnya)"
+						if idx := strings.Index(rawDate, "("); idx > 0 {
+							rawDate = strings.TrimSpace(rawDate[:idx])
+						}
+						if isDateLine(rawDate) {
+							pkg.DepartureDates = append(pkg.DepartureDates, rawDate)
+						}
+					}
 				}
 			}
 
