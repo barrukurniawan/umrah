@@ -19,12 +19,16 @@ func GetRecommendations(c *fiber.Ctx) error {
 	priority := c.FormValue("priority", "all")
 	advanced := c.FormValue("advanced", "")
 	page, _ := strconv.Atoi(c.FormValue("page", "1"))
+	sort := c.FormValue("sort", "score")
+	month := c.FormValue("month", "")
 
 	input := services.FilterInput{
 		Budget:   budget,
 		Priority: priority,
 		Advanced: strings.Split(advanced, ","),
 		Page:     page,
+		Sort:     sort,
+		Month:    month,
 	}
 
 	results, total := services.GetRecommendations(input)
@@ -39,5 +43,7 @@ func GetRecommendations(c *fiber.Ctx) error {
 		"HasNext":    page < totalPages,
 		"PrevPage":   page - 1,
 		"NextPage":   page + 1,
+		"Sort":       sort,
+		"Month":      month,
 	})
 }

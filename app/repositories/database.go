@@ -1,9 +1,14 @@
 package repositories
 
 import (
+	"encoding/json"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
+	"umrah/app/crawlers"
 	"umrah/app/models"
 
 	"gorm.io/driver/sqlite"
@@ -26,13 +31,198 @@ func InitDB() {
 
 	DB.AutoMigrate(&models.Travel{}, &models.Package{}, &models.DetailPackage{})
 
-	if DB.Migrator().HasTable(&models.Package{}) {
-		var count int64
-		DB.Model(&models.Package{}).Count(&count)
-		if count == 0 && dbPath == "data/umrah.db" {
-			seedData()
+	// Try importing crawler data first
+	imported := importCrawlerData()
+
+	if !imported {
+		if DB.Migrator().HasTable(&models.Package{}) {
+			var count int64
+			DB.Model(&models.Package{}).Count(&count)
+			if count == 0 && dbPath == "data/umrah.db" {
+				seedData()
+			}
 		}
 	}
+}
+
+func importCrawlerData() bool {
+	entries, err := os.ReadDir("output")
+	if err != nil {
+		return false
+	}
+
+	var latest string
+	for _, e := range entries {
+		name := e.Name()
+		if strings.HasPrefix(name, "all_") && strings.HasSuffix(name, ".json") {
+			if name > latest {
+				latest = name
+			}
+		}
+	}
+	if latest == "" {
+		return false
+	}
+
+	data, err := os.ReadFile(filepath.Join("output", latest))
+	if err != nil {
+		log.Println("[import] failed to read crawler output:", err)
+		return false
+	}
+
+	type CrawlResult struct {
+		Timestamp string                    `json:"timestamp"`
+		Site      string                    `json:"site"`
+		URL       string                    `json:"url"`
+		Packages  []crawlers.CrawledPackage `json:"packages"`
+		Error     string                    `json:"error,omitempty"`
+	}
+
+	var results []CrawlResult
+	if err := json.Unmarshal(data, &results); err != nil {
+		log.Println("[import] failed to parse crawler output:", err)
+		return false
+	}
+
+	// Clear existing data to avoid duplicates
+	DB.Where("1 = 1").Delete(&models.DetailPackage{})
+	DB.Where("1 = 1").Delete(&models.Package{})
+	DB.Where("1 = 1").Delete(&models.Travel{})
+
+	travelMap := make(map[string]*models.Travel)
+	pkgCount := 0
+	detailCount := 0
+
+	for _, result := range results {
+		if result.Error != "" {
+			continue
+		}
+		for _, cp := range result.Packages {
+			if cp.Price < 1000000 {
+				continue
+			}
+
+			travelName := cp.TravelName
+			if travelName == "" {
+				travelName = result.Site
+			}
+
+			travel, ok := travelMap[travelName]
+			if !ok {
+				travel = &models.Travel{Name: travelName, Rating: 4.5}
+				DB.Create(travel)
+				travelMap[travelName] = travel
+			}
+
+			downPayment := cp.Price / 5
+			if downPayment < 1000000 {
+				downPayment = 1000000
+			}
+
+			pkg := models.Package{
+				TravelID:         travel.ID,
+				Name:             cp.PackageName,
+				Price:            cp.Price,
+				HotelDistance:    500,
+				Duration:         cp.Duration,
+				Airline:          cp.Airline,
+				IsDirect:         false,
+				DownPayment:      downPayment,
+				PaymentDeadline:  "",
+				Guide:            "Ustadz Pembimbing",
+				Facilities:       `["Visa","Hotel","Transportasi","Makan 3x sehari"]`,
+				IsFamily:         false,
+				IsSenior:         false,
+				SunnahScore:      5,
+				GroupSize:        40,
+				IsNearHaram:      false,
+				IsKajian:         false,
+				IsSunnah:         false,
+				IsKidFriendly:    false,
+				IsSeniorFriendly: false,
+			}
+			DB.Create(&pkg)
+			pkgCount++
+
+			for _, dStr := range cp.DepartureDates {
+				depDate, ok := parseCrawlerDate(dStr)
+				if !ok {
+					continue
+				}
+				retDate := calcReturnDate(depDate, cp.Duration)
+
+				detail := models.DetailPackage{
+					PackageID:         pkg.ID,
+					DepartureDate:     depDate,
+					ReturnDate:        retDate,
+					HotelMakkah:       cleanHotelName(cp.HotelMakkah),
+					HotelMadinah:      cleanHotelName(cp.HotelMadinah),
+					StarsMakkah:       3,
+					StarsMadinah:      3,
+					RoomType:          "Quad",
+					TotalQuota:        40,
+					AvailableQuota:    30,
+					DepartureLocation: "Jakarta",
+					AddonTriple:       2500000,
+					AddonDouble:       3500000,
+					Guide:             pkg.Guide,
+				}
+				DB.Create(&detail)
+				detailCount++
+			}
+		}
+	}
+
+	log.Printf("[import] loaded %d travels, %d packages, %d details from crawler output\n", len(travelMap), pkgCount, detailCount)
+	return pkgCount > 0
+}
+
+func parseCrawlerDate(s string) (string, bool) {
+	s = strings.TrimSpace(s)
+	lower := strings.ToLower(s)
+
+	monthMap := map[string]string{
+		"jan": "Jan", "feb": "Feb", "mar": "Mar", "apr": "Apr",
+		"mei": "May", "jun": "Jun", "jul": "Jul", "agu": "Aug",
+		"sep": "Sep", "okt": "Oct", "nov": "Nov", "des": "Dec",
+		"may": "May", "aug": "Aug", "oct": "Oct", "dec": "Dec",
+	}
+
+	for id, en := range monthMap {
+		lower = strings.ReplaceAll(lower, id, en)
+	}
+
+	// Handle formats: "4 Jul 2026", "1 Agu 2026", etc.
+	layout := "2 Jan 2006"
+	t, err := time.Parse(layout, lower)
+	if err != nil {
+		// Try "1 January 2026" format
+		layout = "2 January 2006"
+		t, err = time.Parse(layout, lower)
+		if err != nil {
+			return "", false
+		}
+	}
+
+	return t.Format("2006-01-02"), true
+}
+
+func calcReturnDate(depDate string, duration int) string {
+	t, err := time.Parse("2006-01-02", depDate)
+	if err != nil {
+		return depDate
+	}
+	return t.AddDate(0, 0, duration).Format("2006-01-02")
+}
+
+func cleanHotelName(s string) string {
+	s = strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, "  ", " ")
+	idx := strings.Index(s, "/setaraf")
+	if idx >= 0 {
+		s = strings.TrimSpace(s[:idx])
+	}
+	return s
 }
 
 func seedData() {
@@ -64,7 +254,7 @@ func seedData() {
 		{TravelID: 3, Name: "Paket Lansia Hemat", Price: 26000000, HotelDistance: 750, Duration: 9, Airline: "Batik Air", IsDirect: false, DownPayment: 5000000, PaymentDeadline: "2025-11-20", Guide: "Ust. Nur Rahman", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan 3x sehari","Kursi roda","Pendamping lansia"]`, IsFamily: false, IsSenior: true, SunnahScore: 7, GroupSize: 35, IsNearHaram: false, IsKajian: false, IsSunnah: false, IsKidFriendly: false, IsSeniorFriendly: true},
 		{TravelID: 2, Name: "Paket Kajian Hemat", Price: 27000000, HotelDistance: 700, Duration: 9, Airline: "Batik Air", IsDirect: false, DownPayment: 6000000, PaymentDeadline: "2025-12-01", Guide: "Ust. Imam Ghazali", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan 3x sehari","Kajian rutin","Manasik umrah"]`, IsFamily: false, IsSenior: false, SunnahScore: 9, GroupSize: 35, IsNearHaram: false, IsKajian: true, IsSunnah: true, IsKidFriendly: false, IsSeniorFriendly: false},
 		{TravelID: 7, Name: "Paket Keluarga Hemat", Price: 27000000, HotelDistance: 600, Duration: 12, Airline: "Garuda Indonesia", IsDirect: false, DownPayment: 6000000, PaymentDeadline: "2025-12-05", Guide: "Ust. Malik Ibrahim", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan prasmanan","Air zamzam","Taman bermain anak"]`, IsFamily: true, IsSenior: false, SunnahScore: 7, GroupSize: 32, IsNearHaram: false, IsKajian: true, IsSunnah: false, IsKidFriendly: true, IsSeniorFriendly: false},
-		{TravelID: 3, Name: "Paket Standar", Price: 27000000, HotelDistance: 700, Duration: 9, Airline: "Citilink", IsDirect: false, DownPayment: 6000000, PaymentDeadline: "2025-12-01", Guide: "Ust. Hasan Basri", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan 3x sehari","Kursi roda","Pendamping lansia"]`, IsFamily: false, IsSenior: true, SunnahScore: 8, GroupSize: 35, IsNearHaram: false, IsKajian: false, IsSunnah: false, IsKidFriendly: false, IsSeniorFriendly: true},
+		{TravelID: 3, Name: "Paket Standar", Price: 27000000, HotelDistance: 700, Duration: 9, Airline: "Citilink", IsDirect: false, DownPayment: 6000000, PaymentDeadline: "2025-12-01", Guide: "Ust. Hasan Basri", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan 3x sehari","Kursi roda","Pendamping lansia"]`, IsFamily: false, IsSenior: true, SunnahScore: 8, GroupSize: 35, IsNearHaram: false, IsKajian: false, IsSunnah: false, IsKidFriendly: false, IsSeniorFriendly: false},
 		{TravelID: 5, Name: "Paket Dekat Haram Hemat", Price: 28000000, HotelDistance: 400, Duration: 9, Airline: "Garuda Indonesia", IsDirect: false, DownPayment: 7000000, PaymentDeadline: "2025-12-01", Guide: "Ust. Lutfi Hamid", Facilities: `["Visa","Hotel bintang 4","Transportasi bus","Makan 3x sehari","Air zamzam"]`, IsFamily: false, IsSenior: false, SunnahScore: 7, GroupSize: 35, IsNearHaram: true, IsKajian: false, IsSunnah: false, IsKidFriendly: false, IsSeniorFriendly: false},
 		{TravelID: 1, Name: "Paket Keluarga", Price: 28000000, HotelDistance: 600, Duration: 12, Airline: "Garuda Indonesia", IsDirect: true, DownPayment: 7000000, PaymentDeadline: "2025-12-10", Guide: "Ust. Abdullah Syahid", Facilities: `["Visa","Hotel bintang 4","Transportasi bus VIP","Makan prasmanan","Air zamzam","Kajian harian","Taman bermain anak"]`, IsFamily: true, IsSenior: false, SunnahScore: 8, GroupSize: 30, IsNearHaram: true, IsKajian: true, IsSunnah: false, IsKidFriendly: true, IsSeniorFriendly: false},
 		{TravelID: 7, Name: "Paket Pertengahan", Price: 29000000, HotelDistance: 550, Duration: 9, Airline: "Batik Air", IsDirect: false, DownPayment: 7000000, PaymentDeadline: "2025-12-05", Guide: "Ust. Hanan Attaki", Facilities: `["Visa","Hotel bintang 3","Transportasi bus","Makan 3x sehari","Air zamzam","Kajian rutin"]`, IsFamily: true, IsSenior: false, SunnahScore: 7, GroupSize: 30, IsNearHaram: false, IsKajian: true, IsSunnah: false, IsKidFriendly: true, IsSeniorFriendly: false},

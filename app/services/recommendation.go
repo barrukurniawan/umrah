@@ -2,8 +2,11 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	"umrah/app/models"
 	"umrah/app/repositories"
@@ -14,6 +17,8 @@ type FilterInput struct {
 	Priority string
 	Advanced []string
 	Page     int
+	Sort     string
+	Month    string
 }
 
 type ScoredPackage struct {
@@ -145,9 +150,48 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		})
 	}
 
+	// Server-side sort
 	sort.Slice(scored, func(i, j int) bool {
-		return scored[i].Score > scored[j].Score
+		switch input.Sort {
+		case "price_asc":
+			return scored[i].Price < scored[j].Price
+		case "price_desc":
+			return scored[i].Price > scored[j].Price
+		case "distance_asc":
+			return scored[i].HotelDistance < scored[j].HotelDistance
+		case "duration_asc":
+			return scored[i].Duration < scored[j].Duration
+		case "duration_desc":
+			return scored[i].Duration > scored[j].Duration
+		case "dp_asc":
+			return scored[i].DownPayment < scored[j].DownPayment
+		default:
+			return scored[i].Score > scored[j].Score
+		}
 	})
+
+	// Server-side month filter
+	if input.Month != "" {
+		filtered := make([]ScoredPackage, 0)
+		now := time.Now()
+		currentMonth := int(now.Month())
+		selMonth, _ := strconv.Atoi(input.Month)
+		targetYear := now.Year()
+		if selMonth < currentMonth {
+			targetYear++
+		}
+		targetPrefix := fmt.Sprintf("%d-%02d", targetYear, selMonth)
+
+		for _, sp := range scored {
+			for _, d := range sp.Details {
+				if strings.HasPrefix(d.DepartureDate, targetPrefix) {
+					filtered = append(filtered, sp)
+					break
+				}
+			}
+		}
+		scored = filtered
+	}
 
 	total := len(scored)
 

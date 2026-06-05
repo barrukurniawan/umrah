@@ -150,13 +150,17 @@ func KnownAirline(s string) string {
 		name string
 	}{
 		{"garuda", "Garuda Indonesia"},
+		{"ga /", "Garuda Indonesia"},
 		{"saudia", "Saudia"},
 		{"saudi arabian", "Saudia"},
+		{"sv /", "Saudia"},
 		{"qatar", "Qatar Airways"},
 		{"emirates", "Emirates"},
 		{"etihad", "Etihad Airways"},
 		{"et /", "Etihad Airways"},
 		{"ey /", "Etihad Airways"},
+		{"turkish", "Turkish Airlines"},
+		{"tk /", "Turkish Airlines"},
 		{"oman", "Oman Air"},
 		{"wy /", "Oman Air"},
 		{"royal brunei", "Royal Brunei Airlines"},

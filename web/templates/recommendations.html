@@ -23,19 +23,35 @@
     <h2 class="text-xl font-bold text-gray-900 mb-1">Hasil Rekomendasi</h2>
     <p class="text-sm text-gray-500 mb-2">Budget: Rp {{formatCurrency .Budget}}</p>
     <div class="flex justify-end gap-2 mb-4">
-        <select id="sortFilter" onchange="sortCards()"
+        <select id="sortFilter" name="sort"
+            hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
+            hx-include="[name='budget'],[name='priority'],[name='advanced']"
             class="border border-gray-200 rounded-full pl-3 pr-7 py-1 text-xs text-center text-gray-600 bg-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 hover:border-gray-300 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%239ca3af%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:14px] bg-[right_6px_center] bg-no-repeat">
-            <option value="score">Skor Tertinggi</option>
-            <option value="price_asc">Harga Terendah</option>
-            <option value="price_desc">Harga Tertinggi</option>
-            <option value="distance_asc">Hotel Terdekat</option>
-            <option value="duration_asc">Durasi Tersingkat</option>
-            <option value="duration_desc">Durasi Terlama</option>
-            <option value="dp_asc">DP Terendah</option>
+            <option value="score" {{if eq .Sort "score"}}selected{{end}}>Skor Tertinggi</option>
+            <option value="price_asc" {{if eq .Sort "price_asc"}}selected{{end}}>Harga Terendah</option>
+            <option value="price_desc" {{if eq .Sort "price_desc"}}selected{{end}}>Harga Tertinggi</option>
+            <option value="distance_asc" {{if eq .Sort "distance_asc"}}selected{{end}}>Hotel Terdekat</option>
+            <option value="duration_asc" {{if eq .Sort "duration_asc"}}selected{{end}}>Durasi Tersingkat</option>
+            <option value="duration_desc" {{if eq .Sort "duration_desc"}}selected{{end}}>Durasi Terlama</option>
+            <option value="dp_asc" {{if eq .Sort "dp_asc"}}selected{{end}}>DP Terendah</option>
         </select>
-        <select id="monthFilter"
+        <select id="monthFilter" name="month"
+            hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
+            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort']"
             class="border border-gray-200 rounded-full pl-3 pr-7 py-1 text-xs text-center text-gray-600 bg-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 hover:border-gray-300 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%239ca3af%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:14px] bg-[right_6px_center] bg-no-repeat">
-            <option value="">Semua Bulan</option>
+            <option value="" {{if eq .Month ""}}selected{{end}}>Semua Bulan</option>
+            <option value="01" {{if eq .Month "01"}}selected{{end}}>Januari</option>
+            <option value="02" {{if eq .Month "02"}}selected{{end}}>Februari</option>
+            <option value="03" {{if eq .Month "03"}}selected{{end}}>Maret</option>
+            <option value="04" {{if eq .Month "04"}}selected{{end}}>April</option>
+            <option value="05" {{if eq .Month "05"}}selected{{end}}>Mei</option>
+            <option value="06" {{if eq .Month "06"}}selected{{end}}>Juni</option>
+            <option value="07" {{if eq .Month "07"}}selected{{end}}>Juli</option>
+            <option value="08" {{if eq .Month "08"}}selected{{end}}>Agustus</option>
+            <option value="09" {{if eq .Month "09"}}selected{{end}}>September</option>
+            <option value="10" {{if eq .Month "10"}}selected{{end}}>Oktober</option>
+            <option value="11" {{if eq .Month "11"}}selected{{end}}>November</option>
+            <option value="12" {{if eq .Month "12"}}selected{{end}}>Desember</option>
         </select>
     </div>
 
@@ -191,7 +207,7 @@
     <div class="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-100">
         {{if .HasPrev}}
         <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
-            hx-include="[name='budget'],[name='priority'],[name='advanced']"
+            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort']"
             hx-vals='{"page":"{{.PrevPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
             &#8592; Sebelumnya
@@ -206,7 +222,7 @@
 
         {{if .HasNext}}
         <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML"
-            hx-include="[name='budget'],[name='priority'],[name='advanced']"
+            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort']"
             hx-vals='{"page":"{{.NextPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
             Selanjutnya &#8594;
