@@ -13,5 +13,14 @@
   { "name": "Umrah Bisa - 5 Juli", "url": "https://daftar.umrahbisa.com/product/umrahhemat5juli", "parser": "umrahbisa_product" },
   { "name": "Umrah Bisa - 16 Sep", "url": "https://daftar.umrahbisa.com/product/umrahhemat16sep", "parser": "umrahbisa_product" },
   { "name": "Umrah Bisa - 3 Okt", "url": "https://daftar.umrahbisa.com/product/umrahhemat3okt", "parser": "umrahbisa_product" },
-  { "name": "Umrah Bisa - 29 Nov", "url": "https://daftar.umrahbisa.com/product/umrahhemat29nov", "parser": "umrahbisa_product" }
+  { "name": "Umrah Bisa - 29 Nov", "url": "https://daftar.umrahbisa.com/product/umrahhemat29nov", "parser": "umrahbisa_product" },
+
+  { "name": "Uhud Tour - 30 Jul 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/276/30-juli-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+
+  { "name": "UMI Travel - Plus Thaif Qonaah Salwa 10 Sep", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-10-september-2026-bz3lovrpnd", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Qonaah Salwa 20 Agt", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-20-agustus-2026-66rdgqm9xe", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Muhasabah Salwa 13 Agt", "url": "https://umi.travel/listings/umrah-plus-thaif-muhasabah-salwa-13-agustus-2026-xdlw49lo4r", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Qonaah Salwa 27 Jun", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-27-juni-2026-ke2m6y8law", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - 2x Jumat Plus Thaif 24 Sep", "url": "https://umi.travel/listings/umroh-2x-jumat-plus-thaif-24-september-2026-10-hari-lg1012aaw7", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - 2x Jumat Sirah Nabawiyah Plus Thaif 29 Okt", "url": "https://umi.travel/listings/umroh-2x-jumat-sirah-nabawiyah-plus-thaif-10-hari-29-oktober-2026-aawk04mlo9", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" }
 ]

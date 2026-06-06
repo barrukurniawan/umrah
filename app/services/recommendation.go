@@ -40,6 +40,18 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
+		// Skip packages with no valid departure dates
+		hasValidDate := false
+		for _, d := range pkg.Details {
+			if d.DepartureDate != "" {
+				hasValidDate = true
+				break
+			}
+		}
+		if !hasValidDate {
+			continue
+		}
+
 		if pkg.Price > input.Budget {
 			continue
 		}

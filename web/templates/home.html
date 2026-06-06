@@ -301,6 +301,17 @@
                     if (typeof lucide !== 'undefined') lucide.createIcons();
                 }, 50);
             }
+            if (evt.detail.target.id === 'chatMessages') {
+                setTimeout(scrollToBottom, 50);
+            }
+        });
+
+        document.body.addEventListener('htmx:beforeRequest', function (evt) {
+            var form = evt.detail.elt;
+            if (form && form.getAttribute('hx-post') === '/chat') {
+                var input = document.getElementById('chatInput');
+                if (input) input.value = '';
+            }
         });
 
         document.body.addEventListener('htmx:configRequest', function (evt) {
@@ -404,6 +415,94 @@
             document.getElementById('calcTotal').innerText = 'Rp ' + total.toLocaleString('id-ID');
             document.getElementById('calcDP').innerText = 'Rp ' + estDP.toLocaleString('id-ID');
         }
+    </script>
+
+    <!-- Chatbox UI -->
+    <div id="chatboxContainer" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <!-- The Chat Panel -->
+        <div id="chatPanel" class="hidden bg-white w-[350px] max-w-[calc(100vw-2rem)] h-[500px] max-h-[80vh] rounded-2xl shadow-2xl border border-gray-200 flex flex-col mb-4 overflow-hidden transition-all duration-300">
+            <!-- Header -->
+            <div class="bg-emerald-600 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white animate-pulse">
+                      <path d="M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z"/>
+                    </svg>
+                    <div>
+                        <h3 class="font-bold leading-tight">Asisten Umrohku</h3>
+                        <p class="text-[10px] text-emerald-100 opacity-90">AI Powered by Gemini</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white hover:text-emerald-200 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="chatMessages" class="relative flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-3">
+                <!-- Gemini Watermark -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-48 h-48">
+                      <path d="M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z"/>
+                    </svg>
+                </div>
+                <div class="flex justify-start z-10">
+                    <div class="bg-white text-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[90%] text-sm shadow-sm border border-gray-200">
+                        Assalamu'alaikum! 👋 Saya asisten virtual Umrohku. Ada yang bisa saya bantu untuk mencari paket umrah impian Anda?
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="chatLoading" class="htmx-indicator px-4 py-2 text-xs text-gray-400 italic">
+                AI sedang memikirkan jawaban...
+            </div>
+
+            <!-- Input Form -->
+            <div class="p-3 bg-white border-t border-gray-100">
+                <form hx-post="/chat" 
+                      hx-target="#chatMessages" 
+                      hx-swap="beforeend" 
+                      hx-indicator="#chatLoading"
+                      class="flex gap-2">
+                    <input type="text" id="chatInput" name="message" placeholder="Tanya sesuatu..." required
+                           class="flex-1 bg-gray-100 border-transparent rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center transition-colors">
+                        <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Floating Button -->
+        <button onclick="toggleChat()" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-105 group relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 group-hover:animate-pulse">
+                <path d="M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z"/>
+            </svg>
+        </button>
+    </div>
+
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: block; }
+        .htmx-request.htmx-indicator { display: block; }
+    </style>
+
+    <script>
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                setTimeout(() => scrollToBottom(), 100);
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+        function scrollToBottom() {
+            const msgs = document.getElementById('chatMessages');
+            if (msgs) msgs.scrollTop = msgs.scrollHeight;
+        }
+        // Re-run lucide here so chatbox icons (send arrow etc.) render correctly
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     </script>
 </body>
 

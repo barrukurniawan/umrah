@@ -84,10 +84,10 @@ func importCrawlerData() bool {
 		return false
 	}
 
-	// Clear existing data to avoid duplicates
-	DB.Where("1 = 1").Delete(&models.DetailPackage{})
-	DB.Where("1 = 1").Delete(&models.Package{})
-	DB.Where("1 = 1").Delete(&models.Travel{})
+	// Hard-delete existing data to avoid soft-delete accumulation
+	DB.Unscoped().Where("1 = 1").Delete(&models.DetailPackage{})
+	DB.Unscoped().Where("1 = 1").Delete(&models.Package{})
+	DB.Unscoped().Where("1 = 1").Delete(&models.Travel{})
 
 	travelMap := make(map[string]*models.Travel)
 	pkgCount := 0
@@ -181,18 +181,22 @@ func parseCrawlerDate(s string) (string, bool) {
 	s = strings.TrimSpace(s)
 	lower := strings.ToLower(s)
 
-	monthMap := map[string]string{
-		"januari": "January", "februari": "February", "maret": "March", "april": "April",
-		"mei": "May", "juni": "June", "juli": "July", "agustus": "August",
-		"september": "September", "oktober": "October", "november": "November", "desember": "December",
-		"jan": "Jan", "feb": "Feb", "mar": "Mar", "apr": "Apr",
-		"jun": "Jun", "jul": "Jul", "agu": "Aug",
-		"sep": "Sep", "okt": "Oct", "nov": "Nov", "des": "Dec",
-		"may": "May", "aug": "Aug", "oct": "Oct", "dec": "Dec",
+	// Use ordered slice: longer (full month names) first to avoid
+	// partial matches corrupting longer names (e.g. "agu" before "agustus" → "Augstus").
+	monthReplacements := []struct{ id, en string }{
+		{"januari", "January"}, {"februari", "February"}, {"maret", "March"}, {"april", "April"},
+		{"mei", "May"}, {"juni", "June"}, {"juli", "July"}, {"agustus", "August"},
+		{"september", "September"}, {"oktober", "October"}, {"november", "November"}, {"desember", "December"},
+		{"january", "January"}, {"february", "February"}, {"march", "March"}, {"may", "May"},
+		{"june", "June"}, {"july", "July"}, {"august", "August"},
+		{"october", "October"}, {"december", "December"},
+		{"jan", "Jan"}, {"feb", "Feb"}, {"mar", "Mar"}, {"apr", "Apr"},
+		{"jun", "Jun"}, {"jul", "Jul"}, {"agu", "Aug"}, {"aug", "Aug"},
+		{"sep", "Sep"}, {"okt", "Oct"}, {"oct", "Oct"}, {"nov", "Nov"}, {"des", "Dec"}, {"dec", "Dec"},
 	}
 
-	for id, en := range monthMap {
-		lower = strings.ReplaceAll(lower, id, en)
+	for _, r := range monthReplacements {
+		lower = strings.ReplaceAll(lower, r.id, r.en)
 	}
 
 	// Handle formats: "4 Jul 2026", "1 Agu 2026", "06 Juli 2026", "10 Agustus 2026", etc.

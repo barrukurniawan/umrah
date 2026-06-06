@@ -71,6 +71,10 @@ func main() {
 			parser = &crawlers.RabbaniParser{URL: site.URL}
 		case "umrahbisa_product":
 			parser = &crawlers.UmrahBisaProductParser{URL: site.URL}
+		case "uhudtour_product":
+			parser = &crawlers.UhudTourParser{URL: site.URL}
+		case "umi_travel_product":
+			parser = &crawlers.UmiTravelParser{URL: site.URL}
 		default:
 			log.Printf("[main] parser '%s' tidak dikenal, skip\n", site.Parser)
 			continue

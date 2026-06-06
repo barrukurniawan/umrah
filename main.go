@@ -8,6 +8,7 @@ import (
 
 	"umrah/app/handlers"
 	"umrah/app/repositories"
+	"umrah/app/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -55,14 +56,14 @@ func main() {
 
 	engine.AddFunc("travelURL", func(name string) string {
 		urls := map[string]string{
-			"Hamdan Tour":    "https://hamdantour.id",
-			"Taiba Medina":   "https://taibamedina.com",
-			"Al Hijaz":       "https://alhijaz.co",
-			"Marwa Mustajab": "https://umrohmustajab.com",
-			"Namira Travel":  "https://namira.travel",
+			"Hamdan Tour":       "https://hamdantour.id",
+			"Taiba Medina":      "https://taibamedina.com",
+			"Al Hijaz":          "https://alhijaz.co",
+			"Marwa Mustajab":    "https://umrohmustajab.com",
+			"Namira Travel":     "https://namira.travel",
 			"UMI Tour & Travel": "https://umi.travel",
-			"Rabbani Tour":   "https://rabbanitour.com",
-			"Umrah Bisa":     "https://umrahbisa.com",
+			"Rabbani Tour":      "https://rabbanitour.com",
+			"Umrah Bisa":        "https://umrahbisa.com",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -92,9 +93,11 @@ func main() {
 	app.Static("/static", "./web/static")
 
 	repositories.InitDB()
+	services.InitAI()
 
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
+	app.Post("/chat", handlers.HandleChat)
 
 	log.Fatal(app.Listen(":3000"))
 }
