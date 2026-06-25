@@ -85,11 +85,11 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 	})
 
 	dp := cp.Price / 5
-	if travelName == "PT. Khasanah Global Travelindo" {
+	if travelName == "Khasanah Travel" {
 		dp = 14000000
 	} else if travelName == "PT Labbaika Cipta Imani" {
 		dp = 15000000
-	} else if travelName == "PT Rahmah Grup Internasional" {
+	} else if travelName == "Rahmah Travel" {
 		dp = 7500000
 	}
 

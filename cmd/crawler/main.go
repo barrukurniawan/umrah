@@ -125,7 +125,7 @@ func getManualData() CrawlResult {
 		URL:       "manual",
 		Packages: []crawlers.CrawledPackage{
 			{
-				TravelName:     "PT. Khasanah Global Travelindo",
+				TravelName:     "Khasanah Travel",
 				PackageName:    "Umrah Khasanah 10 Hari",
 				Price:          25900000,
 				Duration:       10,
@@ -151,7 +151,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-labbaika",
 			},
 			{
-				TravelName:     "PT Rahmah Grup Internasional",
+				TravelName:     "Rahmah Travel",
 				PackageName:    "Umrah Rahmah Paket Hemat 9 Hari",
 				Price:          23900000,
 				Duration:       9,
@@ -164,7 +164,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-rahmah-hemat",
 			},
 			{
-				TravelName:     "PT Rahmah Grup Internasional",
+				TravelName:     "Rahmah Travel",
 				PackageName:    "Umrah Rahmah Paket Reguler 9 Hari",
 				Price:          26900000,
 				Duration:       9,
