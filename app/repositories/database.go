@@ -191,7 +191,7 @@ func parseCrawlerDate(s string) (string, bool) {
 		{"june", "June"}, {"july", "July"}, {"august", "August"},
 		{"october", "October"}, {"december", "December"},
 		{"jan", "Jan"}, {"feb", "Feb"}, {"mar", "Mar"}, {"apr", "Apr"},
-		{"jun", "Jun"}, {"jul", "Jul"}, {"agu", "Aug"}, {"aug", "Aug"},
+		{"jun", "Jun"}, {"jul", "Jul"}, {"agu", "Aug"}, {"aug", "Aug"}, {"agt", "Aug"},
 		{"sep", "Sep"}, {"okt", "Oct"}, {"oct", "Oct"}, {"nov", "Nov"}, {"des", "Dec"}, {"dec", "Dec"},
 	}
 
