@@ -84,13 +84,22 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		Rating: estimateRating(travelName),
 	})
 
+	dp := cp.Price / 5
+	if travelName == "PT. Khasanah Global Travelindo" {
+		dp = 14000000
+	} else if travelName == "PT Labbaika Cipta Imani" {
+		dp = 15000000
+	} else if travelName == "PT Rahmah Grup Internasional" {
+		dp = 7500000
+	}
+
 	pkg := models.Package{
 		TravelID:      travel.ID,
 		Name:          cp.PackageName,
 		Price:         cp.Price,
 		Duration:      cp.Duration,
 		Airline:       cp.Airline,
-		DownPayment:   cp.Price / 5,
+		DownPayment:   dp,
 		GroupSize:     cp.Seats,
 		Guide:         "Ustadz/Ustadzah",
 		HotelDistance: estimateDistance(cp.Price),
@@ -111,6 +120,7 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		db.Model(&pkg).Update("duration", cp.Duration)
 	}
 	db.Model(&pkg).Update("price", cp.Price)
+	db.Model(&pkg).Update("down_payment", dp)
 	db.Model(&pkg).Update("group_size", cp.Seats)
 
 	cleanHotel := strings.TrimSuffix(cp.HotelMakkah, " (Makkah)")

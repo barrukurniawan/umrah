@@ -103,6 +103,9 @@ func main() {
 		log.Printf("[main] disimpan ke %s\n", siteFile)
 	}
 
+	// Inject manual data
+	allResults = append(allResults, getManualData())
+
 	allFile := filepath.Join("output", fmt.Sprintf("all_%s.json", ts))
 	allData, _ := json.MarshalIndent(allResults, "", "  ")
 	os.WriteFile(allFile, allData, 0644)
@@ -113,4 +116,66 @@ func main() {
 func sanitizeName(name string) string {
 	r := strings.NewReplacer(" ", "_", ".", "", "/", "")
 	return strings.ToLower(r.Replace(name))
+}
+
+func getManualData() CrawlResult {
+	return CrawlResult{
+		Timestamp: time.Now().Format(time.RFC3339),
+		Site:      "Data Manual",
+		URL:       "manual",
+		Packages: []crawlers.CrawledPackage{
+			{
+				TravelName:     "PT. Khasanah Global Travelindo",
+				PackageName:    "Umrah Khasanah 10 Hari",
+				Price:          25900000,
+				Duration:       10,
+				Airline:        "Saudia Airlines",
+				HotelMakkah:    "Maysan Almaqam",
+				HotelMadinah:   "Araik Taiba",
+				DepartureDates: []string{"13 Okt 2026"},
+				Seats:          45,
+				Airport:        "Jakarta",
+				URL:            "manual-khasanah",
+			},
+			{
+				TravelName:     "PT Labbaika Cipta Imani",
+				PackageName:    "Labbaika Umrah & Hajj Tour 9 Hari",
+				Price:          26900000,
+				Duration:       9,
+				Airline:        "Saudi Airlines",
+				HotelMakkah:    "Almassa Badr",
+				HotelMadinah:   "Jawharat Al Rasheed",
+				DepartureDates: []string{"28 Okt 2026"},
+				Seats:          45,
+				Airport:        "Jakarta",
+				URL:            "manual-labbaika",
+			},
+			{
+				TravelName:     "PT Rahmah Grup Internasional",
+				PackageName:    "Umrah Rahmah Paket Hemat 9 Hari",
+				Price:          23900000,
+				Duration:       9,
+				Airline:        "Etihad Airways",
+				HotelMakkah:    "Emaar Noor",
+				HotelMadinah:   "Jawharat Arrasyid",
+				DepartureDates: []string{"17 Sep 2026", "4 Okt 2026", "17 Okt 2026", "1 Nov 2026", "11 Nov 2026"},
+				Seats:          45,
+				Airport:        "Jakarta",
+				URL:            "manual-rahmah-hemat",
+			},
+			{
+				TravelName:     "PT Rahmah Grup Internasional",
+				PackageName:    "Umrah Rahmah Paket Reguler 9 Hari",
+				Price:          26900000,
+				Duration:       9,
+				Airline:        "Etihad Airways",
+				HotelMakkah:    "Winner Inn Ajyad",
+				HotelMadinah:   "Jawharat Arrasyid",
+				DepartureDates: []string{"17 Sep 2026", "4 Okt 2026", "17 Okt 2026", "1 Nov 2026", "11 Nov 2026"},
+				Seats:          45,
+				Airport:        "Jakarta",
+				URL:            "manual-rahmah-reguler",
+			},
+		},
+	}
 }
