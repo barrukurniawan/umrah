@@ -38,7 +38,12 @@ func main() {
 		if err != nil {
 			return dateStr
 		}
-		return fmt.Sprintf("%d %s %d", t.Day(), t.Month().String()[:3], t.Year())
+		months := map[string]string{
+			"Jan": "Jan", "Feb": "Feb", "Mar": "Mar", "Apr": "Apr",
+			"May": "Mei", "Jun": "Jun", "Jul": "Jul", "Aug": "Agu",
+			"Sep": "Sep", "Oct": "Okt", "Nov": "Nov", "Dec": "Des",
+		}
+		return fmt.Sprintf("%d %s %d", t.Day(), months[t.Month().String()[:3]], t.Year())
 	})
 
 	engine.AddFunc("formatDateID", func(dateStr string) string {
