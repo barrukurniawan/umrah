@@ -188,7 +188,7 @@ var monthsID = map[string]string{
 	"september": "09", "oktober": "10", "november": "11", "desember": "12",
 	"jan": "01", "feb": "02", "mar": "03", "apr": "04",
 	"may": "05", "jun": "06", "jul": "07", "aug": "08",
-	"agu": "08", "sep": "09", "okt": "10", "oct": "10",
+	"agu": "08", "agt": "08", "sep": "09", "okt": "10", "oct": "10",
 	"nov": "11", "des": "12", "dec": "12",
 }
 
