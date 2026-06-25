@@ -117,10 +117,10 @@
                 <div class="mb-10">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
-                        <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 30.000.000</span>
+                        <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 26.000.000</span>
                     </div>
                     <input type="range" name="budget" id="budgetSlider" min="20000000" max="50000000" step="1000000"
-                        value="30000000" class="w-full" oninput="updateBudget(this.value)" />
+                        value="26000000" class="w-full" oninput="updateBudget(this.value)" />
                     <div class="flex justify-between text-xs text-gray-400 mt-1">
                         <span>Rp 20 jt</span>
                         <span>Rp 50 jt</span>
@@ -321,7 +321,7 @@
             }
         });
 
-        var _lastSort = 'score';
+        var _lastSort = 'price_desc';
 
         function restoreSortFilter() {
             var sf = document.getElementById('sortFilter');

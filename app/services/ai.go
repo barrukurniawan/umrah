@@ -241,6 +241,25 @@ Selalu jawab singkat, jelas, hangat, dan ramah dalam bahasa Indonesia.`),
 		},
 	}
 
+	chatModel.SafetySettings = []*genai.SafetySetting{
+		{
+			Category:  genai.HarmCategoryHarassment,
+			Threshold: genai.HarmBlockLowAndAbove,
+		},
+		{
+			Category:  genai.HarmCategoryHateSpeech,
+			Threshold: genai.HarmBlockLowAndAbove,
+		},
+		{
+			Category:  genai.HarmCategorySexuallyExplicit,
+			Threshold: genai.HarmBlockLowAndAbove,
+		},
+		{
+			Category:  genai.HarmCategoryDangerousContent,
+			Threshold: genai.HarmBlockLowAndAbove,
+		},
+	}
+
 	log.Println("Gemini AI Client initialized successfully")
 }
 

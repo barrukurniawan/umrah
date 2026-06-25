@@ -23,8 +23,9 @@ type FilterInput struct {
 
 type ScoredPackage struct {
 	models.Package
-	Score        int
-	FacilityList []string
+	Score             int
+	FacilityList      []string
+	DepartureDatesStr string
 }
 
 func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
@@ -161,9 +162,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 
 		scored = append(scored, ScoredPackage{
-			Package:      pkg,
-			Score:        score,
-			FacilityList: parseFacilities(pkg.Facilities),
+			Package:           pkg,
+			Score:             score,
+			FacilityList:      parseFacilities(pkg.Facilities),
+			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
 		})
 	}
 
@@ -233,4 +235,75 @@ func parseFacilities(raw string) []string {
 		return []string{}
 	}
 	return list
+}
+
+func formatDepartureDatesStr(details []models.DetailPackage) string {
+	if len(details) == 0 {
+		return "-"
+	}
+
+	var dates []time.Time
+	seen := make(map[string]bool)
+	for _, d := range details {
+		if d.DepartureDate == "" {
+			continue
+		}
+		if !seen[d.DepartureDate] {
+			seen[d.DepartureDate] = true
+			if t, err := time.Parse("2006-01-02", d.DepartureDate); err == nil {
+				dates = append(dates, t)
+			}
+		}
+	}
+
+	if len(dates) == 0 {
+		return "-"
+	}
+
+	sort.Slice(dates, func(i, j int) bool {
+		return dates[i].Before(dates[j])
+	})
+
+	months := map[time.Month]string{
+		time.January: "Jan", time.February: "Feb", time.March: "Mar", time.April: "Apr",
+		time.May: "Mei", time.June: "Jun", time.July: "Jul", time.August: "Agu",
+		time.September: "Sep", time.October: "Okt", time.November: "Nov", time.December: "Des",
+	}
+
+	var parts []string
+	type group struct {
+		Month time.Month
+		Year  int
+		Days  []int
+	}
+	var groups []group
+
+	for _, d := range dates {
+		if len(groups) > 0 {
+			last := &groups[len(groups)-1]
+			if last.Month == d.Month() && last.Year == d.Year() {
+				last.Days = append(last.Days, d.Day())
+				continue
+			}
+		}
+		groups = append(groups, group{Month: d.Month(), Year: d.Year(), Days: []int{d.Day()}})
+	}
+
+	for i, g := range groups {
+		var daysStr []string
+		for _, day := range g.Days {
+			daysStr = append(daysStr, strconv.Itoa(day))
+		}
+		daysJoined := strings.Join(daysStr, ", ")
+
+		str := fmt.Sprintf("%s %s", daysJoined, months[g.Month])
+		if i == len(groups)-1 {
+			str += fmt.Sprintf(" %d", g.Year)
+		} else if groups[i].Year != groups[len(groups)-1].Year {
+			str += fmt.Sprintf(" %d", g.Year)
+		}
+		parts = append(parts, str)
+	}
+
+	return strings.Join(parts, ", ")
 }

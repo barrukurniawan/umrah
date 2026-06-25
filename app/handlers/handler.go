@@ -15,11 +15,11 @@ func HomePage(c *fiber.Ctx) error {
 }
 
 func GetRecommendations(c *fiber.Ctx) error {
-	budget, _ := strconv.Atoi(c.FormValue("budget", "25000000"))
+	budget, _ := strconv.Atoi(c.FormValue("budget", "26000000"))
 	priority := c.FormValue("priority", "all")
 	advanced := c.FormValue("advanced", "")
 	page, _ := strconv.Atoi(c.FormValue("page", "1"))
-	sort := c.FormValue("sort", "score")
+	sort := c.FormValue("sort", "price_desc")
 	month := c.FormValue("month", "")
 
 	input := services.FilterInput{
