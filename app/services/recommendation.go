@@ -26,6 +26,8 @@ type ScoredPackage struct {
 	Score             int
 	FacilityList      []string
 	DepartureDatesStr string
+	DistanceMakkah    string
+	DistanceMadinah   string
 }
 
 func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
@@ -56,6 +58,17 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		if pkg.Price > input.Budget {
 			continue
 		}
+
+		distMakkah := "700-1000m"
+		distMadinah := "200-400m"
+		if len(pkg.Details) > 0 {
+			distMakkah = getDistanceMakkah(pkg.Details[0].HotelMakkah)
+			distMadinah = getDistanceMadinah(pkg.Details[0].HotelMadinah)
+		}
+
+		// Override DB values dynamically
+		pkg.HotelDistance = parseMinDistance(distMakkah)
+		pkg.IsNearHaram = pkg.HotelDistance <= 550
 
 		// Apply advanced filters always if set (regardless of priority)
 		if advanceFilter["direct"] && !pkg.IsDirect {
@@ -88,63 +101,28 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 		score := 0
 
-		if input.Priority == "all" {
-			score += 10
-		}
-
-		switch input.Priority {
-		case "near_haram":
+		if advanceFilter["near_haram"] {
 			if pkg.IsNearHaram {
-				score += 30
+				score += 20
 			}
 			if pkg.HotelDistance <= 300 {
 				score += 10
 			}
-		case "family_friendly":
+		}
+		if advanceFilter["family_friendly"] {
 			if pkg.Travel.Name == "Taiba Medina" {
-				score += 35
+				score += 25
 			}
 			if pkg.IsKidFriendly || pkg.IsSeniorFriendly {
-				score += 20
+				score += 15
 			}
 			if pkg.IsDirect {
-				score += 15
+				score += 10
 			}
 			if pkg.IsFamily || pkg.IsSenior {
 				score += 10
 			}
 			if pkg.HotelDistance <= 400 {
-				score += 10
-			} else if pkg.IsKidFriendly || pkg.IsSeniorFriendly {
-				score += 5
-			}
-		case "advanced":
-			if advanceFilter["near_haram"] {
-				if pkg.IsNearHaram {
-					score += 20
-				}
-				if pkg.HotelDistance <= 300 {
-					score += 10
-				}
-			}
-			if advanceFilter["family_friendly"] {
-				if pkg.Travel.Name == "Taiba Medina" {
-					score += 25
-				}
-				if pkg.IsKidFriendly || pkg.IsSeniorFriendly {
-					score += 15
-				}
-				if pkg.IsDirect {
-					score += 10
-				}
-				if pkg.IsFamily || pkg.IsSenior {
-					score += 10
-				}
-				if pkg.HotelDistance <= 400 {
-					score += 10
-				}
-			}
-			if len(advanceFilter) == 0 {
 				score += 10
 			} else {
 				score += 5
@@ -166,6 +144,8 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			Score:             score,
 			FacilityList:      parseFacilities(pkg.Facilities),
 			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
+			DistanceMakkah:    distMakkah,
+			DistanceMadinah:   distMadinah,
 		})
 	}
 
@@ -306,4 +286,82 @@ func formatDepartureDatesStr(details []models.DetailPackage) string {
 	}
 
 	return strings.Join(parts, ", ")
+}
+
+func getDistanceMakkah(hotel string) string {
+	h := strings.ToLower(hotel)
+	if strings.Contains(h, "zamzam") {
+		return "150-250m"
+	}
+	if strings.Contains(h, "azka") || strings.Contains(h, "safa") {
+		return "250-350m"
+	}
+	if strings.Contains(h, "anjum") {
+		return "450-550m"
+	}
+	if strings.Contains(h, "shohada") {
+		return "600-700m"
+	}
+	if strings.Contains(h, "almassa grand") || strings.Contains(h, "grand al masa") || strings.Contains(h, "al massa grand") {
+		return "700m"
+	}
+	if strings.Contains(h, "al massa dar") || strings.Contains(h, "faiezeen") || strings.Contains(h, "fayzeen") {
+		return "750m"
+	}
+	if strings.Contains(h, "jada ajyad") {
+		return "750-900m"
+	}
+	if strings.Contains(h, "nada ajyad") {
+		return "800-950m"
+	}
+	if strings.Contains(h, "mashaer") {
+		return "850-1000m"
+	}
+	if strings.Contains(h, "majestic") {
+		return "900-1100m"
+	}
+	return "700-1000m"
+}
+
+func getDistanceMadinah(hotel string) string {
+	h := strings.ToLower(hotel)
+	if strings.Contains(h, "concorde") || strings.Contains(h, "dar al khair") {
+		return "120m"
+	}
+	if strings.Contains(h, "shaza") {
+		return "180m"
+	}
+	if strings.Contains(h, "plaza inn") {
+		return "250m"
+	}
+	if strings.Contains(h, "ritz") {
+		return "300m"
+	}
+	if strings.Contains(h, "odst") {
+		return "350m"
+	}
+	if strings.Contains(h, "jauharat") || strings.Contains(h, "jawharat") || strings.Contains(h, "rasheed") || strings.Contains(h, "rashed") {
+		return "400m"
+	}
+	if strings.Contains(h, "arkan") || strings.Contains(h, "manar") {
+		return "500m"
+	}
+	if strings.Contains(h, "sham province") {
+		return "650m"
+	}
+	if strings.Contains(h, "haram") {
+		return "200-400m"
+	}
+	return "200-400m"
+}
+
+func parseMinDistance(dist string) int {
+	d := strings.Split(dist, "-")[0]
+	d = strings.ReplaceAll(d, "m", "")
+	d = strings.TrimSpace(d)
+	val, _ := strconv.Atoi(d)
+	if val == 0 {
+		return 1000
+	}
+	return val
 }
