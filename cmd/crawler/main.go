@@ -138,7 +138,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-khasanah",
 			},
 			{
-				TravelName:     "PT Labbaika Cipta Imani",
+				TravelName:     "Labbaika Umrah",
 				PackageName:    "Labbaika Umrah & Hajj Tour 9 Hari",
 				Price:          26900000,
 				Duration:       9,
