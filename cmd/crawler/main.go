@@ -13,10 +13,11 @@ import (
 )
 
 type Site struct {
-	Name       string `json:"name"`
-	URL        string `json:"url"`
-	Parser     string `json:"parser"`
-	TravelName string `json:"travel_name,omitempty"`
+	Name       string   `json:"name"`
+	URL        string   `json:"url"`
+	Parser     string   `json:"parser"`
+	TravelName string   `json:"travel_name,omitempty"`
+	PackageIDs []string `json:"package_ids,omitempty"`
 }
 
 type CrawlResult struct {
@@ -75,6 +76,18 @@ func main() {
 			parser = &crawlers.UhudTourParser{URL: site.URL}
 		case "umi_travel_product":
 			parser = &crawlers.UmiTravelParser{URL: site.URL}
+		case "lafaya":
+			ids := site.PackageIDs
+			if len(ids) == 0 {
+				ids = []string{
+					"3ead1033-0278-4e54-a610-6f68f5c54a9d",
+					"e8a72b00-6b72-4018-a49b-9c9c885f5840",
+					"be8fbaf8-f95d-4dbc-a7db-719d3b781682",
+					"0586dc80-2330-4f80-a6c3-0a1c305cc1e8",
+					"622c2a59-e868-4a96-89a3-ef2bc4952965",
+				}
+			}
+			parser = &crawlers.LafayaParser{PackageIDs: ids}
 		default:
 			log.Printf("[main] parser '%s' tidak dikenal, skip\n", site.Parser)
 			continue

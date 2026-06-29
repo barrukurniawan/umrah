@@ -16,11 +16,18 @@
   { "name": "Umrah Bisa - 29 Nov", "url": "https://daftar.umrahbisa.com/product/umrahhemat29nov", "parser": "umrahbisa_product" },
 
   { "name": "Uhud Tour - 30 Jul 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/276/30-juli-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+  { "name": "Uhud Tour - 15 Jul 2026 Gold", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/275/15-juli-2026-gold", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+  { "name": "Uhud Tour - 22 Agt 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/291/22-agustus-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+  { "name": "Uhud Tour - 21 Sep 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/285/21-september-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+  { "name": "Uhud Tour - 1 Okt 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/286/01-oktober-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
+  { "name": "Uhud Tour - 26 Okt 2026 Bronze", "url": "https://uhudtour.com/transaksi/paket-umrah/detail/287/26-oktober-2026-bronze", "parser": "uhudtour_product", "travel_name": "Uhud Tour" },
 
   { "name": "UMI Travel - Plus Thaif Qonaah Salwa 10 Sep", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-10-september-2026-bz3lovrpnd", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - Plus Thaif Qonaah Salwa 20 Agt", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-20-agustus-2026-66rdgqm9xe", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - Plus Thaif Muhasabah Salwa 13 Agt", "url": "https://umi.travel/listings/umrah-plus-thaif-muhasabah-salwa-13-agustus-2026-xdlw49lo4r", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - Plus Thaif Qonaah Salwa 27 Jun", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-27-juni-2026-ke2m6y8law", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - 2x Jumat Plus Thaif 24 Sep", "url": "https://umi.travel/listings/umroh-2x-jumat-plus-thaif-24-september-2026-10-hari-lg1012aaw7", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
-  { "name": "UMI Travel - 2x Jumat Sirah Nabawiyah Plus Thaif 29 Okt", "url": "https://umi.travel/listings/umroh-2x-jumat-sirah-nabawiyah-plus-thaif-10-hari-29-oktober-2026-aawk04mlo9", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" }
+  { "name": "UMI Travel - 2x Jumat Sirah Nabawiyah Plus Thaif 29 Okt", "url": "https://umi.travel/listings/umroh-2x-jumat-sirah-nabawiyah-plus-thaif-10-hari-29-oktober-2026-aawk04mlo9", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+
+  { "name": "Lafaya Travel", "url": "https://lafayatravel.com", "parser": "lafaya", "travel_name": "Lafaya Travel", "package_ids": ["3ead1033-0278-4e54-a610-6f68f5c54a9d", "e8a72b00-6b72-4018-a49b-9c9c885f5840", "be8fbaf8-f95d-4dbc-a7db-719d3b781682", "0586dc80-2330-4f80-a6c3-0a1c305cc1e8", "622c2a59-e868-4a96-89a3-ef2bc4952965"] }
 ]

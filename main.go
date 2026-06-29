@@ -73,6 +73,8 @@ func main() {
 			"Labbaika Umrah":          "https://labbaika.co.id/",
 			"Rahmah Travel":           "https://rahmahtravel.id",
 			"Fandiego Tours & Travel": "https://fandiegotravel.com/",
+			"Uhud Tour":               "https://uhudtour.com",
+			"Lafaya Travel":           "https://www.lafayatravel.com",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -92,6 +94,8 @@ func main() {
 			"Labbaika Umrah":          "https://api.whatsapp.com/send/?phone=6281313557780&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
 			"Rahmah Travel":           "https://api.whatsapp.com/send/?phone=6282246386908&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
 			"Fandiego Tours & Travel": "https://api.whatsapp.com/send/?phone=628111718567&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
+			"Uhud Tour":               "https://api.whatsapp.com/send/?phone=6281113304343&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Uhud+Tour",
+			"Lafaya Travel":           "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
 		}
 		if u, ok := urls[name]; ok {
 			return u

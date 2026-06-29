@@ -78,6 +78,13 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		travelName = site
 	}
 
+	if cp.Price > 0 && cp.Price < 5000000 {
+		log.Printf("[skip] %s - %s: harga Rp %d terlalu kecil, kemungkinan data error", travelName, cp.PackageName, cp.Price)
+		return
+	}
+
+	cp = enrichPackage(travelName, cp)
+
 	var travel models.Travel
 	db.Where("name = ?", travelName).FirstOrCreate(&travel, models.Travel{
 		Name:   travelName,
@@ -91,6 +98,10 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		dp = 15000000
 	} else if travelName == "Rahmah Travel" {
 		dp = 7500000
+	} else if travelName == "Umrah Bisa" {
+		dp = 5000000
+	} else if travelName == "PT Wisata Hati Universal" {
+		dp = 5000000
 	}
 
 	pkg := models.Package{
@@ -145,14 +156,33 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 				continue
 			}
 
+			hMakkah := cleanHotel
+			hMadinah := cleanHotelMd
+			starsMakkah := 3
+			starsMadinah := 3
+
+			enriched := enrichHotel(travelName, cp.PackageName, depDate)
+			if enriched.Makkah != "" {
+				hMakkah = enriched.Makkah
+			}
+			if enriched.Madinah != "" {
+				hMadinah = enriched.Madinah
+			}
+			if enriched.StarsMakkah > 0 {
+				starsMakkah = enriched.StarsMakkah
+			}
+			if enriched.StarsMadinah > 0 {
+				starsMadinah = enriched.StarsMadinah
+			}
+
 			detail := models.DetailPackage{
 				PackageID:         pkg.ID,
 				DepartureDate:     depDate,
 				ReturnDate:        computeReturn(depDate, cp.Duration),
-				HotelMakkah:       cleanHotel,
-				HotelMadinah:      cleanHotelMd,
-				StarsMakkah:       3,
-				StarsMadinah:      3,
+				HotelMakkah:       hMakkah,
+				HotelMadinah:      hMadinah,
+				StarsMakkah:       starsMakkah,
+				StarsMadinah:      starsMadinah,
 				RoomType:          "Quad",
 				TotalQuota:        cp.Seats,
 				AvailableQuota:    cp.Seats,
@@ -284,17 +314,170 @@ func estimateSunnah(price int, airline string) int {
 
 func estimateRating(travelName string) float64 {
 	ratings := map[string]float64{
-		"Hamdan Tour":    4.5,
-		"Taiba Medina":   4.3,
-		"Al Hijaz":       4.7,
-		"Marwa Mustajab": 4.2,
-		"Rabbani Tour":   4.6,
+		"Hamdan Tour":       4.5,
+		"Taiba Medina":      4.3,
+		"Al Hijaz":          4.7,
+		"Marwa Mustajab":    4.2,
+		"Rabbani Tour":      4.6,
 		"UMI Tour & Travel": 4.1,
-		"Namira Travel":  4.2,
-		"Umrah Bisa":     4.5,
+		"Namira Travel":     4.2,
+		"Umrah Bisa":        4.5,
+		"Lafaya Travel":     4.4,
 	}
 	if r, ok := ratings[travelName]; ok {
 		return r
 	}
 	return 4.0
+}
+
+type hotelInfo struct {
+	Makkah      string
+	Madinah     string
+	StarsMakkah int
+	StarsMadinah int
+}
+
+func enrichPackage(travelName string, cp CrawledPackage) CrawledPackage {
+	switch travelName {
+	case "Marwa Mustajab":
+		if cp.Airline == "" {
+			switch {
+			case strings.Contains(cp.PackageName, "HEART 03 JULI"):
+				cp.Airline = "Garuda Indonesia"
+			case strings.Contains(cp.PackageName, "HEART 16 SEPTEMBER"):
+				cp.Airline = "Saudia Airlines"
+			case strings.Contains(cp.PackageName, "HEMAYA 06 OKTOBER"):
+				cp.Airline = "Oman Airlines"
+			case strings.Contains(cp.PackageName, "HEMAYA 25 OKTOBER"):
+				cp.Airline = "Oman Airlines"
+			case strings.Contains(cp.PackageName, "HEMAYA 05 NOVEMBER"):
+				cp.Airline = "Oman Airlines"
+			case strings.Contains(cp.PackageName, "AKHIR TAHUN 22 DESEMBER"):
+				cp.Airline = "Garuda Indonesia"
+			}
+		}
+
+	case "Taiba Medina":
+		if cp.Airline == "" || cp.Airline == "-" || cp.Airline == "Request" {
+			switch {
+			case strings.Contains(cp.PackageName, "PLUS SPECIAL THAIF DIRECT"):
+				cp.Airline = "Saudia Airlines"
+			case strings.Contains(cp.PackageName, "MENGINAP THAIF 10D") && strings.Contains(cp.PackageName, "11 AGUSTUS"):
+				cp.Airline = "Qatar Airways"
+			case strings.Contains(cp.PackageName, "PLUS THAIF 10D") && strings.Contains(cp.PackageName, "14 AGUSTUS"):
+				cp.Airline = "Qatar Airways"
+			case strings.Contains(cp.PackageName, "MENGINAP DI THAIF 10D") && strings.Contains(cp.PackageName, "1 SEPTEMBER"):
+				cp.Airline = "Garuda Indonesia"
+			case strings.Contains(cp.PackageName, "PLUS SPECIAL DUBAI"):
+				cp.Airline = "Emirates"
+			case strings.Contains(cp.PackageName, "PLUS THAIF 9D") && strings.Contains(cp.PackageName, "4 OKTOBER"):
+				cp.Airline = "Garuda Indonesia"
+			case strings.Contains(cp.PackageName, "MENGINAP THAIF 10D") && strings.Contains(cp.PackageName, "27 OKTOBER"):
+				cp.Airline = "Garuda Indonesia"
+			case strings.Contains(cp.PackageName, "PLUS THAIF 9D") && strings.Contains(cp.PackageName, "1 NOVEMBER"):
+				cp.Airline = "Garuda Indonesia"
+			case strings.Contains(cp.PackageName, "MENGINAP DI THAIF 10D") && strings.Contains(cp.PackageName, "24 NOVEMBER"):
+				cp.Airline = "Qatar Airways"
+			case strings.Contains(cp.PackageName, "PLUS THAIF 9D") && strings.Contains(cp.PackageName, "1 DESEMBER"):
+				cp.Airline = "Saudia Airlines"
+			case strings.Contains(cp.PackageName, "PLUS THAIF 9D") && strings.Contains(cp.PackageName, "24 DESEMBER"):
+				cp.Airline = "Oman Air"
+			case strings.Contains(cp.PackageName, "MENGINAP DI THAIF 10D") && strings.Contains(cp.PackageName, "29 DESEMBER"):
+				cp.Airline = "Saudia Airlines"
+			}
+		}
+
+	case "UMI Tour & Travel":
+		if cp.Airline == "" || cp.Airline == "N/A" || cp.Airline == "-" {
+			switch {
+			case strings.Contains(cp.PackageName, "Qonaah Salwa") || strings.Contains(cp.PackageName, "Muhasabah Salwa"):
+				cp.Airline = "Etihad Airways"
+			case strings.Contains(cp.PackageName, "2x Jumat Plus Thaif 24 Sep"):
+				cp.Airline = "Saudia Airlines"
+			case strings.Contains(cp.PackageName, "Sirah Nabawiyah Plus Thaif"):
+				cp.Airline = "Qatar Airways"
+			}
+		}
+
+	case "Umrah Bisa":
+		if cp.Airline == "" {
+			cp.Airline = "Oman Air"
+		}
+	}
+
+	return cp
+}
+
+func enrichHotel(travelName, packageName, depDate string) hotelInfo {
+	switch travelName {
+	case "Taiba Medina":
+		switch {
+		case strings.Contains(packageName, "PLUS SPECIAL THAIF DIRECT"):
+			return hotelInfo{Makkah: "Royal Majestic", Madinah: "Shaza Regency", StarsMakkah: 5, StarsMadinah: 5}
+		case strings.Contains(packageName, "MENGINAP THAIF 10D") && strings.Contains(packageName, "11 AGUSTUS"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS THAIF 10D") && strings.Contains(packageName, "14 AGUSTUS"):
+			return hotelInfo{Makkah: "Grand Al Masa", Madinah: "Arkan Al Manar", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "MENGINAP DI THAIF 10D") && strings.Contains(packageName, "1 SEPTEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS SPECIAL DUBAI"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS THAIF 9D") && strings.Contains(packageName, "4 OKTOBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "MENGINAP THAIF 10D") && strings.Contains(packageName, "27 OKTOBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS THAIF 9D") && strings.Contains(packageName, "1 NOVEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "MENGINAP DI THAIF 10D") && strings.Contains(packageName, "24 NOVEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS THAIF 9D") && strings.Contains(packageName, "1 DESEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "PLUS THAIF 9D") && strings.Contains(packageName, "24 DESEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "MENGINAP DI THAIF 10D") && strings.Contains(packageName, "29 DESEMBER"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "Plaza Inn Ohud", StarsMakkah: 4, StarsMadinah: 3}
+		}
+
+	case "UMI Tour & Travel":
+		switch {
+		case strings.Contains(packageName, "Qonaah Salwa") || strings.Contains(packageName, "Muhasabah Salwa"):
+			return hotelInfo{Makkah: "Al Massa Dar Fayzeen", Madinah: "Dar Al-Naeem Hotel", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "2x Jumat Plus Thaif 24 Sep"):
+			return hotelInfo{Makkah: "Elaf Kinda Hotel", Madinah: "Hotel Ritz Madinah", StarsMakkah: 5, StarsMadinah: 4}
+		case strings.Contains(packageName, "Sirah Nabawiyah Plus Thaif"):
+			return hotelInfo{Makkah: "Prestige Al Mashaer Hotel", Madinah: "Hotel Ritz Madinah", StarsMakkah: 5, StarsMadinah: 4}
+		}
+
+	case "Umrah Bisa":
+		return hotelInfo{Makkah: "Grand Al Massa", Madinah: "Jawharat Ar Rasheed", StarsMakkah: 4, StarsMadinah: 3}
+
+	case "Uhud Tour":
+		return hotelInfo{Makkah: "Shohada Hotel", Madinah: "Concorde Dar Al Khair", StarsMakkah: 5, StarsMadinah: 4}
+
+	case "PT Wisata Hati Universal":
+		switch {
+		case strings.Contains(packageName, "Hemat"):
+			return hotelInfo{Makkah: "Le Meridien Tower", Madinah: "One Inn Hotel", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "Reguler"):
+			return hotelInfo{Makkah: "Grand Al Massa", Madinah: "One Inn Hotel", StarsMakkah: 4, StarsMadinah: 3}
+		case strings.Contains(packageName, "Gold"):
+			return hotelInfo{Makkah: "Prestige Hotel", Madinah: "One Inn Hotel", StarsMakkah: 5, StarsMadinah: 3}
+		case strings.Contains(packageName, "Diamond"):
+			return hotelInfo{Makkah: "Pullman Hotel", Madinah: "Al Haram", StarsMakkah: 5, StarsMadinah: 5}
+		}
+
+	case "Marwa Mustajab":
+		switch {
+		case strings.Contains(packageName, "HEART"):
+			return hotelInfo{Makkah: "Movenpick Hajar Tower", Madinah: "Frontel Al Harithia", StarsMakkah: 5, StarsMadinah: 5}
+		case strings.Contains(packageName, "HEMAYA"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "ODST Al Madinah", StarsMakkah: 3, StarsMadinah: 3}
+		case strings.Contains(packageName, "AKHIR TAHUN"):
+			return hotelInfo{Makkah: "Movenpick Hajar Tower", Madinah: "Frontel Al Harithia", StarsMakkah: 5, StarsMadinah: 5}
+		case strings.Contains(packageName, "ITTIKAF"):
+			return hotelInfo{Makkah: "Nada Ajyad", Madinah: "ODST Al Madinah", StarsMakkah: 3, StarsMadinah: 3}
+		}
+	}
+
+	return hotelInfo{}
 }
