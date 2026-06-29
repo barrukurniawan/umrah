@@ -164,10 +164,23 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			return scored[i].Duration > scored[j].Duration
 		case "dp_asc":
 			return scored[i].DownPayment < scored[j].DownPayment
+		case "direct_only":
+			return scored[i].Price < scored[j].Price
 		default:
 			return scored[i].Score > scored[j].Score
 		}
 	})
+
+	// Filter direct only
+	if input.Sort == "direct_only" {
+		filtered := make([]ScoredPackage, 0)
+		for _, sp := range scored {
+			if sp.IsDirect {
+				filtered = append(filtered, sp)
+			}
+		}
+		scored = filtered
+	}
 
 	// Server-side month filter
 	if input.Month != "" {

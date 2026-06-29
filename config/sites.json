@@ -28,6 +28,14 @@
   { "name": "UMI Travel - Plus Thaif Qonaah Salwa 27 Jun", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-27-juni-2026-ke2m6y8law", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - 2x Jumat Plus Thaif 24 Sep", "url": "https://umi.travel/listings/umroh-2x-jumat-plus-thaif-24-september-2026-10-hari-lg1012aaw7", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
   { "name": "UMI Travel - 2x Jumat Sirah Nabawiyah Plus Thaif 29 Okt", "url": "https://umi.travel/listings/umroh-2x-jumat-sirah-nabawiyah-plus-thaif-10-hari-29-oktober-2026-aawk04mlo9", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Muhasabah Salwa 14 Okt", "url": "https://umi.travel/listings/umrah-plus-thaif-muhasabah-salwa-14-oktober-2026-yqa6lgjbx9", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Bintang 5 Mumtaz 23 Des", "url": "https://umi.travel/listings/umroh-bintang-5-9-hari-paket-mumtaz-23-desember-2026-xdozrzkmld", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Turki 13 Hari 14 Des", "url": "https://umi.travel/listings/umroh-plus-turki-13-hari-2x-jumat-14-desember-2026-6qrpxqpl6v", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Safa 13 Des", "url": "https://umi.travel/listings/umroh-plus-thaif-9-hari-paket-safa-13-desember-2026-9l41xwd11l", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Marwa 13 Des", "url": "https://umi.travel/listings/umroh-plus-thaif-9-hari-paket-marwa-13-desember2026-j2ory83gkv", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Turki 13 Hari 23 Nov", "url": "https://umi.travel/listings/umroh-plus-turki-13-hari-2x-jumat-23-november-2026-4lewna2y4j", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Spesial 2x Jumat Hudaibiyah 19 Nov", "url": "https://umi.travel/listings/umroh-spesial-2x-jumat-perjanjian-hudaibiyah-19-november-2026-10-hari-4xyqx0xe1w", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
+  { "name": "UMI Travel - Plus Thaif Qonaah Salwa 1 Okt", "url": "https://umi.travel/listings/umrah-plus-thaif-qonaah-salwa-01-oktober-2026-y4obpqp2zx", "parser": "umi_travel_product", "travel_name": "UMI Tour & Travel" },
 
   { "name": "Lafaya Travel", "url": "https://lafayatravel.com", "parser": "lafaya", "travel_name": "Lafaya Travel", "package_ids": ["3ead1033-0278-4e54-a610-6f68f5c54a9d", "e8a72b00-6b72-4018-a49b-9c9c885f5840", "be8fbaf8-f95d-4dbc-a7db-719d3b781682", "0586dc80-2330-4f80-a6c3-0a1c305cc1e8", "622c2a59-e868-4a96-89a3-ef2bc4952965"] }
 ]

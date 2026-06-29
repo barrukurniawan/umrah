@@ -102,6 +102,20 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		dp = 5000000
 	} else if travelName == "PT Wisata Hati Universal" {
 		dp = 5000000
+	} else if travelName == "Marwa Mustajab" {
+		dp = 5000000
+	} else if travelName == "Taiba Medina" {
+		dp = 2500000
+	} else if travelName == "UMI Tour & Travel" {
+		dp = 5000000
+	} else if travelName == "Uhud Tour" {
+		dp = 9000000
+	} else if travelName == "Lafaya Travel" {
+		dp = 10000000
+	} else if travelName == "Al Hijaz" {
+		dp = 5000000
+	} else if travelName == "Hamdan Tour" {
+		dp = 5000000
 	}
 
 	pkg := models.Package{

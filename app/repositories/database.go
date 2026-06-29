@@ -46,6 +46,35 @@ func InitDB() {
 }
 
 func importCrawlerData() bool {
+
+	dpOverrides := map[string]int{
+		"Khasanah Travel":         14000000,
+		"PT Labbaika Cipta Imani": 15000000,
+		"Rahmah Travel":           7500000,
+		"Umrah Bisa":              5000000,
+		"PT Wisata Hati Universal": 5000000,
+		"Marwa Mustajab":          5000000,
+		"Taiba Medina":            2500000,
+		"UMI Tour & Travel":       5000000,
+		"Uhud Tour":               9000000,
+		"Lafaya Travel":           10000000,
+		"Al Hijaz":                5000000,
+		"Hamdan Tour":             5000000,
+	}
+
+	ratingOverrides := map[string]float64{
+		"Hamdan Tour":       4.5,
+		"Taiba Medina":      4.3,
+		"Al Hijaz":          4.7,
+		"Marwa Mustajab":    4.2,
+		"Rabbani Tour":      4.6,
+		"UMI Tour & Travel": 4.1,
+		"Namira Travel":     4.2,
+		"Umrah Bisa":        4.5,
+		"Lafaya Travel":     4.4,
+		"Uhud Tour":         4.5,
+	}
+
 	entries, err := os.ReadDir("output")
 	if err != nil {
 		return false
@@ -98,9 +127,9 @@ func importCrawlerData() bool {
 			continue
 		}
 		for _, cp := range result.Packages {
-			if cp.Price < 1000000 {
-				continue
-			}
+		if cp.Price < 5000000 {
+			continue
+		}
 
 			travelName := cp.TravelName
 			if travelName == "" {
@@ -109,24 +138,31 @@ func importCrawlerData() bool {
 
 			travel, ok := travelMap[travelName]
 			if !ok {
-				travel = &models.Travel{Name: travelName, Rating: 4.5}
+				rating := 4.5
+				if r, ok := ratingOverrides[travelName]; ok {
+					rating = r
+				}
+				travel = &models.Travel{Name: travelName, Rating: rating}
 				DB.Create(travel)
 				travelMap[travelName] = travel
 			}
 
-			downPayment := cp.Price / 5
-			if downPayment < 1000000 {
-				downPayment = 1000000
-			}
+		downPayment := cp.Price / 5
+		if downPayment < 1000000 {
+			downPayment = 1000000
+		}
+		if dp, ok := dpOverrides[travelName]; ok {
+			downPayment = dp
+		}
 
-			pkg := models.Package{
+		pkg := models.Package{
 				TravelID:         travel.ID,
 				Name:             cp.PackageName,
 				Price:            cp.Price,
 				HotelDistance:    500,
 				Duration:         cp.Duration,
 				Airline:          cp.Airline,
-				IsDirect:         false,
+				IsDirect:         isDirectAirline(cp.Airline),
 				DownPayment:      downPayment,
 				PaymentDeadline:  "",
 				Guide:            "Ustadz Pembimbing",
@@ -230,6 +266,16 @@ func cleanHotelName(s string) string {
 		s = strings.TrimSpace(s[:idx])
 	}
 	return s
+}
+
+func isDirectAirline(airline string) bool {
+	direct := []string{"Garuda Indonesia", "Saudia", "Saudi Airlines", "Emirates"}
+	for _, a := range direct {
+		if strings.Contains(airline, a) {
+			return true
+		}
+	}
+	return false
 }
 
 func seedData() {
