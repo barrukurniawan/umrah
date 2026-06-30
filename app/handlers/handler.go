@@ -21,6 +21,7 @@ func GetRecommendations(c *fiber.Ctx) error {
 	page, _ := strconv.Atoi(c.FormValue("page", "1"))
 	sort := c.FormValue("sort", "price_desc")
 	month := c.FormValue("month", "")
+	travels := c.FormValue("travels", "")
 
 	input := services.FilterInput{
 		Budget:   budget,
@@ -29,6 +30,7 @@ func GetRecommendations(c *fiber.Ctx) error {
 		Page:     page,
 		Sort:     sort,
 		Month:    month,
+		Travels:  travels,
 	}
 
 	results, total := services.GetRecommendations(input)
@@ -45,5 +47,6 @@ func GetRecommendations(c *fiber.Ctx) error {
 		"NextPage":   page + 1,
 		"Sort":       sort,
 		"Month":      month,
+		"Travels":    travels,
 	})
 }

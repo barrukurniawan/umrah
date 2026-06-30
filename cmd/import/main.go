@@ -294,7 +294,7 @@ func estimateDistance(price int) int {
 }
 
 func isDirectAirline(airline string) bool {
-	direct := []string{"Garuda Indonesia", "Saudia", "Emirates"}
+	direct := []string{"Garuda Indonesia", "Saudia", "Saudi Airlines"}
 	for _, a := range direct {
 		if strings.Contains(airline, a) {
 			return true

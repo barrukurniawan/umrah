@@ -127,6 +127,41 @@
                     </div>
                 </div>
                 <input type="hidden" name="advanced" id="advancedInput" value="">
+                <input type="hidden" name="travels" id="travelsInput" value="">
+
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-semibold text-gray-700">Travel</label>
+                        <button type="button" onclick="toggleAllTravels()" id="travelToggleBtn"
+                            class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Pilih Semua</button>
+                    </div>
+                    <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Hamdan Tour"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Hamdan Tour</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Lafaya Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Lafaya</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="UMI Tour & Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">UMI Tour</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="PT Wisata Hati Universal"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Fandiego</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="PT Labbaika Cipta Imani"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Labbaika</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Al Hijaz"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Al Hijaz</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Uhud Tour"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Uhud Tour</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Taiba Medina"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Taiba Medina</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Marwa Mustajab"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Marwa Mustajab</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Rahmah Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Rahmah</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Khasanah Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Khasanah</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Umrah Bisa"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Umrah Bisa</button>
+                    </div>
+                </div>
                 
                 <button type="submit"
                     class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
@@ -351,6 +386,50 @@
             if (form && typeof htmx !== 'undefined') {
                 htmx.trigger(form, 'submit');
             }
+        }
+
+        var _selectedTravels = [];
+
+        function toggleTravel(btn) {
+            var name = btn.dataset.travel;
+            var idx = _selectedTravels.indexOf(name);
+            if (idx >= 0) {
+                _selectedTravels.splice(idx, 1);
+                btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+            } else {
+                _selectedTravels.push(name);
+                btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+            }
+            document.getElementById('travelsInput').value = _selectedTravels.join(',');
+            updateTravelToggleBtn();
+        }
+
+        function toggleAllTravels() {
+            var chips = document.querySelectorAll('.travel-chip');
+            if (_selectedTravels.length === chips.length) {
+                _selectedTravels = [];
+                chips.forEach(function(btn) {
+                    btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+                    btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+                });
+            } else {
+                _selectedTravels = [];
+                chips.forEach(function(btn) {
+                    _selectedTravels.push(btn.dataset.travel);
+                    btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                    btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+                });
+            }
+            document.getElementById('travelsInput').value = _selectedTravels.join(',');
+            updateTravelToggleBtn();
+        }
+
+        function updateTravelToggleBtn() {
+            var btn = document.getElementById('travelToggleBtn');
+            var chips = document.querySelectorAll('.travel-chip');
+            btn.textContent = _selectedTravels.length === chips.length ? 'Hapus Semua' : 'Pilih Semua';
         }
 
         function calculateTotal() {

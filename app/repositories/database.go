@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -80,24 +81,18 @@ func importCrawlerData() bool {
 		return false
 	}
 
-	var latest string
+	var allFiles []string
 	for _, e := range entries {
 		name := e.Name()
 		if strings.HasPrefix(name, "all_") && strings.HasSuffix(name, ".json") {
-			if name > latest {
-				latest = name
-			}
+			allFiles = append(allFiles, name)
 		}
 	}
-	if latest == "" {
+	if len(allFiles) == 0 {
 		return false
 	}
 
-	data, err := os.ReadFile(filepath.Join("output", latest))
-	if err != nil {
-		log.Println("[import] failed to read crawler output:", err)
-		return false
-	}
+	sort.Strings(allFiles)
 
 	type CrawlResult struct {
 		Timestamp string                    `json:"timestamp"`
@@ -107,11 +102,32 @@ func importCrawlerData() bool {
 		Error     string                    `json:"error,omitempty"`
 	}
 
-	var results []CrawlResult
-	if err := json.Unmarshal(data, &results); err != nil {
-		log.Println("[import] failed to parse crawler output:", err)
+	latestResult := make(map[string]CrawlResult)
+	for _, fname := range allFiles {
+		data, err := os.ReadFile(filepath.Join("output", fname))
+		if err != nil {
+			continue
+		}
+		var results []CrawlResult
+		if err := json.Unmarshal(data, &results); err != nil {
+			continue
+		}
+		for _, r := range results {
+			key := r.Site + "|" + r.URL
+			latestResult[key] = r
+		}
+	}
+
+	var allResults []CrawlResult
+	for _, r := range latestResult {
+		allResults = append(allResults, r)
+	}
+
+	if len(allResults) == 0 {
 		return false
 	}
+
+	log.Printf("[import] loaded %d results from %d files", len(allResults), len(allFiles))
 
 	// Hard-delete existing data to avoid soft-delete accumulation
 	DB.Unscoped().Where("1 = 1").Delete(&models.DetailPackage{})
@@ -122,7 +138,7 @@ func importCrawlerData() bool {
 	pkgCount := 0
 	detailCount := 0
 
-	for _, result := range results {
+	for _, result := range allResults {
 		if result.Error != "" {
 			continue
 		}
@@ -269,7 +285,7 @@ func cleanHotelName(s string) string {
 }
 
 func isDirectAirline(airline string) bool {
-	direct := []string{"Garuda Indonesia", "Saudia", "Saudi Airlines", "Emirates"}
+	direct := []string{"Garuda Indonesia", "Saudia", "Saudi Airlines"}
 	for _, a := range direct {
 		if strings.Contains(airline, a) {
 			return true

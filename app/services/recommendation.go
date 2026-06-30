@@ -19,6 +19,7 @@ type FilterInput struct {
 	Page     int
 	Sort     string
 	Month    string
+	Travels  string
 }
 
 type ScoredPackage struct {
@@ -41,6 +42,18 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 	}
 
+	travelFilter := make(map[string]bool)
+	hasTravelFilter := false
+	if input.Travels != "" {
+		for _, t := range strings.Split(input.Travels, ",") {
+			t = strings.TrimSpace(t)
+			if t != "" {
+				travelFilter[t] = true
+				hasTravelFilter = true
+			}
+		}
+	}
+
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
 		// Skip packages with no valid departure dates
@@ -56,6 +69,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 
 		if pkg.Price > input.Budget {
+			continue
+		}
+
+		if hasTravelFilter && !travelFilter[pkg.Travel.Name] {
 			continue
 		}
 

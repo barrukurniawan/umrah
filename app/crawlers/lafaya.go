@@ -32,12 +32,7 @@ const (
 )
 
 func (p *LafayaParser) Crawl() ([]CrawledPackage, error) {
-	if len(p.PackageIDs) == 0 {
-		return nil, fmt.Errorf("no package IDs provided")
-	}
-
-	idFilter := strings.Join(p.PackageIDs, ",")
-	url := fmt.Sprintf("%s?id=in.(%s)&select=*", lafayaSupabaseURL, idFilter)
+	url := fmt.Sprintf("%s?type=eq.umrah&is_archived=eq.false&select=*", lafayaSupabaseURL)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
