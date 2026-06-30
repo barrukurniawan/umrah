@@ -320,6 +320,9 @@ func formatDepartureDatesStr(details []models.DetailPackage) string {
 
 func getDistanceMakkah(hotel string) string {
 	h := strings.ToLower(hotel)
+	if strings.Contains(h, "marwa rotana") {
+		return "250m"
+	}
 	if strings.Contains(h, "zamzam") {
 		return "150-250m"
 	}
@@ -332,10 +335,10 @@ func getDistanceMakkah(hotel string) string {
 	if strings.Contains(h, "shohada") {
 		return "600-700m"
 	}
-	if strings.Contains(h, "almassa grand") || strings.Contains(h, "grand al masa") || strings.Contains(h, "al massa grand") {
+	if strings.Contains(h, "almassa grand") || strings.Contains(h, "grand al masa") || strings.Contains(h, "al massa grand") || strings.Contains(h, "ramada dar") || strings.Contains(h, "bader al massa") {
 		return "700m"
 	}
-	if strings.Contains(h, "al massa dar") || strings.Contains(h, "faiezeen") || strings.Contains(h, "fayzeen") {
+	if strings.Contains(h, "al massa dar") || strings.Contains(h, "faiezeen") || strings.Contains(h, "fayzeen") || strings.Contains(h, "dar faizin") {
 		return "750m"
 	}
 	if strings.Contains(h, "jada ajyad") {
@@ -350,11 +353,23 @@ func getDistanceMakkah(hotel string) string {
 	if strings.Contains(h, "majestic") {
 		return "900-1100m"
 	}
+	if strings.Contains(h, "le meridien tower") || strings.Contains(h, "meridien tower") {
+		return "1,5 km"
+	}
+	if strings.Contains(h, "ibis styles") || strings.Contains(h, "ibis style") {
+		return "2,5 km"
+	}
+	if strings.Contains(h, "fajr badea") {
+		return "2 km"
+	}
 	return "700-1000m"
 }
 
 func getDistanceMadinah(hotel string) string {
 	h := strings.ToLower(hotel)
+	if strings.Contains(h, "maden taibah") || strings.Contains(h, "madinah taibah") {
+		return "200m"
+	}
 	if strings.Contains(h, "concorde") || strings.Contains(h, "dar al khair") {
 		return "120m"
 	}
@@ -376,16 +391,29 @@ func getDistanceMadinah(hotel string) string {
 	if strings.Contains(h, "arkan") || strings.Contains(h, "manar") {
 		return "500m"
 	}
+	if strings.Contains(h, "al ansar golden") || strings.Contains(h, "golden tulip") {
+		return "600m"
+	}
+	if strings.Contains(h, "almukhtaro") || strings.Contains(h, "al mukhtara") || strings.Contains(h, "alghorbi") || strings.Contains(h, "al gharbi") {
+		return "1,2 km"
+	}
 	if strings.Contains(h, "sham province") {
 		return "650m"
 	}
-	if strings.Contains(h, "haram") {
-		return "200-400m"
+	if strings.Contains(h, "sky view") {
+		return "1,5 km"
 	}
 	return "200-400m"
 }
 
 func parseMinDistance(dist string) int {
+	if strings.Contains(dist, "km") {
+		d := strings.ReplaceAll(dist, "km", "")
+		d = strings.ReplaceAll(d, ",", ".")
+		d = strings.TrimSpace(d)
+		val, _ := strconv.ParseFloat(d, 64)
+		return int(val * 1000)
+	}
 	d := strings.Split(dist, "-")[0]
 	d = strings.ReplaceAll(d, "m", "")
 	d = strings.TrimSpace(d)
