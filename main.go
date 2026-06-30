@@ -61,20 +61,18 @@ func main() {
 
 	engine.AddFunc("travelURL", func(name string) string {
 		urls := map[string]string{
-			"Hamdan Tour":       "https://hamdantour.id",
-			"Taiba Medina":      "https://taibamedina.com",
-			"Al Hijaz":          "https://alhijaz.co",
-			"Marwa Mustajab":    "https://umrohmustajab.com",
-			"Namira Travel":     "https://namira.travel",
-			"UMI Tour & Travel":       "https://umi.travel",
-			"Rabbani Tour":            "https://rabbanitour.com",
-			"Umrah Bisa":              "https://umrahbisa.com",
-			"Khasanah Travel":         "https://www.khasanahtravel.com",
-			"Labbaika Umrah":          "https://labbaika.co.id/",
-			"Rahmah Travel":           "https://rahmahtravel.id",
-			"Fandiego Tours & Travel": "https://fandiegotravel.com/",
-			"Uhud Tour":               "https://uhudtour.com",
-			"Lafaya Travel":           "https://www.lafayatravel.com",
+			"Hamdan Tour":               "https://hamdantour.id",
+			"Taiba Medina":              "https://taibamedina.com",
+			"Al Hijaz":                  "https://alhijaz.co",
+			"Marwa Mustajab":            "https://umrohmustajab.com",
+			"UMI Tour & Travel":         "https://umi.travel",
+			"Umrah Bisa":                "https://umrahbisa.com",
+			"Khasanah Travel":           "https://www.khasanahtravel.com",
+			"PT Labbaika Cipta Imani":   "https://labbaika.co.id/",
+			"Rahmah Travel":             "https://rahmahtravel.id",
+			"PT Wisata Hati Universal":  "https://fandiegotravel.com/",
+			"Uhud Tour":                 "https://uhudtour.com",
+			"Lafaya Travel":             "https://www.lafayatravel.com",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -84,18 +82,18 @@ func main() {
 
 	engine.AddFunc("whatsappURL", func(name string) string {
 		urls := map[string]string{
-			"Hamdan Tour":    "https://api.whatsapp.com/send/?phone=6282120009897&text=Assalamualaikum%2C+mohon+informasi+umrah+dari+HAMDAN+TOUR",
-			"Taiba Medina":   "https://api.whatsapp.com/send/?phone=6285380000883&text=Assalamu%27alaikum%2C+saya+ingin+bertanya+mengenai+layanan+Umroh+Taiba+Medina+Tour",
-			"Al Hijaz":       "https://api.whatsapp.com/send/?text=%2AALHIJAZ+INDOWISATA%2A%0AAssalamualaikum%2C+saya+ingin+informasi+paket+umroh",
-			"Marwa Mustajab":          "https://api.whatsapp.com/send/?phone=6288214793139&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh",
-			"Rabbani Tour":            "https://api.whatsapp.com/send/?phone=6281297505402&text=Assalamu%27alaikum%2C+saya+ingin+konsultasi+umroh",
-			"Umrah Bisa":              "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+Boleh+info+lebih+lanjut+untuk+paket+umrahnya%3F",
-			"Khasanah Travel":         "https://api.whatsapp.com/send/?phone=6282124144331&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
-			"Labbaika Umrah":          "https://api.whatsapp.com/send/?phone=6281313557780&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
-			"Rahmah Travel":           "https://api.whatsapp.com/send/?phone=6282246386908&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
-			"Fandiego Tours & Travel": "https://api.whatsapp.com/send/?phone=628111718567&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
-			"Uhud Tour":               "https://api.whatsapp.com/send/?phone=6281113304343&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Uhud+Tour",
-			"Lafaya Travel":           "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
+			"Hamdan Tour":               "https://api.whatsapp.com/send/?phone=6282120009897&text=Assalamualaikum%2C+mohon+informasi+umrah+dari+HAMDAN+TOUR",
+			"Taiba Medina":              "https://api.whatsapp.com/send/?phone=6285380000883&text=Assalamu%27alaikum%2C+saya+ingin+bertanya+mengenai+layanan+Umroh+Taiba+Medina+Tour",
+			"Al Hijaz":                  "https://api.whatsapp.com/send/?text=%2AALHIJAZ+INDOWISATA%2A%0AAssalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Marwa Mustajab":            "https://api.whatsapp.com/send/?phone=6288214793139&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Umrah Bisa":                "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+Boleh+info+lebih+lanjut+untuk+paket+umrahnya%3F",
+			"Khasanah Travel":           "https://api.whatsapp.com/send/?phone=6282124144331&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
+			"PT Labbaika Cipta Imani":   "https://api.whatsapp.com/send/?phone=6281313557780&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
+			"Rahmah Travel":             "https://api.whatsapp.com/send/?phone=6282246386908&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
+			"PT Wisata Hati Universal":  "https://api.whatsapp.com/send/?phone=628111718567&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
+			"Uhud Tour":                 "https://api.whatsapp.com/send/?phone=6281113304343&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Uhud+Tour",
+			"Lafaya Travel":             "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
+			"UMI Tour & Travel":         "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+UMI+Tour",
 		}
 		if u, ok := urls[name]; ok {
 			return u
