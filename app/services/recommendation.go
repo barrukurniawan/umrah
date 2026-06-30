@@ -332,6 +332,9 @@ func getDistanceMakkah(hotel string) string {
 	if strings.Contains(h, "anjum") {
 		return "450-550m"
 	}
+	if strings.Contains(h, "maysan") || strings.Contains(h, "almaqam") || strings.Contains(h, "al maqam") {
+		return "550-600m"
+	}
 	if strings.Contains(h, "shohada") {
 		return "600-700m"
 	}
