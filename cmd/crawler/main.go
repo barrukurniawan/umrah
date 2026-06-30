@@ -141,7 +141,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-khasanah",
 			},
 			{
-				TravelName:     "Labbaika Umrah",
+				TravelName:     "PT Labbaika Cipta Imani",
 				PackageName:    "Labbaika Umrah & Hajj Tour 9 Hari",
 				Price:          26900000,
 				Duration:       9,
@@ -180,7 +180,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-rahmah-reguler",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Hemat (Ustadz Abdul Somad)",
 				Price:          33900000,
 				Duration:       9,
@@ -193,7 +193,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-9-hemat",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Reguler (Ustadz Abdul Somad)",
 				Price:          36900000,
 				Duration:       9,
@@ -206,7 +206,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-9-reguler",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Gold (Ustadz Abdul Somad)",
 				Price:          40900000,
 				Duration:       9,
@@ -219,7 +219,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-9-gold",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Diamond (Ustadz Abdul Somad)",
 				Price:          46900000,
 				Duration:       9,
@@ -232,7 +232,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-9-diamond",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 11 Hari Hemat (Ustadz Abdul Somad)",
 				Price:          35900000,
 				Duration:       11,
@@ -245,7 +245,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-11-hemat",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 11 Hari Reguler (Ustadz Abdul Somad)",
 				Price:          38900000,
 				Duration:       11,
@@ -258,7 +258,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-11-reguler",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 11 Hari Gold (Ustadz Abdul Somad)",
 				Price:          43900000,
 				Duration:       11,
@@ -271,7 +271,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-11-gold",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 11 Hari Diamond (Ustadz Abdul Somad)",
 				Price:          50900000,
 				Duration:       11,
@@ -284,7 +284,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-11-diamond",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Hemat (Juli)",
 				Price:          24900000,
 				Duration:       9,
@@ -297,7 +297,7 @@ func getManualData() CrawlResult {
 				URL:            "manual-fandiego-9-hemat-juli",
 			},
 			{
-				TravelName:     "Fandiego Tours & Travel",
+				TravelName:     "PT Wisata Hati Universal",
 				PackageName:    "Umrah Fandiego 9 Hari Reguler (Juli)",
 				Price:          27900000,
 				Duration:       9,
