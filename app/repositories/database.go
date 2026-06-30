@@ -61,6 +61,7 @@ func importCrawlerData() bool {
 		"Lafaya Travel":           10000000,
 		"Al Hijaz":                5000000,
 		"Hamdan Tour":             5000000,
+		"Jejak Imani":             5000000,
 	}
 
 	ratingOverrides := map[string]float64{
@@ -74,6 +75,7 @@ func importCrawlerData() bool {
 		"Umrah Bisa":        4.5,
 		"Lafaya Travel":     4.4,
 		"Uhud Tour":         4.5,
+		"Jejak Imani":       4.5,
 	}
 
 	entries, err := os.ReadDir("output")

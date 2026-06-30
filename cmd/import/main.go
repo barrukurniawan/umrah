@@ -116,6 +116,12 @@ func importPackage(db *gorm.DB, site string, cp CrawledPackage) {
 		dp = 5000000
 	} else if travelName == "Hamdan Tour" {
 		dp = 5000000
+	} else if travelName == "Jejak Imani" {
+		if strings.Contains(cp.PackageName, "Ruby") || strings.Contains(cp.PackageName, "Sapphire") {
+			dp = 10000000
+		} else {
+			dp = 5000000
+		}
 	}
 
 	pkg := models.Package{
