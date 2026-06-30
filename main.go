@@ -103,6 +103,46 @@ func main() {
 		return "#"
 	})
 
+	engine.AddFunc("gmapsMakkahURL", func(hotel string) string {
+		if hotel == "" {
+			return "#"
+		}
+		return "https://www.google.com/maps/dir/Kaaba,+Mecca,+Saudi+Arabia/" + strings.ReplaceAll(hotel, " ", "+") + ",+Mecca,+Saudi+Arabia"
+	})
+
+	engine.AddFunc("gmapsMadinahURL", func(hotel string) string {
+		if hotel == "" {
+			return "#"
+		}
+		return "https://www.google.com/maps/dir/Masjid+Nabawi,+Madinah,+Saudi+Arabia/" + strings.ReplaceAll(hotel, " ", "+") + ",+Madinah,+Saudi+Arabia"
+	})
+
+	engine.AddFunc("airlineURL", func(name string) string {
+		urls := map[string]string{
+			"Garuda Indonesia":    "https://www.garuda-indonesia.com",
+			"Saudia":              "https://www.saudia.com",
+			"Saudi Airlines":      "https://www.saudia.com",
+			"Saudia Airlines":     "https://www.saudia.com",
+			"Qatar Airways":       "https://www.qatarairways.com",
+			"Emirates":            "https://www.emirates.com",
+			"Etihad Airways":      "https://www.etihad.com",
+			"Oman Air":            "https://www.omanair.com",
+			"Oman Airlines":       "https://www.omanair.com",
+			"Turkish Airlines":    "https://www.turkishairlines.com",
+			"Royal Brunei Airlines": "https://www.flyroyalbrunei.com",
+			"Scoot":               "https://www.flyscoot.com",
+			"IndiGo":              "https://www.goindigo.in",
+			"EgyptAir":            "https://www.egyptair.com",
+			"AirAsia":             "https://www.airasia.com",
+		}
+		for k, u := range urls {
+			if strings.Contains(name, k) {
+				return u
+			}
+		}
+		return "#"
+	})
+
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
