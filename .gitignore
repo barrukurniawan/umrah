@@ -27,3 +27,7 @@ vendor/
 
 # Agents
 /AGENTS.md
+
+# Analitik & GeoIP
+data/analytics.*
+data/*.mmdb

@@ -22,7 +22,7 @@ func BeaconHandler(c *fiber.Ctx) error {
 	if len(c.Body()) > 2048 || json.Unmarshal(c.Body(), &b) != nil || !beaconTypes[b.Type] {
 		return c.SendStatus(fiber.StatusNoContent)
 	}
-	visitor, device, bot := FromRequest(c)
+	visitor, vid, device, bot := FromRequest(c)
 	if bot {
 		return c.SendStatus(fiber.StatusNoContent)
 	}
@@ -32,6 +32,7 @@ func BeaconHandler(c *fiber.Ctx) error {
 	Record(Event{
 		Type:     b.Type,
 		Visitor:  visitor,
+		VID:      vid,
 		Device:   device,
 		Travel:   truncate(b.Travel, 80),
 		Package:  truncate(b.Package, 200),
@@ -57,16 +58,16 @@ type Impression struct {
 
 // RecordSearch: halaman 1 dihitung sebagai pencarian; setiap kartu yang tampil dicatat sebagai "impr".
 func RecordSearch(c *fiber.Ctx, budget, page int, meta SearchMeta, shown []Impression) {
-	visitor, device, bot := FromRequest(c)
+	visitor, vid, device, bot := FromRequest(c)
 	if bot {
 		return
 	}
 	if page <= 1 {
 		m, _ := json.Marshal(meta)
-		Record(Event{Type: "search", Visitor: visitor, Device: device, Budget: budget, Meta: truncate(string(m), 500)})
+		Record(Event{Type: "search", Visitor: visitor, VID: vid, Device: device, Budget: budget, Meta: truncate(string(m), 500)})
 	}
 	for _, s := range shown {
-		Record(Event{Type: "impr", Visitor: visitor, Device: device, Travel: truncate(s.Travel, 80),
+		Record(Event{Type: "impr", Visitor: visitor, VID: vid, Device: device, Travel: truncate(s.Travel, 80),
 			Package: truncate(s.Package, 200), Price: s.Price, Position: s.Position, Budget: budget})
 	}
 }

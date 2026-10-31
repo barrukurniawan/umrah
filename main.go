@@ -174,6 +174,11 @@ func main() {
 		analyticsPath = "data/analytics.db"
 	}
 	analytics.Init(analyticsPath)
+	geoPath := os.Getenv("GEOIP_DB_PATH")
+	if geoPath == "" {
+		geoPath = "data/dbip-city-lite.mmdb"
+	}
+	analytics.InitGeo(geoPath)
 
 	app.Use(analytics.ViewMiddleware)
 	app.Get("/", handlers.HomePage)

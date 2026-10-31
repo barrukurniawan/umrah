@@ -148,6 +148,50 @@
         </div>
         {{end}}
 
+        {{if eq .Tab "lokasi"}}
+        <p class="text-sm text-gray-600 mb-4">Perkiraan lokasi dari jaringan internet pengunjung ({{.R.Location.Known}} terdeteksi{{if .R.Location.Unknown}}, {{.R.Location.Unknown}} tidak diketahui{{end}}). Pengguna data seluler sering terbaca di kota gateway operator (mis. Jakarta), jadi anggap ini perkiraan tingkat provinsi.</p>
+        <div class="grid md:grid-cols-3 gap-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Provinsi (Indonesia)</h2>
+                {{template "bars" .R.Location.Regions}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Kota</h2>
+                {{template "bars" .R.Location.Cities}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Negara</h2>
+                {{template "bars" .R.Location.Countries}}
+            </section>
+        </div>
+        {{end}}
+
+        {{if eq .Tab "frekuensi"}}
+        {{with .R.Frequency}}
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Pengunjung baru</p><p class="text-2xl font-bold tabular-nums mt-1">{{.New}}</p><p class="text-xs text-gray-400 mt-1">{{.NewShare}} dari {{.Visitors}}</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Pengunjung kembali</p><p class="text-2xl font-bold tabular-nums mt-1 text-emerald-700">{{.Returning}}</p><p class="text-xs text-gray-400 mt-1">{{.RetShare}} dari {{.Visitors}}</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Rata-rata kunjungan / orang</p><p class="text-2xl font-bold tabular-nums mt-1">{{.AvgVisits}}</p><p class="text-xs text-gray-400 mt-1">1 kunjungan = 1 hari berbeda</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Jeda antar kunjungan</p><p class="text-2xl font-bold tabular-nums mt-1">{{.AvgGap}}</p><p class="text-xs text-gray-400 mt-1">rata-rata, yang datang ≥ 2 kali</p></div>
+        </section>
+        <div class="grid md:grid-cols-2 gap-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Berapa kali datang (di periode ini)</h2>
+                {{template "bars" .Distribution}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Corong: buka → cari → klik WA</h2>
+                <ol class="space-y-3 text-sm">
+                    <li class="flex justify-between"><span>Pengunjung</span><span class="font-semibold tabular-nums">{{.Visitors}}</span></li>
+                    <li class="flex justify-between"><span>Mencari paket</span><span class="tabular-nums"><span class="font-semibold">{{.Searchers}}</span> <span class="text-gray-400">· {{.SearchRate}}</span></span></li>
+                    <li class="flex justify-between"><span>Lalu klik WA travel</span><span class="tabular-nums"><span class="font-semibold text-emerald-700">{{.WAClickers}}</span> <span class="text-gray-400">· {{.WARate}} dari yang mencari</span></span></li>
+                </ol>
+            </section>
+        </div>
+        <p class="text-xs text-gray-400 mt-4">Dihitung dari ID anonim di cookie (kode acak, bukan IP). Orang yang menghapus cookie atau ganti browser/HP terhitung sebagai pengunjung baru.</p>
+        {{end}}
+        {{end}}
+
         {{if eq .Tab "live"}}
         <div class="flex items-center gap-2 mb-4">
             <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span>
@@ -158,7 +202,7 @@
             {{if .R.Live}}
             <table class="w-full text-sm">
                 <thead class="text-left text-xs text-gray-500 border-b">
-                    <tr><th class="py-2 pr-3">Jam</th><th class="py-2 px-2">Aktivitas</th><th class="py-2 px-2">Detail</th><th class="py-2 px-2">Sumber</th><th class="py-2 pl-2">Perangkat</th></tr>
+                    <tr><th class="py-2 pr-3">Jam</th><th class="py-2 px-2">Aktivitas</th><th class="py-2 px-2">Detail</th><th class="py-2 px-2">Lokasi</th><th class="py-2 px-2">Kunjungan</th><th class="py-2 px-2">Sumber</th><th class="py-2 pl-2">Perangkat</th></tr>
                 </thead>
                 <tbody>
                     {{range .R.Live}}
@@ -166,6 +210,8 @@
                         <td class="py-2 pr-3 tabular-nums text-gray-500">{{.Time}}</td>
                         <td class="py-2 px-2 font-medium">{{.Type}}</td>
                         <td class="py-2 px-2 text-gray-600">{{.Detail}}</td>
+                        <td class="py-2 px-2 text-gray-600">{{.Place}}</td>
+                        <td class="py-2 px-2">{{if eq .Visit 1}}<span class="text-xs bg-sky-50 text-sky-700 rounded-full px-2 py-0.5">baru</span>{{else if gt .Visit 1}}<span class="text-xs bg-emerald-50 text-emerald-700 rounded-full px-2 py-0.5">ke-{{.Visit}}</span>{{end}}</td>
                         <td class="py-2 px-2">{{.Source}}</td>
                         <td class="py-2 pl-2">{{.Device}}</td>
                     </tr>
@@ -176,6 +222,9 @@
         </section>
         {{end}}
     </main>
+    <footer class="max-w-6xl mx-auto px-4 pb-8 text-[11px] text-gray-400">
+        Lokasi: <a href="https://db-ip.com" class="underline" target="_blank" rel="noopener">IP Geolocation by DB-IP</a> (CC BY 4.0). IP pengunjung tidak disimpan.
+    </footer>
 </body>
 
 </html>

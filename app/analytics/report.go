@@ -76,7 +76,8 @@ type PackageRow struct {
 }
 
 type LiveRow struct {
-	Time, Type, Source, Device, Detail string
+	Time, Type, Source, Device, Detail, Place string
+	Visit                                     int // kunjungan ke-N (hari berbeda); 1 = baru
 }
 
 type Report struct {
@@ -91,6 +92,8 @@ type Report struct {
 	ZeroResults                        int
 	Live                               []LiveRow
 	LiveVisitors                       int
+	Location                           Location
+	Frequency                          Frequency
 }
 
 func count(r Range, where string, args ...any) int {
@@ -288,11 +291,27 @@ func Build(r Range) Report {
 				detail += " — " + e.Package
 			}
 		}
+		loc := e
+		if e.Type != "view" {
+			if v := lastView(e.VID, e.TS); v.ID != 0 {
+				loc = v
+				e.Source = v.Source
+			}
+		}
+		place := loc.City
+		if loc.Region != "" && loc.Region != loc.City {
+			place = joinNonEmpty(place, loc.Region)
+		}
+		if loc.Country != "" && loc.Country != "Indonesia" {
+			place = joinNonEmpty(place, loc.Country)
+		}
 		rep.Live = append(rep.Live, LiveRow{
 			Time: time.Unix(e.TS, 0).In(WIB).Format("15:04"), Type: typeLabel(e.Type),
-			Source: e.Source, Device: e.Device, Detail: detail,
+			Source: e.Source, Device: e.Device, Detail: detail, Place: place, Visit: visitNumber(e.VID, e.TS),
 		})
 	}
+	rep.Location = buildLocation(r)
+	rep.Frequency = buildFrequency(r)
 	return rep
 }
 
@@ -361,4 +380,11 @@ func rupiah(n int) string {
 		s = s[:len(s)-3]
 	}
 	return strings.Join(append([]string{s}, parts...), ".")
+}
+
+func joinNonEmpty(a, b string) string {
+	if a == "" {
+		return b
+	}
+	return a + ", " + b
 }

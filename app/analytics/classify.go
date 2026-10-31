@@ -1,6 +1,8 @@
 package analytics
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"net"
 	"net/url"
 	"regexp"
@@ -96,30 +98,60 @@ func ClientIP(c *fiber.Ctx) string {
 
 // Middleware mencatat "view" untuk GET halaman (bukan aset, admin, atau beacon).
 func ViewMiddleware(c *fiber.Ctx) error {
-	err := c.Next()
 	path := c.Path()
-	if c.Method() != fiber.MethodGet || c.Response().StatusCode() != fiber.StatusOK ||
-		strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/admin") || path == "/t" || path == "/favicon.ico" {
-		return err
-	}
+	page := c.Method() == fiber.MethodGet && !strings.HasPrefix(path, "/static") && !strings.HasPrefix(path, "/admin") &&
+		path != "/t" && path != "/favicon.ico"
 	ua := c.Get(fiber.HeaderUserAgent)
-	if IsBot(ua) {
+	if !page || IsBot(ua) {
+		return c.Next()
+	}
+	vid := ensureVID(c)
+	err := c.Next()
+	if c.Response().StatusCode() != fiber.StatusOK {
 		return err
 	}
+	ip := ClientIP(c)
+	city, region, country := Locate(ip)
 	Record(Event{
 		Type:    "view",
-		Visitor: VisitorID(ClientIP(c), ua),
+		Visitor: VisitorID(ip, ua),
+		VID:     vid,
 		Source:  ClassifySource(c.Get(fiber.HeaderReferer), c.Query("utm_source"), c.Query("fbclid") != ""),
 		Device:  Device(ua),
 		Path:    truncate(path, 200),
+		City:    city,
+		Region:  region,
+		Country: country,
 	})
 	return err
 }
 
-// Visitor + perangkat untuk event selain view (pencarian, klik).
-func FromRequest(c *fiber.Ctx) (visitor, device string, bot bool) {
+const vidCookie = "uk_vid"
+
+var vidRe = regexp.MustCompile(`^[0-9a-f]{32}$`)
+
+// ensureVID memberi ID anonim acak (cookie 1 tahun) untuk menghitung kunjungan ulang; tanpa data pribadi.
+func ensureVID(c *fiber.Ctx) string {
+	if v := c.Cookies(vidCookie); vidRe.MatchString(v) {
+		return v
+	}
+	buf := make([]byte, 16)
+	rand.Read(buf)
+	v := hex.EncodeToString(buf)
+	c.Cookie(&fiber.Cookie{
+		Name: vidCookie, Value: v, Path: "/", MaxAge: 365 * 24 * 3600, HTTPOnly: true, SameSite: "Lax",
+		Secure: c.Protocol() == "https" || c.Get("X-Forwarded-Proto") == "https",
+	})
+	return v
+}
+
+// Visitor harian, ID anonim cookie, dan perangkat untuk event selain view (pencarian, klik).
+func FromRequest(c *fiber.Ctx) (visitor, vid, device string, bot bool) {
 	ua := c.Get(fiber.HeaderUserAgent)
-	return VisitorID(ClientIP(c), ua), Device(ua), IsBot(ua)
+	if v := c.Cookies(vidCookie); vidRe.MatchString(v) {
+		vid = v
+	}
+	return VisitorID(ClientIP(c), ua), vid, Device(ua), IsBot(ua)
 }
 
 func truncate(s string, n int) string {

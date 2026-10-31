@@ -28,6 +28,8 @@ const (
 var adminTabs = []struct{ Key, Label string }{
 	{"ringkasan", "Ringkasan"},
 	{"sumber", "Sumber Trafik"},
+	{"lokasi", "Lokasi"},
+	{"frekuensi", "Frekuensi"},
 	{"travel", "Travel & Paket"},
 	{"pencarian", "Pencarian"},
 	{"live", "Live"},

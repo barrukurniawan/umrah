@@ -32,6 +32,12 @@ type Event struct {
 	Position int
 	Budget   int
 	Meta     string `gorm:"size:500"`
+	// VID: ID anonim dari cookie (acak, 1 tahun) untuk frekuensi kunjungan lintas hari.
+	VID string `gorm:"column:vid;size:32;index"`
+	// Lokasi hasil lookup GeoIP saat kunjungan; IP sendiri tidak disimpan.
+	City    string `gorm:"size:60"`
+	Region  string `gorm:"size:60"`
+	Country string `gorm:"size:60"`
 }
 
 // Data mentah disimpan ±13 bulan.
