@@ -6,24 +6,77 @@
     <meta name="robots" content="noindex">
 </head>
 
-<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700 flex items-center justify-center px-4">
-    <main class="w-full max-w-md bg-white border border-emerald-100 rounded-2xl shadow-sm p-6">
-        <p class="text-3xl mb-2">🕋</p>
-        <h1 class="text-xl font-bold text-gray-900 mb-1">Assalamu'alaikum, {{firstName .Pending.Name}}!</h1>
-        <p class="text-sm text-gray-600 mb-4">Sebelum lanjut, ini data yang kami simpan untuk akunmu:</p>
-        <ul class="text-sm text-gray-700 space-y-2 mb-5">
-            <li>✓ Nama, email, dan foto profil dari Google (tanpa akses ke Gmail, Drive, atau kontak).</li>
-            <li>✓ Data yang kamu isi sendiri: paket tersimpan, dan nanti tabungan & rencana.</li>
-            <li>✓ Tidak dijual dan tidak dibagikan ke travel. Bisa diunduh atau dihapus kapan saja di menu Akun.</li>
-        </ul>
-        <p class="text-xs text-gray-500 mb-5">Selengkapnya di <a href="/privasi" target="_blank" class="underline">kebijakan privasi</a>.</p>
-        <form method="POST" action="/akun/persetujuan">
-            <input type="hidden" name="next" value="{{.Next}}">
-            <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg py-2.5">Setuju & lanjutkan</button>
-        </form>
-        <form method="POST" action="/akun/persetujuan/tolak" class="mt-2">
-            <button class="w-full text-sm text-gray-500 hover:text-rose-600 py-2">Tidak jadi (hapus akun yang baru dibuat)</button>
-        </form>
+<body class="min-h-screen bg-[radial-gradient(ellipse_at_top,_#d1fae5_0%,_#f8fafc_55%)] text-gray-700 flex items-center justify-center px-4 py-10">
+    <main class="w-full max-w-[420px] bg-white rounded-3xl shadow-[0_20px_60px_-20px_rgba(6,95,70,0.25)] ring-1 ring-emerald-900/5 overflow-hidden">
+        <header class="relative bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 px-7 pt-7 pb-14 text-white">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 3000" class="w-9 h-9 text-white"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M 2163.261719 1020.28125 L 1505.371094 839.609375 L 839.550781 1022.460938 L 838.96875 1244.910156 L 1504.699219 1117.5 L 1505.039062 1258.578125 L 2162.789062 1373.691406 L 2162.679688 1454.511719 L 2143.199219 1452.359375 L 2142.261719 1565.300781 L 2162.53125 1568.171875 L 2161.828125 2089.578125 L 1502.179688 2160.390625 L 836.734375 2094.445312 L 838.121094 1567.691406 L 856.601562 1567.738281 L 857.347656 1452.550781 L 838.414062 1455.058594 L 838.621094 1375.488281 L 1504.359375 1258.578125 L 1504.699219 1117.5 L 2162.960938 1243.480469 Z M 2094.96875 1441.859375 L 2070.960938 1504.519531 L 2095.730469 1562.308594 L 2120.859375 1503.390625 Z M 1869.839844 1402.089844 L 1845.828125 1464.75 L 1870.589844 1522.53125 L 1895.730469 1463.621094 Z M 1611.699219 1360.058594 L 1587.691406 1422.71875 L 1612.449219 1480.5 L 1637.589844 1421.601562 Z M 1386.578125 1362.320312 L 1362.570312 1424.96875 L 1387.328125 1482.75 L 1412.46875 1423.851562 Z M 1563.128906 1352.320312 L 1503.96875 1344.378906 L 1438.179688 1352.320312 L 1438.179688 1477.511719 L 1503.96875 1469.578125 L 1563.128906 1477.511719 Z M 1920.320312 1529.871094 L 2046.578125 1551.238281 L 2046.578125 1432.011719 L 1920.320312 1410.640625 Z M 1666.871094 1495.789062 L 1822.589844 1518.21875 L 1822.589844 1393.019531 L 1666.871094 1370.578125 Z M 1129.378906 1405.648438 L 1105.359375 1468.308594 L 1130.121094 1526.089844 L 1155.261719 1467.179688 Z M 906.496094 1441.671875 L 882.488281 1504.328125 L 907.246094 1562.121094 L 932.386719 1503.210938 Z M 1180.789062 1395.089844 L 1336.5 1372.648438 L 1336.5 1497.851562 L 1180.789062 1520.28125 Z M 959.785156 1435.011719 L 1080.601562 1414.320312 L 1080.601562 1529.800781 L 959.785156 1550.5 L 959.785156 1435.011719 " />
+                </svg>
+                <span class="text-lg font-bold tracking-tight">Umrohku</span>
+            </div>
+            <p class="mt-6 text-sm text-emerald-100">Assalamu'alaikum,</p>
+            <h1 class="text-[26px] leading-tight font-bold tracking-tight">{{.Pending.Name}}</h1>
+            <svg class="absolute -bottom-px left-0 w-full h-6 text-white" viewBox="0 0 400 24" preserveAspectRatio="none" fill="currentColor"><path d="M0 24h400V8C330 22 270 0 200 8S70 22 0 6z"/></svg>
+        </header>
+
+        <div class="px-7 -mt-9 relative">
+            <div class="flex items-center gap-3 bg-white rounded-2xl ring-1 ring-gray-200 shadow-sm px-4 py-3">
+                {{if .Pending.Picture}}<img src="{{.Pending.Picture}}" alt="" referrerpolicy="no-referrer" class="w-10 h-10 rounded-full ring-2 ring-emerald-100">
+                {{else}}<span class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-semibold">{{initial .Pending.Name}}</span>{{end}}
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{.Pending.Email}}</p>
+                    <p class="text-xs text-gray-500">Masuk dengan Google</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="px-7 pt-6 pb-7">
+            <p class="text-[15px] text-gray-600 leading-relaxed">Selamat datang! Sebelum mulai, ini yang perlu kamu tahu tentang datamu.</p>
+
+            <ul class="mt-5 space-y-4">
+                <li class="flex gap-3">
+                    <span class="shrink-0 w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                    </span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Profil Google</p>
+                        <p class="text-sm text-gray-500 leading-snug">Nama, email, dan foto profil. Kami tidak bisa membuka Gmail, Drive, atau kontakmu.</p>
+                    </div>
+                </li>
+                <li class="flex gap-3">
+                    <span class="shrink-0 w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>
+                    </span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Data yang kamu isi</p>
+                        <p class="text-sm text-gray-500 leading-snug">Paket tersimpan, lalu tabungan dan rencana umroh di fitur berikutnya.</p>
+                    </div>
+                </li>
+                <li class="flex gap-3">
+                    <span class="shrink-0 w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </span>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Tetap milikmu</p>
+                        <p class="text-sm text-gray-500 leading-snug">Tidak dijual atau dibagikan ke travel. Unduh atau hapus kapan saja dari menu Akun.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <form method="POST" action="/akun/persetujuan" class="mt-7">
+                <input type="hidden" name="next" value="{{.Next}}">
+                <button class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-xl py-3 shadow-sm shadow-emerald-600/30 transition-colors">Setuju &amp; lanjutkan</button>
+            </form>
+            <form method="POST" action="/akun/persetujuan/tolak" class="mt-2 text-center">
+                <button class="text-sm text-gray-400 hover:text-rose-600 py-2 transition-colors">Batal, hapus akun ini</button>
+            </form>
+
+            <p class="mt-4 pt-4 border-t border-gray-100 text-center text-xs text-gray-400 leading-relaxed">Dengan melanjutkan, kamu menyetujui
+                <a href="/privasi" target="_blank" class="text-gray-500 underline underline-offset-2 hover:text-emerald-700">Kebijakan Privasi</a> Umrohku.</p>
+        </section>
     </main>
 </body>
 

@@ -229,5 +229,9 @@ func main() {
 	app.Post("/admin/login", handlers.AdminLogin)
 	app.Post("/admin/logout", handlers.AdminLogout)
 
-	log.Fatal(app.Listen(":3000"))
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "3000"
+	}
+	log.Fatal(app.Listen(":" + port))
 }
