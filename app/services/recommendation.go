@@ -22,8 +22,17 @@ type FilterInput struct {
 	Travels  string
 }
 
+// Travel partner/promo: selalu di urutan teratas rekomendasi default (selama masuk budget).
+var featuredTravels = map[string]bool{
+	"Alviandra Travel": true,
+}
+
+// Paket promo boleh sedikit di atas budget (mis. Rp28,5 jt sudah tampil di budget Rp28 jt).
+const featuredBudgetSlack = 500000
+
 type ScoredPackage struct {
 	models.Package
+	Featured          bool
 	Score             int
 	FacilityList      []string
 	DepartureDatesStr string
@@ -54,21 +63,28 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 	}
 
+	// Hanya keberangkatan mulai hari ini (WIB); tanggal "2006-01-02" aman dibandingkan sebagai string.
+	today := time.Now().In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02")
+
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
-		// Skip packages with no valid departure dates
-		hasValidDate := false
+		// Buang jadwal yang sudah lewat; paket tanpa jadwal mendatang tidak ditampilkan.
+		var upcoming []models.DetailPackage
 		for _, d := range pkg.Details {
-			if d.DepartureDate != "" {
-				hasValidDate = true
-				break
+			if d.DepartureDate != "" && d.DepartureDate >= today {
+				upcoming = append(upcoming, d)
 			}
 		}
-		if !hasValidDate {
+		if len(upcoming) == 0 {
 			continue
 		}
+		pkg.Details = upcoming
 
-		if pkg.Price > input.Budget {
+		budget := input.Budget
+		if featuredTravels[pkg.Travel.Name] {
+			budget += featuredBudgetSlack
+		}
+		if pkg.Price > budget {
 			continue
 		}
 
@@ -158,6 +174,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 		scored = append(scored, ScoredPackage{
 			Package:           pkg,
+			Featured:          featuredTravels[pkg.Travel.Name],
 			Score:             score,
 			FacilityList:      parseFacilities(pkg.Facilities),
 			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
@@ -184,6 +201,9 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		case "direct_only":
 			return scored[i].Price < scored[j].Price
 		default:
+			if scored[i].Featured != scored[j].Featured {
+				return scored[i].Featured
+			}
 			return scored[i].Score > scored[j].Score
 		}
 	})

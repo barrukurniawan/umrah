@@ -74,6 +74,8 @@ func main() {
 			"Uhud Tour":                 "https://uhudtour.com",
 			"Lafaya Travel":             "https://www.lafayatravel.com",
 			"Jejak Imani":               "https://www.jejakimani.com",
+			"Alviandra Travel":          "https://www.instagram.com/alviandratravel",
+			"Rabbani Tour":              "https://rabbanitour.com",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -96,6 +98,8 @@ func main() {
 			"Lafaya Travel":             "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
 			"UMI Tour & Travel":         "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+UMI+Tour",
 			"Jejak Imani":               "https://api.whatsapp.com/send/?phone=6281519898880&text=Assalamualaikum%20Susi%2C%20saya%20mau%20tanya%20info%20paket%20umroh%20di%20Jejak%20Imani.%20Saya%20lihat%20dari%20website.",
+			"Rabbani Tour":              "https://api.whatsapp.com/send/?phone=6282280001799&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Rabbani+Tour",
+			"Alviandra Travel":          "https://api.whatsapp.com/send/?phone=6285183032548&text=Assalamualaikum%2C+saya+ingin+informasi+paket+Umroh+Plus+City+Tour+Oman+%2815+Januari+2027%29.+Saya+lihat+dari+Umrohku.",
 		}
 		if u, ok := urls[name]; ok {
 			return u

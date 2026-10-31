@@ -67,6 +67,7 @@
             data-dp="{{$v.DownPayment}}" data-score="{{$v.Score}}">
             <div class="flex justify-between items-start mb-3">
                 <div>
+                    {{if $v.Featured}}<span class="inline-block mb-1 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">🔥 Promo Spesial</span>{{end}}
                     <h3 class="font-bold text-lg text-gray-900">{{$v.Travel.Name}}</h3>
                     <p class="text-sm text-gray-500">{{$v.Name}}</p>
                 </div>
