@@ -86,6 +86,14 @@ func SavedPage(c *fiber.Ctx) error {
 			rows = append(rows, r)
 		}
 		m["Saved"] = rows
+		// Insight per paket yang masih tersedia, urut sama dengan daftar (paling baru disimpan = default).
+		var insights []*services.Insight
+		for _, r := range rows {
+			if in := services.BuildInsight(r.Current); in != nil {
+				insights = append(insights, in)
+			}
+		}
+		m["Insights"] = insights
 	}
 	return c.Render("saved", viewer(c, m))
 }
