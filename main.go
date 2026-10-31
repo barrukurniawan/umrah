@@ -185,6 +185,9 @@ func main() {
 	app.Post("/recommendations", handlers.GetRecommendations)
 	app.Post("/chat", handlers.HandleChat)
 	app.Post("/t", analytics.BeaconHandler)
+	app.Get("/privasi", handlers.PrivacyPage)
+	app.Post("/privasi/opt-out", handlers.PrivacyOptOut)
+	app.Post("/privasi/opt-in", handlers.PrivacyOptIn)
 
 	app.Get("/admin", handlers.AdminDashboard)
 	app.Get("/admin/login", handlers.AdminLoginPage)

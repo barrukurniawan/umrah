@@ -102,7 +102,7 @@ func ViewMiddleware(c *fiber.Ctx) error {
 	page := c.Method() == fiber.MethodGet && !strings.HasPrefix(path, "/static") && !strings.HasPrefix(path, "/admin") &&
 		path != "/t" && path != "/favicon.ico"
 	ua := c.Get(fiber.HeaderUserAgent)
-	if !page || IsBot(ua) {
+	if !page || IsBot(ua) || OptedOut(c) {
 		return c.Next()
 	}
 	vid := ensureVID(c)
@@ -126,7 +126,26 @@ func ViewMiddleware(c *fiber.Ctx) error {
 	return err
 }
 
-const vidCookie = "uk_vid"
+const (
+	vidCookie    = "uk_vid"
+	OptOutCookie = "uk_optout"
+)
+
+// OptedOut: pengunjung memilih tidak dihitung (/privasi) atau browser mengirim Global Privacy Control.
+func OptedOut(c *fiber.Ctx) bool {
+	return c.Cookies(OptOutCookie) == "1" || c.Get("Sec-GPC") == "1"
+}
+
+// SetOptOut menyalakan/mematikan opt-out; saat opt-out, ID anonim ikut dihapus.
+func SetOptOut(c *fiber.Ctx, out bool) {
+	secure := c.Protocol() == "https" || c.Get("X-Forwarded-Proto") == "https"
+	if out {
+		c.Cookie(&fiber.Cookie{Name: OptOutCookie, Value: "1", Path: "/", MaxAge: 5 * 365 * 24 * 3600, HTTPOnly: true, SameSite: "Lax", Secure: secure})
+		c.Cookie(&fiber.Cookie{Name: vidCookie, Value: "", Path: "/", MaxAge: -1, HTTPOnly: true, SameSite: "Lax", Secure: secure})
+		return
+	}
+	c.Cookie(&fiber.Cookie{Name: OptOutCookie, Value: "", Path: "/", MaxAge: -1, HTTPOnly: true, SameSite: "Lax", Secure: secure})
+}
 
 var vidRe = regexp.MustCompile(`^[0-9a-f]{32}$`)
 
@@ -148,6 +167,9 @@ func ensureVID(c *fiber.Ctx) string {
 // Visitor harian, ID anonim cookie, dan perangkat untuk event selain view (pencarian, klik).
 func FromRequest(c *fiber.Ctx) (visitor, vid, device string, bot bool) {
 	ua := c.Get(fiber.HeaderUserAgent)
+	if OptedOut(c) {
+		return "", "", "", true
+	}
 	if v := c.Cookies(vidCookie); vidRe.MatchString(v) {
 		vid = v
 	}

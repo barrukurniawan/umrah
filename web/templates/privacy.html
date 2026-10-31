@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebijakan Privasi - Umrohku</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F54B;</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    <header class="bg-white border-b border-emerald-100">
+        <div class="max-w-3xl mx-auto px-4 py-4">
+            <a href="/" class="flex items-center gap-2 font-bold text-emerald-700 text-xl">
+                <img src="/static/logo.png" alt="" class="w-7 h-7"> Umrohku
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">Kebijakan Privasi</h1>
+        <p class="text-sm text-gray-500 mb-8">Berlaku sejak 1 November 2026</p>
+
+        <div class="space-y-6 leading-relaxed">
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Singkatnya</h2>
+                <p>Umrohku tidak meminta nama, nomor HP, atau email Anda, dan <strong>tidak menyimpan alamat IP</strong>.
+                    Kami hanya mencatat statistik kunjungan secara anonim supaya tahu paket dan travel mana yang paling
+                    membantu jamaah.</p>
+            </section>
+
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Yang kami catat</h2>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Halaman yang dibuka, waktu kunjungan, dan dari mana Anda datang (misalnya Threads, Instagram, atau Google).</li>
+                    <li>Pencarian paket: budget, travel, dan bulan yang dipilih.</li>
+                    <li>Klik tombol WhatsApp, website travel, dan kalkulator: travel dan paket yang diklik.</li>
+                    <li>Jenis perangkat (HP atau komputer).</li>
+                    <li>Perkiraan kota/provinsi. Lokasi dicari dari alamat IP saat itu juga lalu IP-nya langsung dibuang; yang disimpan hanya nama kota/provinsinya.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Cookie</h2>
+                <p>Kami memasang satu cookie, <code class="bg-gray-100 px-1 rounded">uk_vid</code>, berisi kode acak (bukan
+                    data pribadi) selama 1 tahun untuk membedakan pengunjung baru dan yang kembali. Cookie ini tidak dipakai
+                    untuk iklan dan tidak dibagikan ke pihak lain. Umrohku tidak memakai Google Analytics, Facebook Pixel,
+                    atau pelacak pihak ketiga lainnya.</p>
+            </section>
+
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Berapa lama disimpan</h2>
+                <p>Statistik disimpan paling lama 13 bulan di server kami sendiri, lalu dihapus otomatis. Log teknis server
+                    hanya menyimpan alamat IP yang sudah disamarkan dan terhapus sendiri setelah beberapa minggu.</p>
+            </section>
+
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Situs travel &amp; WhatsApp</h2>
+                <p>Saat Anda menekan tombol WhatsApp atau website, Anda berpindah ke layanan milik travel atau WhatsApp.
+                    Data yang Anda berikan di sana diatur oleh kebijakan privasi mereka masing-masing. Harga dan jadwal
+                    paket bersumber dari situs resmi travel; selalu konfirmasi langsung ke travel sebelum mendaftar.</p>
+            </section>
+
+            <section id="opt-out" class="bg-white border border-emerald-100 rounded-xl p-5">
+                <h2 class="font-semibold text-gray-900 mb-2">Tidak ingin dihitung?</h2>
+                <p class="mb-4">Anda bisa mematikan statistik untuk browser ini. Browser yang mengirim sinyal
+                    <em>Global Privacy Control</em> juga otomatis tidak dihitung.</p>
+                {{if .OptedOut}}
+                <p class="text-emerald-700 font-medium mb-3">✓ Kunjungan Anda dari browser ini tidak dihitung.</p>
+                <form method="POST" action="/privasi/opt-in">
+                    <button class="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50">Hitung lagi kunjungan saya</button>
+                </form>
+                {{else}}
+                <form method="POST" action="/privasi/opt-out">
+                    <button class="text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2">Jangan hitung kunjungan saya</button>
+                </form>
+                {{end}}
+            </section>
+
+            <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Pertanyaan</h2>
+                <p>Ada pertanyaan soal privasi? Hubungi kami lewat Threads
+                    <a href="https://www.threads.com/@barruawd" class="text-emerald-700 underline" target="_blank" rel="noopener">@barruawd</a>.</p>
+            </section>
+
+            <p class="text-xs text-gray-400 pt-4">Lokasi perkiraan: IP Geolocation by
+                <a href="https://db-ip.com" class="underline" target="_blank" rel="noopener">DB-IP</a> (CC BY 4.0).</p>
+        </div>
+
+        <a href="/" class="inline-block mt-8 text-emerald-700 hover:underline">← Kembali ke Umrohku</a>
+    </main>
+</body>
+
+</html>

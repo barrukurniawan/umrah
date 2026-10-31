@@ -15,6 +15,20 @@ func HomePage(c *fiber.Ctx) error {
 	return c.Render("home", fiber.Map{})
 }
 
+func PrivacyPage(c *fiber.Ctx) error {
+	return c.Render("privacy", fiber.Map{"OptedOut": analytics.OptedOut(c)})
+}
+
+func PrivacyOptOut(c *fiber.Ctx) error {
+	analytics.SetOptOut(c, true)
+	return c.Redirect("/privasi#opt-out", fiber.StatusSeeOther)
+}
+
+func PrivacyOptIn(c *fiber.Ctx) error {
+	analytics.SetOptOut(c, false)
+	return c.Redirect("/privasi#opt-out", fiber.StatusSeeOther)
+}
+
 func GetRecommendations(c *fiber.Ctx) error {
 	budget, _ := strconv.Atoi(c.FormValue("budget", "26000000"))
 	priority := c.FormValue("priority", "all")
