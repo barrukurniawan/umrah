@@ -35,11 +35,11 @@ var months = [13]monthInfo{
 	{"musim panas", "panas", 1, "umumnya sepi karena mendekati musim haji", "kering"},
 	{"puncak musim panas", "ekstrem", 1, "sepi untuk umroh karena berdekatan dengan musim haji", "kering"},
 	{"puncak musim panas", "ekstrem", 2, "mulai ramai lagi setelah haji, bertepatan libur sekolah Indonesia", "kering"},
-	{"puncak musim panas", "ekstrem", 1, "termasuk low season: lengang dan harga paket biasanya lebih murah", "kering"},
+	{"puncak musim panas", "ekstrem", 1, "termasuk low season, suasananya lengang dan harga paket biasanya lebih murah", "kering"},
 	{"musim panas", "panas", 1, "masih low season, cocok untuk yang mencari harga hemat", "kering"},
 	{"akhir musim panas", "hangat", 2, "mulai ramai, awal musim umroh", "kering"},
-	{"awal musim sejuk", "peralihan", 2, "ramai seiring dimulainya musim sejuk; puncaknya biasanya Desember", "mulai ada peluang hujan ringan"},
-	{"musim dingin yang sejuk", "sejuk", 3, "high season: libur akhir tahun membuat jamaah Indonesia sangat ramai dan harga cenderung tertinggi", "peluang hujan ringan, kadang deras sesaat"},
+	{"awal musim sejuk", "peralihan", 2, "mulai ramai seiring datangnya musim sejuk, dan puncaknya biasanya di bulan Desember", "mulai ada peluang hujan ringan"},
+	{"musim dingin yang sejuk", "sejuk", 3, "termasuk high season. Libur akhir tahun membuat jamaah Indonesia sangat ramai dan harga cenderung paling tinggi", "peluang hujan ringan, kadang deras sesaat"},
 }
 
 var monthNames = [13]string{"", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"}
@@ -50,13 +50,13 @@ type event struct{ From, To, Label, Kind string }
 var events = []event{
 	{"2026-02-18", "2026-03-19", "Ramadhan 1447 H", "ramadhan"},
 	{"2026-03-09", "2026-03-19", "10 malam terakhir Ramadhan 1447 H (puncak keramaian)", "puncak"},
-	{"2026-04-25", "2026-06-05", "Musim haji 1447 H: visa umroh biasanya dihentikan sementara", "haji"},
+	{"2026-04-25", "2026-06-05", "Musim haji 1447 H, visa umroh biasanya dihentikan sementara", "haji"},
 	{"2027-02-08", "2027-03-09", "Ramadhan 1448 H", "ramadhan"},
 	{"2027-02-27", "2027-03-09", "10 malam terakhir Ramadhan 1448 H (puncak keramaian)", "puncak"},
-	{"2027-04-14", "2027-05-26", "Musim haji 1448 H: visa umroh biasanya dihentikan sementara", "haji"},
+	{"2027-04-14", "2027-05-26", "Musim haji 1448 H, visa umroh biasanya dihentikan sementara", "haji"},
 	{"2028-01-28", "2028-02-26", "Ramadhan 1449 H", "ramadhan"},
 	{"2028-02-16", "2028-02-26", "10 malam terakhir Ramadhan 1449 H (puncak keramaian)", "puncak"},
-	{"2028-04-03", "2028-05-14", "Musim haji 1449 H: visa umroh biasanya dihentikan sementara", "haji"},
+	{"2028-04-03", "2028-05-14", "Musim haji 1449 H, visa umroh biasanya dihentikan sementara", "haji"},
 	// Libur sekolah Indonesia (perkiraan) membuat jamaah keluarga ramai.
 	{"2026-12-19", "2027-01-03", "Libur sekolah akhir semester Indonesia", "libur"},
 	{"2027-06-26", "2027-07-11", "Libur kenaikan kelas Indonesia", "libur"},
@@ -121,7 +121,7 @@ func BuildInsight(cp *CurrentPackage) *Insight {
 			ramadhan = true
 			in.CrowdLevel = 3
 			in.Events = append(in.Events, e.Label)
-			crowdNote = "bertepatan dengan Ramadhan, salah satu waktu paling ramai dan paling dicari; umroh di bulan Ramadhan pahalanya setara haji (HR. Bukhari & Muslim)"
+			crowdNote = "bertepatan dengan Ramadhan, salah satu waktu paling ramai dan paling dicari. Umroh di bulan Ramadhan pahalanya setara haji (HR. Bukhari dan Muslim)"
 		case "puncak":
 			if overlap < 3 { // hanya menyerempet, jangan dilebih-lebihkan
 				continue
@@ -131,7 +131,7 @@ func BuildInsight(cp *CurrentPackage) *Insight {
 			crowdNote = fmt.Sprintf("masuk %d hari di 10 malam terakhir Ramadhan, puncak keramaian sepanjang tahun", min(overlap, 10))
 		case "haji":
 			in.Events = append(in.Events, e.Label)
-			crowdNote = "berdekatan dengan musim haji; pastikan ke travel bahwa visa umroh masih berlaku untuk tanggal ini"
+			crowdNote = "berdekatan dengan musim haji. Pastikan ke travel bahwa visa umroh masih berlaku untuk tanggal ini"
 		case "libur":
 			in.Events = append(in.Events, e.Label)
 			in.CrowdLevel = 3
@@ -140,7 +140,7 @@ func BuildInsight(cp *CurrentPackage) *Insight {
 	in.CrowdLabel = map[int]string{1: "Sepi (low season)", 2: "Sedang", 3: "Ramai (high season)"}[in.CrowdLevel]
 
 	in.Summary = fmt.Sprintf("Paket %s di bulan %s %s yang kamu simpan masuk %s di Arab Saudi. "+
-		"Rata-rata suhu di Makkah sekitar %d°C saat siang dan %d°C saat malam; di Madinah %d°C siang dan %d°C malam. "+
+		"Rata-rata suhu di Makkah sekitar %d°C saat siang dan %d°C saat malam. Di Madinah sekitar %d°C saat siang dan %d°C saat malam. "+
 		"Keramaian bulan ini %s.",
 		cp.Travel, in.Month, in.Year, mi.Season, c.MakHi, c.MakLo, c.MadHi, c.MadLo, crowdNote)
 
@@ -148,31 +148,31 @@ func BuildInsight(cp *CurrentPackage) *Insight {
 	switch mi.Tone {
 	case "sejuk":
 		in.Tips = append(in.Tips,
-			fmt.Sprintf("Malam di Madinah bisa turun sampai %d°C: bawa jaket atau sweater tipis dan kaus kaki.", c.MadLo),
-			"Udara kering: bawa pelembap bibir dan kulit, serta minum air yang cukup meski tidak terasa haus.",
-			"Tawaf siang hari terasa nyaman, waktu yang baik untuk ibadah lebih lama di pelataran.")
+			fmt.Sprintf("Malam di Madinah bisa turun sampai %d°C, jadi bawa jaket atau sweater tipis dan kaus kaki.", c.MadLo),
+			"Udaranya kering, jadi bawa pelembap bibir dan kulit. Minum air yang cukup meski tidak terasa haus.",
+			"Tawaf di siang hari terasa nyaman, jadi manfaatkan untuk beribadah lebih lama di pelataran.")
 	case "peralihan", "hangat":
 		in.Tips = append(in.Tips,
-			"Siang mulai terik: pakai payung atau topi saat di luar masjid, dan bawa botol semprot air.",
+			"Siang mulai terik, jadi pakai payung atau topi saat di luar masjid dan bawa botol semprot air.",
 			"Malam masih nyaman untuk tawaf dan i'tikaf di Masjidil Haram.")
 	default:
 		in.Tips = append(in.Tips,
-			fmt.Sprintf("Siang bisa mencapai %d°C: lakukan tawaf dan sa'i setelah Isya atau ba'da Subuh, hindari pukul 11.00–16.00 di area terbuka.", c.MakHi),
-			"Bawa payung UV, semprotan air, dan sandal yang tidak panas; minum zamzam rutin untuk mencegah dehidrasi.",
-			"Perhatikan jamaah lansia: waspadai tanda heatstroke (pusing, mual, kulit panas dan kering).")
+			fmt.Sprintf("Siang bisa mencapai %d°C, jadi lakukan tawaf dan sa'i setelah Isya atau ba'da Subuh. Hindari area terbuka pukul 11.00–16.00.", c.MakHi),
+			"Bawa payung UV, semprotan air, dan sandal yang tidak panas. Minum zamzam secara rutin untuk mencegah dehidrasi.",
+			"Perhatikan jamaah lansia dan waspadai tanda heatstroke seperti pusing, mual, serta kulit yang panas dan kering.")
 	}
 	if ramadhan {
 		in.Tips = append(in.Tips,
-			"Ramadhan: jadwal makan mengikuti sahur dan iftar; iftar bersama di pelataran masjid biasanya tersedia, datang lebih awal karena cepat penuh.",
-			"Tarawih dan tahajud di Masjidil Haram sangat padat: datang 1–2 jam sebelum waktu shalat dan bawa sajadah tipis.")
+			"Selama Ramadhan, jadwal makan mengikuti sahur dan iftar. Iftar bersama di pelataran masjid biasanya tersedia, jadi datanglah lebih awal karena cepat penuh.",
+			"Tarawih dan tahajud di Masjidil Haram sangat padat. Datanglah 1–2 jam sebelum waktu shalat dan bawa sajadah tipis.")
 	}
 	if in.CrowdLevel >= 3 {
 		in.Tips = append(in.Tips,
-			"Masjidil Haram paling padat ba'da Isya hingga tengah malam dan setelah Subuh. Untuk tawaf yang lebih lengang, coba pukul 09.00–11.00 atau lantai atas (mataf lantai 2/3).",
-			"Pesan jadwal Raudhah lewat aplikasi Nusuk jauh hari, karena slot cepat habis saat ramai.")
+			"Masjidil Haram paling padat ba'da Isya hingga tengah malam dan setelah Subuh. Untuk tawaf yang lebih lengang, coba pukul 09.00–11.00 atau di lantai atas mataf.",
+			"Pesan jadwal Raudhah lewat aplikasi Nusuk jauh hari karena slotnya cepat habis saat ramai.")
 	} else {
 		in.Tips = append(in.Tips,
-			"Lebih lengang: kesempatan baik untuk mendapat slot Raudhah (pesan lewat Nusuk) dan tawaf lebih dekat ke Ka'bah.")
+			"Suasana yang lebih lengang jadi kesempatan baik untuk mendapat slot Raudhah lewat aplikasi Nusuk dan tawaf lebih dekat ke Ka'bah.")
 	}
 	return in
 }
