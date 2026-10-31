@@ -10,7 +10,9 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.3
 	github.com/google/generative-ai-go v0.20.1
 	github.com/joho/godotenv v1.5.1
+	github.com/oschwald/maxminddb-golang/v2 v2.8.0
 	golang.org/x/crypto v0.51.0
+	golang.org/x/oauth2 v0.36.0
 	google.golang.org/api v0.283.0
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1
@@ -57,7 +59,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/nlnwa/whatwg-url v0.6.2 // indirect
-	github.com/oschwald/maxminddb-golang/v2 v2.8.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
@@ -71,7 +72,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.23.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.37.0 // indirect

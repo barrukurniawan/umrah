@@ -72,9 +72,15 @@
                     <h3 class="font-bold text-lg text-gray-900">{{$v.Travel.Name}}</h3>
                     <p class="text-sm text-gray-500">{{$v.Name}}</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="star" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
-                    <span class="text-sm font-semibold text-gray-700">{{$v.Travel.Rating}}</span>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1">
+                        <i data-lucide="star" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
+                        <span class="text-sm font-semibold text-gray-700">{{$v.Travel.Rating}}</span>
+                    </div>
+                    <button type="button" class="save-btn p-1.5 -m-1.5 rounded-full hover:bg-rose-50" data-save-key="{{$v.Key}}"
+                        aria-pressed="{{if index $.Saved $v.Key}}true{{else}}false{{end}}" title="Simpan paket" aria-label="Simpan paket">
+                        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>
+                    </button>
                 </div>
             </div>
 

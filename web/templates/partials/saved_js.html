@@ -1,0 +1,73 @@
+{{define "saved_js"}}
+<style>
+    .save-btn { color: #9ca3af; }
+    .save-btn[aria-pressed="true"] { color: #e11d48; }
+    .save-btn[aria-pressed="true"] svg { fill: currentColor; }
+</style>
+<div id="ukToast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden max-w-sm w-[calc(100%-2rem)] bg-gray-900 text-white text-sm rounded-xl px-4 py-3 shadow-lg"></div>
+<script>
+    // ♡ Simpan paket. Tamu: disimpan di browser (localStorage). Login: ke akun; simpanan browser dipindah otomatis.
+    (function () {
+        var LS = 'umrohku_saved';
+        var logged = document.body.dataset.loggedIn === '1';
+        function local() { try { return JSON.parse(localStorage.getItem(LS) || '[]'); } catch (e) { return []; } }
+        function setLocal(a) { try { localStorage.setItem(LS, JSON.stringify(a)); } catch (e) { } }
+        var toastTimer;
+        function toast(html) {
+            var t = document.getElementById('ukToast'); if (!t) return;
+            t.innerHTML = html; t.classList.remove('hidden');
+            clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.add('hidden'); }, 6000);
+        }
+        function setPressed(key, on) {
+            document.querySelectorAll('[data-save-key]').forEach(function (b) {
+                if (b.dataset.saveKey === key) b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+        }
+        function markLocal() {
+            if (logged) return;
+            var keys = local().map(function (x) { return x.key; });
+            document.querySelectorAll('[data-save-key]').forEach(function (b) {
+                b.setAttribute('aria-pressed', keys.indexOf(b.dataset.saveKey) >= 0 ? 'true' : 'false');
+            });
+        }
+        window.ukMarkLocal = markLocal;
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('[data-save-key]');
+            if (!b) return;
+            e.preventDefault();
+            var key = b.dataset.saveKey;
+            if (logged) {
+                fetch('/api/saved/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: key }) })
+                    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                    .then(function (res) {
+                        if (!res.ok) { toast(res.j.error || 'Gagal menyimpan, coba lagi.'); return; }
+                        setPressed(key, res.j.saved);
+                        toast(res.j.saved ? '♥ Paket tersimpan. <a href="/tersimpan" class="underline font-semibold">Lihat tersimpan</a>' : 'Dihapus dari tersimpan.');
+                    }).catch(function () { toast('Koneksi bermasalah, coba lagi.'); });
+                return;
+            }
+            var a = local(), i = a.findIndex(function (x) { return x.key === key; });
+            if (i >= 0) { a.splice(i, 1); toast('Dihapus dari tersimpan.'); }
+            else {
+                var card = b.closest('.package-card');
+                a.push({ key: key, travel: card ? card.dataset.travel : '', pkg: card ? card.dataset.pkg : '', price: card ? parseInt(card.dataset.price, 10) || 0 : 0 });
+                toast('♥ Tersimpan di browser ini. <a href="/auth/google/login?next=%2Ftersimpan" class="underline font-semibold">Masuk dengan Google</a> supaya tersimpan di semua perangkat.');
+            }
+            setLocal(a.slice(-50)); markLocal();
+        });
+        document.body.addEventListener('htmx:afterSwap', markLocal);
+        markLocal();
+        if (logged) {
+            var pending = local();
+            if (pending.length) {
+                fetch('/api/saved/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ keys: pending.map(function (x) { return x.key; }) }) })
+                    .then(function (r) { return r.json(); })
+                    .then(function (j) {
+                        setLocal([]);
+                        if (j.imported) { toast('♥ ' + j.imported + ' paket dari browser ini dipindah ke akunmu.'); if (location.pathname === '/tersimpan') setTimeout(function () { location.reload(); }, 1200); }
+                    }).catch(function () { });
+            }
+        }
+    })();
+</script>
+{{end}}

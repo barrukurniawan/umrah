@@ -32,6 +32,7 @@ const featuredBudgetSlack = 500000
 
 type ScoredPackage struct {
 	models.Package
+	Key               string // PackageKey, untuk ♡ simpan
 	Featured          bool
 	Score             int
 	FacilityList      []string
@@ -174,6 +175,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 		scored = append(scored, ScoredPackage{
 			Package:           pkg,
+			Key:               PackageKey(pkg.Travel.Name, pkg.Name),
 			Featured:          featuredTravels[pkg.Travel.Name],
 			Score:             score,
 			FacilityList:      parseFacilities(pkg.Facilities),

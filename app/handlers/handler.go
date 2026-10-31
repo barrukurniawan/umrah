@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"umrah/app/accounts"
 	"umrah/app/analytics"
 	"umrah/app/services"
 
@@ -12,11 +13,11 @@ import (
 )
 
 func HomePage(c *fiber.Ctx) error {
-	return c.Render("home", fiber.Map{})
+	return c.Render("home", viewer(c, fiber.Map{}))
 }
 
 func PrivacyPage(c *fiber.Ctx) error {
-	return c.Render("privacy", fiber.Map{"OptedOut": analytics.OptedOut(c)})
+	return c.Render("privacy", viewer(c, fiber.Map{"OptedOut": analytics.OptedOut(c)}))
 }
 
 func PrivacyOptOut(c *fiber.Ctx) error {
@@ -57,7 +58,14 @@ func GetRecommendations(c *fiber.Ctx) error {
 	}
 	analytics.RecordSearch(c, budget, page, analytics.SearchMeta{Travels: travels, Month: month, Sort: sort, Total: total}, shown)
 
+	saved := map[string]bool{}
+	if u := accounts.Current(c); u != nil {
+		saved = accounts.SavedKeys(u.ID)
+	}
+
 	return c.Render("recommendations", fiber.Map{
+		"Saved":      saved,
+		"LoggedIn":   accounts.Current(c) != nil,
 		"Results":    results,
 		"Budget":     budget,
 		"Page":       page,

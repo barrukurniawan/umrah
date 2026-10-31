@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" (dict "Title" "Paket Tersimpan")}}
+    <meta name="robots" content="noindex">
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="{{if .User}}1{{end}}">
+    {{template "nav" .}}
+
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">♡ Paket tersimpan</h1>
+
+        {{if .User}}
+        <p class="text-sm text-gray-500 mb-6">Harga & jadwal dicek ulang setiap data travel diperbarui.</p>
+        {{if .Saved}}
+        <div class="space-y-4">
+            {{range .Saved}}
+            <article class="bg-white border border-gray-200 rounded-xl p-5 {{if not .Current}}opacity-70{{end}}">
+                <div class="flex justify-between items-start gap-3">
+                    <div>
+                        <h2 class="font-bold text-gray-900">{{.Travel}}</h2>
+                        <p class="text-sm text-gray-500">{{.Package}}</p>
+                    </div>
+                    <button type="button" class="save-btn p-1.5 -m-1.5 rounded-full hover:bg-rose-50" data-save-key="{{.Key}}" aria-pressed="true" title="Hapus dari tersimpan">
+                        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>
+                    </button>
+                </div>
+                {{if .Current}}
+                <div class="mt-3 flex items-baseline gap-2 flex-wrap">
+                    <span class="text-xl font-bold text-emerald-600">mulai Rp {{formatCurrency .Current.MinPrice}}</span>
+                    {{if .PriceDown}}<span class="text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full px-2 py-0.5">↓ turun Rp {{formatCurrency .PriceDown}}</span>{{end}}
+                </div>
+                <p class="text-sm text-gray-600 mt-2">📅 {{.Current.DatesLabel}}{{if .Current.Duration}} · {{.Current.Duration}} hari{{end}}{{if .Current.Airline}} · ✈️ {{.Current.Airline}}{{end}}</p>
+                {{if or .Current.HotelMakkah .Current.HotelMadinah}}<p class="text-xs text-gray-500 mt-1">🏨 {{.Current.HotelMakkah}}{{if .Current.HotelMadinah}} · {{.Current.HotelMadinah}}{{end}}</p>{{end}}
+                <div class="mt-4 flex gap-2 flex-wrap">
+                    <a href="{{whatsappURL .Travel}}" target="_blank" rel="noopener" data-track="click_wa"
+                        class="text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2">Tanya via WhatsApp</a>
+                    <a href="{{travelURL .Travel}}" target="_blank" rel="noopener" data-track="click_web"
+                        class="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50">Website travel</a>
+                </div>
+                {{else}}
+                <p class="text-sm text-amber-700 mt-3">Sudah tidak tersedia: jadwalnya lewat atau travel menghapus paket ini. Disimpan seharga Rp {{formatCurrency .Price}} ({{.Departures}}).</p>
+                {{end}}
+            </article>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
+            <p class="text-gray-600 mb-4">Belum ada paket tersimpan. Tekan ♡ di kartu paket untuk menyimpannya.</p>
+            <a href="/" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-5 py-2.5">Cari paket umroh</a>
+        </div>
+        {{end}}
+
+        {{else}}
+        <p class="text-sm text-gray-500 mb-6">Tersimpan di browser ini saja.</p>
+        <div id="localSaved" class="space-y-3"></div>
+        <div class="bg-white border border-emerald-100 rounded-xl p-5 mt-6">
+            <p class="text-gray-700 mb-3">Masuk supaya paket incaranmu tersimpan di semua perangkat, dan dapat info kalau harganya turun atau jadwalnya habis.</p>
+            {{if .LoginEnabled}}<a href="/auth/google/login?next=%2Ftersimpan" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-5 py-2.5">Masuk dengan Google</a>{{end}}
+        </div>
+        <script>
+            (function () {
+                var box = document.getElementById('localSaved'), a = [];
+                try { a = JSON.parse(localStorage.getItem('umrohku_saved') || '[]'); } catch (e) { }
+                function rp(n) { return (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+                if (!a.length) { box.innerHTML = '<p class="text-gray-500">Belum ada. Tekan ♡ di kartu paket untuk menyimpannya.</p>'; return; }
+                a.slice().reverse().forEach(function (x) {
+                    var el = document.createElement('div');
+                    el.className = 'bg-white border border-gray-200 rounded-xl p-4 flex justify-between items-center gap-3';
+                    var info = document.createElement('div');
+                    var t = document.createElement('p'); t.className = 'font-semibold text-gray-900'; t.textContent = x.travel;
+                    var p = document.createElement('p'); p.className = 'text-sm text-gray-500'; p.textContent = x.pkg + (x.price ? ' · Rp ' + rp(x.price) : '');
+                    info.appendChild(t); info.appendChild(p); el.appendChild(info);
+                    var btn = document.createElement('button');
+                    btn.className = 'save-btn p-1.5 rounded-full hover:bg-rose-50'; btn.setAttribute('data-save-key', x.key); btn.setAttribute('aria-pressed', 'true'); btn.title = 'Hapus';
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>';
+                    btn.addEventListener('click', function () { setTimeout(function () { el.remove(); }, 50); });
+                    el.appendChild(btn); box.appendChild(el);
+                });
+            })();
+        </script>
+        {{end}}
+    </main>
+    {{template "saved_js" .}}
+</body>
+
+</html>

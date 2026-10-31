@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" (dict "Title" "Akun Saya")}}
+    <meta name="robots" content="noindex">
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="1">
+    {{template "nav" .}}
+
+    <main class="max-w-2xl mx-auto px-4 py-8 space-y-5">
+        <h1 class="text-2xl font-bold text-gray-900">Akun &amp; privasi</h1>
+
+        <section class="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4">
+            {{if .User.Picture}}<img src="{{.User.Picture}}" alt="" referrerpolicy="no-referrer" class="w-14 h-14 rounded-full">{{end}}
+            <div>
+                <p class="font-semibold text-gray-900">{{.User.Name}}</p>
+                <p class="text-sm text-gray-500">{{.User.Email}}</p>
+                <p class="text-xs text-gray-400 mt-1">Masuk dengan Google · {{.SavedCount}} paket tersimpan</p>
+            </div>
+        </section>
+
+        <section class="bg-white border border-gray-200 rounded-xl p-5">
+            <h2 class="font-semibold text-gray-900 mb-1">Unduh data saya</h2>
+            <p class="text-sm text-gray-600 mb-3">Semua data akunmu dalam satu file JSON.</p>
+            <a href="/akun/data.json" class="inline-block text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50">Unduh data (.json)</a>
+        </section>
+
+        <section class="bg-white border border-rose-200 rounded-xl p-5">
+            <h2 class="font-semibold text-rose-700 mb-1">Hapus akun</h2>
+            <p class="text-sm text-gray-600 mb-3">Akun dan semua data (paket tersimpan, dan nanti tabungan & rencana) dihapus permanen dan tidak bisa dikembalikan.</p>
+            {{if .Error}}<p class="text-sm text-rose-700 mb-2">{{.Error}}</p>{{end}}
+            <form method="POST" action="/akun/hapus" class="flex gap-2 flex-wrap items-center">
+                <input name="confirm" placeholder="Ketik HAPUS" autocomplete="off" class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-40">
+                <button class="text-sm bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg px-4 py-2">Hapus akun permanen</button>
+            </form>
+        </section>
+
+        <p class="text-xs text-gray-400">Baca <a href="/privasi" class="underline">kebijakan privasi</a>. Untuk mencabut akses Google, buka myaccount.google.com/connections.</p>
+    </main>
+</body>
+
+</html>

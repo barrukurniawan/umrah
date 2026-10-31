@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"umrah/app/accounts"
 	"umrah/app/analytics"
 	"umrah/app/handlers"
 	"umrah/app/repositories"
@@ -31,6 +32,19 @@ func main() {
 		return m
 	})
 	engine.AddFunc("inc", func(i int) int { return i + 1 })
+	// Header akun: huruf awal (avatar tanpa foto) dan nama depan.
+	engine.AddFunc("initial", func(name string) string {
+		for _, r := range strings.TrimSpace(name) {
+			return strings.ToUpper(string(r))
+		}
+		return "?"
+	})
+	engine.AddFunc("firstName", func(name string) string {
+		if f := strings.Fields(name); len(f) > 0 {
+			return f[0]
+		}
+		return "Akun"
+	})
 	// Nomor urut kartu di seluruh hasil (5 per halaman), untuk analitik posisi klik.
 	engine.AddFunc("cardPos", func(page, i int) int { return (max(page, 1)-1)*5 + i + 1 })
 
@@ -180,12 +194,33 @@ func main() {
 	}
 	analytics.InitGeo(geoPath)
 
+	usersPath := os.Getenv("USERS_DB_PATH")
+	if usersPath == "" {
+		usersPath = "data/users.db"
+	}
+	accounts.Init(usersPath)
+
 	app.Use(analytics.ViewMiddleware)
+	app.Use(accounts.Middleware)
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
 	app.Post("/chat", handlers.HandleChat)
 	app.Post("/t", analytics.BeaconHandler)
 	app.Get("/privasi", handlers.PrivacyPage)
+
+	// Akun (opsional): login Google, persetujuan, paket tersimpan, unduh/hapus data.
+	app.Get("/auth/google/login", accounts.GoogleLogin)
+	app.Get("/auth/google/callback", accounts.GoogleCallback)
+	app.Post("/auth/logout", accounts.Logout)
+	app.Get("/akun/persetujuan", handlers.ConsentPage)
+	app.Post("/akun/persetujuan", handlers.ConsentAccept)
+	app.Post("/akun/persetujuan/tolak", handlers.ConsentDecline)
+	app.Get("/akun", handlers.AccountPage)
+	app.Get("/akun/data.json", handlers.AccountExport)
+	app.Post("/akun/hapus", handlers.AccountDelete)
+	app.Get("/tersimpan", handlers.SavedPage)
+	app.Post("/api/saved/toggle", handlers.SavedToggle)
+	app.Post("/api/saved/import", handlers.SavedImport)
 	app.Post("/privasi/opt-out", handlers.PrivacyOptOut)
 	app.Post("/privasi/opt-in", handlers.PrivacyOptIn)
 

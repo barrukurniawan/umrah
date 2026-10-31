@@ -1,0 +1,39 @@
+{{define "nav"}}
+<nav class="bg-white shadow-sm border-b border-emerald-100 relative z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div class="flex flex-col">
+            <a href="/" class="text-2xl font-bold text-emerald-700 whitespace-nowrap flex items-center gap-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 3000" class="w-10 h-10 text-emerald-700"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M 2163.261719 1020.28125 L 1505.371094 839.609375 L 839.550781 1022.460938 L 838.96875 1244.910156 L 1504.699219 1117.5 L 1505.039062 1258.578125 L 2162.789062 1373.691406 L 2162.679688 1454.511719 L 2143.199219 1452.359375 L 2142.261719 1565.300781 L 2162.53125 1568.171875 L 2161.828125 2089.578125 L 1502.179688 2160.390625 L 836.734375 2094.445312 L 838.121094 1567.691406 L 856.601562 1567.738281 L 857.347656 1452.550781 L 838.414062 1455.058594 L 838.621094 1375.488281 L 1504.359375 1258.578125 L 1504.699219 1117.5 L 2162.960938 1243.480469 Z M 2094.96875 1441.859375 L 2070.960938 1504.519531 L 2095.730469 1562.308594 L 2120.859375 1503.390625 Z M 1869.839844 1402.089844 L 1845.828125 1464.75 L 1870.589844 1522.53125 L 1895.730469 1463.621094 Z M 1611.699219 1360.058594 L 1587.691406 1422.71875 L 1612.449219 1480.5 L 1637.589844 1421.601562 Z M 1386.578125 1362.320312 L 1362.570312 1424.96875 L 1387.328125 1482.75 L 1412.46875 1423.851562 Z M 1563.128906 1352.320312 L 1503.96875 1344.378906 L 1438.179688 1352.320312 L 1438.179688 1477.511719 L 1503.96875 1469.578125 L 1563.128906 1477.511719 Z M 1920.320312 1529.871094 L 2046.578125 1551.238281 L 2046.578125 1432.011719 L 1920.320312 1410.640625 Z M 1666.871094 1495.789062 L 1822.589844 1518.21875 L 1822.589844 1393.019531 L 1666.871094 1370.578125 Z M 1129.378906 1405.648438 L 1105.359375 1468.308594 L 1130.121094 1526.089844 L 1155.261719 1467.179688 Z M 906.496094 1441.671875 L 882.488281 1504.328125 L 907.246094 1562.121094 L 932.386719 1503.210938 Z M 1180.789062 1395.089844 L 1336.5 1372.648438 L 1336.5 1497.851562 L 1180.789062 1520.28125 Z M 959.785156 1435.011719 L 1080.601562 1414.320312 L 1080.601562 1529.800781 L 959.785156 1550.5 L 959.785156 1435.011719 " />
+                </svg>
+                <span>Umrohku</span></a>
+            <span class="hidden sm:block text-xs text-gray-400 pl-10 -mt-1">Ikhtiar untuk kepulangan</span>
+        </div>
+        {{if .User}}
+        <details class="relative" id="userMenu">
+            <summary class="list-none flex items-center gap-2 cursor-pointer rounded-full border border-gray-200 pl-1 pr-3 py-1 hover:border-emerald-300">
+                {{if .User.Picture}}<img src="{{.User.Picture}}" alt="" referrerpolicy="no-referrer" class="w-8 h-8 rounded-full">
+                {{else}}<span class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-semibold">{{initial .User.Name}}</span>{{end}}
+                <span class="hidden sm:inline text-sm font-medium text-gray-700 max-w-[120px] truncate">{{firstName .User.Name}}</span>
+                <svg class="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>
+            </summary>
+            <div class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-2 text-sm">
+                <p class="px-4 pb-2 mb-1 border-b text-xs text-gray-500 truncate">{{.User.Email}}</p>
+                <a href="/tersimpan" class="flex items-center gap-2 px-4 py-2 hover:bg-emerald-50">♡ Paket tersimpan</a>
+                <a href="/akun" class="flex items-center gap-2 px-4 py-2 hover:bg-emerald-50">⚙︎ Akun &amp; privasi</a>
+                <form method="POST" action="/auth/logout"><button class="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600">Keluar</button></form>
+            </div>
+        </details>
+        {{else if .LoginEnabled}}
+        <a href="/auth/google/login?next={{.Path | urlquery}}"
+            class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 hover:border-emerald-400 hover:shadow-sm transition"
+            title="Masuk dengan Google">
+            <svg class="w-4 h-4" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.5z"/></svg>
+            <span>Masuk</span>
+        </a>
+        {{end}}
+    </div>
+</nav>
+{{end}}

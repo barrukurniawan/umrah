@@ -10,14 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
-    <header class="bg-white border-b border-emerald-100">
-        <div class="max-w-3xl mx-auto px-4 py-4">
-            <a href="/" class="flex items-center gap-2 font-bold text-emerald-700 text-xl">
-                <img src="/static/logo.png" alt="" class="w-7 h-7"> Umrohku
-            </a>
-        </div>
-    </header>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="{{if .User}}1{{end}}">
+    {{template "nav" .}}
 
     <main class="max-w-3xl mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold text-gray-900 mb-1">Kebijakan Privasi</h1>
@@ -51,8 +45,20 @@
             </section>
 
             <section>
+                <h2 class="font-semibold text-gray-900 mb-2">Akun (opsional)</h2>
+                <p class="mb-2">Semua fitur bisa dipakai tanpa akun. Kalau Anda memilih <strong>Masuk dengan Google</strong>, kami
+                    menyimpan nama, email, dan foto profil dari Google (tanpa akses ke Gmail, Drive, atau kontak), serta data
+                    yang Anda isi sendiri seperti paket tersimpan. Cookie <code class="bg-gray-100 px-1 rounded">uk_sess</code>
+                    menjaga Anda tetap masuk selama 30 hari.</p>
+                <p>Data akun tidak dijual, tidak dibagikan ke travel, dan tidak dihubungkan dengan statistik anonim di atas.
+                    Anda bisa <strong>mengunduh</strong> atau <strong>menghapus permanen</strong> akun beserta semua datanya
+                    kapan saja di menu Akun.</p>
+            </section>
+
+            <section>
                 <h2 class="font-semibold text-gray-900 mb-2">Berapa lama disimpan</h2>
-                <p>Statistik disimpan paling lama 13 bulan di server kami sendiri, lalu dihapus otomatis. Log teknis server
+                <p>Statistik disimpan paling lama 13 bulan di server kami sendiri, lalu dihapus otomatis. Data akun disimpan
+                    selama akun aktif dan langsung dihapus saat Anda menghapus akun. Log teknis server
                     hanya menyimpan alamat IP yang sudah disamarkan dan terhapus sendiri setelah beberapa minggu.</p>
             </section>
 
