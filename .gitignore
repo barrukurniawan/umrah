@@ -31,3 +31,4 @@ vendor/
 # Analitik & GeoIP
 data/analytics.*
 data/*.mmdb
+data/users.db*
