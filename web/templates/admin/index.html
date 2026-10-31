@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Umrohku</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{if eq .Tab "live"}}<meta http-equiv="refresh" content="30">{{end}}
+</head>
+
+<body class="min-h-screen bg-gray-50 text-gray-800">
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <a href="/admin" class="flex items-center gap-2">
+                <img src="/static/logo.png" alt="" class="w-7 h-7">
+                <span class="font-bold text-emerald-700">Umrohku Admin</span>
+            </a>
+            <div class="flex items-center gap-3 text-xs text-gray-500">
+                <span class="hidden sm:inline">Diperbarui {{.Now}} WIB</span>
+                <a href="/" target="_blank" class="text-emerald-700 hover:underline">Buka situs ↗</a>
+                <form method="POST" action="/admin/logout"><button class="text-gray-500 hover:text-rose-600">Keluar</button></form>
+            </div>
+        </div>
+        <nav class="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto">
+            {{range .Tabs}}
+            <a href="/admin?tab={{.Key}}&days={{$.Days}}"
+                class="whitespace-nowrap px-3 py-2 text-sm border-b-2 {{if eq .Key $.Tab}}border-emerald-600 text-emerald-700 font-semibold{{else}}border-transparent text-gray-500 hover:text-gray-800{{end}}">{{.Label}}</a>
+            {{end}}
+        </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        {{if ne .Tab "live"}}
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-5">
+            <h1 class="text-lg font-bold">{{.R.Range.Label}}</h1>
+            <div class="flex gap-1 bg-white border border-gray-200 rounded-full p-1">
+                {{range .DaysOpt}}
+                <a href="/admin?tab={{$.Tab}}&days={{.}}"
+                    class="px-3 py-1 rounded-full text-xs {{if eq . $.Days}}bg-emerald-600 text-white{{else}}text-gray-600 hover:bg-gray-100{{end}}">{{if eq . 1}}Hari ini{{else}}{{.}} hari{{end}}</a>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+
+        {{if eq .Tab "ringkasan"}}
+        <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            {{template "kpi" (dict "Label" "Pengunjung unik" "S" .R.Visitors)}}
+            {{template "kpi" (dict "Label" "Halaman dibuka" "S" .R.Views)}}
+            {{template "kpi" (dict "Label" "Pencarian" "S" .R.Searches)}}
+            {{template "kpi" (dict "Label" "Klik WhatsApp" "S" .R.WA)}}
+            {{template "kpi" (dict "Label" "Klik website" "S" .R.Web)}}
+        </section>
+        <section class="bg-white border border-gray-200 rounded-xl p-4">
+            <h2 class="font-semibold mb-1">Pengunjung unik {{if eq .Days 1}}per jam{{else}}per hari{{end}}</h2>
+            <p class="text-xs text-gray-500 mb-4">Arahkan kursor ke batang untuk detail pencarian & klik.</p>
+            <div class="flex items-end gap-1 h-48 overflow-x-auto">
+                {{range .R.Days}}
+                <div class="flex-1 min-w-[14px] flex flex-col items-center justify-end h-full group"
+                    title="{{.Label}}: {{.Visitors}} pengunjung, {{.Searches}} pencarian, {{.Clicks}} klik">
+                    <span class="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100">{{.Visitors}}</span>
+                    <div class="w-full rounded-t bg-emerald-500/80 group-hover:bg-emerald-600" style="height: {{.Pct}}%; min-height: 2px"></div>
+                </div>
+                {{end}}
+            </div>
+            <div class="flex gap-1 mt-1 overflow-x-auto">
+                {{range .R.Days}}<span class="flex-1 min-w-[14px] text-center text-[9px] text-gray-400">{{.Label}}</span>{{end}}
+            </div>
+        </section>
+        {{end}}
+
+        {{if eq .Tab "sumber"}}
+        <div class="grid md:grid-cols-2 gap-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-1">Sumber pengunjung</h2>
+                <p class="text-xs text-gray-500 mb-4">Pengunjung unik per sumber. Bagikan link dengan <code>?utm_source=threads</code> supaya Threads tidak tercatat sebagai "Langsung".</p>
+                {{template "bars" .R.Sources}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Perangkat</h2>
+                {{template "bars" .R.Devices}}
+            </section>
+        </div>
+        {{end}}
+
+        {{if eq .Tab "travel"}}
+        <section class="bg-white border border-gray-200 rounded-xl p-4 mb-4 overflow-x-auto">
+            <h2 class="font-semibold mb-1">Per travel</h2>
+            <p class="text-xs text-gray-500 mb-3">Tampil = berapa kali paketnya muncul di hasil pencarian. CTR = (klik WA + website) ÷ tampil.</p>
+            {{if .R.Travels}}
+            <table class="w-full text-sm">
+                <thead class="text-left text-xs text-gray-500 border-b">
+                    <tr><th class="py-2 pr-3">Travel</th><th class="py-2 px-2 text-right">Tampil</th><th class="py-2 px-2 text-right">Klik WA</th><th class="py-2 px-2 text-right">Klik web</th><th class="py-2 px-2 text-right">Kalkulator</th><th class="py-2 pl-2 text-right">CTR</th></tr>
+                </thead>
+                <tbody>
+                    {{range .R.Travels}}
+                    <tr class="border-b last:border-0">
+                        <td class="py-2 pr-3 font-medium">{{.Travel}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums">{{.Impr}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums font-semibold text-emerald-700">{{.WA}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums">{{.Web}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums">{{.Calc}}</td>
+                        <td class="py-2 pl-2 text-right tabular-nums">{{.CTR}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            {{else}}{{template "empty"}}{{end}}
+        </section>
+        <div class="grid md:grid-cols-2 gap-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-3">Paket paling banyak diklik WA</h2>
+                {{if .R.TopPackages}}
+                <ol class="space-y-2 text-sm">
+                    {{range $i, $p := .R.TopPackages}}
+                    <li class="flex justify-between gap-3">
+                        <span><span class="text-gray-400 mr-1">{{inc $i}}.</span><span class="font-medium">{{$p.Travel}}</span> <span class="text-gray-500">— {{$p.Package}} (Rp {{formatCurrency $p.Price}})</span></span>
+                        <span class="font-semibold text-emerald-700 tabular-nums">{{$p.WA}}</span>
+                    </li>
+                    {{end}}
+                </ol>
+                {{else}}{{template "empty"}}{{end}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-1">Klik menurut posisi kartu</h2>
+                <p class="text-xs text-gray-500 mb-4">Posisi 1 = kartu teratas (tempat promo partner).</p>
+                {{template "bars" .R.Positions}}
+            </section>
+        </div>
+        {{end}}
+
+        {{if eq .Tab "pencarian"}}
+        <p class="text-sm text-gray-600 mb-4">{{.R.Searches.Value}} pencarian · <span class="{{if .R.ZeroResults}}text-rose-600 font-semibold{{end}}">{{.R.ZeroResults}} tanpa hasil</span> (tanda paket untuk budget/bulan itu kurang).</p>
+        <div class="grid md:grid-cols-3 gap-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Budget yang dicari</h2>
+                {{template "bars" .R.Budgets}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Travel dipilih di filter</h2>
+                {{template "bars" .R.FilterTravels}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-4">Bulan keberangkatan</h2>
+                {{template "bars" .R.Months}}
+            </section>
+        </div>
+        {{end}}
+
+        {{if eq .Tab "live"}}
+        <div class="flex items-center gap-2 mb-4">
+            <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span>
+            <h1 class="text-lg font-bold">{{.R.LiveVisitors}} pengunjung aktif · 30 menit terakhir</h1>
+            <span class="text-xs text-gray-400">(refresh otomatis tiap 30 detik)</span>
+        </div>
+        <section class="bg-white border border-gray-200 rounded-xl p-4 overflow-x-auto">
+            {{if .R.Live}}
+            <table class="w-full text-sm">
+                <thead class="text-left text-xs text-gray-500 border-b">
+                    <tr><th class="py-2 pr-3">Jam</th><th class="py-2 px-2">Aktivitas</th><th class="py-2 px-2">Detail</th><th class="py-2 px-2">Sumber</th><th class="py-2 pl-2">Perangkat</th></tr>
+                </thead>
+                <tbody>
+                    {{range .R.Live}}
+                    <tr class="border-b last:border-0">
+                        <td class="py-2 pr-3 tabular-nums text-gray-500">{{.Time}}</td>
+                        <td class="py-2 px-2 font-medium">{{.Type}}</td>
+                        <td class="py-2 px-2 text-gray-600">{{.Detail}}</td>
+                        <td class="py-2 px-2">{{.Source}}</td>
+                        <td class="py-2 pl-2">{{.Device}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            {{else}}{{template "empty"}}{{end}}
+        </section>
+        {{end}}
+    </main>
+</body>
+
+</html>
+
+{{define "kpi"}}
+<div class="bg-white border border-gray-200 rounded-xl p-4">
+    <p class="text-xs text-gray-500">{{.Label}}</p>
+    <p class="text-2xl font-bold tabular-nums mt-1">{{.S.Value}}</p>
+    {{if .S.Delta}}<p class="text-xs mt-1 {{if .S.Up}}text-emerald-600{{else}}text-rose-600{{end}}">{{.S.Delta}} vs periode sebelumnya</p>
+    {{else}}<p class="text-xs mt-1 text-gray-400">belum ada pembanding</p>{{end}}
+</div>
+{{end}}
+
+{{define "bars"}}
+{{if .}}
+<ul class="space-y-2.5">
+    {{range .}}
+    <li>
+        <div class="flex justify-between text-sm mb-1"><span>{{.Label}}</span><span class="tabular-nums text-gray-600">{{.Value}}{{if .Share}} <span class="text-gray-400">· {{.Share}}</span>{{end}}</span></div>
+        <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full bg-emerald-500" style="width: {{.Pct}}%"></div></div>
+    </li>
+    {{end}}
+</ul>
+{{else}}{{template "empty"}}{{end}}
+{{end}}
+
+{{define "empty"}}<p class="text-sm text-gray-400 py-6 text-center">Belum ada data untuk periode ini.</p>{{end}}

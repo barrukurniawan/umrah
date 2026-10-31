@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
+	"umrah/app/analytics"
 	"umrah/app/handlers"
 	"umrah/app/repositories"
 	"umrah/app/services"
@@ -19,6 +21,18 @@ func main() {
 	godotenv.Load()
 
 	engine := html.New("./web/templates", ".html")
+
+	// Untuk template admin: {{template "kpi" (dict "Label" "..." "S" .X)}} dan nomor urut {{inc $i}}.
+	engine.AddFunc("dict", func(kv ...any) map[string]any {
+		m := make(map[string]any, len(kv)/2)
+		for i := 0; i+1 < len(kv); i += 2 {
+			m[fmt.Sprint(kv[i])] = kv[i+1]
+		}
+		return m
+	})
+	engine.AddFunc("inc", func(i int) int { return i + 1 })
+	// Nomor urut kartu di seluruh hasil (5 per halaman), untuk analitik posisi klik.
+	engine.AddFunc("cardPos", func(page, i int) int { return (max(page, 1)-1)*5 + i + 1 })
 
 	engine.AddFunc("formatCurrency", func(price int) string {
 		parts := []string{}
@@ -155,10 +169,22 @@ func main() {
 
 	repositories.InitDB()
 	services.InitAI()
+	analyticsPath := os.Getenv("ANALYTICS_DB_PATH")
+	if analyticsPath == "" {
+		analyticsPath = "data/analytics.db"
+	}
+	analytics.Init(analyticsPath)
 
+	app.Use(analytics.ViewMiddleware)
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
 	app.Post("/chat", handlers.HandleChat)
+	app.Post("/t", analytics.BeaconHandler)
+
+	app.Get("/admin", handlers.AdminDashboard)
+	app.Get("/admin/login", handlers.AdminLoginPage)
+	app.Post("/admin/login", handlers.AdminLogin)
+	app.Post("/admin/logout", handlers.AdminLogout)
 
 	log.Fatal(app.Listen(":3000"))
 }

@@ -546,6 +546,27 @@
         // Re-run lucide here so chatbox icons (send arrow etc.) render correctly
         if (typeof lucide !== 'undefined') lucide.createIcons();
     </script>
+    <script>
+        // Analitik ringan: klik WA/website/kalkulator dikirim ke /t (tanpa pihak ketiga).
+        document.addEventListener('click', function (e) {
+            var el = e.target.closest && e.target.closest('[data-track]');
+            if (!el) return;
+            var card = el.closest('.package-card');
+            var data = {
+                t: el.getAttribute('data-track'),
+                travel: card ? card.dataset.travel : '',
+                pkg: card ? card.dataset.pkg : '',
+                price: card ? parseInt(card.dataset.price, 10) || 0 : 0,
+                pos: card ? parseInt(card.dataset.pos, 10) || 0 : 0
+            };
+            try {
+                var body = JSON.stringify(data);
+                if (!(navigator.sendBeacon && navigator.sendBeacon('/t', new Blob([body], { type: 'application/json' })))) {
+                    fetch('/t', { method: 'POST', body: body, keepalive: true, headers: { 'Content-Type': 'application/json' } });
+                }
+            } catch (err) { }
+        }, true);
+    </script>
 </body>
 
 </html>

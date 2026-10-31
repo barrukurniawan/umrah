@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"umrah/app/analytics"
 	"umrah/app/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -35,6 +36,12 @@ func GetRecommendations(c *fiber.Ctx) error {
 
 	results, total := services.GetRecommendations(input)
 	totalPages := int(math.Ceil(float64(total) / 5))
+
+	shown := make([]analytics.Impression, 0, len(results))
+	for i, r := range results {
+		shown = append(shown, analytics.Impression{Travel: r.Travel.Name, Package: r.Name, Price: r.Price, Position: (max(page, 1)-1)*5 + i + 1})
+	}
+	analytics.RecordSearch(c, budget, page, analytics.SearchMeta{Travels: travels, Month: month, Sort: sort, Total: total}, shown)
 
 	return c.Render("recommendations", fiber.Map{
 		"Results":    results,
