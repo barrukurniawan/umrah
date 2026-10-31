@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" (dict "Title" "Tujuan Tabungan")}}
+    <meta name="robots" content="noindex">
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="1">
+    {{template "nav" .}}
+
+    <main class="max-w-xl mx-auto px-4 py-8">
+        <a href="{{if .Editing}}/tabungan/{{.GoalID}}{{else}}/tabungan{{end}}" class="text-sm text-gray-500 hover:text-emerald-700">← Kembali</a>
+        <h1 class="text-2xl font-bold text-gray-900 mt-2 mb-6">{{if .Editing}}Ubah tujuan{{else}}Tujuan tabungan baru{{end}}</h1>
+
+        {{if .Form.Error}}<p class="mb-4 text-sm bg-rose-50 text-rose-700 ring-1 ring-rose-200 rounded-xl px-4 py-3">{{.Form.Error}}</p>{{end}}
+
+        <form method="POST" action="{{if .Editing}}/tabungan/{{.GoalID}}/ubah{{else}}/tabungan{{end}}" class="bg-white rounded-2xl ring-1 ring-gray-200 p-6 space-y-5" id="goalForm">
+            <div>
+                <label class="block text-sm font-medium text-gray-800 mb-1" for="title">Nama tujuan</label>
+                <input id="title" name="title" value="{{.Form.Title}}" maxlength="100" required placeholder="mis. Umroh bareng Ibu"
+                    class="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-800 mb-1" for="package">Paket incaran <span class="font-normal text-gray-400">(opsional)</span></label>
+                <select id="package" name="package" class="w-full rounded-xl border border-gray-300 px-3 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option value="" data-price="">Tanpa paket, isi harga sendiri</option>
+                    {{range .Options}}<option value="{{.Key}}" data-price="{{.Price}}" data-dp="{{.DP}}" {{if eq .Key $.Form.PackageKey}}selected{{end}}>{{.Label}} · Rp {{formatCurrency .Price}}</option>{{end}}
+                </select>
+                {{if not .Options}}<p class="text-xs text-gray-500 mt-1">Belum ada paket tersimpan. Tekan ♡ di <a href="/" class="underline">halaman pencarian</a> untuk memilih paket.</p>{{end}}
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2 sm:col-span-1">
+                    <label class="block text-sm font-medium text-gray-800 mb-1" for="price">Harga paket / orang</label>
+                    <div class="flex items-center rounded-xl border border-gray-300 focus-within:ring-2 focus-within:ring-emerald-500"><span class="pl-3 text-gray-400 text-sm">Rp</span>
+                        <input id="price" name="price" value="{{.Form.Price}}" inputmode="numeric" required data-money class="w-full rounded-xl px-2 py-2.5 focus:outline-none"></div>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label class="block text-sm font-medium text-gray-800 mb-1" for="people">Jumlah orang</label>
+                    <input id="people" name="people" type="number" min="1" max="20" value="{{.Form.People}}" required class="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-800 mb-1" for="extra">Tambahan / orang <span class="font-normal text-gray-400">(uang saku, perlengkapan, oleh-oleh)</span></label>
+                    <div class="flex items-center rounded-xl border border-gray-300 focus-within:ring-2 focus-within:ring-emerald-500"><span class="pl-3 text-gray-400 text-sm">Rp</span>
+                        <input id="extra" name="extra" value="{{.Form.Extra}}" inputmode="numeric" data-money class="w-full rounded-xl px-2 py-2.5 focus:outline-none"></div>
+                </div>
+            </div>
+
+            <div class="rounded-xl bg-emerald-50 ring-1 ring-emerald-100 px-4 py-3 flex items-center justify-between">
+                <span class="text-sm text-emerald-900">Target tabungan</span>
+                <span class="text-lg font-bold text-emerald-700" id="totalOut">Rp 0</span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-800 mb-1" for="target_date">Ingin tercapai pada <span class="font-normal text-gray-400">(opsional)</span></label>
+                <input id="target_date" name="target_date" type="date" value="{{.Form.TargetDate}}" class="w-full rounded-xl border border-gray-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <p class="text-xs text-gray-500 mt-1">Dipakai untuk menghitung berapa yang perlu ditabung tiap bulan.</p>
+            </div>
+
+            <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl py-3 shadow-sm shadow-emerald-600/30">{{if .Editing}}Simpan perubahan{{else}}Buat tujuan{{end}}</button>
+        </form>
+    </main>
+
+    <script>
+        (function () {
+            var f = document.getElementById('goalForm'), sel = document.getElementById('package'), price = document.getElementById('price'),
+                people = document.getElementById('people'), extra = document.getElementById('extra'), out = document.getElementById('totalOut');
+            var d = document.getElementById('target_date'); d.min = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+            function num(v) { return parseInt(String(v || '').replace(/\D/g, ''), 10) || 0; }
+            function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+            function total() { out.textContent = 'Rp ' + fmt((num(price.value) + num(extra.value)) * Math.max(1, parseInt(people.value, 10) || 1)); }
+            f.querySelectorAll('[data-money]').forEach(function (i) {
+                if (num(i.value)) i.value = fmt(num(i.value));
+                i.addEventListener('input', function () { var n = num(i.value); i.value = n ? fmt(n) : ''; total(); });
+            });
+            sel.addEventListener('change', function () { var p = sel.selectedOptions[0].dataset.price; if (p) { price.value = fmt(num(p)); } total(); });
+            people.addEventListener('input', total);
+            total();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" (dict "Title" "Tabungan Umroh")}}
+    <meta name="robots" content="noindex">
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="{{if .User}}1{{end}}">
+    {{template "nav" .}}
+
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        {{if .User}}
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Tabungan Umroh</h1>
+                <p class="text-sm text-gray-500 mt-1">Catat setoran sampai niatmu tercapai. Hanya pencatatan, tidak terhubung ke bank.</p>
+            </div>
+            {{if .CanAdd}}<a href="/tabungan/baru" class="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl px-4 py-2.5 shadow-sm">+ Tujuan baru</a>{{end}}
+        </div>
+
+        {{if .Goals}}
+        <div class="grid sm:grid-cols-2 gap-4">
+            {{range .Goals}}
+            <a href="/tabungan/{{.ID}}" class="group block min-w-0 bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-emerald-300 hover:shadow-md transition p-5">
+                <div class="flex items-start justify-between gap-2">
+                    <h2 class="font-semibold text-gray-900 group-hover:text-emerald-700 min-w-0 truncate">{{.Title}}</h2>
+                    {{if .AchievedAt}}<span class="shrink-0 text-[11px] font-semibold bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">🎉 Tercapai</span>
+                    {{else}}<span class="shrink-0 text-sm font-bold text-emerald-700">{{.P.Percent}}%</span>{{end}}
+                </div>
+                {{if .PackageLabel}}<p class="text-xs text-gray-500 mt-0.5 truncate">{{.PackageLabel}}</p>{{end}}
+                <div class="mt-4 h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                    <div class="h-full rounded-full {{if .AchievedAt}}bg-amber-400{{else}}bg-emerald-500{{end}}" style="width: {{.P.Percent}}%"></div>
+                </div>
+                <p class="mt-3 text-sm"><span class="font-semibold text-gray-900">Rp {{rupiah .P.Saved}}</span> <span class="text-gray-400">dari Rp {{rupiah .Target}}</span></p>
+                {{if and (not .AchievedAt) .P.PerMonth}}<p class="text-xs text-gray-500 mt-1">Perlu ±Rp {{rupiah .P.PerMonth}}/bulan · {{.P.MonthsLeft}} bulan lagi</p>{{end}}
+                {{if .P.DPReady}}{{if not .AchievedAt}}<p class="text-xs text-emerald-700 font-medium mt-1">✓ DP sudah cukup</p>{{end}}{{end}}
+            </a>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white rounded-2xl ring-1 ring-gray-200 p-8 text-center">
+            <p class="text-4xl mb-3">💰</p>
+            <h2 class="font-semibold text-gray-900 mb-1">Mulai tabungan umroh pertamamu</h2>
+            <p class="text-sm text-gray-500 mb-5 max-w-sm mx-auto">Pilih paket incaran, tentukan target tanggal, lalu catat setiap setoran. Kami hitungkan berapa yang perlu ditabung tiap bulan.</p>
+            <a href="/tabungan/baru" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-2.5">Buat tujuan tabungan</a>
+        </div>
+        {{end}}
+
+        {{else}}
+        <section class="bg-white rounded-3xl ring-1 ring-gray-200 overflow-hidden">
+            <div class="bg-gradient-to-br from-emerald-700 to-teal-600 text-white px-7 py-8">
+                <p class="text-4xl mb-3">💰</p>
+                <h1 class="text-2xl font-bold">Tabungan Umroh</h1>
+                <p class="text-emerald-100 mt-1">Dari niat sampai berangkat, setahap demi setahap.</p>
+            </div>
+            <ul class="px-7 py-6 space-y-3 text-sm text-gray-700">
+                <li>✓ Target otomatis dari harga paket incaranmu × jumlah orang</li>
+                <li>✓ Hitungan "perlu menabung Rp X per bulan" sampai tanggal tujuan</li>
+                <li>✓ Penanda saat DP sudah cukup untuk mendaftar</li>
+                <li>✓ Perayaan saat target tercapai 🎉</li>
+            </ul>
+            <div class="px-7 pb-7">
+                {{if .LoginEnabled}}<a href="/auth/google/login?next=%2Ftabungan%2Fbaru" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-2.5">Masuk dengan Google untuk mulai</a>{{end}}
+                <p class="text-xs text-gray-400 mt-3">Hanya pencatatan pribadi; tidak terhubung ke rekening bank.</p>
+            </div>
+        </section>
+        {{end}}
+    </main>
+</body>
+
+</html>

@@ -21,6 +21,7 @@ type CurrentPackage struct {
 	Travel       string
 	Name         string
 	MinPrice     int
+	DownPayment  int // DP per orang (dari data paket)
 	Duration     int
 	Airline      string
 	HotelMakkah  string
@@ -54,7 +55,7 @@ func CurrentByKeys(keys map[string]bool) map[string]*CurrentPackage {
 		}
 		cp, ok := out[key]
 		if !ok {
-			cp = &CurrentPackage{Key: key, Travel: p.Travel.Name, Name: p.Name, MinPrice: p.Price, Duration: p.Duration, Airline: p.Airline,
+			cp = &CurrentPackage{Key: key, Travel: p.Travel.Name, Name: p.Name, MinPrice: p.Price, DownPayment: p.DownPayment, Duration: p.Duration, Airline: p.Airline,
 				HotelMakkah: upcoming[0].HotelMakkah, HotelMadinah: upcoming[0].HotelMadinah}
 			out[key] = cp
 		}

@@ -62,7 +62,7 @@ func Init(path string) {
 	}
 	db, err := gorm.Open(sqlite.Open(path+"?_journal_mode=WAL&_busy_timeout=5000&_foreign_keys=on"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
 	if err == nil {
-		err = db.AutoMigrate(&User{}, &Session{}, &SavedPackage{})
+		err = db.AutoMigrate(&User{}, &Session{}, &SavedPackage{}, &SavingsGoal{}, &SavingsEntry{})
 	}
 	if err != nil {
 		log.Println("[akun] nonaktif:", err)
@@ -138,6 +138,12 @@ func SetConsent(userID uint) error {
 func DeleteUser(userID uint) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("user_id = ?", userID).Delete(&SavedPackage{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", userID).Delete(&SavingsEntry{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", userID).Delete(&SavingsGoal{}).Error; err != nil {
 			return err
 		}
 		if err := tx.Where("user_id = ?", userID).Delete(&Session{}).Error; err != nil {

@@ -32,6 +32,43 @@ func main() {
 		return m
 	})
 	engine.AddFunc("inc", func(i int) int { return i + 1 })
+	// Halaman tabungan: lingkar progres, tonggak, persen DP, tombol nominal cepat.
+	engine.AddFunc("ringOffset", func(pct int) string { return fmt.Sprintf("%.1f", 326.7*(1-float64(min(max(pct, 0), 100))/100)) })
+	engine.AddFunc("milestones", func() []int { return []int{25, 50, 75, 100} })
+	engine.AddFunc("pct", func(a, b int64) int {
+		if b <= 0 {
+			return 0
+		}
+		return int(min(100, a*100/b))
+	})
+	engine.AddFunc("int", func(n int64) int { return int(n) })
+	engine.AddFunc("quickAmounts", func() []struct {
+		Value int
+		Label string
+	} {
+		return []struct {
+			Value int
+			Label string
+		}{{100000, "100rb"}, {250000, "250rb"}, {500000, "500rb"}, {1000000, "1 jt"}, {5000000, "5 jt"}}
+	})
+	// Rupiah untuk int64 (tabungan) dan tanggal "2006-01-02" → "15 Jan 2027".
+	engine.AddFunc("rupiah", func(n int64) string {
+		neg := n < 0
+		if neg {
+			n = -n
+		}
+		s := fmt.Sprintf("%d", n)
+		var parts []string
+		for len(s) > 3 {
+			parts = append([]string{s[len(s)-3:]}, parts...)
+			s = s[:len(s)-3]
+		}
+		out := strings.Join(append([]string{s}, parts...), ".")
+		if neg {
+			return "-" + out
+		}
+		return out
+	})
 	// Header akun: huruf awal (avatar tanpa foto) dan nama depan.
 	engine.AddFunc("initial", func(name string) string {
 		for _, r := range strings.TrimSpace(name) {
@@ -221,6 +258,17 @@ func main() {
 	app.Get("/tersimpan", handlers.SavedPage)
 	app.Post("/api/saved/toggle", handlers.SavedToggle)
 	app.Post("/api/saved/import", handlers.SavedImport)
+
+	// Tabungan umroh (perlu login).
+	app.Get("/tabungan", handlers.SavingsList)
+	app.Get("/tabungan/baru", handlers.SavingsNew)
+	app.Post("/tabungan", handlers.SavingsCreate)
+	app.Get("/tabungan/:id<int>", handlers.SavingsDetail)
+	app.Get("/tabungan/:id<int>/ubah", handlers.SavingsEdit)
+	app.Post("/tabungan/:id<int>/ubah", handlers.SavingsUpdate)
+	app.Post("/tabungan/:id<int>/hapus", handlers.SavingsDelete)
+	app.Post("/tabungan/:id<int>/setoran", handlers.EntryAdd)
+	app.Post("/tabungan/:id<int>/setoran/:eid<int>/hapus", handlers.EntryDelete)
 	app.Post("/privasi/opt-out", handlers.PrivacyOptOut)
 	app.Post("/privasi/opt-in", handlers.PrivacyOptIn)
 

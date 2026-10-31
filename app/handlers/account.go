@@ -176,6 +176,7 @@ func AccountExport(c *fiber.Ctx) error {
 		"exported_at": time.Now().Format(time.RFC3339),
 		"akun":        fiber.Map{"nama": u.Name, "email": u.Email, "dibuat": u.CreatedAt, "login_terakhir": u.LastLoginAt, "persetujuan": u.ConsentAt},
 		"tersimpan":   accounts.ListSaved(u.ID),
+		"tabungan":    exportSavings(u.ID),
 	}
 	c.Set(fiber.HeaderContentDisposition, fmt.Sprintf(`attachment; filename="umrohku-data-%s.json"`, time.Now().Format("20060102")))
 	return c.JSON(data)
@@ -192,4 +193,12 @@ func AccountDelete(c *fiber.Ctx) error {
 	accounts.DeleteUser(u.ID)
 	c.ClearCookie(accounts.SessionCookie)
 	return c.Redirect("/?akun=dihapus", fiber.StatusSeeOther)
+}
+
+func exportSavings(userID uint) []fiber.Map {
+	var out []fiber.Map
+	for _, g := range accounts.ListGoals(userID) {
+		out = append(out, fiber.Map{"tujuan": g, "setoran": accounts.ListEntries(g.ID)})
+	}
+	return out
 }

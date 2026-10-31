@@ -39,6 +39,7 @@
                         class="text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2">Tanya via WhatsApp</a>
                     <a href="{{travelURL .Travel}}" target="_blank" rel="noopener" data-track="click_web"
                         class="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50">Website travel</a>
+                    <a href="/tabungan/baru?paket={{.Key | urlquery}}" class="text-sm border border-amber-300 bg-amber-50 text-amber-900 rounded-lg px-4 py-2 hover:bg-amber-100">💰 Jadikan target tabungan</a>
                 </div>
                 {{else}}
                 <p class="text-sm text-amber-700 mt-3">Sudah tidak tersedia: jadwalnya lewat atau travel menghapus paket ini. Disimpan seharga Rp {{formatCurrency .Price}} ({{.Departures}}).</p>
