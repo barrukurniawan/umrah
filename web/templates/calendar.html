@@ -37,11 +37,11 @@
 <!-- HP: legenda ringkas, titik + tulisan -->
 <div class="sm:hidden mt-2.5 space-y-1 text-[11px] text-gray-500">
     <p class="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
-        <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-sky-300"></i>Sejuk</span>
-        <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-emerald-300"></i>Nyaman</span>
-        <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-amber-300"></i>Hangat</span>
-        <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-orange-300"></i>Panas</span>
-        <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-rose-300"></i>Sangat panas</span></p>
+        <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-[3px] tone-sejuk border border-black/10"></i>Sejuk</span>
+        <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-[3px] tone-nyaman border border-black/10"></i>Nyaman</span>
+        <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-[3px] tone-hangat border border-black/10"></i>Hangat</span>
+        <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-[3px] tone-panas border border-black/10"></i>Panas</span>
+        <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-[3px] tone-ekstrem border border-black/10"></i>Sangat panas</span></p>
     <p class="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
         <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-violet-400"></i>Libur sekolah</span>
         <span class="inline-flex items-center gap-1"><i class="w-2 h-2 rounded-full bg-[#8B1E3F]"></i>Ramadhan</span>
@@ -57,7 +57,7 @@
     {{range .V.Lead}}<div></div>{{end}}
     {{range .V.Days}}
     <button type="button" {{if .Travels}}onclick="ukCal.day('{{.Date}}')" data-day="{{.Date}}"{{else}}tabindex="-1"{{end}}
-        class="cal-cell {{if .Haji}}cal-haji{{else}}tone-{{.Temp.Tone}}{{end}} relative rounded-xl sm:rounded-2xl border text-left p-1.5 sm:p-2.5 min-h-[62px] sm:min-h-[112px] flex flex-col {{if .Travels}}has border-emerald-200 cursor-pointer{{else}}border-gray-100 cursor-default{{end}} {{if .Events}}pb-4 sm:pb-4{{end}} {{if .Past}}opacity-40{{end}} {{if .Today}}ring-2 ring-emerald-500{{end}}"
+        class="cal-cell {{if .Haji}}cal-haji{{else}}tone-{{.Temp.Tone}}{{end}} relative rounded-xl sm:rounded-2xl border text-left p-1.5 sm:p-2.5 min-h-[62px] sm:min-h-[112px] flex flex-col {{if .Travels}}has border-black/10 cursor-pointer{{else}}border-black/5 cursor-default{{end}} {{if .Events}}pb-4 sm:pb-4{{end}} {{if .Past}}opacity-40{{end}} {{if .Today}}ring-2 ring-emerald-500{{end}}"
         {{if .Travels}}aria-label="{{.Day}}: {{.Travels}} travel, mulai {{jt .MinPrice}}"{{end}}>
         <div class="flex items-start justify-between gap-1">
             <span class="text-sm sm:text-lg font-bold {{if .Travels}}text-gray-900{{else}}text-gray-400{{end}}">{{.Day}}</span>
