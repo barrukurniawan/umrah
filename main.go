@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -176,6 +177,36 @@ func main() {
 	engine.AddFunc("gmapsMadinahURL", services.GmapsMadinahURL)
 	engine.AddFunc("cleanHotel", services.CleanHotelName)
 	engine.AddFunc("hasPrefix", strings.HasPrefix)
+	// Mode Kalender.
+	engine.AddFunc("jt", func(n int) string { // 23500000 -> "23,5 jt"
+		v := strconv.FormatFloat(float64(n)/1e6, 'f', 1, 64)
+		return strings.Replace(strings.TrimSuffix(v, ".0"), ".", ",", 1) + " jt"
+	})
+	engine.AddFunc("list", func(v ...string) []string { return v })
+	engine.AddFunc("add", func(a, b int) int { return a + b })
+	engine.AddFunc("mul", func(a, b int) int { return a * b })
+	engine.AddFunc("capFirst", func(s string) string {
+		if s == "" {
+			return s
+		}
+		return strings.ToUpper(s[:1]) + s[1:]
+	})
+	engine.AddFunc("toneColor", func(t string) string {
+		return map[string]string{"sejuk": "text-sky-500", "nyaman": "text-emerald-500", "hangat": "text-amber-500", "panas": "text-orange-500", "ekstrem": "text-rose-500"}[t]
+	})
+	engine.AddFunc("toneLabel", func(t string) string {
+		return map[string]string{"sejuk": "Sejuk", "nyaman": "Nyaman", "hangat": "Hangat", "panas": "Panas", "ekstrem": "Sangat panas"}[t]
+	})
+	engine.AddFunc("eventBar", func(kind string) string {
+		return map[string]string{"libur": "bg-violet-400", "ramadhan": "bg-emerald-500", "puncak": "bg-amber-400", "ied": "bg-sky-500"}[kind]
+	})
+	engine.AddFunc("formatDateShort", func(d string) string { // "2027-01-07" -> "7 Jan"
+		t, err := time.Parse("2006-01-02", d)
+		if err != nil {
+			return d
+		}
+		return fmt.Sprintf("%d %s", t.Day(), [...]string{"", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"}[t.Month()])
+	})
 
 	engine.AddFunc("airlineURL", func(name string) string {
 		urls := map[string]string{
@@ -231,6 +262,8 @@ func main() {
 	app.Use(accounts.Middleware)
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
+	app.Get("/kalender", handlers.CalendarMonth)
+	app.Get("/kalender/hari", handlers.CalendarDay)
 	app.Get("/api/support/messages", handlers.SupportMessages)
 	app.Post("/api/support/messages", handlers.SupportSend)
 	app.Post("/t", analytics.BeaconHandler)

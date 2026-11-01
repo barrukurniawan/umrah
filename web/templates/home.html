@@ -58,6 +58,20 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
 
+        /* Mode Kalender */
+        .tone-sejuk { background: linear-gradient(160deg, #eff6ff, #f8fbff); }
+        .tone-nyaman { background: linear-gradient(160deg, #ecfdf5, #f7fdfa); }
+        .tone-hangat { background: linear-gradient(160deg, #fffbeb, #fffdf6); }
+        .tone-panas { background: linear-gradient(160deg, #fff4e6, #fffaf3); }
+        .tone-ekstrem { background: linear-gradient(160deg, #fff1f2, #fff8f8); }
+        .cal-haji { background: repeating-linear-gradient(135deg, #f3f4f6 0 6px, #fafafa 6px 12px); }
+        .cal-cell { transition: transform .15s ease, box-shadow .15s ease; }
+        .cal-cell.has:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(5, 150, 105, .45); }
+        .cal-sheet { animation: calUp .22s ease-out; }
+        @keyframes calUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .uk-seg button[aria-pressed=true] { background: #059669; color: #fff; box-shadow: 0 6px 16px -8px rgba(5, 150, 105, .8); }
+        .uk-seg button[aria-pressed=true] svg { color: #fff; }
+
         .facility-card {
             transition: all 0.3s ease;
         }
@@ -102,8 +116,14 @@
 
     <section class="max-w-3xl mx-auto px-3 sm:px-4 pb-16">
         <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-4 sm:p-8">
+            <div class="flex justify-center mb-7">
+                <div class="uk-seg inline-flex rounded-full bg-gray-100 p-1 text-sm font-semibold" role="group" aria-label="Cara mencari">
+                    <button type="button" id="modeBtnBudget" aria-pressed="true" onclick="ukCal.mode(false)" class="px-5 py-2 rounded-full transition-all text-gray-600 inline-flex items-center gap-2">{{template "ic" (dict "N" "wallet" "C" "w-4 h-4 text-emerald-600")}}Budget</button>
+                    <button type="button" id="modeBtnCal" aria-pressed="false" onclick="ukCal.mode(true)" class="px-5 py-2 rounded-full transition-all text-gray-600 inline-flex items-center gap-2">{{template "ic" (dict "N" "calendar" "C" "w-4 h-4 text-emerald-600")}}Kalender</button>
+                </div>
+            </div>
             <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML">
-                <div class="mb-10">
+                <div class="mb-10" id="modeBudget">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
                         <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 26.000.000</span>
@@ -158,11 +178,23 @@
                     </div>
                 </div>
                 
-                <button type="submit"
+                <button type="submit" id="budgetSubmit"
                     class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
                     Cari Paket Umrah
                 </button>
             </form>
+
+            <div id="modeCal" class="hidden">
+                <div class="mb-2">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="calBudget" class="text-sm font-semibold text-gray-700">Budget maksimal</label>
+                        <span id="calBudgetDisplay" class="text-lg font-bold text-emerald-600">Semua harga</span>
+                    </div>
+                    <input type="range" id="calBudget" min="20000000" max="50000000" step="1000000" value="50000000" class="w-full">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1"><span>Rp 20 jt</span><span>Semua</span></div>
+                </div>
+                <div id="calendar" class="mt-5"><p class="text-sm text-gray-400 text-center py-10">Memuat kalender…</p></div>
+            </div>
 
             <div id="results" class="mt-4"></div>
         </div>
@@ -390,6 +422,7 @@
             }
             document.getElementById('travelsInput').value = _selectedTravels.join(',');
             updateTravelToggleBtn();
+            if (window.ukCal) ukCal.onFilter();
         }
 
         function toggleAllTravels() {
@@ -410,6 +443,7 @@
             }
             document.getElementById('travelsInput').value = _selectedTravels.join(',');
             updateTravelToggleBtn();
+            if (window.ukCal) ukCal.onFilter();
         }
 
         function updateTravelToggleBtn() {
@@ -465,6 +499,83 @@
                 }
             } catch (err) { }
         }, true);
+    </script>
+    <!-- Pop-up tanggal (mode Kalender) -->
+    <div id="calModal" class="hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px] flex items-end sm:items-center justify-center sm:p-6" onclick="if(event.target===this)ukCal.close()">
+        <div id="calModalBody" class="cal-sheet bg-white w-full sm:max-w-2xl max-h-[88vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col"></div>
+    </div>
+    <script>
+        // Mode Kalender: grid & pop-up dirender server (/kalender, /kalender/hari), filter memakai chip travel yang sama.
+        window.ukCal = (function () {
+            var on = false, month = '', timer = null;
+            var hParts = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { day: 'numeric', month: 'long' });
+            var hLong = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' });
+            var hMon = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { month: 'long', year: 'numeric' });
+            function d(s) { return new Date(s + 'T00:00:00'); }
+            function hijri(root) {
+                try {
+                    // Cukup angka hari Hijriah; nama bulan hanya di tanggal 1 Hijriah dan di kotak pertama.
+                    root.querySelectorAll('[data-hijri]').forEach(function (e, i) {
+                        var parts = hParts.formatToParts(d(e.dataset.hijri)), day = '', mon = '';
+                        parts.forEach(function (p) { if (p.type === 'day') day = p.value; if (p.type === 'month') mon = p.value; });
+                        e.textContent = (i === 0 || day === '1') ? day + ' ' + mon : day;
+                        if (i === 0 || day === '1') e.classList.add('text-emerald-600', 'font-semibold');
+                    });
+                    root.querySelectorAll('[data-hijri-long]').forEach(function (e) { e.textContent = hLong.format(d(e.dataset.hijriLong)); });
+                    root.querySelectorAll('[data-hijri-month]').forEach(function (e) {
+                        var p = e.dataset.hijriMonth.split('-'), a = hMon.format(new Date(+p[0], +p[1] - 1, 1)), b = hMon.format(new Date(+p[0], +p[1], 0));
+                        e.textContent = a === b ? a : a.split(' ')[0] + ' – ' + b;
+                    });
+                } catch (err) { }
+            }
+            function params() {
+                return 'budget=' + document.getElementById('calBudget').value + '&travels=' + encodeURIComponent(document.getElementById('travelsInput').value);
+            }
+            function beacon(t, extra) {
+                try { navigator.sendBeacon('/t', new Blob([JSON.stringify(Object.assign({ t: t }, extra || {}))], { type: 'application/json' })); } catch (e) { }
+            }
+            function load() {
+                htmx.ajax('GET', '/kalender?bulan=' + month + '&' + params(), { target: '#calendar', swap: 'innerHTML' }).then(function () {
+                    var el = document.querySelector('[data-cal-month]');
+                    if (el) month = el.dataset.calMonth;
+                    hijri(document.getElementById('calendar'));
+                    var u = new URL(location.href); u.searchParams.set('mode', 'kalender'); if (month) u.searchParams.set('bulan', month);
+                    history.replaceState(null, '', u.pathname + u.search);
+                });
+            }
+            function mode(cal) {
+                on = cal;
+                document.getElementById('modeBtnCal').setAttribute('aria-pressed', cal);
+                document.getElementById('modeBtnBudget').setAttribute('aria-pressed', !cal);
+                ['modeBudget', 'budgetSubmit', 'results'].forEach(function (id) { document.getElementById(id).classList.toggle('hidden', cal); });
+                document.getElementById('modeCal').classList.toggle('hidden', !cal);
+                try { localStorage.setItem('uk_mode', cal ? 'kalender' : 'budget'); } catch (e) { }
+                if (cal) { load(); beacon('cal_open'); }
+                else { var u = new URL(location.href); u.searchParams.delete('mode'); u.searchParams.delete('bulan'); history.replaceState(null, '', u.pathname + u.search); }
+            }
+            function day(date) {
+                htmx.ajax('GET', '/kalender/hari?tanggal=' + date + '&' + params(), { target: '#calModalBody', swap: 'innerHTML' }).then(function () {
+                    hijri(document.getElementById('calModalBody'));
+                    if (window.ukMarkLocal) ukMarkLocal();
+                    document.getElementById('calModal').classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+                beacon('cal_day', { pkg: date });
+            }
+            function close() { document.getElementById('calModal').classList.add('hidden'); document.body.style.overflow = ''; }
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+            var cb = document.getElementById('calBudget');
+            cb.addEventListener('input', function () {
+                var v = +cb.value;
+                document.getElementById('calBudgetDisplay').textContent = v >= 50000000 ? 'Semua harga' : 'Rp ' + v.toLocaleString('id-ID');
+                clearTimeout(timer); timer = setTimeout(load, 250);
+            });
+            var q = new URLSearchParams(location.search), saved = null;
+            try { saved = localStorage.getItem('uk_mode'); } catch (e) { }
+            month = q.get('bulan') || '';
+            if (q.get('mode') === 'kalender' || (!q.get('mode') && saved === 'kalender')) mode(true);
+            return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
+        })();
     </script>
     {{template "saved_js" .}}
 </body>

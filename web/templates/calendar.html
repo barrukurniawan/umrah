@@ -1,0 +1,67 @@
+{{/* Grid satu bulan untuk mode Kalender (dimuat lewat HTMX ke #calendar). */}}
+<div class="flex items-center justify-between gap-2 border-t border-gray-100 pt-5" data-cal-month="{{.V.Key}}">
+    <button type="button" {{if .V.PrevKey}}onclick="ukCal.month('{{.V.PrevKey}}')"{{else}}disabled{{end}}
+        class="w-10 h-10 rounded-full border border-gray-200 hover:bg-gray-50 flex items-center justify-center {{if not .V.PrevKey}}opacity-30 cursor-default{{end}}" aria-label="Bulan sebelumnya">{{template "ic" (dict "N" "left" "C" "w-4 h-4 text-gray-500")}}</button>
+    <div class="text-center">
+        <p class="text-2xl font-bold text-gray-900">{{.V.Title}}</p>
+        <p class="text-xs text-gray-400" data-hijri-month="{{.V.Key}}"></p>
+    </div>
+    <button type="button" {{if .V.NextKey}}onclick="ukCal.month('{{.V.NextKey}}')"{{else}}disabled{{end}}
+        class="w-10 h-10 rounded-full border border-gray-200 hover:bg-gray-50 flex items-center justify-center {{if not .V.NextKey}}opacity-30 cursor-default{{end}}" aria-label="Bulan berikutnya">{{template "ic" (dict "N" "right" "C" "w-4 h-4 text-gray-500")}}</button>
+</div>
+
+<div class="mt-4 flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+    {{range .V.Tabs}}
+    <button type="button" onclick="ukCal.month('{{.Key}}')"
+        class="flex-1 min-w-[68px] whitespace-nowrap rounded-xl px-2 py-1.5 text-xs border {{if .Active}}bg-emerald-600 text-white border-emerald-600{{else}}bg-white text-gray-600 border-gray-200 hover:border-emerald-300{{end}}">
+        <span class="font-semibold">{{.Label}}</span>
+        <span class="block text-[10px] {{if .Active}}text-emerald-100{{else}}text-gray-400{{end}}">{{.Count}} jadwal</span>
+    </button>
+    {{end}}
+</div>
+
+<p class="mt-3 text-sm text-gray-600 text-center">
+    {{if .V.Departures}}<b>{{.V.Departures}}</b> keberangkatan dari <b>{{.V.TravelCount}}</b> travel. Mulai <b class="text-emerald-600">{{jt .V.MinPrice}}</b>.
+    {{else}}Belum ada keberangkatan yang cocok di bulan ini.{{end}}
+</p>
+
+<div class="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1.5 text-[11px] text-gray-500">
+    {{range $t := (list "sejuk" "nyaman" "hangat" "panas" "ekstrem")}}
+    <span class="inline-flex items-center gap-1 rounded-full tone-{{$t}} border border-gray-100 pl-1.5 pr-2 py-0.5">{{template "ic" (dict "N" $t "C" (printf "w-3.5 h-3.5 %s" (toneColor $t)))}}{{toneLabel $t}}</span>
+    {{end}}
+    <span class="inline-flex items-center gap-1"><i class="w-5 h-1 rounded bg-violet-400"></i>Libur sekolah</span>
+    <span class="inline-flex items-center gap-1"><i class="w-5 h-1 rounded bg-emerald-500"></i>Ramadhan</span>
+    <span class="inline-flex items-center gap-1"><i class="w-5 h-1 rounded bg-amber-400"></i>10 malam terakhir</span>
+    <span class="inline-flex items-center gap-1"><i class="w-5 h-1 rounded bg-sky-500"></i>Idul Fitri</span>
+    <span class="inline-flex items-center gap-1"><i class="w-4 h-3 rounded cal-haji border border-gray-200"></i>Musim haji</span>
+</div>
+
+<div class="mt-4 grid grid-cols-7 gap-1 sm:gap-2 text-center text-[11px] sm:text-xs font-semibold text-gray-400">
+    <div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div><div>Min</div>
+</div>
+<div class="mt-1.5 grid grid-cols-7 gap-1 sm:gap-2">
+    {{range .V.Lead}}<div></div>{{end}}
+    {{range .V.Days}}
+    <button type="button" {{if .Travels}}onclick="ukCal.day('{{.Date}}')"{{else}}tabindex="-1"{{end}}
+        class="cal-cell {{if .Haji}}cal-haji{{else}}tone-{{.Temp.Tone}}{{end}} relative rounded-xl sm:rounded-2xl border text-left p-1.5 sm:p-2.5 min-h-[62px] sm:min-h-[112px] flex flex-col {{if .Travels}}has border-emerald-200 cursor-pointer{{else}}border-gray-100 cursor-default{{end}} {{if .Past}}opacity-40{{end}} {{if .Today}}ring-2 ring-emerald-500{{end}}"
+        {{if .Travels}}aria-label="{{.Day}}: {{.Travels}} travel, mulai {{jt .MinPrice}}"{{end}}>
+        <div class="flex items-start justify-between gap-1">
+            <span class="text-sm sm:text-lg font-bold {{if .Travels}}text-gray-900{{else}}text-gray-400{{end}}">{{.Day}}</span>
+            <span class="sm:hidden">{{template "ic" (dict "N" .Temp.Tone "C" (printf "w-3.5 h-3.5 %s" (toneColor .Temp.Tone)))}}</span>
+            <span class="hidden sm:block text-[10px] text-gray-400 leading-tight text-right whitespace-nowrap" data-hijri="{{.Date}}"></span>
+        </div>
+        <div class="hidden sm:flex items-center gap-1 text-[11px] text-gray-500 mt-0.5">{{template "ic" (dict "N" .Temp.Tone "C" (printf "w-3.5 h-3.5 %s" (toneColor .Temp.Tone)))}}{{.Temp.MakHi}}°<span class="text-gray-300">/</span>{{.Temp.MakLo}}°</div>
+        {{if .Haji}}<span class="hidden sm:block text-[10px] leading-tight text-gray-500 mt-1">Visa umroh biasanya ditutup</span>{{end}}
+        <div class="mt-auto">
+            {{if .Travels}}
+            <span class="sm:hidden inline-flex w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold items-center justify-center">{{.Travels}}</span>
+            <span class="hidden sm:inline-flex items-center rounded-full bg-emerald-600 text-white text-[11px] font-semibold px-2 py-0.5">{{.Travels}} travel</span>
+            <p class="hidden sm:block text-[11px] text-emerald-700 font-medium mt-1">mulai {{jt .MinPrice}}</p>
+            {{end}}
+        </div>
+        {{if .Featured}}<span class="absolute -top-1.5 -right-1.5 rounded-full bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 shadow">Promo</span>{{end}}
+        {{range $i, $e := .Events}}<i class="absolute left-1.5 right-1.5 h-1 rounded-full {{eventBar $e.Kind}}" style="bottom: {{add 2 (mul $i 5)}}px" title="{{$e.Label}}"></i>{{end}}
+    </button>
+    {{end}}
+</div>
+<p class="mt-3 text-[11px] text-gray-400">Suhu siang/malam Makkah. Rata-rata iklim jangka panjang, bukan prakiraan cuaca. Tanggal Hijriah perkiraan Umm al-Qura (±1 hari).</p>

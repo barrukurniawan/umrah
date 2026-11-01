@@ -1,6 +1,6 @@
 # Rencana: Mode Kalender
 
-Status: rencana + mockup. Belum ada kode di aplikasi.
+Status: **K1–K3 sudah dibuat di aplikasi (lokal, belum deploy).** Tombol geser Budget/Kalender di beranda, rute `/kalender` dan `/kalender/hari`.
 Mockup interaktif (data paket asli 6 bulan, Nov 2026 – Apr 2027): buka `docs/mockup-kalender.html` di browser.
 
 ## 1. Tujuan
@@ -131,7 +131,7 @@ Total sekitar 1,5 hari kerja. Bisa dikerjakan dalam satu sesi.
 
 ## 6. Yang perlu kamu putuskan
 
-1. **Alviandra di mode Kalender.** Di mode Budget dia hanya muncul di budget 28–29 jt. Di Kalender, apakah (a) ikut aturan yang sama, hanya muncul kalau filter budget 28–29 jt, atau (b) selalu muncul di tanggal 15 Jan 2027 dengan badge 🔥?
+1. ~~Alviandra di mode Kalender~~ Diputuskan: selalu tampil di Kalender (badge Promo, paling atas di pop-up), apa pun filter budgetnya. Di mode Budget tetap hanya 28–29 jt.
 2. **Suhu kota mana di kotak tanggal.** Usulan saya Makkah (paling lama di sana). Madinah tampil di pop-up.
 3. **Prakiraan cuaca nyata** untuk 16 hari ke depan. Pakai Open-Meteo berbayar, atau cukup rata-rata iklim.
 4. **Default saat halaman dibuka.** Tetap Budget (usulan saya), atau Kalender.

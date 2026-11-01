@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var beaconTypes = map[string]bool{"click_wa": true, "click_web": true, "calc": true, "chat": true}
+var beaconTypes = map[string]bool{"click_wa": true, "click_web": true, "calc": true, "chat": true, "cal_open": true, "cal_day": true}
 
 type beacon struct {
 	Type     string `json:"t"`

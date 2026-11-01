@@ -367,7 +367,11 @@ func typeLabel(t string) string {
 	case "calc":
 		return "Kalkulator"
 	case "chat":
-		return "Chat AI"
+		return "Chat"
+	case "cal_open":
+		return "Buka kalender"
+	case "cal_day":
+		return "Klik tanggal kalender"
 	}
 	return t
 }
