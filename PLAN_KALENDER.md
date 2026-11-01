@@ -36,7 +36,7 @@ Setiap kotak tanggal berisi:
 | Kanan atas | Tanggal Hijriah kecil ("21 Rajab") |
 | Tengah | Ikon cuaca + suhu siang/malam Makkah ("☀️ 36°/24°") |
 | Bawah | Pil hijau **"5 travel"** + "mulai 23,5 jt" |
-| Garis tipis di dasar kotak | Momen. Ungu = libur sekolah, hijau = Ramadhan, kuning = 10 malam terakhir, biru = Idul Fitri. Musim haji diarsir abu dengan tulisan "Visa umroh biasanya ditutup" |
+| Garis tipis di dasar kotak | Momen. Ungu = libur sekolah, maroon = Ramadhan, kuning = 10 malam terakhir, biru = Idul Fitri. Musim haji diarsir abu dengan tulisan "Visa umroh biasanya ditutup" |
 | Latar | Gradasi tipis sesuai cuaca (lihat 2d) |
 
 - Hari yang sudah lewat dibuat pudar. Hari ini diberi cincin hijau.
