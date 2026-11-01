@@ -49,19 +49,19 @@ func InitDB() {
 func importCrawlerData() bool {
 
 	dpOverrides := map[string]int{
-		"Khasanah Travel":         14000000,
-		"PT Labbaika Cipta Imani": 15000000,
-		"Rahmah Travel":           7500000,
-		"Umrah Bisa":              5000000,
+		"Khasanah Travel":          14000000,
+		"PT Labbaika Cipta Imani":  15000000,
+		"Rahmah Travel":            7500000,
+		"Umrah Bisa":               5000000,
 		"PT Wisata Hati Universal": 5000000,
-		"Marwa Mustajab":          5000000,
-		"Taiba Medina":            2500000,
-		"UMI Tour & Travel":       5000000,
-		"Uhud Tour":               9000000,
-		"Lafaya Travel":           10000000,
-		"Al Hijaz":                5000000,
-		"Hamdan Tour":             5000000,
-		"Jejak Imani":             5000000,
+		"Marwa Mustajab":           5000000,
+		"Taiba Medina":             2500000,
+		"UMI Tour & Travel":        5000000,
+		"Uhud Tour":                9000000,
+		"Lafaya Travel":            10000000,
+		"Al Hijaz":                 5000000,
+		"Hamdan Tour":              5000000,
+		"Jejak Imani":              5000000,
 	}
 
 	ratingOverrides := map[string]float64{
@@ -116,13 +116,23 @@ func importCrawlerData() bool {
 		}
 		for _, r := range results {
 			key := r.Site + "|" + r.URL
+			// Crawl yang gagal/kosong tidak boleh menghapus hasil bagus sebelumnya.
+			if prev, ok := latestResult[key]; ok && (r.Error != "" || len(r.Packages) == 0) && len(prev.Packages) > 0 {
+				continue
+			}
 			latestResult[key] = r
 		}
 	}
 
-	var allResults []CrawlResult
-	for _, r := range latestResult {
-		allResults = append(allResults, r)
+	keys := make([]string, 0, len(latestResult))
+	for k := range latestResult {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys) // urutan import (dan ID) deterministik
+	var allResults []crawlResultLite
+	for _, k := range keys {
+		r := latestResult[k]
+		allResults = append(allResults, crawlResultLite{Site: r.Site, URL: r.URL, Packages: r.Packages, Error: r.Error})
 	}
 
 	if len(allResults) == 0 {
@@ -136,98 +146,8 @@ func importCrawlerData() bool {
 	DB.Unscoped().Where("1 = 1").Delete(&models.Package{})
 	DB.Unscoped().Where("1 = 1").Delete(&models.Travel{})
 
-	travelMap := make(map[string]*models.Travel)
-	pkgCount := 0
-	detailCount := 0
-
-	for _, result := range allResults {
-		if result.Error != "" {
-			continue
-		}
-		for _, cp := range result.Packages {
-		if cp.Price < 5000000 {
-			continue
-		}
-
-			travelName := cp.TravelName
-			if travelName == "" {
-				travelName = result.Site
-			}
-
-			travel, ok := travelMap[travelName]
-			if !ok {
-				rating := 4.5
-				if r, ok := ratingOverrides[travelName]; ok {
-					rating = r
-				}
-				travel = &models.Travel{Name: travelName, Rating: rating}
-				DB.Create(travel)
-				travelMap[travelName] = travel
-			}
-
-		downPayment := cp.Price / 5
-		if downPayment < 1000000 {
-			downPayment = 1000000
-		}
-		if dp, ok := dpOverrides[travelName]; ok {
-			downPayment = dp
-		}
-
-		pkg := models.Package{
-				TravelID:         travel.ID,
-				Name:             cp.PackageName,
-				Price:            cp.Price,
-				HotelDistance:    500,
-				Duration:         cp.Duration,
-				Airline:          cp.Airline,
-				IsDirect:         isDirectAirline(cp.Airline),
-				DownPayment:      downPayment,
-				PaymentDeadline:  "",
-				Guide:            "Ustadz Pembimbing",
-				Facilities:       `["Visa","Hotel","Transportasi","Makan 3x sehari"]`,
-				IsFamily:         false,
-				IsSenior:         false,
-				SunnahScore:      5,
-				GroupSize:        40,
-				IsNearHaram:      false,
-				IsKajian:         false,
-				IsSunnah:         false,
-				IsKidFriendly:    false,
-				IsSeniorFriendly: false,
-			}
-			DB.Create(&pkg)
-			pkgCount++
-
-			for _, dStr := range cp.DepartureDates {
-				depDate, ok := parseCrawlerDate(dStr)
-				if !ok {
-					continue
-				}
-				retDate := calcReturnDate(depDate, cp.Duration)
-
-				detail := models.DetailPackage{
-					PackageID:         pkg.ID,
-					DepartureDate:     depDate,
-					ReturnDate:        retDate,
-					HotelMakkah:       cleanHotelName(cp.HotelMakkah),
-					HotelMadinah:      cleanHotelName(cp.HotelMadinah),
-					StarsMakkah:       3,
-					StarsMadinah:      3,
-					RoomType:          "Quad",
-					TotalQuota:        40,
-					AvailableQuota:    30,
-					DepartureLocation: "Jakarta",
-					AddonTriple:       2500000,
-					AddonDouble:       3500000,
-					Guide:             pkg.Guide,
-				}
-				DB.Create(&detail)
-				detailCount++
-			}
-		}
-	}
-
-	log.Printf("[import] loaded %d travels, %d packages, %d details from crawler output\n", len(travelMap), pkgCount, detailCount)
+	pkgCount, detailCount, travelCount := buildFromCrawl(allResults, dpOverrides, ratingOverrides)
+	log.Printf("[import] loaded %d travels, %d packages, %d details from crawler output\n", travelCount, pkgCount, detailCount)
 	return pkgCount > 0
 }
 

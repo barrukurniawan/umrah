@@ -185,6 +185,7 @@ func AccountExport(c *fiber.Ctx) error {
 		"akun":        fiber.Map{"nama": u.Name, "email": u.Email, "dibuat": u.CreatedAt, "login_terakhir": u.LastLoginAt, "persetujuan": u.ConsentAt},
 		"tersimpan":   accounts.ListSaved(u.ID),
 		"tabungan":    exportSavings(u.ID),
+		"chat_admin":  supportJSON(accounts.SupportMessages(u.ID, 0)),
 	}
 	c.Set(fiber.HeaderContentDisposition, fmt.Sprintf(`attachment; filename="umrohku-data-%s.json"`, time.Now().Format("20060102")))
 	return c.JSON(data)

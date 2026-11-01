@@ -19,9 +19,12 @@ import (
 // box: Category, Airlines, Program ("9, 10, 11 Hari"), Package Price
 // ("23,9 Juta - 30,9 Juta"), plus include details with hotels.
 //
-// As of 2026-10-31 the program pages publish NO departure dates (schedules are
-// only in flyer images), so this parser emits nothing until a page contains a
-// text date ("15 Januari 2027") on/after today. It never invents dates.
+// As of 2026-11-01 the program pages (and sitemap.xml) publish NO departure
+// dates: schedules exist only inside flyer images, and the commented-out
+// /umroh-reguler/umroh-9D/ and umroh-12D/ pages are 404. So this parser emits
+// nothing until a page contains a text date ("15 Januari 2027") on/after
+// today. It never invents dates. Fields that are ambiguous on a program page
+// ("Program: 9, 10, 11 Hari", several Makkah hotel tiers) are left empty.
 type FandiegoParser struct {
 	URL string
 }
@@ -31,6 +34,7 @@ var (
 	fandiegoJutaRe        = regexp.MustCompile(`(\d+(?:[.,']\d+)?)\s*Juta`)
 	fandiegoDateRe        = regexp.MustCompile(`(?i)\b(\d{1,2})\s+(januari|january|jan|februari|february|feb|maret|march|mar|april|apr|mei|may|juni|june|jun|juli|july|jul|agustus|august|agu|agt|aug|september|sept|sep|oktober|october|okt|oct|november|nov|desember|december|des|dec)\s+(20\d{2})\b`)
 	fandiegoNumRe         = regexp.MustCompile(`\d+`)
+	fandiegoDPRe          = regexp.MustCompile(`(?i)\bDP\s*(?:Rp\.?\s*)?(\d+(?:[.,']\d+)?\s*Juta)`)
 	fandiegoParenRe       = regexp.MustCompile(`\([^)]*\)`)
 	fandiegoTierRe        = regexp.MustCompile(`(?i)Paket\s+\w+\s*:\s*(.+?)(?:\s+Paket\s+\w+\s*:|$)`)
 )
@@ -103,8 +107,9 @@ func (f *FandiegoParser) Crawl() ([]CrawledPackage, error) {
 			case strings.HasPrefix(label, "category"):
 				pkg.PackageName = val
 			case strings.HasPrefix(label, "program"):
-				if n := fandiegoNumRe.FindString(val); n != "" {
-					pkg.Duration, _ = strconv.Atoi(n)
+				// Only a single stated duration is usable ("9, 10, 11 Hari" is not).
+				if ns := fandiegoNumRe.FindAllString(val, -1); len(ns) == 1 {
+					pkg.Duration, _ = strconv.Atoi(ns[0])
 				}
 			case strings.HasPrefix(label, "package price"):
 				pkg.Price = fandiegoJuta(val) // lowest price of the range
@@ -137,12 +142,43 @@ func (f *FandiegoParser) Crawl() ([]CrawledPackage, error) {
 					pkg.HotelMadinah = strings.TrimSpace(pkg.HotelMadinah)
 				}
 			case (strings.Contains(label, "hotel mekkah") || strings.Contains(label, "hotel makkah")) && pkg.HotelMakkah == "":
-				// First tier ("Paket Silver : <hotel>") is the cheapest one, matching Price.
-				if m := fandiegoTierRe.FindStringSubmatch(text); m != nil {
-					pkg.HotelMakkah = strings.TrimSpace(fandiegoParenRe.ReplaceAllString(m[1], ""))
+				// Several tiers ("Paket Silver : ... Paket Gold : ...") without a
+				// per-tier price: only use the hotel when there is exactly one.
+				if strings.Count(strings.ToLower(text), "paket ") == 1 {
+					if m := fandiegoTierRe.FindStringSubmatch(text); m != nil {
+						pkg.HotelMakkah = strings.TrimSpace(fandiegoParenRe.ReplaceAllString(m[1], ""))
+					}
+				} else if i := strings.Index(text, ":"); i >= 0 && !strings.Contains(strings.ToLower(text), "paket ") {
+					pkg.HotelMakkah = strings.TrimSpace(fandiegoParenRe.ReplaceAllString(text[i+1:], ""))
 				}
 			}
 		})
+
+		// Include / exclude lists and the DP note.
+		doc.Find("h4").Each(func(_ int, h *goquery.Selection) {
+			head := strings.ToLower(h.Text())
+			var dst *[]string
+			switch {
+			case strings.Contains(head, "include"):
+				dst = &pkg.Facilities
+			case strings.Contains(head, "exclude"):
+				dst = &pkg.Excludes
+			default:
+				return
+			}
+			h.NextFiltered("ul").Children().Each(func(_ int, li *goquery.Selection) {
+				if li.Find("b").Length() > 0 && dst == &pkg.Facilities {
+					return // hotel blocks
+				}
+				t := strings.Join(strings.Fields(li.Text()), " ")
+				if t != "" {
+					*dst = append(*dst, t)
+				}
+			})
+		})
+		if m := fandiegoDPRe.FindStringSubmatch(doc.Text()); m != nil {
+			pkg.DownPayment = fandiegoJuta(m[1])
+		}
 
 		dateSeen := make(map[string]bool)
 		for _, m := range fandiegoDateRe.FindAllStringSubmatch(strings.Join(lines, " "), -1) {
@@ -157,6 +193,7 @@ func (f *FandiegoParser) Crawl() ([]CrawledPackage, error) {
 			if !t.Before(today) && !dateSeen[ds] {
 				dateSeen[ds] = true
 				pkg.DepartureDates = append(pkg.DepartureDates, ds)
+				pkg.Departures = append(pkg.Departures, CrawledDeparture{Date: t.Format("2006-01-02")})
 			}
 		}
 

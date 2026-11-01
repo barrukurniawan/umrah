@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -29,6 +30,16 @@ type CrawlResult struct {
 }
 
 func main() {
+	only := flag.String("only", "", "crawl hanya parser/nama site ini (pisahkan koma), mis. -only hamdan,labbaika")
+	outDir := flag.String("out", "output", "direktori output")
+	flag.Parse()
+	onlySet := map[string]bool{}
+	for _, s := range strings.Split(*only, ",") {
+		if s = strings.TrimSpace(strings.ToLower(s)); s != "" {
+			onlySet[s] = true
+		}
+	}
+
 	data, err := os.ReadFile("config/sites.json")
 	if err != nil {
 		log.Fatalf("gagal membaca config/sites.json: %v", err)
@@ -40,11 +51,14 @@ func main() {
 	}
 
 	ts := time.Now().Format("2006-01-02_15-04")
-	os.MkdirAll("output", 0755)
+	os.MkdirAll(*outDir, 0755)
 
 	var allResults []CrawlResult
 
 	for _, site := range sites {
+		if len(onlySet) > 0 && !onlySet[strings.ToLower(site.Parser)] && !onlySet[strings.ToLower(site.Name)] {
+			continue
+		}
 		log.Printf("[main] crawling %s (%s)...\n", site.Name, site.Parser)
 
 		var parser crawlers.Parser
@@ -118,13 +132,17 @@ func main() {
 
 		allResults = append(allResults, result)
 
-		siteFile := fmt.Sprintf("output/%s_%s.json", ts, sanitizeName(site.Name))
+		siteFile := filepath.Join(*outDir, fmt.Sprintf("%s_%s.json", ts, sanitizeName(site.Name)))
 		siteData, _ := json.MarshalIndent(result, "", "  ")
 		os.WriteFile(siteFile, siteData, 0644)
 		log.Printf("[main] disimpan ke %s\n", siteFile)
 	}
 
-	allFile := filepath.Join("output", fmt.Sprintf("all_%s.json", ts))
+	prefix := "all_"
+	if len(onlySet) > 0 {
+		prefix = "partial_" // crawl sebagian tidak boleh dianggap snapshot lengkap
+	}
+	allFile := filepath.Join(*outDir, fmt.Sprintf("%s%s.json", prefix, ts))
 	allData, _ := json.MarshalIndent(allResults, "", "  ")
 	os.WriteFile(allFile, allData, 0644)
 

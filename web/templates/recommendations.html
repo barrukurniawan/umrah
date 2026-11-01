@@ -89,29 +89,40 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3 text-xs">
+                {{if gt $v.Duration 0}}
                 <div class="flex items-center gap-1 text-gray-600">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 flex-shrink-0"></i> <span
                         class="bg-green-200 text-black font-bold px-1.5 py-0.5 rounded">{{$v.Duration}} Hari</span>
                 </div>
+                {{end}}
                 <div class="flex items-center gap-1 text-gray-600">
                     <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span
                         class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{$v.DepartureDatesStr}}</span>
                 </div>
+                {{if eq $v.FlightType "direct"}}
                 <div class="flex items-center gap-1 text-gray-600">
-                    {{if $v.IsDirect}}<i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
-                    Direct{{else}}<i data-lucide="arrow-left-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
-                    Transit{{end}}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i> Direct
                 </div>
+                {{else if eq $v.FlightType "transit"}}
+                <div class="flex items-center gap-1 text-gray-600"{{if $v.FlightAssumed}} title="Travel tidak menyebut direct, umumnya transit"{{end}}>
+                    <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                    Transit{{if $v.TransitVia}} via {{$v.TransitVia}}{{end}}
+                </div>
+                {{end}}
 
+                {{if gt $v.DownPayment 0}}
                 <div class="flex items-center gap-1 text-gray-600">
-                    <i data-lucide="credit-card" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>DP Rp {{formatCurrency
-                        $v.DownPayment}}</span>
+                    <i data-lucide="credit-card" class="w-3.5 h-3.5 flex-shrink-0"></i> <span{{if $v.DPAssumed}} title="Travel belum menyebut DP. Perkiraan 20% harga."{{end}}>DP Rp {{formatCurrency
+                        $v.DownPayment}}{{if $v.DPAssumed}} <span class="text-gray-400">(perkiraan)</span>{{end}}</span>
                 </div>
+                {{end}}
+                {{if and $v.Details (index $v.Details 0).RoomType}}
                 <div class="flex items-center gap-1 text-gray-600">
-                    <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{if $v.Details}}{{(index
-                        $v.Details 0).RoomType}}{{else}}Quad{{end}}</span>
+                    <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{(index $v.Details 0).RoomType}}</span>
                 </div>
+                {{end}}
+
             </div>
 
             <div class="flex flex-wrap gap-2 mb-3">
@@ -128,14 +139,25 @@
                     Lansia</span>
                 {{end}}
 
-                <a href="{{gmapsMakkahURL (index $v.Details 0).HotelMakkah}}" target="_blank" rel="noopener"
+                {{$hm := ""}}{{$hd := ""}}{{if $v.Details}}{{$hm = (index $v.Details 0).HotelMakkah}}{{$hd = (index $v.Details 0).HotelMadinah}}{{end}}
+                {{with gmapsMakkahURL $hm}}
+                <a href="{{.}}" target="_blank" rel="noopener"
                     class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-emerald-100 hover:border-emerald-300 transition-colors cursor-pointer"
-                    title="Lihat jarak dari Kaaba ke {{if $v.Details}}{{(index $v.Details 0).HotelMakkah}}{{end}} di Google Maps">
-                    🕋 {{$v.DistanceMakkah}}</a>
-                <a href="{{gmapsMadinahURL (index $v.Details 0).HotelMadinah}}" target="_blank" rel="noopener"
+                    title="Rute jalan kaki dari {{cleanHotel $hm}} ke gerbang Masjidil Haram di Google Maps{{if hasPrefix $v.DistanceMakkah "±"}} (jarak perkiraan){{end}}">
+                    🕋 {{if $v.DistanceMakkah}}{{$v.DistanceMakkah}}{{else}}Rute ke Haram{{end}}</a>
+                {{else}}{{if $v.DistanceMakkah}}
+                <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full"
+                    title="Jarak menurut travel. Nama hotel belum diumumkan.">🕋 {{$v.DistanceMakkah}}</span>
+                {{end}}{{end}}
+                {{with gmapsMadinahURL $hd}}
+                <a href="{{.}}" target="_blank" rel="noopener"
                     class="inline-flex items-center gap-1 bg-sky-50 border border-sky-200 text-sky-700 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-sky-100 hover:border-sky-300 transition-colors cursor-pointer"
-                    title="Lihat jarak dari Masjid Nabawi ke {{if $v.Details}}{{(index $v.Details 0).HotelMadinah}}{{end}} di Google Maps">
-                    🕌 {{$v.DistanceMadinah}}</a>
+                    title="Rute jalan kaki dari {{cleanHotel $hd}} ke Masjid Nabawi di Google Maps{{if hasPrefix $v.DistanceMadinah "±"}} (jarak perkiraan){{end}}">
+                    🕌 {{if $v.DistanceMadinah}}{{$v.DistanceMadinah}}{{else}}Rute ke Nabawi{{end}}</a>
+                {{else}}{{if $v.DistanceMadinah}}
+                <span class="inline-flex items-center gap-1 bg-sky-50 border border-sky-200 text-sky-700 text-xs font-medium px-2.5 py-1 rounded-full"
+                    title="Jarak menurut travel. Nama hotel belum diumumkan.">🕌 {{$v.DistanceMadinah}}</span>
+                {{end}}{{end}}
                 {{if $v.Airline}}
                 <a href="{{airlineURL $v.Airline}}" target="_blank" rel="noopener"
                     class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-600 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer"
@@ -151,37 +173,19 @@
                     class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700 flex items-center gap-1.5">
                     <i data-lucide="building-2" class="w-3.5 h-3.5"></i> Detail Paket
                 </summary>
-                <div class="mt-2 bg-gray-50 rounded-lg p-3">
-                    {{range $v.Details}}
-                    <div class="detail-row mb-3" data-departure="{{.DepartureDate}}">
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                            <div><span class="text-gray-400">Berangkat:</span> <span
-                                    class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{formatDate
-                                    .DepartureDate}}</span></div>
-                            <div><span class="text-gray-400">Pulang:</span> <span
-                                    class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{formatDate
-                                    .ReturnDate}}</span></div>
-                            <div><span class="text-gray-400">Lokasi:</span> {{.DepartureLocation}}</div>
-                            <div><span class="text-gray-400">Kuota:</span> {{.AvailableQuota}}/{{.TotalQuota}}</div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mb-2">
-                            <div><span class="text-gray-400">Hotel Makkah:</span> {{.HotelMakkah}}
-                                &#11088;{{.StarsMakkah}}</div>
-                            <div><span class="text-gray-400">Hotel Madinah:</span> {{.HotelMadinah}}
-                                &#11088;{{.StarsMadinah}}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
-                            <div><span class="text-gray-400">Tipe Kamar:</span> {{.RoomType}}</div>
-                            <div><span class="text-gray-400">Add-on Triple:</span> Rp {{formatCurrency .AddonTriple}}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700 mt-1">
-                            <div><span class="text-gray-400">Add-on Double:</span> Rp {{formatCurrency .AddonDouble}}
-                            </div>
-                            <div><span class="text-gray-400">Pembimbing:</span> {{.Guide}}</div>
-                        </div>
+                <div class="mt-2 bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
+                    {{if $v.SameDetails}}
+                    {{with index $v.Details 0}}{{template "pkgInfo" .}}{{end}}
+                    <div class="mt-2.5 pt-2.5 border-t border-gray-200 space-y-1.5">
+                        {{range $v.Details}}{{template "pkgDates" dict "D" . "Pkg" $v}}{{end}}
                     </div>
+                    {{else}}
+                    {{range $v.Details}}
+                    <div class="pb-2.5 mb-2.5 last:pb-0 last:mb-0 border-b last:border-0 border-gray-200 space-y-1.5">
+                        {{template "pkgDates" dict "D" . "Pkg" $v}}
+                        {{template "pkgInfo" .}}
+                    </div>
+                    {{end}}
                     {{end}}
                 </div>
             </details>
@@ -195,15 +199,22 @@
                             <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> Lihat Fasilitas
                         </summary>
                         <div class="mt-2 flex flex-wrap gap-1">
+                            {{if $v.FacilityGeneric}}<span class="w-full text-xs text-gray-400 mb-0.5">Travel belum merinci. Umumnya termasuk:</span>{{end}}
                             {{range $fac := $v.FacilityList}}
                             <span
                                 class="inline-flex items-center gap-1 bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200">{{$fac}}</span>
+                            {{end}}
+                            {{if $v.ExcludeList}}
+                            <span class="w-full text-xs text-gray-400 mt-1">Tidak termasuk:</span>
+                            {{range $ex := $v.ExcludeList}}
+                            <span class="inline-flex items-center gap-1 bg-white text-gray-500 text-xs px-2 py-1 rounded border border-dashed border-gray-300">{{$ex}}</span>
+                            {{end}}
                             {{end}}
                         </div>
                     </details>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{travelURL $v.Travel.Name}}" target="_blank" rel="noopener" data-track="click_web"
+                    <a href="{{if $v.URL}}{{$v.URL}}{{else}}{{travelURL $v.Travel.Name}}{{end}}" target="_blank" rel="noopener" data-track="click_web"
                         class="inline-flex items-center text-gray-400 hover:text-emerald-500 transition-colors no-underline"
                         title="Kunjungi Website">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
@@ -285,5 +296,35 @@
 <div class="text-center py-8 text-gray-400">
     <i data-lucide="search" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
     <p>Silakan pilih kriteria dan klik "Cari Paket Umrah"</p>
+</div>
+{{end}}
+{{define "pkgDates"}}{{with .D}}
+<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" data-departure="{{.DepartureDate}}">
+    <div class="flex items-center gap-1.5">
+        <span class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded" title="Berangkat">{{formatDate .DepartureDate}}</span>
+        {{if .ReturnDate}}<span class="text-gray-300">&rarr;</span>
+        <span class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded" title="Pulang">{{formatDate .ReturnDate}}</span>{{end}}
+    </div>
+    <div class="flex flex-wrap items-center gap-x-1.5 text-gray-500 [&>span+span]:before:content-['·'] [&>span+span]:before:mr-1.5 [&>span+span]:before:text-gray-300">
+        {{if .DepartureLocation}}<span>{{.DepartureLocation}}</span>{{end}}
+        {{if and .AvailableQuota .TotalQuota}}<span>sisa {{.AvailableQuota}}/{{.TotalQuota}} seat</span>
+        {{else if .AvailableQuota}}<span>sisa {{.AvailableQuota}} seat</span>
+        {{else if .TotalQuota}}<span>kuota {{.TotalQuota}} seat</span>{{end}}
+        {{if and .Price (ne .Price $.Pkg.Price)}}<span class="text-gray-700 font-medium">Rp {{formatCurrency .Price}}</span>{{end}}
+    </div>
+</div>
+{{end}}{{end}}
+
+{{define "pkgInfo"}}
+<!-- Satu grid 2 kolom: item berpasangan kiri-kanan, sisa ganjil jatuh di kiri bawah. -->
+<div class="grid grid-cols-2 gap-x-4 gap-y-1">
+    {{if or .HotelMakkah .HotelMadinah}}
+    <div><span class="text-gray-400">Hotel Makkah</span> {{if .HotelMakkah}}<span class="font-medium">{{.HotelMakkah}}</span>{{if .StarsMakkah}} <span class="whitespace-nowrap"{{if .StarsMakkahAssumed}} title="Perkiraan, bintang hotel belum disebut travel"{{end}}>&#11088;{{.StarsMakkah}}</span>{{end}}{{else}}<span class="text-gray-400">belum diumumkan</span>{{end}}</div>
+    <div><span class="text-gray-400">Hotel Madinah</span> {{if .HotelMadinah}}<span class="font-medium">{{.HotelMadinah}}</span>{{if .StarsMadinah}} <span class="whitespace-nowrap"{{if .StarsMadinahAssumed}} title="Perkiraan, bintang hotel belum disebut travel"{{end}}>&#11088;{{.StarsMadinah}}</span>{{end}}{{else}}<span class="text-gray-400">belum diumumkan</span>{{end}}</div>
+    {{end}}
+    {{if .RoomType}}<div><span class="text-gray-400">Harga di atas</span> {{.RoomType}}</div>{{end}}
+    {{if .AddonTriple}}<div{{if .AddonAssumed}} title="Perkiraan, travel belum mencantumkan harga upgrade kamar"{{end}}><span class="text-gray-400">Triple</span> <span class="whitespace-nowrap">+Rp {{formatCurrency .AddonTriple}}</span>{{if .AddonAssumed}} <span class="text-gray-400">(perkiraan)</span>{{end}}</div>{{end}}
+    {{if .AddonDouble}}<div{{if .AddonAssumed}} title="Perkiraan, travel belum mencantumkan harga upgrade kamar"{{end}}><span class="text-gray-400">Double</span> <span class="whitespace-nowrap">+Rp {{formatCurrency .AddonDouble}}</span>{{if .AddonAssumed}} <span class="text-gray-400">(perkiraan)</span>{{end}}</div>{{end}}
+    {{if .Guide}}<div><span class="text-gray-400">Pembimbing</span> {{.Guide}}</div>{{end}}
 </div>
 {{end}}

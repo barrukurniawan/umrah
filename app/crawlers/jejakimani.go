@@ -6,10 +6,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // JejakImaniParser fetches Jejak Imani umroh departures from the public JSON
@@ -17,10 +20,15 @@ import (
 //
 //	GET https://api.jejakimanistage.com/public/catalog/umroh-departures?page=N
 //
-// Each record is a single departure (date, price, days, airline, hotels,
-// available seats). Departures sharing the same sub-category, package,
-// duration, airline, hotels and price are merged into one CrawledPackage with
-// multiple DepartureDates.
+// Each record is a single departure (date, price, total_days, airline, hotels
+// with city/star/check-in/check-out, available seats, sold-out flag, ustadz,
+// day-by-day itinerary). Each departure also has a server-rendered page
+// (/umroh-products/<sub>/keberangkatan/<slug>) whose "Fasilitas yang
+// didapatkan" / "Biaya Tidak Termasuk" lists are read for facilities.
+//
+// Departures sharing sub-category, package, duration, airline and hotels are
+// merged into one CrawledPackage with one Departures entry per date (price,
+// seats and sold-out per date).
 type JejakImaniParser struct {
 	// APIBase defaults to https://api.jejakimanistage.com/public/ when empty.
 	APIBase string
@@ -34,25 +42,47 @@ const (
 	jejakImaniDefaultAPI = "https://api.jejakimanistage.com/public/"
 	jejakImaniSiteURL    = "https://www.jejakimani.com"
 	jejakImaniMaxPages   = 50
+	jejakImaniUA         = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+)
+
+var (
+	// "Hotel Makkah bintang 5/setaraf (jarak ± 650m)"
+	jejakImaniHotelFacRe = regexp.MustCompile(`(?i)^hotel\s+(makkah|mekkah|madinah)\s+bintang\s*(\d)[^(]*\(\s*jarak\s*[±~]?\s*([\d.,]+)\s*(km|m)\b`)
+	jejakImaniSetarafRe  = regexp.MustCompile(`(?i)\s*/\s*setaraf.*$`)
+	jejakImaniTagRe      = regexp.MustCompile(`<[^>]+>`)
 )
 
 type jejakImaniHotel struct {
-	CityName  string `json:"city_name"`
-	HotelName string `json:"hotel_name"`
+	CityName    string          `json:"city_name"`
+	HotelName   string          `json:"hotel_name"`
+	Star        json.RawMessage `json:"star"`
+	CheckIn     string          `json:"check_in"`
+	CheckOut    string          `json:"check_out"`
+	PackageName string          `json:"package_name"`
+}
+
+type jejakImaniItinerary struct {
+	DayTitle    string `json:"day_title"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 type jejakImaniDeparture struct {
-	ID              int               `json:"id"`
-	Slug            string            `json:"slug"`
-	DepartureDate   string            `json:"departure_date"`
-	PackageName     string            `json:"package_name"`
-	TotalDays       json.RawMessage   `json:"total_days"`
-	AvailableSeat   json.RawMessage   `json:"available_seat"`
-	SubCategorySlug string            `json:"sub_category_slug"`
-	SubCategoryName string            `json:"sub_category_name"`
-	Airlines        string            `json:"airlines"`
-	PriceStartFrom  json.RawMessage   `json:"price_start_from"`
-	Hotels          []jejakImaniHotel `json:"hotels"`
+	ID              int                   `json:"id"`
+	Slug            string                `json:"slug"`
+	Title           string                `json:"title"`
+	DepartureDate   string                `json:"departure_date"`
+	PackageName     string                `json:"package_name"`
+	TotalDays       json.RawMessage       `json:"total_days"`
+	AvailableSeat   json.RawMessage       `json:"available_seat"`
+	IsSoldOut       bool                  `json:"is_sold_out"`
+	SubCategorySlug string                `json:"sub_category_slug"`
+	SubCategoryName string                `json:"sub_category_name"`
+	Airlines        string                `json:"airlines"`
+	PriceStartFrom  json.RawMessage       `json:"price_start_from"`
+	Ustadz          string                `json:"ustadz"`
+	Hotels          []jejakImaniHotel     `json:"hotels"`
+	Itineraries     []jejakImaniItinerary `json:"itineraries"`
 }
 
 type jejakImaniPage struct {
@@ -76,13 +106,11 @@ func jejakImaniRawInt(raw json.RawMessage) int {
 	return int(f)
 }
 
-func (j *JejakImaniParser) fetchPage(base string, page int) (*jejakImaniPage, error) {
-	url := fmt.Sprintf("%scatalog/umroh-departures?page=%d", base, page)
+func jejakImaniGet(url string, accept string) ([]byte, error) {
 	log.Println("[crawler] visiting:", url)
-
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", jejakImaniUA)
+	req.Header.Set("Accept", accept)
 	req.Header.Set("Origin", jejakImaniSiteURL)
 	req.Header.Set("Referer", jejakImaniSiteURL+"/")
 
@@ -95,7 +123,11 @@ func (j *JejakImaniParser) fetchPage(base string, page int) (*jejakImaniPage, er
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("jejakimani: %s returned HTTP %d", url, resp.StatusCode)
 	}
-	body, err := io.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
+}
+
+func (j *JejakImaniParser) fetchPage(base string, page int) (*jejakImaniPage, error) {
+	body, err := jejakImaniGet(fmt.Sprintf("%scatalog/umroh-departures?page=%d", base, page), "application/json")
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +148,48 @@ func jejakImaniTitle(s string) string {
 	return strings.Join(words, " ")
 }
 
+// jejakImaniHotelName: "AL ANSHAR GOLDEN TULIP" -> "Al Anshar Golden Tulip",
+// "Anjum / Setaraf" -> "Anjum".
+func jejakImaniHotelName(s string) string {
+	s = strings.TrimSpace(jejakImaniSetarafRe.ReplaceAllString(s, ""))
+	if s == strings.ToUpper(s) {
+		s = jejakImaniTitle(s)
+	}
+	return strings.Join(strings.Fields(s), " ")
+}
+
+// jejakImaniFacilities reads the included/excluded lists of a departure page.
+type jejakImaniFacilities struct {
+	inc, exc []string
+}
+
+func jejakImaniFetchFacilities(url string) (jejakImaniFacilities, error) {
+	var f jejakImaniFacilities
+	body, err := jejakImaniGet(url, "text/html")
+	if err != nil {
+		return f, err
+	}
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	if err != nil {
+		return f, err
+	}
+	read := func(sel string) []string {
+		var out []string
+		seen := map[string]bool{}
+		doc.Find(sel + " li").Each(func(_ int, li *goquery.Selection) {
+			t := strings.Join(strings.Fields(li.Text()), " ")
+			if t != "" && !seen[t] {
+				seen[t] = true
+				out = append(out, t)
+			}
+		})
+		return out
+	}
+	f.inc = read("ul.departure-facility-list.included")
+	f.exc = read("ul.departure-facility-list.excluded")
+	return f, nil
+}
+
 func jejakImaniRupiah(n int) string {
 	s := strconv.Itoa(n)
 	var b strings.Builder
@@ -126,6 +200,42 @@ func jejakImaniRupiah(n int) string {
 		b.WriteRune(c)
 	}
 	return "Rp" + b.String()
+}
+
+func jejakImaniCity(city string) string {
+	c := strings.ToLower(city)
+	switch {
+	case strings.Contains(c, "makkah") || strings.Contains(c, "mekkah") || strings.Contains(c, "mecca"):
+		return "makkah"
+	case strings.Contains(c, "madinah") || strings.Contains(c, "medina"):
+		return "madinah"
+	}
+	return ""
+}
+
+// jejakImaniReturn computes the return date from the stated total_days. The
+// itineraries number "Hari 1" as the departure day, so the last day is
+// dep + total_days - 1. Used only when the hotel stays agree (the last check-out
+// is 0-2 days before that date and no stay starts before departure); otherwise
+// the hotel and duration data contradict each other and "" is returned.
+func jejakImaniReturn(dep time.Time, days int, hotels []jejakImaniHotel) string {
+	if days <= 1 {
+		return ""
+	}
+	ret := dep.AddDate(0, 0, days-1)
+	var last time.Time
+	for _, h := range hotels {
+		if ci, err := time.Parse("2006-01-02", h.CheckIn); err == nil && ci.Before(dep.AddDate(0, 0, -1)) {
+			return ""
+		}
+		if co, err := time.Parse("2006-01-02", h.CheckOut); err == nil && co.After(last) {
+			last = co
+		}
+	}
+	if !last.IsZero() && (last.After(ret) || last.Before(ret.AddDate(0, 0, -2))) {
+		return ""
+	}
+	return ret.Format("2006-01-02")
 }
 
 func (j *JejakImaniParser) Crawl() ([]CrawledPackage, error) {
@@ -163,19 +273,23 @@ func (j *JejakImaniParser) Crawl() ([]CrawledPackage, error) {
 	}
 
 	type group struct {
-		pkg   CrawledPackage
-		base  string
-		first time.Time
-		seen  map[string]bool
+		pkg      CrawledPackage
+		base     string
+		seen     map[string]bool
+		guides   map[string]bool
+		urls     map[string]string // date -> departure page
+		minPrice int
 	}
 	groups := map[string]*group{}
 	var order []string
+	seenSlug := map[string]bool{}
 
 	for _, d := range all {
 		dep, err := time.Parse("2006-01-02", strings.Fields(d.DepartureDate + " ")[0])
-		if err != nil || dep.Before(cutoff) {
+		if err != nil || dep.Before(cutoff) || seenSlug[d.Slug] {
 			continue
 		}
+		seenSlug[d.Slug] = true
 		price := jejakImaniRawInt(d.PriceStartFrom)
 		if price <= 0 {
 			continue
@@ -183,16 +297,19 @@ func (j *JejakImaniParser) Crawl() ([]CrawledPackage, error) {
 		days := jejakImaniRawInt(d.TotalDays)
 
 		var makkah, madinah string
+		var starMakkah, starMadinah int
 		for _, h := range d.Hotels {
-			city := strings.ToLower(h.CityName)
-			switch {
-			case strings.Contains(city, "makkah") || strings.Contains(city, "mekkah") || strings.Contains(city, "mecca"):
+			if h.PackageName != "" && d.PackageName != "" && !strings.EqualFold(h.PackageName, d.PackageName) {
+				continue
+			}
+			switch jejakImaniCity(h.CityName) {
+			case "makkah":
 				if makkah == "" {
-					makkah = jejakImaniTitle(h.HotelName)
+					makkah, starMakkah = jejakImaniHotelName(h.HotelName), jejakImaniRawInt(h.Star)
 				}
-			case strings.Contains(city, "madinah") || strings.Contains(city, "medina"):
+			case "madinah":
 				if madinah == "" {
-					madinah = jejakImaniTitle(h.HotelName)
+					madinah, starMadinah = jejakImaniHotelName(h.HotelName), jejakImaniRawInt(h.Star)
 				}
 			}
 		}
@@ -207,76 +324,189 @@ func (j *JejakImaniParser) Crawl() ([]CrawledPackage, error) {
 			baseName += fmt.Sprintf(" %d Hari", days)
 		}
 
-		key := strings.Join([]string{baseName, airline, makkah, madinah, strconv.Itoa(price)}, "|")
+		url := jejakImaniSiteURL + "/umroh"
+		if d.SubCategorySlug != "" && d.Slug != "" {
+			url = fmt.Sprintf("%s/umroh-products/%s/keberangkatan/%s", jejakImaniSiteURL, d.SubCategorySlug, d.Slug)
+		}
+
+		key := strings.Join([]string{baseName, airline, makkah, madinah}, "|")
 		g, ok := groups[key]
 		if !ok {
-			url := jejakImaniSiteURL + "/umroh"
-			if d.SubCategorySlug != "" && d.Slug != "" {
-				url = fmt.Sprintf("%s/umroh-products/%s/keberangkatan/%s", jejakImaniSiteURL, d.SubCategorySlug, d.Slug)
-			}
 			g = &group{
 				pkg: CrawledPackage{
 					TravelName:     "Jejak Imani",
 					PackageName:    baseName,
-					Price:          price,
 					Duration:       days,
 					Airline:        airline,
 					HotelMakkah:    makkah,
 					HotelMadinah:   madinah,
+					StarsMakkah:    starMakkah,
+					StarsMadinah:   starMadinah,
 					DepartureDates: []string{},
-					Airport:        "Jakarta",
 					URL:            url,
 				},
-				base:  baseName,
-				first: dep,
-				seen:  map[string]bool{},
+				base:   baseName,
+				seen:   map[string]bool{},
+				guides: map[string]bool{},
+				urls:   map[string]string{},
 			}
 			groups[key] = g
 			order = append(order, key)
 		}
-		ds := dep.Format("02 Jan 2006")
-		if !g.seen[ds] {
-			g.seen[ds] = true
-			g.pkg.DepartureDates = append(g.pkg.DepartureDates, ds)
-			g.pkg.Seats += jejakImaniRawInt(d.AvailableSeat)
+		ds := dep.Format("2006-01-02")
+		if g.seen[ds] {
+			continue
 		}
-		if dep.Before(g.first) {
-			g.first = dep
+		g.seen[ds] = true
+
+		seats := jejakImaniRawInt(d.AvailableSeat)
+		cd := CrawledDeparture{
+			Date:       ds,
+			ReturnDate: jejakImaniReturn(dep, days, d.Hotels),
+			Price:      price,
+			Seats:      seats,
+			Full:       d.IsSoldOut,
+		}
+		if d.IsSoldOut {
+			cd.Seats = 0
+		}
+		// Departure airport from the travel's day-1 itinerary.
+		if len(d.Itineraries) > 0 {
+			d1 := d.Itineraries[0].Description
+			if strings.Contains(d1, "(CGK)") || strings.Contains(strings.ToLower(d1), "soekarno") {
+				cd.Airport = "Jakarta"
+			}
+		}
+		g.pkg.Departures = append(g.pkg.Departures, cd)
+		if d.IsSoldOut {
+			// Sold-out departures have no page (API/site answer 404).
+			url = fmt.Sprintf("%s/umroh/%s#%s", jejakImaniSiteURL, d.SubCategorySlug, d.Slug)
+		}
+		g.urls[ds] = url
+		if g.minPrice == 0 || price < g.minPrice {
+			g.minPrice = price
+		}
+		guide := strings.TrimSpace(jejakImaniTagRe.ReplaceAllString(d.Ustadz, ""))
+		if guide != "" && !strings.Contains(strings.ToLower(guide), "assatidz") {
+			g.guides[guide] = true
+		} else {
+			g.guides["?"] = true
 		}
 	}
 
-	// The importer dedupes by (travel, package name), so groups with the same
-	// base name but different price/hotels get a distinguishing suffix.
-	nameCount := map[string]int{}
-	for _, k := range order {
-		nameCount[groups[k].base]++
-	}
-
-	sort.SliceStable(order, func(a, b int) bool {
-		ga, gb := groups[order[a]], groups[order[b]]
-		if ga.base != gb.base {
-			return ga.base < gb.base
-		}
-		return ga.pkg.Price < gb.pkg.Price
-	})
-
-	usedNames := map[string]bool{}
 	var packages []CrawledPackage
 	for _, k := range order {
 		g := groups[k]
-		if nameCount[g.base] > 1 {
-			g.pkg.PackageName = g.base + " (" + jejakImaniRupiah(g.pkg.Price) + ")"
-			if usedNames[g.pkg.PackageName] && g.pkg.HotelMakkah != "" {
-				g.pkg.PackageName = g.base + " (" + jejakImaniRupiah(g.pkg.Price) + ", " + g.pkg.HotelMakkah + ")"
+		p := &g.pkg
+		sort.Slice(p.Departures, func(a, b int) bool { return p.Departures[a].Date < p.Departures[b].Date })
+		// Earliest bookable departure's own page (sold-out ones have none).
+		p.URL = g.urls[p.Departures[0].Date]
+		for _, dd := range p.Departures {
+			if !dd.Full {
+				p.URL = g.urls[dd.Date]
+				break
 			}
 		}
-		usedNames[g.pkg.PackageName] = true
-		sort.Slice(g.pkg.DepartureDates, func(a, b int) bool {
-			ta, _ := time.Parse("02 Jan 2006", g.pkg.DepartureDates[a])
-			tb, _ := time.Parse("02 Jan 2006", g.pkg.DepartureDates[b])
-			return ta.Before(tb)
-		})
-		packages = append(packages, g.pkg)
+		p.Price = g.minPrice
+		airports := map[string]bool{}
+		for i := range p.Departures {
+			dd := &p.Departures[i]
+			t, _ := time.Parse("2006-01-02", dd.Date)
+			p.DepartureDates = append(p.DepartureDates, t.Format("02 Jan 2006"))
+			if !dd.Full {
+				p.Seats += dd.Seats
+			}
+			airports[dd.Airport] = true
+		}
+		if len(airports) == 1 {
+			for a := range airports {
+				p.Airport = a
+			}
+		}
+		allFull := true
+		for _, dd := range p.Departures {
+			allFull = allFull && dd.Full
+		}
+		p.Full = allFull
+		if len(g.guides) == 1 && !g.guides["?"] {
+			for gname := range g.guides {
+				p.Guide = gname
+			}
+		}
+		packages = append(packages, *p)
 	}
+
+	// Facilities from the earliest departure page of each package.
+	for i := range packages {
+		p := &packages[i]
+		if strings.Contains(p.URL, "#") {
+			continue // all departures sold out: no departure page
+		}
+		f, err := jejakImaniFetchFacilities(p.URL)
+		if err != nil {
+			log.Printf("[crawler] jejakimani facilities %s: %v\n", p.URL, err)
+			continue
+		}
+		for _, line := range f.inc {
+			if m := jejakImaniHotelFacRe.FindStringSubmatch(line); m != nil {
+				star, _ := strconv.Atoi(m[2])
+				dist := ParsePrice(m[3])
+				if strings.EqualFold(m[4], "km") {
+					if v, err := strconv.ParseFloat(strings.ReplaceAll(m[3], ",", "."), 64); err == nil {
+						dist = int(v * 1000)
+					}
+				}
+				// The list is written per product; use the distance only when its
+				// star rating matches this departure's hotel.
+				if strings.EqualFold(m[1], "madinah") {
+					if star == p.StarsMadinah && p.HotelMadinah != "" {
+						p.DistanceMadinah = dist
+					}
+				} else if star == p.StarsMakkah && p.HotelMakkah != "" {
+					p.DistanceMakkah = dist
+				}
+			}
+			lower := strings.ToLower(line)
+			if strings.HasPrefix(lower, "hotel makkah") || strings.HasPrefix(lower, "hotel mekkah") || strings.HasPrefix(lower, "hotel madinah") {
+				continue // shown through the hotel fields
+			}
+			p.Facilities = append(p.Facilities, line)
+		}
+		p.Excludes = f.exc
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	// Names must be unique per travel: same base name with different hotels
+	// gets the Makkah (then Madinah) hotel as suffix.
+	nameCount := map[string]int{}
+	for _, p := range packages {
+		nameCount[p.PackageName]++
+	}
+	used := map[string]bool{}
+	for i := range packages {
+		p := &packages[i]
+		if nameCount[p.PackageName] > 1 {
+			base := p.PackageName
+			name := base
+			if p.HotelMakkah != "" {
+				name = base + " (" + p.HotelMakkah + ")"
+			}
+			if used[name] && p.HotelMadinah != "" {
+				name = base + " (" + strings.Trim(p.HotelMakkah+" / "+p.HotelMadinah, " /") + ")"
+			}
+			if used[name] {
+				name = base + " (" + jejakImaniRupiah(p.Price) + ")"
+			}
+			p.PackageName = name
+		}
+		used[p.PackageName] = true
+	}
+
+	sort.SliceStable(packages, func(a, b int) bool {
+		if packages[a].PackageName != packages[b].PackageName {
+			return packages[a].PackageName < packages[b].PackageName
+		}
+		return packages[a].Departures[0].Date < packages[b].Departures[0].Date
+	})
 	return packages, nil
 }

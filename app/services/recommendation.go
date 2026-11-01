@@ -36,6 +36,9 @@ type ScoredPackage struct {
 	Featured          bool
 	Score             int
 	FacilityList      []string
+	FacilityGeneric   bool // travel belum merinci; FacilityList = fasilitas umum umroh
+	SameDetails       bool // semua tanggal: hotel & harga kamar sama (ditampilkan sekali)
+	ExcludeList       []string
 	DepartureDatesStr string
 	DistanceMakkah    string
 	DistanceMadinah   string
@@ -72,7 +75,8 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		// Buang jadwal yang sudah lewat; paket tanpa jadwal mendatang tidak ditampilkan.
 		var upcoming []models.DetailPackage
 		for _, d := range pkg.Details {
-			if d.DepartureDate != "" && d.DepartureDate >= today {
+			// Tanggal yang dinyatakan penuh oleh travel tidak ditampilkan.
+			if d.DepartureDate != "" && d.DepartureDate >= today && !d.IsFull {
 				upcoming = append(upcoming, d)
 			}
 		}
@@ -80,6 +84,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			continue
 		}
 		pkg.Details = upcoming
+		pkg.Price = availablePrice(pkg.Price, upcoming)
 
 		budget := input.Budget
 		if featuredTravels[pkg.Travel.Name] {
@@ -93,15 +98,28 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			continue
 		}
 
-		distMakkah := "700-1000m"
-		distMadinah := "200-400m"
+		// Jarak: klaim travel dulu; jika tidak ada, perkiraan dari hotel yang dikenal
+		// (diberi "±"); jika hotel tidak dikenal, kosong (chip tidak menampilkan jarak).
+		distMakkah := formatMeters(pkg.DistanceMakkah)
+		distMadinah := formatMeters(pkg.DistanceMadinah)
 		if len(pkg.Details) > 0 {
-			distMakkah = getDistanceMakkah(pkg.Details[0].HotelMakkah)
-			distMadinah = getDistanceMadinah(pkg.Details[0].HotelMadinah)
+			if distMakkah == "" {
+				if d := getDistanceMakkah(pkg.Details[0].HotelMakkah); d != "" {
+					distMakkah = "±" + d
+				}
+			}
+			if distMadinah == "" {
+				if d := getDistanceMadinah(pkg.Details[0].HotelMadinah); d != "" {
+					distMadinah = "±" + d
+				}
+			}
 		}
 
-		// Override DB values dynamically
-		pkg.HotelDistance = parseMinDistance(distMakkah)
+		// Override DB values dynamically (tidak diketahui = paling jauh saat sort)
+		pkg.HotelDistance = parseMinDistance(strings.TrimPrefix(distMakkah, "±"))
+		if distMakkah == "" {
+			pkg.HotelDistance = unknownDistance
+		}
 		pkg.IsNearHaram = pkg.HotelDistance <= 550
 
 		// Apply advanced filters always if set (regardless of priority)
@@ -178,7 +196,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			Key:               PackageKey(pkg.Travel.Name, pkg.Name),
 			Featured:          featuredTravels[pkg.Travel.Name],
 			Score:             score,
-			FacilityList:      parseFacilities(pkg.Facilities),
+			FacilityList:      facilitiesOrGeneric(pkg.Facilities),
+			FacilityGeneric:   len(parseFacilities(pkg.Facilities)) == 0,
+			SameDetails:       sameDetails(pkg.Details),
+			ExcludeList:       parseFacilities(pkg.Excludes),
 			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
 			DistanceMakkah:    distMakkah,
 			DistanceMadinah:   distMadinah,
@@ -187,6 +208,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 	// Server-side sort
 	sort.Slice(scored, func(i, j int) bool {
+		// Paket promo partner selalu paling atas, apa pun urutan yang dipilih.
+		if scored[i].Featured != scored[j].Featured {
+			return scored[i].Featured
+		}
 		switch input.Sort {
 		case "price_asc":
 			return scored[i].Price < scored[j].Price
@@ -259,6 +284,48 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 	}
 
 	return scored[start:end], total
+}
+
+// availablePrice: harga termurah di antara tanggal yang ditampilkan. d.Price 0
+// berarti sama dengan harga paket (harga termurah semua tanggal saat import).
+func availablePrice(pkgPrice int, details []models.DetailPackage) int {
+	min := 0
+	for _, d := range details {
+		p := d.Price
+		if p == 0 {
+			p = pkgPrice
+		}
+		if min == 0 || p < min {
+			min = p
+		}
+	}
+	if min == 0 {
+		return pkgPrice
+	}
+	return min
+}
+
+// Fasilitas yang umumnya termasuk di paket umroh reguler, dipakai bila travel
+// belum merinci (ditampilkan dengan keterangan "umumnya termasuk").
+var genericFacilities = []string{"Tiket pesawat PP", "Visa umroh", "Hotel Makkah & Madinah", "Bus AC selama di Saudi", "Makan 3x sehari", "Muthawif / pembimbing", "Air zamzam"}
+
+func facilitiesOrGeneric(raw string) []string {
+	if l := parseFacilities(raw); len(l) > 0 {
+		return l
+	}
+	return genericFacilities
+}
+
+func sameDetails(ds []models.DetailPackage) bool {
+	for _, d := range ds[1:] {
+		a := ds[0]
+		if d.HotelMakkah != a.HotelMakkah || d.HotelMadinah != a.HotelMadinah || d.StarsMakkah != a.StarsMakkah ||
+			d.StarsMadinah != a.StarsMadinah || d.AddonTriple != a.AddonTriple || d.AddonDouble != a.AddonDouble ||
+			d.AddonAssumed != a.AddonAssumed || d.RoomType != a.RoomType || d.Guide != a.Guide {
+			return false
+		}
+	}
+	return len(ds) > 0
 }
 
 func parseFacilities(raw string) []string {
@@ -340,8 +407,24 @@ func formatDepartureDatesStr(details []models.DetailPackage) string {
 	return strings.Join(parts, ", ")
 }
 
+const unknownDistance = 99999
+
+func formatMeters(m int) string {
+	switch {
+	case m <= 0:
+		return ""
+	case m >= 1000:
+		return strings.Replace(strconv.FormatFloat(float64(m)/1000, 'f', -1, 64), ".", ",", 1) + " km"
+	default:
+		return strconv.Itoa(m) + "m"
+	}
+}
+
 func getDistanceMakkah(hotel string) string {
 	h := strings.ToLower(hotel)
+	if strings.TrimSpace(h) == "" {
+		return ""
+	}
 	if strings.Contains(h, "marwa rotana") {
 		return "250m"
 	}
@@ -387,11 +470,14 @@ func getDistanceMakkah(hotel string) string {
 	if strings.Contains(h, "fajr badea") {
 		return "2 km"
 	}
-	return "700-1000m"
+	return "" // hotel tidak dikenal: jangan mengarang jarak
 }
 
 func getDistanceMadinah(hotel string) string {
 	h := strings.ToLower(hotel)
+	if strings.TrimSpace(h) == "" {
+		return ""
+	}
 	if strings.Contains(h, "maden taibah") || strings.Contains(h, "madinah taibah") {
 		return "200m"
 	}
@@ -428,7 +514,7 @@ func getDistanceMadinah(hotel string) string {
 	if strings.Contains(h, "sky view") {
 		return "1,5 km"
 	}
-	return "200-400m"
+	return "" // hotel tidak dikenal: jangan mengarang jarak
 }
 
 func parseMinDistance(dist string) int {

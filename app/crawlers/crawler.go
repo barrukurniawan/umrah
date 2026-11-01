@@ -9,18 +9,57 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
+// CrawledPackage adalah satu paket umroh hasil crawl.
+//
+// ATURAN DATA: isi field hanya dengan apa yang benar-benar tertulis/diberikan
+// travel (halaman paket, flyer, JSON situs). Jangan menebak. Nilai nol ("" / 0 /
+// nil / false) berarti "tidak diketahui" dan TIDAK akan ditampilkan ke pengguna.
 type CrawledPackage struct {
 	TravelName     string   `json:"travel_name"`
 	PackageName    string   `json:"package_name"`
-	Price          int      `json:"price"`
-	Duration       int      `json:"duration"`
+	Price          int      `json:"price"`    // harga termurah (biasanya Quad)
+	Duration       int      `json:"duration"` // jumlah hari sesuai yang dipasarkan travel (mis. "9 Hari")
 	Airline        string   `json:"airline"`
 	HotelMakkah    string   `json:"hotel_makkah"`
 	HotelMadinah   string   `json:"hotel_madinah"`
-	DepartureDates []string `json:"departure_dates"`
-	Seats          int      `json:"seats"`
-	Airport        string   `json:"airport"`
-	URL            string   `json:"url"`
+	DepartureDates []string `json:"departure_dates"` // lama; dipakai jika Departures kosong
+	Seats          int      `json:"seats"`           // sisa seat (bukan total)
+	Airport        string   `json:"airport"`         // kota/bandara keberangkatan
+	URL            string   `json:"url"`             // halaman detail paket (unik per paket)
+
+	// --- Field tambahan (opsional) ---
+	Departures      []CrawledDeparture `json:"departures,omitempty"` // satu entri per tanggal berangkat
+	StarsMakkah     int                `json:"stars_makkah,omitempty"`
+	StarsMadinah    int                `json:"stars_madinah,omitempty"`
+	DistanceMakkah  int                `json:"distance_makkah,omitempty"`  // meter, HANYA jika ditulis travel
+	DistanceMadinah int                `json:"distance_madinah,omitempty"` // meter, HANYA jika ditulis travel
+	Direct          *bool              `json:"direct,omitempty"`           // true=direct, false=transit, nil=tidak disebut
+	TransitVia      string             `json:"transit_via,omitempty"`      // kota transit, mis. "Muscat"
+	Facilities      []string           `json:"facilities,omitempty"`       // termasuk (include), apa adanya dari travel
+	Excludes        []string           `json:"excludes,omitempty"`         // tidak termasuk
+	PriceTriple     int                `json:"price_triple,omitempty"`
+	PriceDouble     int                `json:"price_double,omitempty"`
+	SeatsTotal      int                `json:"seats_total,omitempty"`
+	Full            bool               `json:"full,omitempty"` // travel menyatakan penuh/sold out
+	DownPayment     int                `json:"down_payment,omitempty"`
+	Guide           string             `json:"guide,omitempty"` // nama pembimbing/ustadz jika disebut
+}
+
+// CrawledDeparture adalah satu tanggal keberangkatan. Field nol = pakai nilai di
+// level paket (untuk harga/hotel/maskapai) atau "tidak diketahui".
+type CrawledDeparture struct {
+	Date         string `json:"date"`                  // YYYY-MM-DD
+	ReturnDate   string `json:"return_date,omitempty"` // YYYY-MM-DD, hanya jika tertulis atau dihitung dari durasi resmi
+	Price        int    `json:"price,omitempty"`       // jika harga beda per tanggal
+	PriceTriple  int    `json:"price_triple,omitempty"`
+	PriceDouble  int    `json:"price_double,omitempty"`
+	Seats        int    `json:"seats,omitempty"` // sisa seat
+	SeatsTotal   int    `json:"seats_total,omitempty"`
+	Full         bool   `json:"full,omitempty"`
+	HotelMakkah  string `json:"hotel_makkah,omitempty"`
+	HotelMadinah string `json:"hotel_madinah,omitempty"`
+	Airline      string `json:"airline,omitempty"`
+	Airport      string `json:"airport,omitempty"`
 }
 
 type SiteConfig struct {

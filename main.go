@@ -172,19 +172,10 @@ func main() {
 		return "#"
 	})
 
-	engine.AddFunc("gmapsMakkahURL", func(hotel string) string {
-		if hotel == "" {
-			return "#"
-		}
-		return "https://www.google.com/maps/dir/Kaaba,+Mecca,+Saudi+Arabia/" + strings.ReplaceAll(hotel, " ", "+") + ",+Mecca,+Saudi+Arabia"
-	})
-
-	engine.AddFunc("gmapsMadinahURL", func(hotel string) string {
-		if hotel == "" {
-			return "#"
-		}
-		return "https://www.google.com/maps/dir/Masjid+Nabawi,+Madinah,+Saudi+Arabia/" + strings.ReplaceAll(hotel, " ", "+") + ",+Madinah,+Saudi+Arabia"
-	})
+	engine.AddFunc("gmapsMakkahURL", services.GmapsMakkahURL)
+	engine.AddFunc("gmapsMadinahURL", services.GmapsMadinahURL)
+	engine.AddFunc("cleanHotel", services.CleanHotelName)
+	engine.AddFunc("hasPrefix", strings.HasPrefix)
 
 	engine.AddFunc("airlineURL", func(name string) string {
 		urls := map[string]string{
@@ -219,7 +210,6 @@ func main() {
 	app.Static("/static", "./web/static")
 
 	repositories.InitDB()
-	services.InitAI()
 	analyticsPath := os.Getenv("ANALYTICS_DB_PATH")
 	if analyticsPath == "" {
 		analyticsPath = "data/analytics.db"
@@ -241,7 +231,8 @@ func main() {
 	app.Use(accounts.Middleware)
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
-	app.Post("/chat", handlers.HandleChat)
+	app.Get("/api/support/messages", handlers.SupportMessages)
+	app.Post("/api/support/messages", handlers.SupportSend)
 	app.Post("/t", analytics.BeaconHandler)
 	app.Get("/privasi", handlers.PrivacyPage)
 
@@ -276,6 +267,9 @@ func main() {
 	app.Get("/admin/login", handlers.AdminLoginPage)
 	app.Post("/admin/login", handlers.AdminLogin)
 	app.Post("/admin/logout", handlers.AdminLogout)
+	app.Get("/admin/api/support/threads", handlers.AdminSupportThreads)
+	app.Get("/admin/api/support/:uid<int>/messages", handlers.AdminSupportMessages)
+	app.Post("/admin/api/support/:uid<int>/messages", handlers.AdminSupportReply)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

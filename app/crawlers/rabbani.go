@@ -63,11 +63,21 @@ func (r *RabbaniParser) Crawl() ([]CrawledPackage, error) {
 		}
 		dateKey := p.DepartureDates[0]
 		if existing, ok := merged[dateKey]; ok {
-			if p.Price > existing.Price { existing.Price = p.Price }
-			if p.Duration > existing.Duration { existing.Duration = p.Duration }
-			if p.HotelMakkah != "" && existing.HotelMakkah == "" { existing.HotelMakkah = p.HotelMakkah }
-			if p.HotelMadinah != "" && existing.HotelMadinah == "" { existing.HotelMadinah = p.HotelMadinah }
-			if p.Airline != "" && existing.Airline == "" { existing.Airline = p.Airline }
+			if p.Price > existing.Price {
+				existing.Price = p.Price
+			}
+			if p.Duration > existing.Duration {
+				existing.Duration = p.Duration
+			}
+			if p.HotelMakkah != "" && existing.HotelMakkah == "" {
+				existing.HotelMakkah = p.HotelMakkah
+			}
+			if p.HotelMadinah != "" && existing.HotelMadinah == "" {
+				existing.HotelMadinah = p.HotelMadinah
+			}
+			if p.Airline != "" && existing.Airline == "" {
+				existing.Airline = p.Airline
+			}
 			if p.PackageName != "" && (existing.PackageName == "" || strings.Contains(strings.ToLower(existing.PackageName), "/setaraf")) {
 				existing.PackageName = p.PackageName
 			}

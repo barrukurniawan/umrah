@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"umrah/app/accounts"
 	"umrah/app/analytics"
 
 	"github.com/gofiber/fiber/v2"
@@ -33,6 +34,7 @@ var adminTabs = []struct{ Key, Label string }{
 	{"travel", "Travel & Paket"},
 	{"pencarian", "Pencarian"},
 	{"live", "Live"},
+	{"pesan", "Pesan"},
 }
 
 var (
@@ -135,5 +137,6 @@ func AdminDashboard(c *fiber.Ctx) error {
 		"Days":    days,
 		"R":       analytics.Build(analytics.RangeFor(days)),
 		"Now":     time.Now().In(analytics.WIB).Format("02 Jan 2006 15:04"),
+		"Unread":  accounts.SupportUnreadForAdmin(),
 	})
 }

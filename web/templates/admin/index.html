@@ -26,13 +26,13 @@
         <nav class="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto">
             {{range .Tabs}}
             <a href="/admin?tab={{.Key}}&days={{$.Days}}"
-                class="whitespace-nowrap px-3 py-2 text-sm border-b-2 {{if eq .Key $.Tab}}border-emerald-600 text-emerald-700 font-semibold{{else}}border-transparent text-gray-500 hover:text-gray-800{{end}}">{{.Label}}</a>
+                class="whitespace-nowrap px-3 py-2 text-sm border-b-2 {{if eq .Key $.Tab}}border-emerald-600 text-emerald-700 font-semibold{{else}}border-transparent text-gray-500 hover:text-gray-800{{end}}">{{.Label}}{{if and (eq .Key "pesan") $.Unread}} <span id="pesanBadge" class="ml-0.5 inline-flex min-w-[18px] justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">{{$.Unread}}</span>{{end}}</a>
             {{end}}
         </nav>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-6">
-        {{if ne .Tab "live"}}
+        {{if and (ne .Tab "live") (ne .Tab "pesan")}}
         <div class="flex items-center justify-between flex-wrap gap-2 mb-5">
             <h1 class="text-lg font-bold">{{.R.Range.Label}}</h1>
             <div class="flex gap-1 bg-white border border-gray-200 rounded-full p-1">
@@ -220,6 +220,93 @@
             </table>
             {{else}}{{template "empty"}}{{end}}
         </section>
+        {{end}}
+        {{if eq .Tab "pesan"}}
+        <h1 class="text-lg font-bold mb-4">Pesan pengguna</h1>
+        <section class="bg-white border border-gray-200 rounded-xl overflow-hidden grid md:grid-cols-[300px_1fr] h-[70vh] min-h-[420px]">
+            <div id="threadList" class="border-r border-gray-100 overflow-y-auto">
+                <p class="text-sm text-gray-400 p-6 text-center">Memuat…</p>
+            </div>
+            <div id="threadPane" class="hidden md:flex flex-col min-h-0">
+                <div id="threadHead" class="px-4 py-3 border-b border-gray-100 text-sm text-gray-500">Pilih percakapan di kiri.</div>
+                <div id="threadMsgs" class="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50"></div>
+                <form id="replyForm" class="hidden border-t border-gray-100 p-3 flex gap-2">
+                    <button type="button" id="backBtn" class="md:hidden text-sm text-gray-500 px-2">&larr;</button>
+                    <textarea id="replyInput" rows="1" maxlength="2000" placeholder="Tulis balasan… (Enter kirim, Shift+Enter baris baru)" class="flex-1 resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    <button class="rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700">Kirim</button>
+                </form>
+            </div>
+        </section>
+        <script>
+        (function () {
+            var list = document.getElementById('threadList'), pane = document.getElementById('threadPane'),
+                head = document.getElementById('threadHead'), msgs = document.getElementById('threadMsgs'),
+                form = document.getElementById('replyForm'), input = document.getElementById('replyInput');
+            var current = 0, lastId = 0;
+            function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+            function loadThreads() {
+                fetch('/admin/api/support/threads', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+                    list.innerHTML = '';
+                    var b = document.getElementById('pesanBadge'); if (b) { b.textContent = d.unread; b.style.display = d.unread ? '' : 'none'; }
+                    if (!d.threads || !d.threads.length) { list.appendChild(el('p', 'text-sm text-gray-400 p-6 text-center', 'Belum ada pesan.')); return; }
+                    d.threads.forEach(function (t) {
+                        var a = el('button', 'w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 flex gap-3 items-start' + (t.user_id === current ? ' bg-emerald-50' : ''));
+                        a.type = 'button';
+                        var av = t.picture ? el('img', 'w-9 h-9 rounded-full shrink-0') : el('span', 'w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-semibold shrink-0', (t.name || '?').charAt(0).toUpperCase());
+                        if (t.picture) { av.src = t.picture; av.referrerPolicy = 'no-referrer'; }
+                        var box = el('div', 'min-w-0 flex-1');
+                        var top = el('div', 'flex justify-between gap-2');
+                        top.appendChild(el('span', 'text-sm font-semibold truncate', t.name || t.email));
+                        top.appendChild(el('span', 'text-[11px] text-gray-400 shrink-0', t.at));
+                        box.appendChild(top);
+                        var bottom = el('div', 'flex justify-between gap-2');
+                        bottom.appendChild(el('span', 'text-xs text-gray-500 truncate', (t.from === 'admin' ? 'Anda: ' : '') + t.last));
+                        if (t.unread) bottom.appendChild(el('span', 'rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white shrink-0', String(t.unread)));
+                        box.appendChild(bottom);
+                        a.appendChild(av); a.appendChild(box);
+                        a.onclick = function () { open(t); };
+                        list.appendChild(a);
+                    });
+                });
+            }
+            function bubble(m) {
+                var wrap = el('div', 'flex ' + (m.sender === 'admin' ? 'justify-end' : 'justify-start'));
+                var b = el('div', 'max-w-[80%] rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap break-words shadow-sm ' + (m.sender === 'admin' ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-white border border-gray-200 rounded-bl-sm'), m.body);
+                b.appendChild(el('div', 'text-[10px] mt-1 ' + (m.sender === 'admin' ? 'text-emerald-100' : 'text-gray-400'), m.at));
+                wrap.appendChild(b); msgs.appendChild(wrap);
+            }
+            function fetchMsgs() {
+                if (!current) return;
+                var uid = current;
+                fetch('/admin/api/support/' + uid + '/messages?after=' + lastId, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+                    if (uid !== current) return;
+                    (d.messages || []).forEach(function (m) { bubble(m); lastId = Math.max(lastId, m.id); });
+                    if (d.messages && d.messages.length) msgs.scrollTop = msgs.scrollHeight;
+                });
+            }
+            function open(t) {
+                current = t.user_id; lastId = 0; msgs.innerHTML = '';
+                head.textContent = ''; head.appendChild(el('span', 'font-semibold text-gray-800', t.name || t.email)); head.appendChild(el('span', 'ml-2 text-xs', t.email));
+                form.classList.remove('hidden'); form.classList.add('flex');
+                pane.classList.remove('hidden'); pane.classList.add('flex');
+                list.classList.add('hidden', 'md:block');
+                fetchMsgs(); setTimeout(loadThreads, 400); input.focus();
+            }
+            document.getElementById('backBtn').onclick = function () { list.classList.remove('hidden'); pane.classList.add('hidden'); current = 0; };
+            function send() {
+                var body = input.value.trim(); if (!body || !current) return;
+                input.value = '';
+                fetch('/admin/api/support/' + current + '/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ body: body }) })
+                    .then(function (r) { return r.json(); }).then(function (d) { if (d.error) { alert(d.error); input.value = body; return; } fetchMsgs(); loadThreads(); })
+                    .catch(function () { input.value = body; alert('Gagal mengirim, coba lagi.'); });
+            }
+            form.onsubmit = function (e) { e.preventDefault(); send(); };
+            input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+            loadThreads();
+            setInterval(fetchMsgs, 5000);
+            setInterval(loadThreads, 15000);
+        })();
+        </script>
         {{end}}
     </main>
     <footer class="max-w-6xl mx-auto px-4 pb-8 text-[11px] text-gray-400">
