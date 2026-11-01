@@ -157,7 +157,7 @@
                 <input type="hidden" name="advanced" id="advancedInput" value="">
                 <input type="hidden" name="travels" id="travelsInput" value="">
 
-                <div class="mb-6">
+                <div class="mb-6" id="travelFilter">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Travel</label>
                         <button type="button" onclick="toggleAllTravels()" id="travelToggleBtn"
@@ -204,15 +204,7 @@
             </form>
 
             <div id="modeCal" class="hidden">
-                <div class="mb-2">
-                    <div class="flex justify-between items-center mb-2">
-                        <label for="calBudget" class="text-sm font-semibold text-gray-700">Budget maksimal</label>
-                        <span id="calBudgetDisplay" class="text-lg font-bold text-emerald-600">Semua harga</span>
-                    </div>
-                    <input type="range" id="calBudget" min="20000000" max="50000000" step="1000000" value="50000000" class="w-full">
-                    <div class="flex justify-between text-xs text-gray-400 mt-1"><span>Rp 20 jt</span><span>Semua</span></div>
-                </div>
-                <div id="calendar" class="mt-5"><p class="text-sm text-gray-400 text-center py-10">Memuat kalender…</p></div>
+                <div id="calendar"><p class="text-sm text-gray-400 text-center py-10">Memuat kalender…</p></div>
             </div>
 
             <div id="results" class="mt-4"></div>
@@ -530,29 +522,36 @@
         // Mode Kalender: grid & pop-up dirender server (/kalender, /kalender/hari), filter memakai chip travel yang sama.
         window.ukCal = (function () {
             var on = false, month = '', timer = null;
-            var hParts = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { day: 'numeric', month: 'long' });
-            var hLong = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' });
-            var hMon = new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { month: 'long', year: 'numeric' });
+            // Hijriah: angka dari kalender Umm al-Qura bawaan browser, nama bulan dari daftar sendiri
+            // (sebagian browser HP tidak punya nama bulan Hijriah dan mencampurnya dengan Masehi).
+            var HB = ['', 'Muharram', 'Safar', 'Rabiulawal', 'Rabiulakhir', 'Jumadilawal', 'Jumadilakhir', 'Rajab', 'Syakban', 'Ramadhan', 'Syawal', 'Zulkaidah', 'Zulhijah'];
+            var HS = ['', 'Muh.', 'Saf.', 'R.Awal', 'R.Akhir', 'J.Awal', 'J.Akhir', 'Rajab', 'Syak.', 'Ram.', 'Syaw.', 'Zulk.', 'Zulh.'];
+            var hNum = null;
+            try {
+                hNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'numeric', year: 'numeric' });
+                if (hNum.resolvedOptions().calendar.indexOf('islamic') !== 0) hNum = null;
+            } catch (e) { hNum = null; }
             function d(s) { return new Date(s + 'T00:00:00'); }
+            function hParts(s) {
+                if (!hNum) return null;
+                var o = {};
+                hNum.formatToParts(d(s)).forEach(function (p) { if (p.type === 'day' || p.type === 'month' || p.type === 'year') o[p.type] = parseInt(p.value, 10); });
+                return (o.year > 1400 && o.year < 1500 && o.month >= 1 && o.month <= 12) ? o : null;
+            }
             function hijri(root) {
-                try {
-                    // Cukup angka hari Hijriah; nama bulan hanya di tanggal 1 Hijriah dan di kotak pertama.
-                    root.querySelectorAll('[data-hijri]').forEach(function (e, i) {
-                        var parts = hParts.formatToParts(d(e.dataset.hijri)), day = '', mon = '';
-                        parts.forEach(function (p) { if (p.type === 'day') day = p.value; if (p.type === 'month') mon = p.value; });
-                        e.textContent = (i === 0 || day === '1') ? day + ' ' + mon : day;
-                        if (i === 0 || day === '1') e.classList.add('text-emerald-600', 'font-semibold');
-                    });
-                    root.querySelectorAll('[data-hijri-long]').forEach(function (e) { e.textContent = hLong.format(d(e.dataset.hijriLong)); });
-                    root.querySelectorAll('[data-hijri-month]').forEach(function (e) {
-                        var p = e.dataset.hijriMonth.split('-'), a = hMon.format(new Date(+p[0], +p[1] - 1, 1)), b = hMon.format(new Date(+p[0], +p[1], 0));
-                        e.textContent = a === b ? a : a.split(' ')[0] + ' – ' + b;
-                    });
-                } catch (err) { }
+                // Cukup angka hari Hijriah; nama bulan hanya di tanggal 1 Hijriah dan di kotak pertama.
+                root.querySelectorAll('[data-hijri]').forEach(function (e, i) {
+                    var h = hParts(e.dataset.hijri); if (!h) return;
+                    var full = i === 0 || h.day === 1;
+                    e.textContent = full ? h.day + ' ' + HS[h.month] : h.day;
+                    if (full) e.classList.add('text-emerald-600', 'font-semibold');
+                });
+                root.querySelectorAll('[data-hijri-long]').forEach(function (e) {
+                    var h = hParts(e.dataset.hijriLong); if (h) e.textContent = h.day + ' ' + HB[h.month] + ' ' + h.year + ' H';
+                });
             }
-            function params() {
-                return 'budget=' + document.getElementById('calBudget').value + '&travels=' + encodeURIComponent(document.getElementById('travelsInput').value);
-            }
+            // Kalender selalu menampilkan semua travel dan semua harga.
+            function params() { return 'budget=50000000'; }
             function beacon(t, extra) {
                 try { navigator.sendBeacon('/t', new Blob([JSON.stringify(Object.assign({ t: t }, extra || {}))], { type: 'application/json' })); } catch (e) { }
             }
@@ -569,7 +568,7 @@
                 on = cal;
                 document.getElementById('modeBtnCal').setAttribute('aria-pressed', cal);
                 document.getElementById('modeBtnBudget').setAttribute('aria-pressed', !cal);
-                ['modeBudget', 'budgetSubmit', 'results'].forEach(function (id) { document.getElementById(id).classList.toggle('hidden', cal); });
+                ['modeBudget', 'travelFilter', 'budgetSubmit', 'results'].forEach(function (id) { document.getElementById(id).classList.toggle('hidden', cal); });
                 document.getElementById('modeCal').classList.toggle('hidden', !cal);
                 try { localStorage.setItem('uk_mode', cal ? 'kalender' : 'budget'); } catch (e) { }
                 if (cal) { load(); beacon('cal_open'); }
@@ -619,12 +618,6 @@
                 }, { passive: true });
             });
             document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-            var cb = document.getElementById('calBudget');
-            cb.addEventListener('input', function () {
-                var v = +cb.value;
-                document.getElementById('calBudgetDisplay').textContent = v >= 50000000 ? 'Semua harga' : 'Rp ' + v.toLocaleString('id-ID');
-                cache = {}; clearTimeout(timer); timer = setTimeout(load, 250);
-            });
             var q = new URLSearchParams(location.search), saved = null;
             try { saved = localStorage.getItem('uk_mode'); } catch (e) { }
             month = q.get('bulan') || '';
