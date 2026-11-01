@@ -221,6 +221,77 @@
             {{else}}{{template "empty"}}{{end}}
         </section>
         {{end}}
+        {{if eq .Tab "pengguna"}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Total akun</p><p class="text-2xl font-bold tabular-nums mt-1">{{.U.Total}}</p>{{if .U.Pending}}<p class="text-xs text-gray-400 mt-1">+{{.U.Pending}} belum setuju kebijakan</p>{{end}}</div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Daftar baru · {{.R.Range.Label}}</p><p class="text-2xl font-bold tabular-nums mt-1">{{.U.NewInRange}}</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Aktif 7 hari</p><p class="text-2xl font-bold tabular-nums mt-1">{{.U.Active7}}</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Aktif 30 hari</p><p class="text-2xl font-bold tabular-nums mt-1">{{.U.Active30}}</p></div>
+        </div>
+
+        <section class="bg-white border border-gray-200 rounded-xl p-4 mb-4">
+            <h2 class="font-semibold mb-3">Pendaftar baru per hari</h2>
+            <div class="flex items-end gap-1 h-36 overflow-x-auto">
+                {{range .U.Days}}
+                <div class="flex-1 min-w-[14px] flex flex-col items-center justify-end h-full group" title="{{.Label}}: {{.Count}} akun baru">
+                    <span class="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100">{{.Count}}</span>
+                    <div class="w-full rounded-t bg-emerald-500/80 group-hover:bg-emerald-600" style="height: {{.Pct}}%; min-height: 2px"></div>
+                </div>
+                {{end}}
+            </div>
+            <div class="flex gap-1 mt-1 overflow-x-auto">{{range .U.Days}}<span class="flex-1 min-w-[14px] text-center text-[9px] text-gray-400">{{.Label}}</span>{{end}}</div>
+        </section>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-3">Paket paling banyak disimpan ♡</h2>
+                {{if .U.TopSaved}}
+                <ol class="space-y-2 text-sm">
+                    {{range $i, $t := .U.TopSaved}}
+                    <li class="flex justify-between gap-3"><span><span class="text-gray-400 tabular-nums">{{inc $i}}.</span> <b>{{$t.Travel}}</b> <span class="text-gray-500">{{$t.Package}}</span></span><span class="tabular-nums text-gray-600 shrink-0">{{$t.Count}}</span></li>
+                    {{end}}
+                </ol>
+                {{else}}{{template "empty"}}{{end}}
+            </section>
+            <section class="bg-white border border-gray-200 rounded-xl p-4">
+                <h2 class="font-semibold mb-3">Tabungan umroh</h2>
+                {{if .U.Goals}}
+                <dl class="grid grid-cols-2 gap-3 text-sm">
+                    <div><dt class="text-xs text-gray-500">Jumlah tujuan</dt><dd class="text-xl font-bold tabular-nums">{{.U.Goals}}</dd></div>
+                    <div><dt class="text-xs text-gray-500">Sudah tercapai</dt><dd class="text-xl font-bold tabular-nums">{{.U.Achieved}}</dd></div>
+                    <div><dt class="text-xs text-gray-500">Rata-rata target</dt><dd class="text-xl font-bold tabular-nums">Rp {{rupiah .U.AvgTarget}}</dd></div>
+                    <div><dt class="text-xs text-gray-500">Rata-rata jumlah orang</dt><dd class="text-xl font-bold tabular-nums">{{printf "%.1f" .U.AvgPeople}}</dd></div>
+                </dl>
+                {{else}}{{template "empty"}}{{end}}
+            </section>
+        </div>
+
+        <section class="bg-white border border-gray-200 rounded-xl p-4 overflow-x-auto">
+            <h2 class="font-semibold mb-1">Daftar akun</h2>
+            <p class="text-xs text-gray-500 mb-3">Email disamarkan. Klik untuk melihat lengkap. Hanya data yang pengguna isi sendiri, tidak dihubungkan dengan statistik kunjungan.</p>
+            {{if .U.Users}}
+            <table class="w-full text-sm">
+                <thead class="text-left text-xs text-gray-500 border-b">
+                    <tr><th class="py-2 pr-3">Nama</th><th class="py-2 px-2">Email</th><th class="py-2 px-2">Daftar</th><th class="py-2 px-2">Login terakhir</th><th class="py-2 px-2 text-right">♡ Simpan</th><th class="py-2 px-2 text-right">Tabungan</th><th class="py-2 pl-2 text-right">Chat</th></tr>
+                </thead>
+                <tbody>
+                    {{range .U.Users}}
+                    <tr class="border-b last:border-0">
+                        <td class="py-2 pr-3"><span class="inline-flex items-center gap-2">{{if .Picture}}<img src="{{.Picture}}" alt="" referrerpolicy="no-referrer" class="w-6 h-6 rounded-full">{{else}}<span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">{{initial .Name}}</span>{{end}}{{.Name}}</span></td>
+                        <td class="py-2 px-2 text-gray-600"><button type="button" class="hover:text-emerald-700" title="Klik untuk tampilkan lengkap" data-full="{{.Email}}" onclick="this.textContent=this.dataset.full">{{.EmailMasked}}</button></td>
+                        <td class="py-2 px-2 tabular-nums text-gray-500 whitespace-nowrap">{{.CreatedAt.Format "02 Jan 2006"}}</td>
+                        <td class="py-2 px-2 tabular-nums text-gray-500 whitespace-nowrap">{{.LastLoginAt.Format "02 Jan 2006 15:04"}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums">{{.Saved}}</td>
+                        <td class="py-2 px-2 text-right tabular-nums">{{.Goals}}</td>
+                        <td class="py-2 pl-2 text-right">{{if .Messages}}<a class="text-emerald-700 hover:underline" href="/admin?tab=pesan&uid={{.ID}}">{{.Messages}} pesan</a>{{else}}<span class="text-gray-300">-</span>{{end}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            {{else}}{{template "empty"}}{{end}}
+        </section>
+        {{end}}
+
         {{if eq .Tab "pesan"}}
         <h1 class="text-lg font-bold mb-4">Pesan pengguna</h1>
         <section class="bg-white border border-gray-200 rounded-xl overflow-hidden grid md:grid-cols-[300px_1fr] h-[70vh] min-h-[420px]">
@@ -303,6 +374,13 @@
             form.onsubmit = function (e) { e.preventDefault(); send(); };
             input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
             loadThreads();
+            // Dari tab Pengguna: /admin?tab=pesan&uid=ID langsung membuka percakapan itu.
+            var wantUid = +(new URLSearchParams(location.search).get('uid') || 0);
+            if (wantUid) {
+                fetch('/admin/api/support/threads', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+                    (d.threads || []).forEach(function (t) { if (t.user_id === wantUid) open(t); });
+                });
+            }
             setInterval(fetchMsgs, 5000);
             setInterval(loadThreads, 15000);
         })();

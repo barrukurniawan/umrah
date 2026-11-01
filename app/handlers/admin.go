@@ -34,6 +34,7 @@ var adminTabs = []struct{ Key, Label string }{
 	{"travel", "Travel & Paket"},
 	{"pencarian", "Pencarian"},
 	{"live", "Live"},
+	{"pengguna", "Pengguna"},
 	{"pesan", "Pesan"},
 }
 
@@ -130,12 +131,18 @@ func AdminDashboard(c *fiber.Ctx) error {
 		days = 7
 	}
 	c.Set("Cache-Control", "no-store")
+	rng := analytics.RangeFor(days)
+	var users accounts.UserStats
+	if tab == "pengguna" {
+		users = accounts.AdminUserStats(rng.From, rng.To)
+	}
 	return c.Render("admin/index", fiber.Map{
+		"U":       users,
 		"Tab":     tab,
 		"Tabs":    adminTabs,
 		"DaysOpt": []int{1, 7, 30, 90},
 		"Days":    days,
-		"R":       analytics.Build(analytics.RangeFor(days)),
+		"R":       analytics.Build(rng),
 		"Now":     time.Now().In(analytics.WIB).Format("02 Jan 2006 15:04"),
 		"Unread":  accounts.SupportUnreadForAdmin(),
 	})
