@@ -1,7 +1,7 @@
 # Rencana: Mode Kalender
 
 Status: rencana + mockup. Belum ada kode di aplikasi.
-Mockup interaktif (data paket asli Nov–Des 2026): buka `docs/mockup-kalender.html` di browser.
+Mockup interaktif (data paket asli 6 bulan, Nov 2026 – Apr 2027): buka `docs/mockup-kalender.html` di browser.
 
 ## 1. Tujuan
 
@@ -23,7 +23,7 @@ Mode Kalender menjawab tiga pertanyaan sekaligus dalam satu layar.
 ### 2b. Kalender bulanan (satu halaman penuh)
 
 Kepala kalender:
-- Tombol ‹ › untuk pindah bulan. Hanya bulan yang punya keberangkatan, mulai bulan ini.
+- Tombol ‹ › untuk pindah bulan, plus strip **6 bulan ke depan** ("Nov 26 · 83 jadwal", "Des 26 · 202 jadwal", …) supaya bisa loncat langsung dan langsung kelihatan bulan mana yang ramai.
 - Nama bulan Masehi besar, di bawahnya bulan Hijriah ("Jumadilakhir – Rajab 1448 H").
 - Filter **budget** (Semua, ≤ 25 jt, ≤ 30 jt, …) dan **travel**. Angka di kalender langsung ikut berubah.
 - Ringkasan satu baris. Contoh dari data asli: "202 keberangkatan dari 11 travel di 31 tanggal. Mulai 24,5 jt."
@@ -36,7 +36,7 @@ Setiap kotak tanggal berisi:
 | Kanan atas | Tanggal Hijriah kecil ("21 Rajab") |
 | Tengah | Ikon cuaca + suhu siang/malam Makkah ("☀️ 36°/24°") |
 | Bawah | Pil hijau **"5 travel"** + "mulai 23,5 jt" |
-| Garis tipis di dasar kotak | Momen. Ungu = libur sekolah, hijau = Ramadhan |
+| Garis tipis di dasar kotak | Momen. Ungu = libur sekolah, hijau = Ramadhan, kuning = 10 malam terakhir, biru = Idul Fitri. Musim haji diarsir abu dengan tulisan "Visa umroh biasanya ditutup" |
 | Latar | Gradasi tipis sesuai cuaca (lihat 2d) |
 
 - Hari yang sudah lewat dibuat pudar. Hari ini diberi cincin hijau.
