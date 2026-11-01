@@ -90,6 +90,9 @@
         }
         .uk-seg button[aria-pressed=true] { background: #059669; color: #fff; box-shadow: 0 6px 16px -8px rgba(5, 150, 105, .8); }
         .uk-seg button[aria-pressed=true] svg { color: #fff; }
+        [data-month-tab][data-active="1"] { background: #059669; color: #fff; border-color: #059669; }
+        [data-month-tab][data-active="1"] span { color: #fff; }
+        #calendar { transition: opacity .15s ease; }
 
         .facility-card {
             transition: all 0.3s ease;
@@ -555,14 +558,36 @@
             function beacon(t, extra) {
                 try { navigator.sendBeacon('/t', new Blob([JSON.stringify(Object.assign({ t: t }, extra || {}))], { type: 'application/json' })); } catch (e) { }
             }
+            // Grid per bulan disimpan di browser; setelah bulan pertama tampil, bulan lain diambil
+            // di belakang layar, jadi pindah bulan langsung berganti tanpa menunggu server.
+            var months = {}, prefetched = false;
+            function getMonth(m) {
+                if (!months[m]) months[m] = fetch('/kalender?bulan=' + m + '&' + params()).then(function (r) { if (!r.ok) throw r; return r.text(); })
+                    .catch(function (e) { delete months[m]; throw e; });
+                return months[m];
+            }
+            function show(html) {
+                var box = document.getElementById('calendar');
+                box.innerHTML = html; box.style.opacity = '';
+                var el = box.querySelector('[data-cal-month]');
+                if (el) { month = el.dataset.calMonth; months[month] = months[month] || Promise.resolve(html); }
+                hijri(box);
+                var u = new URL(location.href); u.searchParams.set('mode', 'kalender'); if (month) u.searchParams.set('bulan', month);
+                history.replaceState(null, '', u.pathname + u.search);
+                if (!prefetched) {
+                    prefetched = true;
+                    setTimeout(function () {
+                        box.querySelectorAll('[data-month-tab]').forEach(function (b) { getMonth(b.dataset.monthTab).catch(function () { }); });
+                    }, 300);
+                }
+            }
             function load() {
-                htmx.ajax('GET', '/kalender?bulan=' + month + '&' + params(), { target: '#calendar', swap: 'innerHTML' }).then(function () {
-                    var el = document.querySelector('[data-cal-month]');
-                    if (el) month = el.dataset.calMonth;
-                    hijri(document.getElementById('calendar'));
-                    var u = new URL(location.href); u.searchParams.set('mode', 'kalender'); if (month) u.searchParams.set('bulan', month);
-                    history.replaceState(null, '', u.pathname + u.search);
-                });
+                var want = month, box = document.getElementById('calendar');
+                // Umpan balik seketika: tab yang diklik langsung menyala, grid meredup bila belum tersimpan.
+                box.querySelectorAll('[data-month-tab]').forEach(function (b) { b.dataset.active = b.dataset.monthTab === want ? '1' : ''; });
+                var t = setTimeout(function () { box.style.opacity = '.55'; }, 60);
+                getMonth(want).then(function (html) { clearTimeout(t); if (want === month) show(html); })
+                    .catch(function () { clearTimeout(t); box.style.opacity = ''; });
             }
             function mode(cal) {
                 on = cal;
@@ -622,7 +647,7 @@
             try { saved = localStorage.getItem('uk_mode'); } catch (e) { }
             month = q.get('bulan') || '';
             if (q.get('mode') === 'kalender' || (!q.get('mode') && saved === 'kalender')) mode(true);
-            return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { cache = {}; if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
+            return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { cache = {}; months = {}; prefetched = false; if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
         })();
     </script>
     {{template "saved_js" .}}

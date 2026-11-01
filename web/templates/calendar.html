@@ -11,7 +11,7 @@
 
 <div class="mt-4 flex gap-1.5 overflow-x-auto pb-3 scrollbar-thin">
     {{range .V.Tabs}}
-    <button type="button" onclick="ukCal.month('{{.Key}}')"
+    <button type="button" onclick="ukCal.month('{{.Key}}')" data-month-tab="{{.Key}}"
         class="flex-1 min-w-[68px] whitespace-nowrap rounded-xl px-2 py-1.5 text-xs border {{if .Active}}bg-emerald-600 text-white border-emerald-600{{else}}bg-white text-gray-600 border-gray-200 hover:border-emerald-300{{end}}">
         <span class="font-semibold">{{.Label}}</span>
         <span class="block text-[10px] {{if .Active}}text-emerald-100{{else}}text-gray-400{{end}}">{{.Count}} jadwal</span>

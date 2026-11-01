@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"umrah/app/models"
@@ -192,8 +193,37 @@ func shortMonth(t time.Time) string {
 	return fmt.Sprintf("%s %02d", monthNames[t.Month()][:3], t.Year()%100)
 }
 
+// Hasil per bulan disimpan di memori. Data paket hanya berubah saat aplikasi restart (import
+// ulang), dan simpanan dikosongkan setiap ganti hari karena "lewat"/"hari ini" ikut berubah.
+var (
+	calCacheMu  sync.Mutex
+	calCacheDay string
+	calCache    = map[string]CalendarView{}
+)
+
 // CalendarMonth membangun grid satu bulan ("2026-11"); bulan di luar 6 bulan ke depan dijepit.
 func CalendarMonth(key string, budget int, travels []string) CalendarView {
+	today := time.Now().In(wib).Format("2006-01-02")
+	ck := key + "|" + fmt.Sprint(budget) + "|" + strings.Join(travels, ",")
+	calCacheMu.Lock()
+	if calCacheDay != today {
+		calCache, calCacheDay = map[string]CalendarView{}, today
+	}
+	v, ok := calCache[ck]
+	calCacheMu.Unlock()
+	if ok {
+		return v
+	}
+	v = buildCalendarMonth(key, budget, travels)
+	calCacheMu.Lock()
+	if len(calCache) < 500 {
+		calCache[ck] = v
+	}
+	calCacheMu.Unlock()
+	return v
+}
+
+func buildCalendarMonth(key string, budget int, travels []string) CalendarView {
 	if budget >= calendarNoBudget {
 		budget = 0
 	}
