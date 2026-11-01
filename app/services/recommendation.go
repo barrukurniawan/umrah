@@ -22,10 +22,15 @@ type FilterInput struct {
 	Travels  string
 }
 
-// Travel partner/promo: selalu di urutan teratas rekomendasi default (selama masuk budget).
-var featuredTravels = map[string]bool{
-	"Alviandra Travel": true,
+// Travel partner/promo: selalu di urutan teratas, tapi hanya pada budget tertentu
+// (dipilih pemilik situs). Di luar rentang ini paketnya tidak ditampilkan sama sekali.
+type featuredRange struct{ MinBudget, MaxBudget int }
+
+var featuredTravels = map[string]featuredRange{
+	"Alviandra Travel": {MinBudget: 28000000, MaxBudget: 29000000},
 }
+
+func isFeatured(travel string) bool { _, ok := featuredTravels[travel]; return ok }
 
 // Paket promo boleh sedikit di atas budget (mis. Rp28,5 jt sudah tampil di budget Rp28 jt).
 const featuredBudgetSlack = 500000
@@ -87,7 +92,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		pkg.Price = availablePrice(pkg.Price, upcoming)
 
 		budget := input.Budget
-		if featuredTravels[pkg.Travel.Name] {
+		if fr, ok := featuredTravels[pkg.Travel.Name]; ok {
+			if input.Budget < fr.MinBudget || input.Budget > fr.MaxBudget {
+				continue
+			}
 			budget += featuredBudgetSlack
 		}
 		if pkg.Price > budget {
@@ -194,7 +202,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		scored = append(scored, ScoredPackage{
 			Package:           pkg,
 			Key:               PackageKey(pkg.Travel.Name, pkg.Name),
-			Featured:          featuredTravels[pkg.Travel.Name],
+			Featured:          isFeatured(pkg.Travel.Name),
 			Score:             score,
 			FacilityList:      facilitiesOrGeneric(pkg.Facilities),
 			FacilityGeneric:   len(parseFacilities(pkg.Facilities)) == 0,

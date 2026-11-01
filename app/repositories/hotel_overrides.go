@@ -14,19 +14,22 @@ import (
 // config/hotel_overrides.json dan diterapkan setiap import saat boot, jadi tidak
 // hilang saat crawl ulang. Field match yang diisi harus cocok semua
 // (substring, case-insensitive; departure_date persis YYYY-MM-DD).
-// Override hanya mengisi hotel yang kosong, tidak menimpa data crawler.
+// Default: hanya mengisi hotel yang kosong. replace_hotels menimpa hotel dari travel
+// (untuk data travel yang jelas salah), set_airline mengisi maskapai yang kosong.
 type hotelOverride struct {
-	TravelName   string `json:"travel_name"`
-	URLContains  string `json:"url_contains,omitempty"`
-	NameContains string `json:"name_contains,omitempty"`
-	Airline      string `json:"airline,omitempty"`
-	Departure    string `json:"departure_date,omitempty"`
-	HotelMakkah  string `json:"hotel_makkah"`
-	StarsMakkah  int    `json:"stars_makkah,omitempty"`
-	HotelMadinah string `json:"hotel_madinah"`
-	StarsMadinah int    `json:"stars_madinah,omitempty"`
-	Source       string `json:"source"`
-	Note         string `json:"note,omitempty"`
+	TravelName    string `json:"travel_name"`
+	URLContains   string `json:"url_contains,omitempty"`
+	NameContains  string `json:"name_contains,omitempty"`
+	Airline       string `json:"airline,omitempty"`
+	Departure     string `json:"departure_date,omitempty"`
+	HotelMakkah   string `json:"hotel_makkah"`
+	StarsMakkah   int    `json:"stars_makkah,omitempty"`
+	HotelMadinah  string `json:"hotel_madinah"`
+	StarsMadinah  int    `json:"stars_madinah,omitempty"`
+	SetAirline    string `json:"set_airline,omitempty"`    // isi maskapai bila halaman paket tidak menyebutnya
+	ReplaceHotels bool   `json:"replace_hotels,omitempty"` // timpa hotel dari travel (data travel salah, mis. tertukar)
+	Source        string `json:"source"`
+	Note          string `json:"note,omitempty"`
 }
 
 func loadHotelOverrides() []hotelOverride {

@@ -297,6 +297,12 @@ func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratin
 				}
 			}
 		}
+		if airline == "" {
+			// Maskapai dari flyer travel bila halaman paket tidak menyebutnya.
+			if o, ok := findHotelOverride(overrides, a.travel, cp, deps[0].Date); ok && o.SetAirline != "" {
+				airline = o.SetAirline
+			}
+		}
 
 		pkg := models.Package{
 			TravelID:        travel.ID,
@@ -327,16 +333,15 @@ func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratin
 			hm := cleanHotelName(firstNonEmpty(d.HotelMakkah, cp.HotelMakkah))
 			hd := cleanHotelName(firstNonEmpty(d.HotelMadinah, cp.HotelMadinah))
 			sm, sd := cp.StarsMakkah, cp.StarsMadinah
-			if hm == "" || hd == "" {
-				if o, ok := findHotelOverride(overrides, a.travel, cp, d.Date); ok {
-					if hm == "" && o.HotelMakkah != "" {
-						hm, sm = o.HotelMakkah, o.StarsMakkah
-					}
-					if hd == "" && o.HotelMadinah != "" {
-						hd, sd = o.HotelMadinah, o.StarsMadinah
-					}
-					overrideCount++
+			if o, ok := findHotelOverride(overrides, a.travel, cp, d.Date); ok && (hm == "" || hd == "" || o.ReplaceHotels) {
+				// Biasanya hanya mengisi yang kosong; replace_hotels untuk data travel yang salah.
+				if o.HotelMakkah != "" && (hm == "" || o.ReplaceHotels) {
+					hm, sm = o.HotelMakkah, o.StarsMakkah
 				}
+				if o.HotelMadinah != "" && (hd == "" || o.ReplaceHotels) {
+					hd, sd = o.HotelMadinah, o.StarsMadinah
+				}
+				overrideCount++
 			}
 
 			// Bintang adalah fakta hotel: bila paket ini tidak menyebutnya, ambil dari
