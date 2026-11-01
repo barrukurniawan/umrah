@@ -122,50 +122,42 @@
                     <i data-lucide="users" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{(index $v.Details 0).RoomType}}</span>
                 </div>
                 {{end}}
-
-            </div>
-
-            <div class="flex flex-wrap gap-2 mb-3">
-                {{if $v.IsFamily}}
-                <span
-                    class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full"><i
-                        data-lucide="users" class="w-3 h-3"></i>
-                    Keluarga</span>
-                {{end}}
-                {{if $v.IsSenior}}
-                <span
-                    class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full"><i
-                        data-lucide="heart" class="w-3 h-3"></i>
-                    Lansia</span>
-                {{end}}
-
-                {{$hm := ""}}{{$hd := ""}}{{if $v.Details}}{{$hm = (index $v.Details 0).HotelMakkah}}{{$hd = (index $v.Details 0).HotelMadinah}}{{end}}
-                {{with gmapsMakkahURL $hm}}
-                <a href="{{.}}" target="_blank" rel="noopener"
-                    class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-emerald-100 hover:border-emerald-300 transition-colors cursor-pointer"
-                    title="Rute jalan kaki dari {{cleanHotel $hm}} ke gerbang Masjidil Haram di Google Maps{{if hasPrefix $v.DistanceMakkah "±"}} (jarak perkiraan){{end}}">
-                    🕋 {{if $v.DistanceMakkah}}{{$v.DistanceMakkah}}{{else}}Rute ke Haram{{end}}</a>
-                {{else}}{{if $v.DistanceMakkah}}
-                <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium px-2.5 py-1 rounded-full"
-                    title="Jarak menurut travel. Nama hotel belum diumumkan.">🕋 {{$v.DistanceMakkah}}</span>
-                {{end}}{{end}}
-                {{with gmapsMadinahURL $hd}}
-                <a href="{{.}}" target="_blank" rel="noopener"
-                    class="inline-flex items-center gap-1 bg-sky-50 border border-sky-200 text-sky-700 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-sky-100 hover:border-sky-300 transition-colors cursor-pointer"
-                    title="Rute jalan kaki dari {{cleanHotel $hd}} ke Masjid Nabawi di Google Maps{{if hasPrefix $v.DistanceMadinah "±"}} (jarak perkiraan){{end}}">
-                    🕌 {{if $v.DistanceMadinah}}{{$v.DistanceMadinah}}{{else}}Rute ke Nabawi{{end}}</a>
-                {{else}}{{if $v.DistanceMadinah}}
-                <span class="inline-flex items-center gap-1 bg-sky-50 border border-sky-200 text-sky-700 text-xs font-medium px-2.5 py-1 rounded-full"
-                    title="Jarak menurut travel. Nama hotel belum diumumkan.">🕌 {{$v.DistanceMadinah}}</span>
-                {{end}}{{end}}
                 {{if $v.Airline}}
-                <a href="{{airlineURL $v.Airline}}" target="_blank" rel="noopener"
-                    class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-600 text-xs font-medium px-2.5 py-1 rounded-full hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer"
-                    title="Kunjungi website {{$v.Airline}}"><i
-                        data-lucide="plane" class="w-3 h-3"></i>
-                    {{$v.Airline}}</a>
+                <div class="flex items-center gap-1 text-gray-600">
+                    <i data-lucide="plane" class="w-3.5 h-3.5 flex-shrink-0"></i> <span>{{$v.Airline}}</span>
+                </div>
+                {{end}}
+
+            </div>
+
+            {{if or $v.IsFamily $v.IsSenior}}
+            <div class="flex flex-wrap gap-2 mb-3">
+                {{if $v.IsFamily}}<span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full"><i data-lucide="users" class="w-3 h-3"></i> Keluarga</span>{{end}}
+                {{if $v.IsSenior}}<span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-1 rounded-full"><i data-lucide="heart" class="w-3 h-3"></i> Lansia</span>{{end}}
+            </div>
+            {{end}}
+
+            {{/* Rute hotel ke Masjidil Haram / Nabawi: tombol satu tema, seperti tombol di bawah kartu. */}}
+            {{$hm := ""}}{{$hd := ""}}{{if $v.Details}}{{$hm = (index $v.Details 0).HotelMakkah}}{{$hd = (index $v.Details 0).HotelMadinah}}{{end}}
+            {{$um := gmapsMakkahURL $hm}}{{$ud := gmapsMadinahURL $hd}}
+            {{if or $um $ud $v.DistanceMakkah $v.DistanceMadinah}}
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                {{if $um}}
+                <a href="{{$um}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors no-underline bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    title="Rute jalan kaki dari {{cleanHotel $hm}} ke gerbang Masjidil Haram di Google Maps{{if hasPrefix $v.DistanceMakkah "±"}} (jarak perkiraan){{end}}">
+                    {{template "ic" (dict "N" "kaaba" "C" "w-4 h-4")}}{{if $v.DistanceMakkah}}{{$v.DistanceMakkah}} ke Haram{{else}}Rute ke Haram{{end}}</a>
+                {{else if $v.DistanceMakkah}}
+                <span class="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors no-underline bg-gray-50 text-gray-500" title="Jarak menurut travel. Nama hotel belum diumumkan.">{{template "ic" (dict "N" "kaaba" "C" "w-4 h-4")}}{{$v.DistanceMakkah}} ke Haram</span>
+                {{end}}
+                {{if $ud}}
+                <a href="{{$ud}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors no-underline bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    title="Rute jalan kaki dari {{cleanHotel $hd}} ke Masjid Nabawi di Google Maps{{if hasPrefix $v.DistanceMadinah "±"}} (jarak perkiraan){{end}}">
+                    {{template "ic" (dict "N" "mosque" "C" "w-4 h-4")}}{{if $v.DistanceMadinah}}{{$v.DistanceMadinah}} ke Nabawi{{else}}Rute ke Nabawi{{end}}</a>
+                {{else if $v.DistanceMadinah}}
+                <span class="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors no-underline bg-gray-50 text-gray-500" title="Jarak menurut travel. Nama hotel belum diumumkan.">{{template "ic" (dict "N" "mosque" "C" "w-4 h-4")}}{{$v.DistanceMadinah}} ke Nabawi</span>
                 {{end}}
             </div>
+            {{end}}
 
             {{if $v.Details}}
             <details class="mt-2">
