@@ -19,7 +19,7 @@
         <p class="mt-2.5 text-xs text-gray-500 leading-relaxed">{{.D.Temp.ToneLabel}}. {{capFirst .D.Season}}. {{capFirst .D.Crowd}}. {{capFirst .D.Rain}}.{{range .D.Events}} {{.Label}}.{{end}}{{if .D.Haji}} Musim haji. Visa umroh biasanya ditutup.{{end}}</p>
     </div>
 </div>
-<div class="overflow-y-auto px-5 sm:px-6 py-4 space-y-5">
+<div class="overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-5">
     {{range .D.Groups}}
     <div>
         <p class="font-bold text-gray-900 mb-2">{{.Travel}} <span class="text-xs font-medium text-gray-400">{{len .Packages}} paket</span></p>

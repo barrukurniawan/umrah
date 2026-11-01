@@ -42,12 +42,11 @@
 <div class="mt-1.5 grid grid-cols-7 gap-1 sm:gap-2">
     {{range .V.Lead}}<div></div>{{end}}
     {{range .V.Days}}
-    <button type="button" {{if .Travels}}onclick="ukCal.day('{{.Date}}')"{{else}}tabindex="-1"{{end}}
+    <button type="button" {{if .Travels}}onclick="ukCal.day('{{.Date}}')" data-day="{{.Date}}"{{else}}tabindex="-1"{{end}}
         class="cal-cell {{if .Haji}}cal-haji{{else}}tone-{{.Temp.Tone}}{{end}} relative rounded-xl sm:rounded-2xl border text-left p-1.5 sm:p-2.5 min-h-[62px] sm:min-h-[112px] flex flex-col {{if .Travels}}has border-emerald-200 cursor-pointer{{else}}border-gray-100 cursor-default{{end}} {{if .Past}}opacity-40{{end}} {{if .Today}}ring-2 ring-emerald-500{{end}}"
         {{if .Travels}}aria-label="{{.Day}}: {{.Travels}} travel, mulai {{jt .MinPrice}}"{{end}}>
         <div class="flex items-start justify-between gap-1">
             <span class="text-sm sm:text-lg font-bold {{if .Travels}}text-gray-900{{else}}text-gray-400{{end}}">{{.Day}}</span>
-            <span class="sm:hidden">{{template "ic" (dict "N" .Temp.Tone "C" (printf "w-3.5 h-3.5 %s" (toneColor .Temp.Tone)))}}</span>
             <span class="hidden sm:block text-[10px] text-gray-400 leading-tight text-right whitespace-nowrap" data-hijri="{{.Date}}"></span>
         </div>
         <div class="hidden sm:flex items-center gap-1 text-[11px] text-gray-500 mt-0.5">{{template "ic" (dict "N" .Temp.Tone "C" (printf "w-3.5 h-3.5 %s" (toneColor .Temp.Tone)))}}{{.Temp.MakHi}}°<span class="text-gray-300">/</span>{{.Temp.MakLo}}°</div>

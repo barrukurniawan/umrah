@@ -67,8 +67,27 @@
         .cal-haji { background: repeating-linear-gradient(135deg, #f3f4f6 0 6px, #fafafa 6px 12px); }
         .cal-cell { transition: transform .15s ease, box-shadow .15s ease; }
         .cal-cell.has:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(5, 150, 105, .45); }
-        .cal-sheet { animation: calUp .22s ease-out; }
-        @keyframes calUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+        /* Pop-up: hanya transform/opacity (GPU), tanpa blur, supaya mulus di HP. */
+        .cal-modal { visibility: hidden; transition: visibility 0s .28s; }
+        .cal-modal.open { visibility: visible; transition: visibility 0s; }
+        .cal-backdrop { opacity: 0; transition: opacity .25s ease; }
+        .cal-modal.open .cal-backdrop { opacity: 1; }
+        .cal-panel { transform: translate3d(0, 100%, 0); transition: transform .28s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
+        .cal-modal.open .cal-panel { transform: none; }
+        @media (min-width: 640px) {
+            .cal-panel { transform: translate3d(0, 16px, 0) scale(.98); opacity: 0; transition: transform .2s ease, opacity .2s ease; }
+            .cal-modal.open .cal-panel { transform: none; opacity: 1; }
+        }
+        .cal-skel { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%); background-size: 400% 100%; animation: calSkel 1.2s ease infinite; border-radius: .75rem; }
+        @keyframes calSkel { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+        /* HP: tanpa ikon cuaca per tanggal, warna latar sedikit lebih tegas. */
+        @media (max-width: 639px) {
+            .tone-sejuk { background: #e0efff; }
+            .tone-nyaman { background: #dcf7ea; }
+            .tone-hangat { background: #fff3c9; }
+            .tone-panas { background: #ffe6cc; }
+            .tone-ekstrem { background: #ffe0e3; }
+        }
         .uk-seg button[aria-pressed=true] { background: #059669; color: #fff; box-shadow: 0 6px 16px -8px rgba(5, 150, 105, .8); }
         .uk-seg button[aria-pressed=true] svg { color: #fff; }
 
@@ -501,8 +520,11 @@
         }, true);
     </script>
     <!-- Pop-up tanggal (mode Kalender) -->
-    <div id="calModal" class="hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px] flex items-end sm:items-center justify-center sm:p-6" onclick="if(event.target===this)ukCal.close()">
-        <div id="calModalBody" class="cal-sheet bg-white w-full sm:max-w-2xl max-h-[88vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col"></div>
+    <div id="calModal" class="cal-modal fixed inset-0 z-[60]" aria-hidden="true">
+        <div class="cal-backdrop absolute inset-0 bg-black/40" onclick="ukCal.close()"></div>
+        <div class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center sm:p-6 pointer-events-none">
+            <div id="calModalBody" role="dialog" aria-modal="true" class="cal-panel pointer-events-auto bg-white w-full sm:max-w-2xl max-h-[88vh] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col"></div>
+        </div>
     </div>
     <script>
         // Mode Kalender: grid & pop-up dirender server (/kalender, /kalender/hari), filter memakai chip travel yang sama.
@@ -553,28 +575,61 @@
                 if (cal) { load(); beacon('cal_open'); }
                 else { var u = new URL(location.href); u.searchParams.delete('mode'); u.searchParams.delete('bulan'); history.replaceState(null, '', u.pathname + u.search); }
             }
+            // Isi pop-up diambil sekali per tanggal+filter, mulai saat jari menyentuh tanggal (prefetch).
+            var cache = {};
+            function fetchDay(date) {
+                var key = date + '&' + params();
+                if (!cache[key]) cache[key] = fetch('/kalender/hari?tanggal=' + key).then(function (r) { if (!r.ok) throw r; return r.text(); })
+                    .catch(function (e) { delete cache[key]; throw e; });
+                return cache[key];
+            }
+            var BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            var opened = '';
             function day(date) {
-                htmx.ajax('GET', '/kalender/hari?tanggal=' + date + '&' + params(), { target: '#calModalBody', swap: 'innerHTML' }).then(function () {
-                    hijri(document.getElementById('calModalBody'));
+                var body = document.getElementById('calModalBody'), modal = document.getElementById('calModal'), t = d(date);
+                opened = date;
+                // Pop-up langsung meluncur dengan kerangka; isi menyusul tanpa memutar ulang animasi.
+                body.innerHTML = '<div class="px-5 sm:px-6 pt-5 pb-4 border-b border-gray-100"><p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Memuat paket…</p>'
+                    + '<h2 class="text-xl sm:text-2xl font-bold text-gray-900 mt-0.5">' + HARI[t.getDay()] + ', ' + t.getDate() + ' ' + BULAN[t.getMonth()] + ' ' + t.getFullYear() + '</h2>'
+                    + '<div class="cal-skel h-20 mt-4"></div></div><div class="px-5 sm:px-6 py-4 space-y-3"><div class="cal-skel h-28"></div><div class="cal-skel h-28"></div></div>';
+                modal.setAttribute('aria-hidden', 'false');
+                requestAnimationFrame(function () { modal.classList.add('open'); });
+                document.documentElement.style.overflow = 'hidden';
+                fetchDay(date).then(function (html) {
+                    if (opened !== date) return;
+                    body.innerHTML = html;
+                    hijri(body);
                     if (window.ukMarkLocal) ukMarkLocal();
-                    document.getElementById('calModal').classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
+                }).catch(function () {
+                    if (opened === date) body.querySelector('p').textContent = 'Gagal memuat. Coba ketuk lagi.';
                 });
                 beacon('cal_day', { pkg: date });
             }
-            function close() { document.getElementById('calModal').classList.add('hidden'); document.body.style.overflow = ''; }
+            function close() {
+                opened = '';
+                var modal = document.getElementById('calModal');
+                modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true');
+                document.documentElement.style.overflow = '';
+            }
+            ['pointerdown', 'mouseover'].forEach(function (ev) {
+                document.getElementById('calendar').addEventListener(ev, function (e) {
+                    var c = e.target.closest && e.target.closest('[data-day]');
+                    if (c) fetchDay(c.dataset.day).catch(function () { });
+                }, { passive: true });
+            });
             document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
             var cb = document.getElementById('calBudget');
             cb.addEventListener('input', function () {
                 var v = +cb.value;
                 document.getElementById('calBudgetDisplay').textContent = v >= 50000000 ? 'Semua harga' : 'Rp ' + v.toLocaleString('id-ID');
-                clearTimeout(timer); timer = setTimeout(load, 250);
+                cache = {}; clearTimeout(timer); timer = setTimeout(load, 250);
             });
             var q = new URLSearchParams(location.search), saved = null;
             try { saved = localStorage.getItem('uk_mode'); } catch (e) { }
             month = q.get('bulan') || '';
             if (q.get('mode') === 'kalender' || (!q.get('mode') && saved === 'kalender')) mode(true);
-            return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
+            return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { cache = {}; if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
         })();
     </script>
     {{template "saved_js" .}}
