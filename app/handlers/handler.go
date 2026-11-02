@@ -64,6 +64,7 @@ func GetRecommendations(c *fiber.Ctx) error {
 	}
 
 	return c.Render("recommendations", fiber.Map{
+		"Searched":   true, // tampilkan dropdown urutan/bulan walau hasilnya kosong
 		"Saved":      saved,
 		"LoggedIn":   accounts.Current(c) != nil,
 		"Results":    results,

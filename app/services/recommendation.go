@@ -76,13 +76,27 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 	// Hanya keberangkatan mulai hari ini (WIB); tanggal "2006-01-02" aman dibandingkan sebagai string.
 	today := time.Now().In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02")
 
+	// Filter bulan diterapkan per tanggal: kartu hanya berisi tanggal di bulan itu, sehingga
+	// harga, cek budget, dan ringkasan tanggal ikut bulan yang dipilih. Bulan yang sudah lewat
+	// tahun ini berarti tahun depan.
+	monthPrefix := ""
+	if m, err := strconv.Atoi(input.Month); err == nil && m >= 1 && m <= 12 {
+		now := time.Now().In(time.FixedZone("WIB", 7*3600))
+		y := now.Year()
+		if m < int(now.Month()) {
+			y++
+		}
+		monthPrefix = fmt.Sprintf("%d-%02d", y, m)
+	}
+
 	var scored []ScoredPackage
 	for _, pkg := range allPackages {
 		// Buang jadwal yang sudah lewat; paket tanpa jadwal mendatang tidak ditampilkan.
 		var upcoming []models.DetailPackage
 		for _, d := range pkg.Details {
 			// Tanggal yang dinyatakan penuh oleh travel tidak ditampilkan.
-			if d.DepartureDate != "" && d.DepartureDate >= today && !d.IsFull {
+			if d.DepartureDate != "" && d.DepartureDate >= today && !d.IsFull &&
+				(monthPrefix == "" || strings.HasPrefix(d.DepartureDate, monthPrefix)) {
 				upcoming = append(upcoming, d)
 			}
 		}
@@ -271,29 +285,6 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		for _, sp := range scored {
 			if sp.IsDirect {
 				filtered = append(filtered, sp)
-			}
-		}
-		scored = filtered
-	}
-
-	// Server-side month filter
-	if input.Month != "" {
-		filtered := make([]ScoredPackage, 0)
-		now := time.Now()
-		currentMonth := int(now.Month())
-		selMonth, _ := strconv.Atoi(input.Month)
-		targetYear := now.Year()
-		if selMonth < currentMonth {
-			targetYear++
-		}
-		targetPrefix := fmt.Sprintf("%d-%02d", targetYear, selMonth)
-
-		for _, sp := range scored {
-			for _, d := range sp.Details {
-				if strings.HasPrefix(d.DepartureDate, targetPrefix) {
-					filtered = append(filtered, sp)
-					break
-				}
 			}
 		}
 		scored = filtered
