@@ -33,7 +33,7 @@ type CalEvent struct{ Label, Kind string }
 
 type CalTemp struct {
 	MakHi, MakLo, MadHi, MadLo int
-	Tone, ToneLabel            string // sejuk | nyaman | hangat | panas | ekstrem
+	Tone, ToneLabel            string // sejuk | nyaman | hangat | panas
 }
 
 type CalDay struct {
@@ -161,10 +161,8 @@ func dailyTemp(t time.Time) CalTemp {
 		ct.Tone, ct.ToneLabel = "nyaman", "Nyaman"
 	case ct.MakHi < 42:
 		ct.Tone, ct.ToneLabel = "hangat", "Hangat"
-	case ct.MakHi < 45:
+	default: // "sangat panas" digabung ke panas supaya legenda ringkas
 		ct.Tone, ct.ToneLabel = "panas", "Panas"
-	default:
-		ct.Tone, ct.ToneLabel = "ekstrem", "Sangat panas"
 	}
 	return ct
 }
@@ -289,7 +287,15 @@ func buildCalendarMonth(key string, budget int, travels []string) CalendarView {
 	for d := m; d.Month() == m.Month(); d = d.AddDate(0, 0, 1) {
 		date := d.Format("2006-01-02")
 		evs, haji := calEvents(date)
-		day := CalDay{Date: date, Day: d.Day(), Temp: dailyTemp(d), Events: evs, Haji: haji, Past: date < today, Today: date == today}
+		// Garis di kotak tanggal hanya libur sekolah & Ramadhan (legenda ringkas). Momen lain
+		// (10 malam terakhir, Idul Fitri) tetap disebut di pop-up tanggal.
+		var bars []CalEvent
+		for _, e := range evs {
+			if e.Kind == "libur" || e.Kind == "ramadhan" {
+				bars = append(bars, e)
+			}
+		}
+		day := CalDay{Date: date, Day: d.Day(), Temp: dailyTemp(d), Events: bars, Haji: haji, Past: date < today, Today: date == today}
 		if a := byDate[date]; a != nil {
 			day.Travels, day.Packages, day.MinPrice, day.Featured = len(a.travels), len(a.pkgs), a.min, a.feat
 		}

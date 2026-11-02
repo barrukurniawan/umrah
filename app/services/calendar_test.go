@@ -7,11 +7,11 @@ import (
 
 func TestDailyTempTone(t *testing.T) {
 	cases := map[string]string{
-		"2027-01-15": "sejuk",   // Makkah 31°
-		"2026-11-15": "nyaman",  // 35°
-		"2027-04-15": "hangat",  // 39°
-		"2027-05-15": "panas",   // 43°
-		"2027-06-15": "ekstrem", // 45°
+		"2027-01-15": "sejuk",  // Makkah 31°
+		"2026-11-15": "nyaman", // 35°
+		"2027-04-15": "hangat", // 39°
+		"2027-05-15": "panas",  // 43°
+		"2027-06-15": "panas",  // 45°, "sangat panas" digabung ke panas
 	}
 	for d, want := range cases {
 		tm, _ := time.Parse("2006-01-02", d)
