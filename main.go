@@ -177,6 +177,7 @@ func main() {
 	engine.AddFunc("gmapsMadinahURL", services.GmapsMadinahURL)
 	engine.AddFunc("cleanHotel", services.CleanHotelName)
 	engine.AddFunc("hasPrefix", strings.HasPrefix)
+	engine.AddFunc("contains", strings.Contains)
 	// Mode Kalender.
 	engine.AddFunc("jt", func(n int) string { // 23500000 -> "23,5 jt"
 		v := strconv.FormatFloat(float64(n)/1e6, 'f', 1, 64)
