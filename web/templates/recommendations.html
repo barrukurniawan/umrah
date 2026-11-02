@@ -160,10 +160,11 @@
             {{end}}
 
             {{if $v.Details}}
-            <details class="mt-2">
+            <details class="mt-2 group">
                 <summary
-                    class="text-xs text-emerald-600 cursor-pointer font-medium hover:text-emerald-700 flex items-center gap-1.5">
-                    <i data-lucide="building-2" class="w-3.5 h-3.5"></i> Detail Paket
+                    class="list-none [&::-webkit-details-marker]:hidden text-xs text-emerald-600 cursor-pointer font-semibold hover:text-emerald-700 flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5"><i data-lucide="building-2" class="w-3.5 h-3.5"></i> Detail Paket</span>
+                    <svg class="w-4 h-4 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </summary>
                 <div class="mt-2 bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
                     {{if $v.SameDetails}}

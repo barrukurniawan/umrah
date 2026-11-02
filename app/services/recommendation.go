@@ -504,8 +504,9 @@ func getDistanceMadinah(hotel string) string {
 	if strings.Contains(h, "odst") {
 		return "350m"
 	}
+	// Dicek langsung oleh pemilik situs (100-200 m), sama dengan flyer Umrah Bisa (±150 m).
 	if strings.Contains(h, "jauharat") || strings.Contains(h, "jawharat") || strings.Contains(h, "rasheed") || strings.Contains(h, "rashed") {
-		return "400m"
+		return "150m"
 	}
 	if strings.Contains(h, "arkan") || strings.Contains(h, "manar") {
 		return "500m"
