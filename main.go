@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -179,9 +178,11 @@ func main() {
 	engine.AddFunc("hasPrefix", strings.HasPrefix)
 	engine.AddFunc("contains", strings.Contains)
 	// Mode Kalender.
-	engine.AddFunc("jt", func(n int) string { // 23500000 -> "23,5 jt"
-		v := strconv.FormatFloat(float64(n)/1e6, 'f', 1, 64)
-		return strings.Replace(strings.TrimSuffix(v, ".0"), ".", ",", 1) + " jt"
+	engine.AddFunc("jt", services.ShortJuta)
+	// Kota keberangkatan hanya ditampilkan bila bukan Jakarta (hampir semua lewat CGK).
+	engine.AddFunc("notJakarta", func(s string) bool {
+		l := strings.ToLower(s)
+		return s != "" && !strings.Contains(l, "cgk") && !strings.Contains(l, "jakarta") && !strings.Contains(l, "soekarno")
 	})
 	engine.AddFunc("list", func(v ...string) []string { return v })
 	engine.AddFunc("add", func(a, b int) int { return a + b })

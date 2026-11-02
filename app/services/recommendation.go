@@ -43,6 +43,7 @@ type ScoredPackage struct {
 	FacilityList      []string
 	FacilityGeneric   bool // travel belum merinci; FacilityList = fasilitas umum umroh
 	SameDetails       bool // semua tanggal: hotel & harga kamar sama (ditampilkan sekali)
+	VaryingPrice      bool // harga berbeda antar tanggal: tampilkan harga di setiap baris
 	ExcludeList       []string
 	DepartureDatesStr string
 	DistanceMakkah    string
@@ -87,6 +88,15 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 		if len(upcoming) == 0 {
 			continue
+		}
+		// Harga tiap tanggal dibuat eksplisit (0 = sama dengan harga paket saat import),
+		// supaya bisa ditampilkan di setiap baris bila harganya berbeda-beda.
+		varying := false
+		for i := range upcoming {
+			if upcoming[i].Price == 0 {
+				upcoming[i].Price = pkg.Price
+			}
+			varying = varying || upcoming[i].Price != upcoming[0].Price
 		}
 		pkg.Details = upcoming
 		pkg.Price = availablePrice(pkg.Price, upcoming)
@@ -207,6 +217,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			FacilityList:      facilitiesOrGeneric(pkg.Facilities),
 			FacilityGeneric:   len(parseFacilities(pkg.Facilities)) == 0,
 			SameDetails:       sameDetails(pkg.Details),
+			VaryingPrice:      varying,
 			ExcludeList:       parseFacilities(pkg.Excludes),
 			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
 			DistanceMakkah:    distMakkah,

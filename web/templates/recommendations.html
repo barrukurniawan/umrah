@@ -95,7 +95,7 @@
                         class="bg-green-200 text-black font-bold px-1.5 py-0.5 rounded">{{$v.Duration}} Hari</span>
                 </div>
                 {{end}}
-                <div class="flex items-center gap-1 text-gray-600">
+                <div class="flex items-center gap-1 text-gray-600 !whitespace-normal">
                     <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span
                         class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded">{{$v.DepartureDatesStr}}</span>
@@ -266,18 +266,18 @@
 </div>
 {{end}}
 {{define "pkgDates"}}{{with .D}}
-<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" data-departure="{{.DepartureDate}}">
-    <div class="flex items-center gap-1.5">
-        <span class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded" title="Berangkat">{{formatDate .DepartureDate}}</span>
+<div class="flex flex-wrap items-center justify-between gap-x-2 sm:gap-x-3 gap-y-1 text-[11px] sm:text-xs" data-departure="{{.DepartureDate}}">
+    <div class="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
+        <span class="bg-blue-50 text-blue-600 font-bold px-1 sm:px-1.5 py-0.5 rounded" title="Berangkat"><span class="sm:hidden">{{formatDateShort .DepartureDate}}</span><span class="hidden sm:inline">{{formatDate .DepartureDate}}</span></span>
         {{if .ReturnDate}}<span class="text-gray-300">&rarr;</span>
-        <span class="bg-blue-50 text-blue-600 font-bold px-1.5 py-0.5 rounded" title="Pulang">{{formatDate .ReturnDate}}</span>{{end}}
+        <span class="bg-blue-50 text-blue-600 font-bold px-1 sm:px-1.5 py-0.5 rounded" title="Pulang"><span class="sm:hidden">{{formatDateShort .ReturnDate}}</span><span class="hidden sm:inline">{{formatDate .ReturnDate}}</span></span>{{end}}
     </div>
-    <div class="flex flex-wrap items-center gap-x-1.5 text-gray-500 [&>span+span]:before:content-['·'] [&>span+span]:before:mr-1.5 [&>span+span]:before:text-gray-300">
-        {{if .DepartureLocation}}<span>{{.DepartureLocation}}</span>{{end}}
-        {{if and .AvailableQuota .TotalQuota}}<span>sisa {{.AvailableQuota}}/{{.TotalQuota}} seat</span>
-        {{else if .AvailableQuota}}<span>sisa {{.AvailableQuota}} seat</span>
+    <div class="flex items-center gap-x-1 sm:gap-x-1.5 whitespace-nowrap text-gray-500 [&>span+span]:before:content-['·'] [&>span+span]:before:mr-1 sm:[&>span+span]:before:mr-1.5 [&>span+span]:before:text-gray-300">
+        {{if notJakarta .DepartureLocation}}<span>dari {{.DepartureLocation}}</span>{{end}}
+        {{if and .AvailableQuota .TotalQuota}}<span><span class="hidden sm:inline">sisa </span>{{.AvailableQuota}}/{{.TotalQuota}} seat</span>
+        {{else if .AvailableQuota}}<span><span class="hidden sm:inline">sisa </span>{{.AvailableQuota}} seat</span>
         {{else if .TotalQuota}}<span>kuota {{.TotalQuota}} seat</span>{{end}}
-        {{if and .Price (ne .Price $.Pkg.Price)}}<span class="text-gray-700 font-medium whitespace-nowrap"><span class="sm:hidden">{{jt .Price}}</span><span class="hidden sm:inline">Rp {{formatCurrency .Price}}</span></span>{{end}}
+        {{if $.Pkg.VaryingPrice}}<span class="text-gray-700 font-medium"><span class="sm:hidden">{{jt .Price}}</span><span class="hidden sm:inline">Rp {{formatCurrency .Price}}</span></span>{{end}}
     </div>
 </div>
 {{end}}{{end}}
