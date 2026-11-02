@@ -44,3 +44,46 @@ func PkgNameHTML(s string) template.HTML {
 	}
 	return template.HTML(strings.Join(parts, " "+planeSVG+" "))
 }
+
+// TravelDisplayName: nama travel untuk judul, tanpa badan usaha ("PT Labbaika Cipta Imani"
+// -> "Labbaika Cipta Imani"). Nama asli tetap dipakai untuk data, filter, dan analitik.
+func TravelDisplayName(name string) string {
+	n := strings.TrimSpace(name)
+	for _, p := range []string{"PT. ", "PT ", "CV. ", "CV "} {
+		if len(n) > len(p) && strings.EqualFold(n[:len(p)], p) {
+			n = strings.TrimSpace(n[len(p):])
+		}
+	}
+	return n
+}
+
+// TravelSlug: "UMI Tour & Travel" -> "umi-tour-travel" (nama file logo).
+func TravelSlug(name string) string {
+	var b strings.Builder
+	dash := false
+	for _, r := range strings.ToLower(TravelDisplayName(name)) {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			b.WriteRune(r)
+			dash = false
+		} else if !dash && b.Len() > 0 {
+			b.WriteByte('-')
+			dash = true
+		}
+	}
+	return strings.TrimSuffix(b.String(), "-")
+}
+
+// TravelInitials: "Labbaika Cipta Imani" -> "LC" (cadangan bila logo belum ada).
+func TravelInitials(name string) string {
+	var out []rune
+	for _, w := range strings.Fields(TravelDisplayName(name)) {
+		r := []rune(w)
+		if len(r) > 0 && ((r[0] >= 'A' && r[0] <= 'Z') || (r[0] >= 'a' && r[0] <= 'z')) {
+			out = append(out, []rune(strings.ToUpper(string(r[0])))...)
+		}
+		if len(out) == 2 {
+			break
+		}
+	}
+	return string(out)
+}

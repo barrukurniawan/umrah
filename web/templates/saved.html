@@ -20,7 +20,7 @@
             <article class="bg-white border border-gray-200 rounded-xl p-5 {{if not .Current}}opacity-70{{end}}">
                 <div class="flex justify-between items-start gap-3">
                     <div>
-                        <h2 class="font-bold text-gray-900">{{.Travel}}</h2>
+                        <h2 class="font-bold text-gray-900">{{travelName .Travel}}</h2>
                         <p class="text-sm text-gray-500">{{pkgName .Package}}</p>
                     </div>
                     <button type="button" class="save-btn p-1.5 -m-1.5 rounded-full hover:bg-rose-50" data-save-key="{{.Key}}" aria-pressed="true" title="Hapus dari tersimpan">

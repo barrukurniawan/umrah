@@ -184,6 +184,18 @@ func main() {
 	engine.AddFunc("jt", services.ShortJuta)
 	engine.AddFunc("pkgName", services.PkgNameHTML) // ✈️ di nama paket -> ikon pesawat bertema
 	engine.AddFunc("noEmoji", services.StripEmoji)
+	engine.AddFunc("travelName", services.TravelDisplayName)
+	engine.AddFunc("travelInitials", services.TravelInitials)
+	// Logo travel: web/static/logos/<slug>.(webp|png|jpg|svg); "" bila belum ada.
+	engine.AddFunc("travelLogo", func(name string) string {
+		slug := services.TravelSlug(name)
+		for _, ext := range []string{".webp", ".png", ".jpg", ".svg"} {
+			if _, err := os.Stat("web/static/logos/" + slug + ext); err == nil {
+				return "/static/logos/" + slug + ext
+			}
+		}
+		return ""
+	})
 	// Kota keberangkatan hanya ditampilkan bila bukan Jakarta (hampir semua lewat CGK).
 	engine.AddFunc("notJakarta", func(s string) bool {
 		l := strings.ToLower(s)

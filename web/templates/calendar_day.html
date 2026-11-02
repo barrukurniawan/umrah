@@ -22,7 +22,7 @@
 <div class="overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-5">
     {{range .D.Groups}}
     <div>
-        <p class="font-bold text-gray-900 mb-2">{{.Travel}} <span class="text-xs font-medium text-gray-400">{{len .Packages}} paket</span></p>
+        <p class="font-bold text-gray-900 mb-2">{{travelName .Travel}} <span class="text-xs font-medium text-gray-400">{{len .Packages}} paket</span></p>
         <div class="space-y-2">
             {{range .Packages}}
             <div class="package-card rounded-2xl border {{if .Featured}}border-rose-200 bg-rose-50/30{{else}}border-gray-100{{end}} hover:border-emerald-200 p-3.5"
