@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- Pembuat ilustrasi Niat & Tahallul untuk halaman simulasi (tidak ikut dilayani situs).
+     Cara pakai: dari root repo jalankan `python3 -m http.server 8099`, lalu buka
+     http://localhost:8099/scripts/sim-illus/?s=pesawat (pesawat|birali|aisyah|cukur-pria|cukur-wanita),
+     ambil screenshot 960x600, simpan ke web/static/sim/img/<nama>.webp (lihat scripts/sim-illus/render.py). -->
+<html><head><meta charset="utf-8">
+<script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.min.js"}}</script>
+<style>html,body{margin:0;overflow:hidden;background:#fff}canvas{display:block}</style></head>
+<body><canvas id="c" width="960" height="600"></canvas>
+<script type="module">
+import { THREE, chibiKit } from '/web/static/sim/common.js';
+const { M, mat, canvasTex, makeChibi } = chibiKit();
+const scene = new THREE.Scene();
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+renderer.setPixelRatio(1); renderer.setSize(960, 600, false); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const camera = new THREE.PerspectiveCamera(38, 960 / 600, 0.1, 400);
+scene.add(new THREE.HemisphereLight('#ffffff', '#cbbf9f', 1.3));
+const sun = new THREE.DirectionalLight('#fff4df', 1.6); sun.position.set(-6, 12, 10); scene.add(sun);
+const box = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); scene.add(o); return o; };
+const sky = (top, bottom) => { scene.background = canvasTex(4, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, top); gr.addColorStop(1, bottom); g.fillStyle = gr; g.fillRect(0, 0, w, h); }); };
+function palm(x, z, h = 5) {
+  const t = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, h, 8), mat('#8a6a46')); t.position.set(x, h / 2, z); scene.add(t);
+  for (let i = 0; i < 7; i++) {
+    const l = new THREE.Mesh(new THREE.ConeGeometry(0.35, 2.6, 4), mat('#3f8f4a'));
+    l.position.set(x, h, z); l.rotation.z = Math.PI / 2.6; l.rotation.y = i / 7 * Math.PI * 2;
+    l.geometry.translate(0, 1.2, 0); scene.add(l);
+  }
+}
+function minaret(x, z, h, r = 0.55) {
+  const m = mat('#f4f1ea');
+  const s = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.8, r, h, 12), m); s.position.set(x, h / 2, z); scene.add(s);
+  for (const k of [0.55, 0.8]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(r * 1.35, r * 1.35, 0.25, 12), mat('#e3dccd')); b.position.set(x, h * k, z); scene.add(b); }
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, 1.4, 12), mat('#2f8a5b')); tip.position.set(x, h + 0.7, z); scene.add(tip);
+  const cres = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.04, 6, 16, Math.PI * 1.4), M.gold); cres.position.set(x, h + 1.6, z); scene.add(cres);
+}
+function archWall(x0, x1, z, h, m) {
+  box(x1 - x0, h, 0.8, m, (x0 + x1) / 2, h / 2, z);
+  for (let x = x0 + 1; x < x1 - 0.5; x += 1.6) {
+    const a = new THREE.Mesh(new THREE.PlaneGeometry(0.9, h * 0.55), mat('#a7c3c9')); a.position.set(x, h * 0.4, z + 0.41); scene.add(a);
+    const top = new THREE.Mesh(new THREE.CircleGeometry(0.45, 16, 0, Math.PI), mat('#a7c3c9')); top.position.set(x, h * 0.4 + h * 0.275, z + 0.41); scene.add(top);
+  }
+}
+function ground(color, size = 80) { const g = new THREE.Mesh(new THREE.PlaneGeometry(size, size), mat(color)); g.rotation.x = -Math.PI / 2; scene.add(g); }
+function hero(gender, opts = {}, x = 0, z = 0, ry = 0.25) { const c = makeChibi(gender, { scale: 1, ...opts }); c.g.position.set(x, 0, z); c.g.rotation.y = ry; scene.add(c.g); return c; }
+const look = (p, t) => { camera.position.set(...p); camera.lookAt(...t); };
+
+const scenes = {
+  // 1. Niat di pesawat: kabin, kursi, jendela; jamaah laki-laki sudah berihram (kedua bahu tertutup).
+  pesawat() {
+    scene.background = new THREE.Color('#eef3f7');
+    ground('#7c8aa3');
+    const wall = mat('#f4f6f8');
+    for (const s of [-1, 1]) {
+      box(0.3, 4, 30, wall, s * 3.2, 2, -8);
+      for (let z = 3; z > -20; z -= 2.2) {
+        const w = new THREE.Mesh(new THREE.CircleGeometry(0.32, 20), mat('#7fb4e6')); w.scale.y = 1.4; w.position.set(s * 3.04, 2.2, z); w.rotation.y = -s * Math.PI / 2; scene.add(w);
+        box(1.3, 0.5, 0.9, mat('#2f4b7c'), s * 2.2, 0.75, z); box(1.3, 1.3, 0.25, mat('#2f4b7c'), s * 2.2, 1.4, z - 0.45); box(1.3, 0.3, 0.27, mat('#e9eef5'), s * 2.2, 2.05, z - 0.45);
+      }
+      box(1.6, 0.6, 30, mat('#e5e9ee'), s * 2.4, 3.6, -8);
+    }
+    box(6.6, 0.2, 30, wall, 0, 4.1, -8);
+    for (let z = 2; z > -20; z -= 3) box(0.6, 0.05, 0.6, new THREE.MeshBasicMaterial({ color: '#fffbe8' }), 0, 4.0, z);
+    hero('m', { shoulderBare: false }, 0, 0.8, 0.1);
+    look([1.4, 2.4, 5.8], [0, 1.4, -1]);
+  },
+  // 2. Bir Ali (Dzulhulaifah): masjid berlengkung dengan menara tinggi, pohon kurma.
+  birali() {
+    sky('#7fb7e8', '#eaf3fb'); ground('#e6d6b8');
+    archWall(-9, 9, -10, 4.2, mat('#f3efe6'));
+    box(18, 0.5, 1.4, mat('#d9cfbb'), 0, 4.45, -10);
+    minaret(6.5, -11.5, 13, 0.7);
+    palm(-6, -4.5, 5); palm(-3.4, -6.5, 4.4); palm(4, -5.5, 4.8);
+    hero('m', { shoulderBare: false }, 0, 0.8, 0.2);
+    look([1.0, 2.4, 8.6], [0.6, 2.3, -4]);
+  },
+  // 3. Masjid Aisyah (Tan'im): dua menara, kubah tengah.
+  aisyah() {
+    sky('#8cc0ec', '#f3f7fb'); ground('#ece2cf');
+    archWall(-7, 7, -10, 4.6, mat('#fbfaf6'));
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(2.6, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), mat('#f7f5ef')); dome.position.set(0, 4.8, -11); scene.add(dome);
+    const drum = new THREE.Mesh(new THREE.CylinderGeometry(2.7, 2.7, 0.6, 24), mat('#e8e2d4')); drum.position.set(0, 4.9, -11); scene.add(drum);
+    minaret(-8.2, -10.5, 12, 0.6); minaret(8.2, -10.5, 12, 0.6);
+    hero('f', {}, -0.8, 0.9, 0.25); hero('m', { shoulderBare: false }, 0.9, 0.6, -0.15);
+    look([0.4, 2.4, 9.4], [0.1, 2.5, -4]);
+  },
+  // 4. Tahallul laki-laki: dicukur (gundul lebih utama) oleh jamaah/tukang cukur laki-laki.
+  'cukur-pria'() {
+    scene.background = new THREE.Color('#f3efe8'); ground('#d9cfc0');
+    box(12, 6, 0.3, mat('#efe7da'), 0, 3, -2.5);
+    box(2.4, 1.6, 0.05, mat('#bcd5de'), -0.6, 3.1, -2.3);
+    const stool = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.4, 0.55, 16), mat('#8a5a3c')); stool.position.set(-0.3, 0.27, 0.1); scene.add(stool);
+    const p = hero('m', { shoulderBare: false }, -0.3, 0.1, 0.35); p.g.position.y = 0.32;
+    p.parts.legL.rotation.x = -1.3; p.parts.legR.rotation.x = -1.3;
+    // alat cukur menempel di sisi kepala (mengikuti kepala)
+    const clip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.32, 0.11), mat('#2d2d2d')); clip.position.set(-0.47, 0.18, 0.02); clip.rotation.z = -0.5; p.parts.head.add(clip);
+    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.04, 0.12), M.silver); blade.position.set(-0.42, 0.34, 0.02); blade.rotation.z = -0.5; p.parts.head.add(blade);
+    const b = hero('m', { clothColor: '#5b8fb9' }, -1.45, -0.45, 1.0);
+    b.parts.armL.rotation.x = -2.5; b.parts.armL.rotation.z = -0.2;
+    for (let i = 0; i < 16; i++) { const h = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.12, 0.03), M.hair); h.position.set(-0.3 + (Math.random() - 0.5) * 1.2, 0.05 + Math.random() * 1.9, 0.3 + Math.random() * 0.4); h.rotation.z = Math.random() * 3; scene.add(h); }
+    look([0.9, 2.4, 5.0], [-0.55, 1.85, 0]);
+  },
+  // 5. Tahallul perempuan: memotong ujung rambut seruas jari, oleh dirinya/mahram/sesama perempuan, di tempat tertutup.
+  'cukur-wanita'() {
+    scene.background = new THREE.Color('#f6eef0'); ground('#e2d5d8');
+    box(14, 6, 0.3, mat('#f3e7ea'), 0, 3, -2.8);
+    const a = hero('f', { veilColor: '#d9c7b8' }, 0.4, 0.1, 2.5);
+    // ujung rambut sedikit keluar di belakang kerudung; gunting di ujungnya (mengikuti karakter)
+    const strand = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.28, 3, 6), mat('#3a2a22')); strand.position.set(0.1, 1.5, -0.5); strand.rotation.x = 0.5; a.g.add(strand);
+    const sc = new THREE.Group();
+    for (const s of [-1, 1]) {
+      const bl = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.26, 0.04), M.silver); bl.rotation.z = s * 0.3; bl.position.y = 0.1; sc.add(bl);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.016, 6, 14), mat('#d65a7a')); ring.position.set(s * 0.05, -0.06, 0); sc.add(ring);
+    }
+    sc.position.set(0.16, 1.32, -0.62); sc.rotation.set(0.3, 0, -1.2); a.g.add(sc);
+    const b = hero('f', { veilColor: '#c9d8cf', clothColor: '#e9efe9' }, -0.75, -0.15, 1.15);
+    b.parts.armL.rotation.x = -1.35; b.parts.armL.rotation.z = -0.25;
+    look([1.2, 2.3, 4.4], [-0.1, 1.55, -0.1]);
+  },
+};
+(scenes[new URLSearchParams(location.search).get('s')] || scenes.pesawat)();
+renderer.render(scene, camera);
+document.title = 'ready';
+</script></body></html>

@@ -248,8 +248,7 @@ function onRel(prev, rel, round) {
   });
   if (prev < REL_YAMANI && rel >= REL_YAMANI) once('yamani', () => {
     if (round === 1) pauseWith([
-      { title: 'Rukun Yamani', body: `<p>Ini <b>Rukun Yamani</b>, sudut Ka'bah sebelum Hajar Aswad.</p><p>Jika bisa, <b>usap dengan tangan kanan tanpa dicium</b>. Jika tidak bisa karena ramai, lewati saja <b>tanpa isyarat dan tanpa takbir</b>.</p>`, next: 'Lanjut →' },
-      { title: 'Antara Rukun Yamani dan Hajar Aswad', body: '<p>Di sepanjang sisi ini, bacalah doa:</p>', dua: SAPU_JAGAD },
+      { title: 'Rukun Yamani', body: `<p>Usap dengan tangan kanan jika bisa (tanpa dicium); jika ramai, lewati saja. Lalu sampai Hajar Aswad, bacalah:</p>`, dua: SAPU_JAGAD },
     ], () => info({ title: 'Antara Rukun Yamani dan Hajar Aswad', dua: SAPU_JAGAD, hint: 'Terus berjalan menuju garis Hajar Aswad.' }));
     else info({ title: 'Antara Rukun Yamani dan Hajar Aswad', dua: SAPU_JAGAD, hint: `Putaran ${round}. Terus berjalan menuju garis Hajar Aswad.` });
   });

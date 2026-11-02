@@ -266,7 +266,7 @@ func main() {
 
 	// CSS diberi versi (?v=hash), jadi aman disimpan lama di browser.
 	app.Static("/static/css", "./web/static/css", fiber.Static{MaxAge: 31536000})
-	app.Static("/static", "./web/static")
+	app.Static("/static", "./web/static", fiber.Static{ByteRange: true}) // byte range: audio bisa diputar & digeser di Safari/iPhone
 
 	repositories.InitDB()
 	// SIGHUP (dikirim cron setelah crawl): muat ulang data paket tanpa restart.

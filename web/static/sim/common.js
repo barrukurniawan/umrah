@@ -7,22 +7,8 @@ export const $ = (id) => document.getElementById(id);
 export const TAU = Math.PI * 2;
 export const mod = (a, n) => ((a % n) + n) % n;
 
-export function createSim(opts = {}) {
-  const bg = opts.bg || '#e7ede6';
-  const stage = $('simStage'), canvas = $('simCanvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(bg);
-  scene.fog = new THREE.Fog(bg, opts.fogNear || 130, opts.fogFar || 260);
-  const camera = new THREE.PerspectiveCamera(opts.fov || 42, 1, 0.5, opts.far || 420);
-  scene.add(new THREE.HemisphereLight('#ffffff', '#cbbf9f', 1.25));
-  const sun = new THREE.DirectionalLight('#fff4df', 1.5);
-  sun.position.set(-40, 80, 30);
-  scene.add(sun);
-
-  // ---------- Material & helper ----------
+export function chibiKit() {
+  // ---------- Material, tekstur & karakter chibi (juga dipakai pembuat ilustrasi) ----------
   const mat = (color, o = {}) => new THREE.MeshLambertMaterial({ color, ...o });
   const M = {
     marble: mat('#f1f0ec'), stone: mat('#e6dcc4'), stoneDark: mat('#cdbf9f'), pillar: mat('#efe6d2'),
@@ -37,19 +23,14 @@ export function createSim(opts = {}) {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
     return t;
   }
-  function instanced(geo, material, items, place, parent = scene) {
-    const im = new THREE.InstancedMesh(geo, material, items.length), o = new THREE.Object3D();
-    items.forEach((it, i) => { o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1); place(o, it); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
-    parent.add(im); return im;
-  }
-
   // ---------- Karakter chibi (menghadap +z; sisi kanannya ada di -x) ----------
   function limb(r, len, material) {
     const pivot = new THREE.Group(); const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 8), material); m.position.y = -len / 2 - r * 0.4; pivot.add(m); return { pivot, m };
   }
-  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2 } = {}) {
+  // clothColor/veilColor: untuk ilustrasi (mis. tukang cukur berbaju biasa).
+  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null } = {}) {
     const g = new THREE.Group(), parts = {};
-    const cloth = gender === 'm' ? M.white : mat('#f4efe6'), veil = mat('#e6ddcf');
+    const cloth = clothColor ? mat(clothColor) : gender === 'm' ? M.white : mat('#f4efe6'), veil = mat(veilColor || '#e6ddcf');
     if (gender === 'm') {
       const legL = limb(0.11, 0.38, M.skin), legR = limb(0.11, 0.38, M.skin);
       legL.pivot.position.set(-0.15, 0.62, 0); legR.pivot.position.set(0.15, 0.62, 0); g.add(legL.pivot, legR.pivot);
@@ -63,7 +44,7 @@ export function createSim(opts = {}) {
     }
     for (const side of [-1, 1]) {
       const bare = gender === 'm' && shoulderBare && side === -1;
-      const arm = limb(0.085, 0.36, bare ? M.skin : (gender === 'm' ? M.white : mat('#f4efe6')));
+      const arm = limb(0.085, 0.36, bare ? M.skin : cloth);
       arm.pivot.position.set(side * 0.38, 1.45, 0); g.add(arm.pivot);
       const hand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), M.skin); hand.position.y = -0.62; arm.pivot.add(hand);
       parts[side < 0 ? 'armR' : 'armL'] = arm.pivot;
@@ -87,6 +68,30 @@ export function createSim(opts = {}) {
     sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; g.add(sh);
     g.scale.setScalar(scale);
     return { g, parts };
+  }
+  return { M, mat, canvasTex, makeChibi };
+}
+
+export function createSim(opts = {}) {
+  const bg = opts.bg || '#e7ede6';
+  const stage = $('simStage'), canvas = $('simCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(bg);
+  scene.fog = new THREE.Fog(bg, opts.fogNear || 130, opts.fogFar || 260);
+  const camera = new THREE.PerspectiveCamera(opts.fov || 42, 1, 0.5, opts.far || 420);
+  scene.add(new THREE.HemisphereLight('#ffffff', '#cbbf9f', 1.25));
+  const sun = new THREE.DirectionalLight('#fff4df', 1.5);
+  sun.position.set(-40, 80, 30);
+  scene.add(sun);
+
+  const { M, mat, canvasTex, makeChibi } = chibiKit();
+  function instanced(geo, material, items, place, parent = scene) {
+    const im = new THREE.InstancedMesh(geo, material, items.length), o = new THREE.Object3D();
+    items.forEach((it, i) => { o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1); place(o, it); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
+    parent.add(im); return im;
   }
 
   // ---------- Kondisi bersama ----------
@@ -143,7 +148,7 @@ export function createSim(opts = {}) {
   const guide = $('guide');
   function cardHTML(c) {
     let h = `<div class="${c.pause ? 'card-in border-amber-200 bg-amber-50 border-l-4 border-l-amber-400 lg:border-l' : 'fade-in border-gray-200 bg-white'} rounded-2xl border p-3 lg:p-4">`;
-    if (c.pause) h += `<p class="hidden lg:flex items-center gap-1.5 text-[10px] lg:text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-0.5 lg:mb-2"><svg viewBox="0 0 24 24" class="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Kita berhenti di sini</p>`;
+    if (c.pause) h += `<p class="hidden lg:flex items-center gap-1.5 text-[10px] lg:text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-0.5 lg:mb-2"><svg viewBox="0 0 24 24" class="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Sekilas Info</p>`;
     h += `<h2 class="font-bold text-gray-900 text-[14px] lg:text-lg leading-snug">${c.title}</h2>`;
     if (c.body) h += `<div class="mt-1 lg:mt-2 text-[12.5px] lg:text-sm text-gray-600 leading-snug lg:leading-relaxed space-y-1 lg:space-y-2">${c.body}</div>`;
     if (c.dua) {
@@ -198,8 +203,13 @@ export function createSim(opts = {}) {
   audio.volume = VOL;
   function duck(on) { audio.volume = on ? VOL_DUCK : VOL; }
   sim.duck = duck;
-  audio.addEventListener('loadedmetadata', () => { const t = +sessionStorage.getItem('ukAudioT') || 0; if (t > 0 && t < audio.duration) audio.currentTime = t; sessionStorage.removeItem('ukAudioT'); }, { once: true });
-  addEventListener('pagehide', () => { if (!audio.paused) sessionStorage.setItem('ukAudioT', audio.currentTime); });
+  // Lanjutkan posisi hanya bila file audionya sama (Tawaf: Al-Mulk, Sa'i: Al-Baqarah 158–170).
+  audio.addEventListener('loadedmetadata', () => {
+    const t = +sessionStorage.getItem('ukAudioT') || 0;
+    if (sessionStorage.getItem('ukAudioSrc') === audio.currentSrc && t > 0 && t < audio.duration) audio.currentTime = t;
+    sessionStorage.removeItem('ukAudioT');
+  }, { once: true });
+  addEventListener('pagehide', () => { if (!audio.paused) { sessionStorage.setItem('ukAudioT', audio.currentTime); sessionStorage.setItem('ukAudioSrc', audio.currentSrc); } });
   sim.playAudio = () => { if (audioOn) audio.play().catch(() => {}); };
   function syncAudioBtn() {
     $('audioOn').style.display = audioOn ? '' : 'none'; $('audioOff').style.display = audioOn ? 'none' : '';
