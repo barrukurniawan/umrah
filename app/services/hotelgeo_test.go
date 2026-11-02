@@ -21,6 +21,7 @@ func TestHotelGeo(t *testing.T) {
 		{"makkah", "Fajr Al-Nusuk Ajyad (Makkah)", "550m"}, // Google: "Luluat Al Shark"
 		{"makkah", "Manazel Ajyad/Tara Ajyad", "±1,4 km"},
 		{"makkah", "Villa Hilton", "0m"},
+		{"makkah", "Owais", "500m"}, // flyer Umrah Bisa: jalan kaki ±500 m
 		{"makkah", "Makkah Tower/Al Shafwa", "0m"},
 		{"makkah", "Hotel Pullman Zamzam Makkah", "0m"},
 		{"makkah", "Zad Al Qimmah", "6,3 km"},

@@ -604,14 +604,14 @@
    ],
    "lat": 21.4262357,
    "lng": 39.8193284,
-   "distance_m": 150,
+   "distance_m": 500,
    "gate": "King Abdullah Gate -100",
    "gate_lat": 21.4253914,
    "gate_lng": 39.824132,
-   "verified": false,
+   "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Owais Hotel\" (Jabal Omar, Haratal Bab And Ash Shamiyyah, Kabah 24231, Arab)",
-   "note": "Travel Umrah Bisa menyebut 500 m."
+   "note": "Flyer & deskripsi Umrah Bisa: jalan kaki ±500 m (dipakai). Hitungan peta 150 m garis lurus kemungkinan titik/cabang lain."
   },
   {
    "city": "makkah",
