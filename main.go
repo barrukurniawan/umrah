@@ -253,6 +253,7 @@ func main() {
 		hup := make(chan os.Signal, 1)
 		signal.Notify(hup, syscall.SIGHUP)
 		for range hup {
+			services.ReloadHotelGeo() // koreksi jarak hotel ikut berlaku tanpa restart
 			if repositories.Reload() == nil {
 				services.ResetCalendarCache()
 			}

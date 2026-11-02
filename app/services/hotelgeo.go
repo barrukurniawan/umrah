@@ -42,47 +42,66 @@ func (h *HotelGeo) UnmarshalJSON(b []byte) error {
 }
 
 var (
-	geoOnce  sync.Once
-	geoIndex map[string]HotelGeo // city|nama-normal -> data
+	geoMu    sync.RWMutex
+	geoIndex map[string]HotelGeo // city|nama-normal -> data; nil = belum dimuat
 )
 
 func geoKey(city, name string) string {
 	return city + "|" + strings.Join(strings.Fields(strings.ToLower(CleanHotelName(name))), " ")
 }
 
-func loadHotelGeo() {
-	geoIndex = map[string]HotelGeo{}
+// ReloadHotelGeo membaca ulang config/hotel_geo.json (dipanggil saat SIGHUP).
+func ReloadHotelGeo() {
+	geoMu.Lock()
+	geoIndex = nil
+	geoMu.Unlock()
+	LookupHotelGeo("", "")
+}
+
+func loadHotelGeo() map[string]HotelGeo {
+	idx := map[string]HotelGeo{}
 	path := os.Getenv("HOTEL_GEO")
 	if path == "" {
 		path = "config/hotel_geo.json"
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return
+		return idx
 	}
 	var doc struct {
 		Hotels []HotelGeo `json:"hotels"`
 	}
 	if err := json.Unmarshal(data, &doc); err != nil {
 		log.Printf("[geo] %s tidak valid: %v", path, err)
-		return
+		return idx
 	}
 	for _, h := range doc.Hotels {
-		geoIndex[geoKey(h.City, h.Name)] = h
+		idx[geoKey(h.City, h.Name)] = h
 		for _, a := range h.Aliases {
-			geoIndex[geoKey(h.City, a)] = h
+			idx[geoKey(h.City, a)] = h
 		}
 	}
 	log.Printf("[geo] %d hotel dengan koordinat", len(doc.Hotels))
+	return idx
 }
 
 // LookupHotelGeo mencari hotel berdasarkan nama persis seperti di data travel (atau variasinya).
 func LookupHotelGeo(city, name string) (HotelGeo, bool) {
-	geoOnce.Do(loadHotelGeo)
+	geoMu.RLock()
+	idx := geoIndex
+	geoMu.RUnlock()
+	if idx == nil {
+		geoMu.Lock()
+		if geoIndex == nil {
+			geoIndex = loadHotelGeo()
+		}
+		idx = geoIndex
+		geoMu.Unlock()
+	}
 	if strings.TrimSpace(name) == "" {
 		return HotelGeo{}, false
 	}
-	h, ok := geoIndex[geoKey(city, name)]
+	h, ok := idx[geoKey(city, name)]
 	return h, ok
 }
 
