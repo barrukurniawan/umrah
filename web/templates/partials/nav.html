@@ -14,9 +14,9 @@
             <span class="relative flex w-2 h-2 mr-0.5" aria-hidden="true"><span class="absolute inset-0 rounded-full bg-emerald-600 opacity-60 animate-ping"></span><span class="relative w-2 h-2 rounded-full bg-emerald-700"></span></span>
             Live <svg viewBox="820 820 1360 1360" class="w-3 h-3 sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
         </button>
-        <button type="button" onclick="ukSoon(this)" title="Simulasi tawaf &amp; sa'i (segera hadir)" class="relative inline-flex items-center gap-1 min-[400px]:gap-1.5 py-1.5 text-sm font-semibold text-emerald-800 hover:text-emerald-600 transition-colors whitespace-nowrap">
+        <a href="/simulasi" title="Simulasi tawaf" class="relative inline-flex items-center gap-1 min-[400px]:gap-1.5 py-1.5 text-sm font-semibold text-emerald-800 hover:text-emerald-600 transition-colors whitespace-nowrap">
             Simulasi <svg viewBox="820 820 1360 1360" class="w-3 h-3 sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
-        </button>
+        </a>
         </div>
         {{if .User}}
         <details class="relative" id="userMenu">
@@ -60,13 +60,6 @@
     </div>
 </div>
 <script>
-function ukSoon(el) {
-    if (el.querySelector('.uk-soon')) return;
-    var t = document.createElement('span');
-    t.className = 'uk-soon absolute top-full right-0 mt-1 whitespace-nowrap rounded-lg bg-gray-900 text-white text-xs font-medium px-2.5 py-1.5 shadow-lg';
-    t.textContent = 'Segera hadir';
-    el.appendChild(t); setTimeout(function () { t.remove(); }, 1800);
-}
 window.ukLive = {
     open: function () {
         var m = document.getElementById('liveModal');

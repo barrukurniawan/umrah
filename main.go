@@ -298,6 +298,7 @@ func main() {
 	app.Post("/api/support/messages", handlers.SupportSend)
 	app.Post("/t", analytics.BeaconHandler)
 	app.Get("/privasi", handlers.PrivacyPage)
+	app.Get("/simulasi", handlers.SimulasiPage)
 
 	// Akun (opsional): login Google, persetujuan, paket tersimpan, unduh/hapus data.
 	app.Get("/auth/google/login", accounts.GoogleLogin)

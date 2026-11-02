@@ -16,6 +16,10 @@ func HomePage(c *fiber.Ctx) error {
 	return c.Render("home", viewer(c, fiber.Map{}))
 }
 
+func SimulasiPage(c *fiber.Ctx) error {
+	return c.Render("simulasi", viewer(c, fiber.Map{"Title": "Simulasi Tawaf"}))
+}
+
 func PrivacyPage(c *fiber.Ctx) error {
 	return c.Render("privacy", viewer(c, fiber.Map{"OptedOut": analytics.OptedOut(c)}))
 }
