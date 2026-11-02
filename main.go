@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 	"strings"
 	"time"
 
@@ -176,6 +178,7 @@ func main() {
 	engine.AddFunc("gmapsMadinahURL", services.GmapsMadinahURL)
 	engine.AddFunc("cleanHotel", services.CleanHotelName)
 	engine.AddFunc("hasPrefix", strings.HasPrefix)
+	engine.AddFunc("wib", func(t time.Time) string { return t.In(time.FixedZone("WIB", 7*3600)).Format("02 Jan 15:04") })
 	engine.AddFunc("contains", strings.Contains)
 	// Mode Kalender.
 	engine.AddFunc("jt", services.ShortJuta)
@@ -245,6 +248,16 @@ func main() {
 	app.Static("/static", "./web/static")
 
 	repositories.InitDB()
+	// SIGHUP (dikirim cron setelah crawl): muat ulang data paket tanpa restart.
+	go func() {
+		hup := make(chan os.Signal, 1)
+		signal.Notify(hup, syscall.SIGHUP)
+		for range hup {
+			if repositories.Reload() == nil {
+				services.ResetCalendarCache()
+			}
+		}
+	}()
 	analyticsPath := os.Getenv("ANALYTICS_DB_PATH")
 	if analyticsPath == "" {
 		analyticsPath = "data/analytics.db"

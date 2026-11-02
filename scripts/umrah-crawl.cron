@@ -1,0 +1,3 @@
+# Dipasang di VPS sebagai /etc/cron.d/umrah-crawl. Zona waktu VPS: Asia/Jakarta (WIB).
+# Crawl 14 travel jam 05:00 dan 17:00, lalu data dimuat ulang tanpa restart.
+0 5,17 * * * ubuntu /var/www/umrah/scripts/crawl.sh >> /var/log/umrah-crawl.log 2>&1

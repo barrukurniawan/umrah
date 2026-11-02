@@ -24,8 +24,13 @@ func InitDB() {
 		dbPath = "data/umrah.db"
 	}
 
+	dsn := dbPath
+	if !strings.Contains(dsn, "?") {
+		// WAL: pembaca tetap melihat data lama selama reload menulis data baru.
+		dsn += "?_journal_mode=WAL&_busy_timeout=5000"
+	}
 	var err error
-	DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("failed to connect database:", err)
 	}
@@ -33,7 +38,10 @@ func InitDB() {
 	DB.AutoMigrate(&models.Travel{}, &models.Package{}, &models.DetailPackage{})
 
 	// Try importing crawler data first
-	imported := importCrawlerData()
+	imported := importCrawlerData(DB)
+	if imported {
+		recordImport(DB)
+	}
 
 	if !imported {
 		if DB.Migrator().HasTable(&models.Package{}) {
@@ -46,7 +54,7 @@ func InitDB() {
 	}
 }
 
-func importCrawlerData() bool {
+func importCrawlerData(db *gorm.DB) bool {
 
 	dpOverrides := map[string]int{
 		"Khasanah Travel":          14000000,
@@ -142,11 +150,11 @@ func importCrawlerData() bool {
 	log.Printf("[import] loaded %d results from %d files", len(allResults), len(allFiles))
 
 	// Hard-delete existing data to avoid soft-delete accumulation
-	DB.Unscoped().Where("1 = 1").Delete(&models.DetailPackage{})
-	DB.Unscoped().Where("1 = 1").Delete(&models.Package{})
-	DB.Unscoped().Where("1 = 1").Delete(&models.Travel{})
+	db.Unscoped().Where("1 = 1").Delete(&models.DetailPackage{})
+	db.Unscoped().Where("1 = 1").Delete(&models.Package{})
+	db.Unscoped().Where("1 = 1").Delete(&models.Travel{})
 
-	pkgCount, detailCount, travelCount := buildFromCrawl(allResults, dpOverrides, ratingOverrides)
+	pkgCount, detailCount, travelCount := buildFromCrawl(db, allResults, dpOverrides, ratingOverrides)
 	log.Printf("[import] loaded %d travels, %d packages, %d details from crawler output\n", travelCount, pkgCount, detailCount)
 	return pkgCount > 0
 }

@@ -11,6 +11,8 @@ import (
 
 	"umrah/app/crawlers"
 	"umrah/app/models"
+
+	"gorm.io/gorm"
 )
 
 // crawlResultLite adalah satu hasil crawl per site (isi file output/all_*.json).
@@ -163,7 +165,7 @@ type pkgAgg struct {
 // Duplikat dibuang di dua level: paket yang sama (URL detail sama, atau nama+harga
 // sama jika URL tidak unik) digabung, dan keberangkatan dengan travel+nama+tanggal+
 // harga yang sama hanya disimpan sekali.
-func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratingOverrides map[string]float64) (pkgCount, detailCount, travelCount int) {
+func buildFromCrawl(db *gorm.DB, results []crawlResultLite, dpOverrides map[string]int, ratingOverrides map[string]float64) (pkgCount, detailCount, travelCount int) {
 	overrides := loadHotelOverrides()
 	overrideCount, dupDeps := 0, 0
 
@@ -244,7 +246,7 @@ func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratin
 				rating = r
 			}
 			travel = &models.Travel{Name: a.travel, Rating: rating}
-			DB.Create(travel)
+			db.Create(travel)
 			travelMap[a.travel] = travel
 		}
 
@@ -326,7 +328,7 @@ func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratin
 			DistanceMakkah:  cp.DistanceMakkah,
 			DistanceMadinah: cp.DistanceMadinah,
 		}
-		DB.Create(&pkg)
+		db.Create(&pkg)
 		pkgCount++
 
 		for _, d := range deps {
@@ -396,7 +398,7 @@ func buildFromCrawl(results []crawlResultLite, dpOverrides map[string]int, ratin
 				detailPrice = d.Price
 			}
 
-			DB.Create(&models.DetailPackage{
+			db.Create(&models.DetailPackage{
 				PackageID:           pkg.ID,
 				DepartureDate:       d.Date,
 				ReturnDate:          ret,

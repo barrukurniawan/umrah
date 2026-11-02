@@ -53,7 +53,7 @@ type ScoredPackage struct {
 
 func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 	var allPackages []models.Package
-	repositories.DB.Preload("Travel").Preload("Details").Find(&allPackages)
+	allPackages = repositories.AllPackages()
 
 	advanceFilter := make(map[string]bool)
 	for _, a := range input.Advanced {

@@ -101,7 +101,7 @@ type calRow struct {
 // calendarRows: keberangkatan mendatang yang tidak penuh, sesuai filter budget & travel.
 func calendarRows(budget int, travels []string, from, to string) []calRow {
 	var pkgs []models.Package
-	repositories.DB.Preload("Travel").Preload("Details").Find(&pkgs)
+	pkgs = repositories.AllPackages()
 	today := time.Now().In(wib).Format("2006-01-02")
 	tf := map[string]bool{}
 	for _, t := range travels {
@@ -346,4 +346,11 @@ func CalendarDay(date string, budget int, travels []string) (CalendarDayView, bo
 	})
 	v.Travels = len(v.Groups)
 	return v, true
+}
+
+// ResetCalendarCache dipanggil setelah data paket dimuat ulang.
+func ResetCalendarCache() {
+	calCacheMu.Lock()
+	calCache, calCacheDay = map[string]CalendarView{}, ""
+	calCacheMu.Unlock()
 }

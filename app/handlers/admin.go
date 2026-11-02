@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"umrah/app/accounts"
+	"umrah/app/repositories"
 	"umrah/app/analytics"
 
 	"github.com/gofiber/fiber/v2"
@@ -138,6 +139,7 @@ func AdminDashboard(c *fiber.Ctx) error {
 	}
 	return c.Render("admin/index", fiber.Map{
 		"U":       users,
+		"Import":  repositories.LastImport(),
 		"Tab":     tab,
 		"Tabs":    adminTabs,
 		"DaysOpt": []int{1, 7, 30, 90},

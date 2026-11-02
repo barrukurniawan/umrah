@@ -36,7 +36,7 @@ func today() string { return time.Now().In(time.FixedZone("WIB", 7*3600)).Format
 // keys nil = semua paket.
 func CurrentByKeys(keys map[string]bool) map[string]*CurrentPackage {
 	var all []models.Package
-	repositories.DB.Preload("Travel").Preload("Details").Find(&all)
+	all = repositories.AllPackages()
 	t := today()
 	out := map[string]*CurrentPackage{}
 	for _, p := range all {
