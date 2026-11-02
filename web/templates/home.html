@@ -105,6 +105,9 @@
         .animate-marquee {
             animation: marquee 18s linear infinite;
         }
+        /* Respons instan saat ganti halaman/filter: hasil meredup sampai halaman baru tampil. */
+        #results.htmx-request { opacity: .45; pointer-events: none; }
+        #results { transition: opacity .12s; scroll-margin-top: 12px; }
     </style>
 </head>
 
@@ -130,7 +133,7 @@
         </div>
     </section>
 
-    <section class="max-w-3xl mx-auto px-3 sm:px-4 pb-16">
+    <section class="max-w-3xl mx-auto px-3 sm:px-4 pb-6">
         <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-4 sm:p-8">
             <div class="flex justify-center mb-7">
                 <div class="uk-seg inline-flex rounded-full bg-gray-100 p-1 text-sm font-semibold" role="group" aria-label="Cara mencari">
@@ -138,7 +141,7 @@
                     <button type="button" id="modeBtnCal" aria-pressed="false" onclick="ukCal.mode(true)" class="px-5 py-2 rounded-full transition-all text-gray-600 inline-flex items-center gap-2">{{template "ic" (dict "N" "calendar" "C" "w-4 h-4 text-emerald-600")}}Kalender</button>
                 </div>
             </div>
-            <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML">
+            <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML" hx-include="#results [name='sort'],#results [name='month'],#results [name='flight']">
                 <div class="mb-10" id="modeBudget">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
@@ -208,7 +211,12 @@
         </div>
     </section>
 
-    <footer class="text-center text-gray-400 text-sm py-8 px-4">
+    <footer class="text-center text-gray-400 text-sm pt-2 pb-8 px-4">
+        <figure class="max-w-md mx-auto mb-6">
+            <span class="block text-3xl leading-none text-emerald-300 font-serif" aria-hidden="true">&ldquo;</span>
+            <blockquote class="-mt-2 [text-wrap:balance] font-serif italic text-[15px] sm:text-base leading-relaxed text-emerald-800">Allah tidak memanggil orang yang mampu, tetapi Allah memampukan orang yang terpanggil.</blockquote>
+            <span class="block mx-auto mt-3 h-px w-10 bg-emerald-200"></span>
+        </figure>
         &copy; 2026 Umrohku by Jago Institute
         <p class="text-xs mt-2">Kami memakai cookie anonim untuk statistik kunjungan. Tidak ada nama atau alamat IP yang disimpan.
             <a href="/privasi" class="underline hover:text-emerald-600">Kebijakan privasi</a></p>
@@ -313,7 +321,7 @@
                 <div class="flex justify-between text-lg font-bold text-emerald-600 border-t border-gray-200 pt-2">
                     <span>Total</span> <span id="calcTotal">Rp 0</span>
                 </div>
-                <div class="flex justify-between text-sm text-blue-600"><span>Perkiraan DP</span> <span
+                <div class="flex justify-between text-sm text-pink-700"><span>Perkiraan DP</span> <span
                         class="font-semibold" id="calcDP">Rp 0</span></div>
             </div>
         </div>
@@ -329,28 +337,10 @@
 
         document.body.addEventListener('htmx:afterSwap', function (evt) {
             if (evt.detail.target.id === 'results') {
-                setTimeout(function () {
-                    restoreSortFilter();
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                }, 50);
+                // Ikon hanya dipasang di area hasil (bukan seluruh halaman) supaya ringan di HP.
+                if (typeof lucide !== 'undefined') lucide.createIcons({ root: evt.detail.target });
             }
         });
-
-        document.body.addEventListener('htmx:configRequest', function (evt) {
-            var sf = document.getElementById('sortFilter');
-            if (sf) {
-                _lastSort = sf.value;
-            }
-        });
-
-        var _lastSort = 'price_desc';
-
-        function restoreSortFilter() {
-            var sf = document.getElementById('sortFilter');
-            if (sf && _lastSort) {
-                sf.value = _lastSort;
-            }
-        }
 
         var _calcPrice = 0;
         var _calcDP = 0;

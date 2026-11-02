@@ -17,6 +17,7 @@
             </div>
         </div>
         <p class="mt-2.5 text-xs text-gray-500 leading-relaxed">{{.D.Temp.ToneLabel}}. {{capFirst .D.Season}}. {{capFirst .D.Crowd}}. {{capFirst .D.Rain}}.{{range .D.Events}} {{.Label}}.{{end}}{{if .D.Haji}} Musim haji. Visa umroh biasanya ditutup.{{end}}</p>
+        {{if and (eq .D.Temp.Tone "panas") (not .D.Haji)}}<p class="mt-2 text-xs text-emerald-700 bg-white/70 rounded-lg px-2.5 py-1.5">Siang terik, ibadah malam lebih sejuk dan nyaman.</p>{{end}}
     </div>
 </div>
 <div class="overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-5">

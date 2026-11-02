@@ -46,6 +46,7 @@ type SearchMeta struct {
 	Travels string `json:"travels,omitempty"`
 	Month   string `json:"month,omitempty"`
 	Sort    string `json:"sort,omitempty"`
+	Flight  string `json:"flight,omitempty"`
 	Total   int    `json:"total"`
 }
 

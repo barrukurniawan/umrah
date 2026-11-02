@@ -66,7 +66,8 @@ type CalendarView struct {
 	Departures  int
 	TravelCount int
 	MinPrice    int
-	Budget      int // 0 = semua harga
+	Budget      int      // 0 = semua harga
+	Tones       []string // tingkat cuaca yang muncul di bulan ini (urutan legenda)
 }
 
 type CalPackage struct {
@@ -300,6 +301,15 @@ func buildCalendarMonth(key string, budget int, travels []string) CalendarView {
 			day.Travels, day.Packages, day.MinPrice, day.Featured = len(a.travels), len(a.pkgs), a.min, a.feat
 		}
 		v.Days = append(v.Days, day)
+	}
+	// Legenda hanya memuat tingkat cuaca yang benar-benar tampil di bulan ini.
+	for _, t := range []string{"nyaman", "sejuk", "hangat", "panas"} {
+		for _, d := range v.Days {
+			if !d.Haji && d.Temp.Tone == t {
+				v.Tones = append(v.Tones, t)
+				break
+			}
+		}
 	}
 	return v
 }

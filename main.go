@@ -217,7 +217,7 @@ func main() {
 		return map[string]string{"sejuk": "Sejuk", "nyaman": "Nyaman", "hangat": "Hangat", "panas": "Panas", "ekstrem": "Sangat panas"}[t]
 	})
 	engine.AddFunc("eventBar", func(kind string) string {
-		return map[string]string{"libur": "bg-violet-400", "ramadhan": "bg-[#8B1E3F]", "puncak": "bg-amber-400", "ied": "bg-sky-500"}[kind]
+		return map[string]string{"libur": "bg-rose-600", "ramadhan": "bg-[#1E3A8A]", "puncak": "bg-amber-400", "ied": "bg-sky-500"}[kind]
 	})
 	engine.AddFunc("formatDateShort", func(d string) string { // "2027-01-07" -> "7 Jan"
 		t, err := time.Parse("2006-01-02", d)

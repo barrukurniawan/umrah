@@ -20,6 +20,7 @@ type FilterInput struct {
 	Sort     string
 	Month    string
 	Travels  string
+	Flight   string // "" semua | "direct" | "transit"
 }
 
 // Travel partner/promo: selalu di urutan teratas, tapi hanya pada budget tertentu
@@ -275,8 +276,6 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			return scored[i].Duration > scored[j].Duration
 		case "dp_asc":
 			return scored[i].DownPayment < scored[j].DownPayment
-		case "direct_only":
-			return scored[i].Price < scored[j].Price
 		default:
 			if scored[i].Featured != scored[j].Featured {
 				return scored[i].Featured
@@ -285,11 +284,12 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		}
 	})
 
-	// Filter direct only
-	if input.Sort == "direct_only" {
-		filtered := make([]ScoredPackage, 0)
+	// Filter penerbangan (terpisah dari urutan).
+	if input.Flight == "direct" || input.Flight == "transit" {
+		want := input.Flight == "direct"
+		filtered := make([]ScoredPackage, 0, len(scored))
 		for _, sp := range scored {
-			if sp.IsDirect {
+			if sp.IsDirect == want {
 				filtered = append(filtered, sp)
 			}
 		}
