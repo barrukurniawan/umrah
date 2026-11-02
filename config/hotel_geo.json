@@ -1377,6 +1377,27 @@
    "confidence": "high",
    "source": "gmaps:\"Zowar International Hotel\" (Abdul Rahman Ibn Ouf Street, Al Haram، بضاعة،, Madinah 42311)",
    "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Fajr Al-Nusuk Ajyad",
+   "aliases": [
+    "Fajr Al-Nusuk Ajyad",
+    "Fajr Al-Nusuk Ajyad (Makkah)",
+    "Fajr Al Nusuk",
+    "Fajar Al Nusuk Ajyad",
+    "Luluat Al Shark"
+   ],
+   "lat": 21.4210752,
+   "lng": 39.8323554,
+   "distance_m": 550,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": true,
+   "confidence": "high",
+   "source": "https://maps.app.goo.gl/VNBHpTzWeBRKVHvP7 (Google: \"Luluat Al Shark - Fajar Al Nusuk Hotel Ajyad\")",
+   "note": "Dicek pemilik situs di Google Maps: jalan kaki 550 m / 8 menit lewat King Abdul Aziz Rd ke terowongan Ajyad."
   }
  ]
 }
