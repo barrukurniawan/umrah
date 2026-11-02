@@ -140,6 +140,10 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			distMakkah = geoDistanceLabel("makkah", pkg.Details[0].HotelMakkah)
 			distMadinah = geoDistanceLabel("madinah", pkg.Details[0].HotelMadinah)
 		}
+		// Paket yang dipasarkan "pelataran" = hotel menempel pelataran Masjidil Haram.
+		if strings.Contains(strings.ToLower(pkg.Name), "pelataran") {
+			distMakkah = "0m"
+		}
 		if distMakkah == "" {
 			distMakkah = formatMeters(pkg.DistanceMakkah)
 		}
@@ -566,9 +570,9 @@ func parseMinDistance(dist string) int {
 	d := strings.Split(dist, "-")[0]
 	d = strings.ReplaceAll(d, "m", "")
 	d = strings.TrimSpace(d)
-	val, _ := strconv.Atoi(d)
-	if val == 0 {
-		return 1000
+	val, err := strconv.Atoi(d)
+	if err != nil {
+		return unknownDistance // tidak terbaca: anggap paling jauh, bukan 1 km
 	}
-	return val
+	return val // "0m" = menempel pelataran
 }

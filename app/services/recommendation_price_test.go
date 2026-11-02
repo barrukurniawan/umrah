@@ -16,3 +16,12 @@ func TestAvailablePrice(t *testing.T) {
 		t.Errorf("Price 0 = harga paket; got %d", got)
 	}
 }
+
+func TestParseMinDistance(t *testing.T) {
+	cases := map[string]int{"0m": 0, "150m": 150, "1,4 km": 1400, "550-600m": 550, "6,3 km": 6300}
+	for in, want := range cases {
+		if got := parseMinDistance(in); got != want {
+			t.Errorf("parseMinDistance(%q) = %d, want %d", in, got, want)
+		}
+	}
+}

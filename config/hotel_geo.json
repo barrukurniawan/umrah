@@ -155,14 +155,14 @@
    ],
    "lat": 21.4192179,
    "lng": 39.8260077,
-   "distance_m": 100,
+   "distance_m": 0,
    "gate": "King Abdul Aziz Gate 1",
    "gate_lat": 21.4210447,
    "gate_lng": 39.8258406,
-   "verified": false,
+   "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Al Marwa Rayhaan by Rotana\" (Ajyad Street Abraj Al Bait, Makkah 24231, Arab Saudi) + osm:n6159278111",
-   "note": ""
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 100 m."
   },
   {
    "city": "makkah",
@@ -209,18 +209,22 @@
     "Safwah Tower 3",
     "Al Safwah Tower",
     "Al Safwah Towers Hotel",
-    "Makkah Tower/Al Shafwa"
+    "Makkah Tower/Al Shafwa",
+    "Makkah Tower",
+    "Al Shafwa",
+    "Al Safwa Hotel",
+    "Makkah Tower/Al Shafwa/Setaraf"
    ],
    "lat": 21.419245,
    "lng": 39.8267641,
-   "distance_m": 100,
+   "distance_m": 0,
    "gate": "Bab Ajyad - Gate 3",
    "gate_lat": 21.4210652,
    "gate_lng": 39.8264059,
-   "verified": false,
+   "verified": true,
    "confidence": "medium",
    "source": "gmaps:\"Al Ghufran Safwah Hotel Makkah\" (Ajyad St، Safwa Towers, Makkah Arab Saudi)",
-   "note": "Google: Al Ghufran Safwah Hotel (kompleks Safwah). Travel Khasanah Travel menyebut 300 m. Travel Jejak Imani menyebut 650 m."
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 100 m."
   },
   {
    "city": "makkah",
@@ -232,14 +236,14 @@
    ],
    "lat": 21.4196875,
    "lng": 39.8265625,
-   "distance_m": 50,
+   "distance_m": 0,
    "gate": "Bab Ajyad - Gate 3",
    "gate_lat": 21.4210652,
    "gate_lng": 39.8264059,
-   "verified": false,
+   "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Al Safwah Royale Orchid\" (Ajyad St, Al Haram, Makkah 24211, Arab Saudi)",
-   "note": ""
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 50 m."
   },
   {
    "city": "makkah",
@@ -321,14 +325,14 @@
    ],
    "lat": 21.4180499,
    "lng": 39.825567,
-   "distance_m": 200,
+   "distance_m": 0,
    "gate": "King Abdul Aziz Gate 1",
    "gate_lat": 21.4210447,
    "gate_lng": 39.8258406,
-   "verified": false,
+   "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Hotel Fairmont Makkah\" (King Abdul Aziz - 38 Rd, Endowment, Ajyad Street, Makkah 242) + osm:n5432376384",
-   "note": "Titik = tengah menara jam; pintu podium Abraj langsung ke pelataran (praktis <100 m)."
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 200 m."
   },
   {
    "city": "makkah",
@@ -358,14 +362,14 @@
    ],
    "lat": 21.4196355,
    "lng": 39.8237376,
-   "distance_m": 50,
+   "distance_m": 0,
    "gate": "King Fahd Gate - 79",
    "gate_lat": 21.421232,
    "gate_lng": 39.8240461,
-   "verified": false,
+   "verified": true,
    "confidence": "medium",
    "source": "gmaps:\"Pullman ZamZam Makkah\" (Abraj Al Bait Complex, King Abdul Aziz - 38 Rd, Endowment, M)",
-   "note": "Beda 192 m dari OSM n5077417300."
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 50 m."
   },
   {
    "city": "makkah",
@@ -515,14 +519,14 @@
    ],
    "lat": 21.4190565,
    "lng": 39.8263266,
-   "distance_m": 100,
+   "distance_m": 0,
    "gate": "Bab Ajyad - Gate 3",
    "gate_lat": 21.4210652,
    "gate_lng": 39.8264059,
-   "verified": false,
+   "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Mövenpick Hotel Makkah\" (The Clock Towers, Al Haram, Makkah 21955, Arab Saudi) + osm:n5077716754",
-   "note": ""
+   "note": "Menempel pada pelataran Masjidil Haram (kompleks Abraj Al Bait / Safwah), keputusan pemilik situs: 0 m. Hitungan peta: 100 m."
   },
   {
    "city": "makkah",
