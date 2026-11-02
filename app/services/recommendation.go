@@ -528,8 +528,9 @@ func getDistanceMadinah(hotel string) string {
 	if strings.Contains(h, "almukhtaro") || strings.Contains(h, "al mukhtara") || strings.Contains(h, "alghorbi") || strings.Contains(h, "al gharbi") {
 		return "1,2 km"
 	}
-	if strings.Contains(h, "sham province") {
-		return "650m"
+	// Dicek pemilik situs di Google Maps (jalan kaki 350 m / 5 menit ke tepi pelataran).
+	if strings.Contains(h, "sham province") || strings.Contains(h, "province al sham") {
+		return "350m"
 	}
 	if strings.Contains(h, "sky view") {
 		return "1,5 km"
