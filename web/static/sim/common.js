@@ -239,6 +239,7 @@ export function createSim(opts = {}) {
     if (sim.chibi) { scene.remove(sim.chibi.g); sim.chibi = null; }
     audio.pause(); duck(false);
     $('chooseOverlay').classList.remove('hidden'); $('simControls').classList.add('hidden');
+    if (window.ukTab) window.ukTab(opts.part || 'tawaf'); // kembali ke tab pilih karakter
     hooks.reset();
     sim.setCounter();
   };

@@ -11,8 +11,8 @@
     <!-- Setelah importmap: unduh three.js & modul simulasi paralel, siapkan bagian lainnya -->
     <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.min.js" crossorigin>
     <link rel="modulepreload" href="/static/sim/common.js">
-    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=21">
-    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=21">
+    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=22">
+    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=22">
     <style>
         .ar { font-family: 'Amiri', serif; }
         .sim-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none; }
@@ -27,6 +27,11 @@
         @keyframes fadein { from { opacity: .3; } to { opacity: 1; } }
         .wait-tap { animation: waittap 1.6s ease-out infinite; }
         @keyframes waittap { 0% { box-shadow: 0 0 0 0 rgba(4,120,87,.45); } 70%,100% { box-shadow: 0 0 0 14px rgba(4,120,87,0); } }
+        /* Ajakan memilih karakter: bingkai berkedip hijau */
+        .pick-pulse { animation: pickpulse 1.6s ease-in-out infinite; }
+        .pick-pulse:hover { animation: none; }
+        @keyframes pickpulse { 0%,100% { border-color: #e5e7eb; box-shadow: 0 0 0 0 rgba(4,120,87,0); } 50% { border-color: #10b981; box-shadow: 0 0 0 4px rgba(16,185,129,.18); } }
+        .tab-pill.text-gray-600:hover { color: #047857; }
         .card-in { animation: cardin .25s ease-out; }
         @keyframes cardin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     </style>
@@ -97,117 +102,102 @@
             </div>
         </aside>
         <!-- Pilih karakter: di HP menutupi area 3D + panel supaya kartunya muat utuh -->
-        <div id="chooseOverlay" class="absolute inset-0 lg:right-[400px] z-30 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
-            <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-4 sm:p-5 my-auto">
-                <!-- Niat (kiri) · Tawaf | Sa'i (tengah) · Tahallul (kanan) -->
-                <div class="flex items-center justify-center gap-1.5 sm:gap-2 text-[13px] sm:text-sm font-semibold">
-                    <button type="button" onclick="ukInfo.open('niat')" class="rounded-full border border-emerald-200 bg-white px-3 sm:px-3.5 py-1.5 text-emerald-800 hover:bg-emerald-50">Niat</button>
-                    <div class="inline-flex rounded-full bg-gray-100 p-1">
-                        <a href="/simulasi?bagian=tawaf" data-part="tawaf" onclick="return ukSwitch(this)" class="part-pill rounded-full px-3.5 sm:px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Tawaf</a>
-                        <a href="/simulasi?bagian=sai" data-part="sai" onclick="return ukSwitch(this)" class="part-pill rounded-full px-3.5 sm:px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Sa'i</a>
+        <div id="chooseOverlay" class="absolute inset-0 lg:right-[400px] z-50 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
+            <div id="chooseCard" class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-4 sm:p-5 my-auto">
+                <!-- Satu tombol geser: Niat · Tawaf · Sa'i · Tahallul -->
+                <div class="flex justify-center">
+                    <div class="inline-flex rounded-full bg-gray-100 p-1 text-[13px] sm:text-sm font-semibold">
+                        <button type="button" data-tab="niat" onclick="ukTab('niat')" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 text-gray-600">Niat</button>
+                        <a href="/simulasi?bagian=tawaf" data-tab="tawaf" data-part="tawaf" onclick="return ukTab('tawaf', this)" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600{{end}}">Tawaf</a>
+                        <a href="/simulasi?bagian=sai" data-tab="sai" data-part="sai" onclick="return ukTab('sai', this)" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600{{end}}">Sa'i</a>
+                        <button type="button" data-tab="tahallul" onclick="ukTab('tahallul')" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 text-gray-600">Tahallul</button>
                     </div>
-                    <button type="button" onclick="ukInfo.open('tahallul')" class="rounded-full border border-emerald-200 bg-white px-3 sm:px-3.5 py-1.5 text-emerald-800 hover:bg-emerald-50">Tahallul</button>
                 </div>
-                <h1 class="text-lg sm:text-xl font-bold text-gray-900 mt-4">Pilih karaktermu</h1>
+                <div data-panel="choose" class="mt-4">
+                <h1 class="text-lg sm:text-xl font-bold text-gray-900">Pilih karaktermu</h1>
                 <p class="text-sm text-gray-500 mt-1">{{if eq .Part "sai"}}Simulasi sa'i 7 lintasan antara bukit Shafa dan Marwah.{{else}}Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.{{end}}</p>
                 <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mt-3 sm:mt-4">
-                    <button type="button" data-gender="m" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                    <button type="button" data-gender="m" class="pick pick-pulse text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
                         <span class="block w-10 h-10 rounded-full bg-[#f1c7a1] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-x-0 top-0 h-3 bg-gray-800"></span></span>
                         <span class="block font-bold text-gray-900">Laki-laki</span>
                         <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Ihram 2 lembar kain putih. Bahu kanan terbuka saat tawaf.</span>
                     </button>
-                    <button type="button" data-gender="f" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                    <button type="button" data-gender="f" class="pick pick-pulse text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
                         <span class="block w-10 h-10 rounded-full bg-[#ece6dc] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-[9px] top-[11px] rounded-full bg-[#f1c7a1]"></span></span>
                         <span class="block font-bold text-gray-900">Perempuan</span>
                         <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Pakaian menutup aurat. Wajah dan telapak tangan terbuka.</span>
                     </button>
                 </div>
                 <p class="text-[11px] text-gray-400 mt-3 sm:mt-4">Simulasi ini alat bantu belajar. Untuk detail fikih, ikuti arahan pembimbing manasik travelmu.</p>
+                </div>
+                <div class="mt-4">
+    <section data-panel="niat" class="hidden">
+        <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Sebelum tawaf</p>
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900">Ihram, Miqat &amp; Niat</h2>
+        <div class="mt-3 grid gap-2 text-[13px] text-gray-600 leading-snug">
+            <p><b class="text-gray-900">Ihram</b> adalah keadaan mulai beribadah umrah dengan berniat. Sejak itu berlaku larangan ihram: memakai wewangian, memotong rambut &amp; kuku, berburu, akad nikah, dan berhubungan suami istri. Laki-laki memakai 2 kain putih tanpa jahitan dan tidak menutup kepala; perempuan memakai pakaian menutup aurat, tanpa cadar dan sarung tangan.</p>
+            <p><b class="text-gray-900">Miqat</b> adalah batas tempat untuk mulai berihram. Jamaah tidak boleh melewatinya tanpa ihram. Sebelumnya disunnahkan mandi, memakai wewangian di badan (bukan di kain ihram), lalu shalat sunnah.</p>
+            <p><b class="text-gray-900">Niat</b> cukup di hati, lalu diucapkan:</p>
+        </div>
+        <div class="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5">
+            <p class="ar text-xl leading-loose text-emerald-900 text-right" dir="rtl">لَبَّيْكَ اللَّهُمَّ عُمْرَةً</p>
+            <p class="text-sm italic text-emerald-800">Labbaika Allāhumma ‘umratan</p>
+            <p class="text-xs text-gray-500">Aku penuhi panggilan-Mu, ya Allah, untuk berumrah.</p>
+        </div>
+        <p class="mt-2 text-[13px] text-gray-600 leading-snug">Setelah itu perbanyak <b>talbiyah</b> (<i>Labbaika Allāhumma labbaik…</i>) sampai mulai tawaf.</p>
+        <p class="mt-4 text-sm font-bold text-gray-900">Di mana miqatnya?</p>
+        <div class="mt-2 grid gap-3 sm:grid-cols-3">
+        <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            <img src="/static/sim/img/pesawat.webp" alt="Jamaah berihram di dalam pesawat" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
+            <figcaption class="p-3">
+                <p class="font-bold text-gray-900 text-sm">1. Di pesawat</p>
+                <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika terbang langsung ke Makkah (mendarat di Jeddah). Pakai ihram sejak di bandara, lalu berniat saat pesawat melintasi miqat Yalamlam atau Qarnul Manazil. Biasanya diumumkan awak kabin atau pembimbing.</p>
+            </figcaption>
+        </figure>
+        <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            <img src="/static/sim/img/birali.webp" alt="Jamaah di depan Masjid Bir Ali" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
+            <figcaption class="p-3">
+                <p class="font-bold text-gray-900 text-sm">2. Masjid Bir Ali (Dzulhulaifah)</p>
+                <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika ke Madinah dulu. Berniat di Masjid Bir Ali dalam perjalanan dari Madinah ke Makkah, sekitar 10 km dari Masjid Nabawi.</p>
+            </figcaption>
+        </figure>
+        <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            <img src="/static/sim/img/aisyah.webp" alt="Jamaah di depan Masjid Aisyah" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
+            <figcaption class="p-3">
+                <p class="font-bold text-gray-900 text-sm">3. Masjid Aisyah (Tan'im)</p>
+                <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika sudah berada di Makkah dan ingin umrah lagi. Keluar ke tanah halal terdekat, yaitu Tan'im, lalu berniat di Masjid Aisyah.</p>
+            </figcaption>
+        </figure>
+        </div>
+        <p class="mt-3 text-[11px] text-gray-400 leading-snug">Bila niat di pesawat terlewat, MUI membolehkan berniat di Bandara Jeddah; sebagian ulama berpendapat lain. Ikuti arahan pembimbing manasik travelmu.</p>
+    </section>
+    <section data-panel="tahallul" class="hidden">
+        <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Setelah sa'i</p>
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900">Tahallul</h2>
+        <p class="mt-3 text-[13px] text-gray-600 leading-snug"><b class="text-gray-900">Tahallul</b> adalah mencukur atau memotong rambut setelah sa'i selesai di Marwah. Inilah penutup umrah: setelahnya semua larangan ihram berakhir.</p>
+        <div class="mt-3 grid gap-3 sm:grid-cols-2">
+        <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            <img src="/static/sim/img/cukur-pria.webp" alt="Jamaah laki-laki dicukur" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
+            <figcaption class="p-3">
+                <p class="font-bold text-gray-900 text-sm">Laki-laki</p>
+                <p class="mt-1 text-[13px] text-gray-600 leading-snug">Mencukur gundul lebih utama, atau memendekkan rambut secara merata. Boleh mencukur sendiri, oleh teman, atau tukang cukur.</p>
+            </figcaption>
+        </figure>
+        <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            <img src="/static/sim/img/cukur-wanita.webp" alt="Jamaah perempuan dipotong ujung rambutnya oleh sesama perempuan" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
+            <figcaption class="p-3">
+                <p class="font-bold text-gray-900 text-sm">Perempuan</p>
+                <p class="mt-1 text-[13px] text-gray-600 leading-snug">Cukup memotong ujung rambut kira-kira seruas jari, tidak dicukur. Dipotong sendiri, oleh suami/mahram, atau sesama perempuan, di tempat tertutup. Rambut termasuk aurat, jadi jangan oleh laki-laki yang bukan mahram.</p>
+            </figcaption>
+        </figure>
+        </div>
+        <p class="mt-3 text-[11px] text-gray-400 leading-snug">Menurut mazhab Syafi'i, minimal tiga helai rambut. Ikuti arahan pembimbing manasik travelmu.</p>
+    </section>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Penjelasan Niat / Tahallul -->
-    <div id="infoModal" class="hidden fixed inset-0 z-[80] bg-black/40 items-center justify-center px-3 py-6 sm:p-6" onclick="if(event.target===this)ukInfo.close()">
-        <div class="relative w-full max-w-[92%] sm:max-w-3xl">
-        <button type="button" onclick="ukInfo.close()" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center text-gray-500 hover:text-gray-800" aria-label="Tutup">
-                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-        <div id="infoBody" class="max-h-[82dvh] sm:max-h-[88dvh] overflow-y-auto overscroll-contain bg-[#f7faf7] rounded-2xl shadow-2xl p-4 sm:p-6">
-            <section data-info="niat" class="hidden">
-                <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Sebelum tawaf</p>
-                <h2 class="text-xl font-bold text-gray-900">Ihram, Miqat &amp; Niat</h2>
-                <div class="mt-3 grid gap-2 text-[13px] text-gray-600 leading-snug">
-                    <p><b class="text-gray-900">Ihram</b> adalah keadaan mulai beribadah umrah dengan berniat. Sejak itu berlaku larangan ihram: memakai wewangian, memotong rambut &amp; kuku, berburu, akad nikah, dan berhubungan suami istri. Laki-laki memakai 2 kain putih tanpa jahitan dan tidak menutup kepala; perempuan memakai pakaian menutup aurat, tanpa cadar dan sarung tangan.</p>
-                    <p><b class="text-gray-900">Miqat</b> adalah batas tempat untuk mulai berihram. Jamaah tidak boleh melewatinya tanpa ihram. Sebelumnya disunnahkan mandi, memakai wewangian di badan (bukan di kain ihram), lalu shalat sunnah.</p>
-                    <p><b class="text-gray-900">Niat</b> cukup di hati, lalu diucapkan:</p>
-                </div>
-                <div class="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5">
-                    <p class="ar text-xl leading-loose text-emerald-900 text-right" dir="rtl">لَبَّيْكَ اللَّهُمَّ عُمْرَةً</p>
-                    <p class="text-sm italic text-emerald-800">Labbaika Allāhumma ‘umratan</p>
-                    <p class="text-xs text-gray-500">Aku penuhi panggilan-Mu, ya Allah, untuk berumrah.</p>
-                </div>
-                <p class="mt-2 text-[13px] text-gray-600 leading-snug">Setelah itu perbanyak <b>talbiyah</b> (<i>Labbaika Allāhumma labbaik…</i>) sampai mulai tawaf.</p>
-                <p class="mt-4 text-sm font-bold text-gray-900">Di mana miqatnya?</p>
-                <div class="mt-2 grid gap-3 sm:grid-cols-3">
-                <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <img src="/static/sim/img/pesawat.webp" alt="Jamaah berihram di dalam pesawat" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
-                    <figcaption class="p-3">
-                        <p class="font-bold text-gray-900 text-sm">1. Di pesawat</p>
-                        <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika terbang langsung ke Makkah (mendarat di Jeddah). Pakai ihram sejak di bandara, lalu berniat saat pesawat melintasi miqat Yalamlam atau Qarnul Manazil. Biasanya diumumkan awak kabin atau pembimbing.</p>
-                    </figcaption>
-                </figure>
-                <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <img src="/static/sim/img/birali.webp" alt="Jamaah di depan Masjid Bir Ali" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
-                    <figcaption class="p-3">
-                        <p class="font-bold text-gray-900 text-sm">2. Masjid Bir Ali (Dzulhulaifah)</p>
-                        <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika ke Madinah dulu. Berniat di Masjid Bir Ali dalam perjalanan dari Madinah ke Makkah, sekitar 10 km dari Masjid Nabawi.</p>
-                    </figcaption>
-                </figure>
-                <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <img src="/static/sim/img/aisyah.webp" alt="Jamaah di depan Masjid Aisyah" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
-                    <figcaption class="p-3">
-                        <p class="font-bold text-gray-900 text-sm">3. Masjid Aisyah (Tan'im)</p>
-                        <p class="mt-1 text-[13px] text-gray-600 leading-snug">Jika sudah berada di Makkah dan ingin umrah lagi. Keluar ke tanah halal terdekat, yaitu Tan'im, lalu berniat di Masjid Aisyah.</p>
-                    </figcaption>
-                </figure>
-                </div>
-                <p class="mt-3 text-[11px] text-gray-400 leading-snug">Bila niat di pesawat terlewat, MUI membolehkan berniat di Bandara Jeddah; sebagian ulama berpendapat lain. Ikuti arahan pembimbing manasik travelmu.</p>
-            </section>
-            <section data-info="tahallul" class="hidden">
-                <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Setelah sa'i</p>
-                <h2 class="text-xl font-bold text-gray-900">Tahallul</h2>
-                <p class="mt-3 text-[13px] text-gray-600 leading-snug"><b class="text-gray-900">Tahallul</b> adalah mencukur atau memotong rambut setelah sa'i selesai di Marwah. Inilah penutup umrah: setelahnya semua larangan ihram berakhir.</p>
-                <div class="mt-3 grid gap-3 sm:grid-cols-2">
-                <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <img src="/static/sim/img/cukur-pria.webp" alt="Jamaah laki-laki dicukur" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
-                    <figcaption class="p-3">
-                        <p class="font-bold text-gray-900 text-sm">Laki-laki</p>
-                        <p class="mt-1 text-[13px] text-gray-600 leading-snug">Mencukur gundul lebih utama, atau memendekkan rambut secara merata. Boleh mencukur sendiri, oleh teman, atau tukang cukur.</p>
-                    </figcaption>
-                </figure>
-                <figure class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <img src="/static/sim/img/cukur-wanita.webp" alt="Jamaah perempuan dipotong ujung rambutnya oleh sesama perempuan" width="640" height="400" loading="lazy" class="w-full aspect-[16/10] object-cover bg-gray-100">
-                    <figcaption class="p-3">
-                        <p class="font-bold text-gray-900 text-sm">Perempuan</p>
-                        <p class="mt-1 text-[13px] text-gray-600 leading-snug">Cukup memotong ujung rambut kira-kira seruas jari, tidak dicukur. Dipotong sendiri, oleh suami/mahram, atau sesama perempuan, di tempat tertutup. Rambut termasuk aurat, jadi jangan oleh laki-laki yang bukan mahram.</p>
-                    </figcaption>
-                </figure>
-                </div>
-                <p class="mt-3 text-[11px] text-gray-400 leading-snug">Menurut mazhab Syafi'i, minimal tiga helai rambut. Ikuti arahan pembimbing manasik travelmu.</p>
-            </section>
-        </div>
-        </div>
-    </div>
-    <script>
-    window.ukInfo = {
-        open: function (k) {
-            document.querySelectorAll('#infoModal [data-info]').forEach(function (s) { s.classList.toggle('hidden', s.dataset.info !== k); });
-            var m = document.getElementById('infoModal'); m.classList.remove('hidden'); m.classList.add('flex'); document.getElementById('infoBody').scrollTop = 0;
-        },
-        close: function () { var m = document.getElementById('infoModal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-    };
-    addEventListener('keydown', function (e) { if (e.key === 'Escape') ukInfo.close(); });
-    </script>
     <!-- Layar memuat saat pindah Tawaf/Sa'i (halaman dimuat ulang, jadi beri tanda langsung) -->
     <div id="simLoading" class="hidden fixed inset-0 z-[70] items-center justify-center bg-white/70 backdrop-blur-sm">
         <div class="flex flex-col items-center gap-3 text-emerald-800">
@@ -216,24 +206,28 @@
         </div>
     </div>
     <script>
-    function ukSwitch(a) {
-        if (a.dataset.part === '{{.Part}}') return false;
-        document.querySelectorAll('.part-pill').forEach(function (p) {
-            var on = p === a;
-            p.classList.toggle('bg-emerald-700', on); p.classList.toggle('text-white', on); p.classList.toggle('shadow', on);
-            p.classList.toggle('text-gray-600', !on);
-        });
-        document.getElementById('simLoadingText').textContent = 'Memuat simulasi ' + (a.dataset.part === 'sai' ? "Sa'i" : 'Tawaf') + '…';
-        var l = document.getElementById('simLoading'); l.classList.remove('hidden'); l.classList.add('flex');
-        // beri browser satu frame untuk menampilkan perubahan, baru pindah halaman
-        requestAnimationFrame(function () { requestAnimationFrame(function () { location.href = a.href; }); });
+    // Tab Niat/Tahallul: ganti isi kartu. Tab Tawaf/Sa'i: pilih karakter (atau pindah halaman).
+    function ukTab(k, a) {
+        var cur = '{{.Part}}';
+        if ((k === 'tawaf' || k === 'sai') && k !== cur) {
+            document.querySelectorAll('.tab-pill').forEach(function (p) { var on = p.dataset.tab === k; p.classList.toggle('bg-emerald-700', on); p.classList.toggle('text-white', on); p.classList.toggle('shadow', on); p.classList.toggle('text-gray-600', !on); });
+            document.getElementById('simLoadingText').textContent = 'Memuat simulasi ' + (k === 'sai' ? "Sa'i" : 'Tawaf') + '…';
+            var l = document.getElementById('simLoading'); l.classList.remove('hidden'); l.classList.add('flex');
+            requestAnimationFrame(function () { requestAnimationFrame(function () { location.href = a.href; }); });
+            return false;
+        }
+        var panel = (k === 'niat' || k === 'tahallul') ? k : 'choose';
+        document.querySelectorAll('.tab-pill').forEach(function (p) { var on = p.dataset.tab === k; p.classList.toggle('bg-emerald-700', on); p.classList.toggle('text-white', on); p.classList.toggle('shadow', on); p.classList.toggle('text-gray-600', !on); });
+        document.querySelectorAll('#chooseCard [data-panel]').forEach(function (s) { s.classList.toggle('hidden', s.dataset.panel !== panel); });
+        var c = document.getElementById('chooseCard'); c.classList.toggle('max-w-md', panel === 'choose'); c.classList.toggle('max-w-3xl', panel !== 'choose');
+        document.getElementById('chooseOverlay').scrollTop = 0;
         return false;
     }
     // Kembali dengan tombol Back (bfcache): sembunyikan layar memuat.
     addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
     </script>
     <audio id="simAudio" preload="none" loop src="{{if eq .Part "sai"}}/static/sim/audio/baqarah-157-170.mp3{{else}}https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/67.mp3{{end}}"></audio>
-    <script type="module" src="/static/sim/{{.Part}}.js?v=21"></script>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=22"></script>
 </body>
 
 </html>
