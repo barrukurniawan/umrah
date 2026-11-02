@@ -1454,7 +1454,9 @@
    "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Zad Al Qimmah Al Naseem Hotel\"; jarak dari pemilik situs",
-   "note": "Al Naseem, Al Aziziyah. ±6,3 km, ada shuttle bus gratis ke area Ajyad/Makarem."
+   "note": "Al Naseem, Al Aziziyah. ±6,3 km, ada shuttle bus gratis ke area Ajyad/Makarem.",
+   "shuttle": true,
+   "shuttle_note": "Shuttle gratis hotel ke area Ajyad / Makarem"
   },
   {
    "city": "makkah",
@@ -1473,7 +1475,9 @@
    "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Holiday Inn Makkah Al Aziziah\"; jarak dari pemilik situs",
-   "note": "Al Aziziyah. ±3,5 km, shuttle bus gratis ke sekitar Abraj Al Bait / Ajyad."
+   "note": "Al Aziziyah. ±3,5 km, shuttle bus gratis ke sekitar Abraj Al Bait / Ajyad.",
+   "shuttle": true,
+   "shuttle_note": "Shuttle gratis hotel ke sekitar Abraj Al Bait / Ajyad"
   }
  ]
 }

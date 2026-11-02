@@ -41,9 +41,10 @@ type ScoredPackage struct {
 	Featured          bool
 	Score             int
 	FacilityList      []string
-	FacilityGeneric   bool // travel belum merinci; FacilityList = fasilitas umum umroh
-	SameDetails       bool // semua tanggal: hotel & harga kamar sama (ditampilkan sekali)
-	VaryingPrice      bool // harga berbeda antar tanggal: tampilkan harga di setiap baris
+	FacilityGeneric   bool   // travel belum merinci; FacilityList = fasilitas umum umroh
+	SameDetails       bool   // semua tanggal: hotel & harga kamar sama (ditampilkan sekali)
+	VaryingPrice      bool   // harga berbeda antar tanggal: tampilkan harga di setiap baris
+	ShuttleMakkah     string // keterangan shuttle hotel Makkah ("" = tidak ada / tidak diketahui)
 	ExcludeList       []string
 	DepartureDatesStr string
 	DistanceMakkah    string
@@ -243,6 +244,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 			FacilityGeneric:   len(parseFacilities(pkg.Facilities)) == 0,
 			SameDetails:       sameDetails(pkg.Details),
 			VaryingPrice:      varying,
+			ShuttleMakkah:     shuttleNote(pkg.Details),
 			ExcludeList:       parseFacilities(pkg.Excludes),
 			DepartureDatesStr: formatDepartureDatesStr(pkg.Details),
 			DistanceMakkah:    distMakkah,
@@ -335,6 +337,19 @@ func facilitiesOrGeneric(raw string) []string {
 		return l
 	}
 	return genericFacilities
+}
+
+func shuttleNote(ds []models.DetailPackage) string {
+	if len(ds) == 0 {
+		return ""
+	}
+	if h, ok := LookupHotelGeo("makkah", ds[0].HotelMakkah); ok && h.Shuttle {
+		if h.ShuttleNote != "" {
+			return h.ShuttleNote
+		}
+		return "Ada shuttle hotel ke Masjidil Haram"
+	}
+	return ""
 }
 
 func sameDetails(ds []models.DetailPackage) bool {

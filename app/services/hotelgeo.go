@@ -21,7 +21,9 @@ type HotelGeo struct {
 	DistanceM        int      `json:"distance_m"`
 	Gate             string   `json:"gate"`
 	GateLat, GateLng float64
-	Verified         bool `json:"verified"`
+	Verified         bool   `json:"verified"`
+	Shuttle          bool   `json:"shuttle"`      // hotel punya shuttle ke Haram (ada sumbernya)
+	ShuttleNote      string `json:"shuttle_note"` // mis. "Shuttle gratis hotel ke sekitar Abraj Al Bait"
 }
 
 func (h *HotelGeo) UnmarshalJSON(b []byte) error {
