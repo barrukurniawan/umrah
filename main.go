@@ -1,12 +1,13 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"syscall"
 	"strings"
+	"syscall"
 	"time"
 
 	"umrah/app/accounts"
@@ -128,21 +129,21 @@ func main() {
 
 	engine.AddFunc("travelURL", func(name string) string {
 		urls := map[string]string{
-			"Hamdan Tour":               "https://hamdantour.id",
-			"Taiba Medina":              "https://taibamedina.com",
-			"Al Hijaz":                  "https://alhijaz.co",
-			"Marwa Mustajab":            "https://umrohmustajab.com",
-			"UMI Tour & Travel":         "https://umi.travel",
-			"Umrah Bisa":                "https://umrahbisa.com",
-			"Khasanah Travel":           "https://www.khasanahtravel.com",
-			"PT Labbaika Cipta Imani":   "https://labbaika.co.id/",
-			"Rahmah Travel":             "https://rahmahtravel.id",
-			"PT Wisata Hati Universal":  "https://fandiegotravel.com/",
-			"Uhud Tour":                 "https://uhudtour.com",
-			"Lafaya Travel":             "https://www.lafayatravel.com",
-			"Jejak Imani":               "https://www.jejakimani.com",
-			"Alviandra Travel":          "https://www.instagram.com/alviandratravel",
-			"Rabbani Tour":              "https://rabbanitour.com",
+			"Hamdan Tour":              "https://hamdantour.id",
+			"Taiba Medina":             "https://taibamedina.com",
+			"Al Hijaz":                 "https://alhijaz.co",
+			"Marwa Mustajab":           "https://umrohmustajab.com",
+			"UMI Tour & Travel":        "https://umi.travel",
+			"Umrah Bisa":               "https://umrahbisa.com",
+			"Khasanah Travel":          "https://www.khasanahtravel.com",
+			"PT Labbaika Cipta Imani":  "https://labbaika.co.id/",
+			"Rahmah Travel":            "https://rahmahtravel.id",
+			"PT Wisata Hati Universal": "https://fandiegotravel.com/",
+			"Uhud Tour":                "https://uhudtour.com",
+			"Lafaya Travel":            "https://www.lafayatravel.com",
+			"Jejak Imani":              "https://www.jejakimani.com",
+			"Alviandra Travel":         "https://www.instagram.com/alviandratravel",
+			"Rabbani Tour":             "https://rabbanitour.com",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -152,21 +153,21 @@ func main() {
 
 	engine.AddFunc("whatsappURL", func(name string) string {
 		urls := map[string]string{
-			"Hamdan Tour":               "https://api.whatsapp.com/send/?phone=6282120009897&text=Assalamualaikum%2C+mohon+informasi+umrah+dari+HAMDAN+TOUR",
-			"Taiba Medina":              "https://api.whatsapp.com/send/?phone=6285380000883&text=Assalamu%27alaikum%2C+saya+ingin+bertanya+mengenai+layanan+Umroh+Taiba+Medina+Tour",
-			"Al Hijaz":                  "https://api.whatsapp.com/send/?text=%2AALHIJAZ+INDOWISATA%2A%0AAssalamualaikum%2C+saya+ingin+informasi+paket+umroh",
-			"Marwa Mustajab":            "https://api.whatsapp.com/send/?phone=6288214793139&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh",
-			"Umrah Bisa":                "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+Boleh+info+lebih+lanjut+untuk+paket+umrahnya%3F",
-			"Khasanah Travel":           "https://api.whatsapp.com/send/?phone=6282124144331&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
-			"PT Labbaika Cipta Imani":   "https://api.whatsapp.com/send/?phone=6281313557780&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
-			"Rahmah Travel":             "https://api.whatsapp.com/send/?phone=6282246386908&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
-			"PT Wisata Hati Universal":  "https://api.whatsapp.com/send/?phone=628111718567&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
-			"Uhud Tour":                 "https://api.whatsapp.com/send/?phone=6281113304343&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Uhud+Tour",
-			"Lafaya Travel":             "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
-			"UMI Tour & Travel":         "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+UMI+Tour",
-			"Jejak Imani":               "https://api.whatsapp.com/send/?phone=6281519898880&text=Assalamualaikum%20Susi%2C%20saya%20mau%20tanya%20info%20paket%20umroh%20di%20Jejak%20Imani.%20Saya%20lihat%20dari%20website.",
-			"Rabbani Tour":              "https://api.whatsapp.com/send/?phone=6282280001799&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Rabbani+Tour",
-			"Alviandra Travel":          "https://api.whatsapp.com/send/?phone=6285183032548&text=Assalamualaikum%2C+saya+ingin+informasi+paket+Umroh+Plus+City+Tour+Oman+%2815+Januari+2027%29.+Saya+lihat+dari+Umrohku.",
+			"Hamdan Tour":              "https://api.whatsapp.com/send/?phone=6282120009897&text=Assalamualaikum%2C+mohon+informasi+umrah+dari+HAMDAN+TOUR",
+			"Taiba Medina":             "https://api.whatsapp.com/send/?phone=6285380000883&text=Assalamu%27alaikum%2C+saya+ingin+bertanya+mengenai+layanan+Umroh+Taiba+Medina+Tour",
+			"Al Hijaz":                 "https://api.whatsapp.com/send/?text=%2AALHIJAZ+INDOWISATA%2A%0AAssalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Marwa Mustajab":           "https://api.whatsapp.com/send/?phone=6288214793139&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh",
+			"Umrah Bisa":               "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+Boleh+info+lebih+lanjut+untuk+paket+umrahnya%3F",
+			"Khasanah Travel":          "https://api.whatsapp.com/send/?phone=6282124144331&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
+			"PT Labbaika Cipta Imani":  "https://api.whatsapp.com/send/?phone=6281313557780&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
+			"Rahmah Travel":            "https://api.whatsapp.com/send/?phone=6282246386908&text=%5BK-44JWD%5D%0AAssalamu%27alaikum%2C+saya+melihat+informasi+Umroh+di+website+dan+tertarik+dengan+paket+yang+tersedia.+Mohon+informasinya.&type=phone_number&app_absent=0",
+			"PT Wisata Hati Universal": "https://api.whatsapp.com/send/?phone=628111718567&text=halo%20saya%20ingin%20tanya%20jadwal%20umroh&type=phone_number&app_absent=0",
+			"Uhud Tour":                "https://api.whatsapp.com/send/?phone=6281113304343&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Uhud+Tour",
+			"Lafaya Travel":            "https://api.whatsapp.com/send?phone=6281977382091&text=Contact%20CS%20Lafaya%20Travel",
+			"UMI Tour & Travel":        "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+UMI+Tour",
+			"Jejak Imani":              "https://api.whatsapp.com/send/?phone=6281519898880&text=Assalamualaikum%20Susi%2C%20saya%20mau%20tanya%20info%20paket%20umroh%20di%20Jejak%20Imani.%20Saya%20lihat%20dari%20website.",
+			"Rabbani Tour":             "https://api.whatsapp.com/send/?phone=6282280001799&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Rabbani+Tour",
+			"Alviandra Travel":         "https://api.whatsapp.com/send/?phone=6285183032548&text=Assalamualaikum%2C+saya+ingin+informasi+paket+Umroh+Plus+City+Tour+Oman+%2815+Januari+2027%29.+Saya+lihat+dari+Umrohku.",
 		}
 		if u, ok := urls[name]; ok {
 			return u
@@ -184,6 +185,12 @@ func main() {
 	engine.AddFunc("jt", services.ShortJuta)
 	engine.AddFunc("pkgName", services.PkgNameHTML) // ✈️ di nama paket -> ikon pesawat bertema
 	engine.AddFunc("noEmoji", services.StripEmoji)
+	// Versi CSS Tailwind (hash isi app.css) supaya browser memuat ulang hanya bila berubah.
+	cssV := "0"
+	if b, err := os.ReadFile("web/static/css/app.css"); err == nil {
+		cssV = fmt.Sprintf("%x", sha256.Sum256(b))[:10]
+	}
+	engine.AddFunc("cssV", func() string { return cssV })
 	engine.AddFunc("travelName", services.TravelDisplayName)
 	engine.AddFunc("travelInitials", services.TravelInitials)
 	// Logo travel: web/static/logos/<slug>.(webp|png|jpg|svg); "" bila belum ada.
@@ -229,21 +236,21 @@ func main() {
 
 	engine.AddFunc("airlineURL", func(name string) string {
 		urls := map[string]string{
-			"Garuda Indonesia":    "https://www.garuda-indonesia.com",
-			"Saudia":              "https://www.saudia.com",
-			"Saudi Airlines":      "https://www.saudia.com",
-			"Saudia Airlines":     "https://www.saudia.com",
-			"Qatar Airways":       "https://www.qatarairways.com",
-			"Emirates":            "https://www.emirates.com",
-			"Etihad Airways":      "https://www.etihad.com",
-			"Oman Air":            "https://www.omanair.com",
-			"Oman Airlines":       "https://www.omanair.com",
-			"Turkish Airlines":    "https://www.turkishairlines.com",
+			"Garuda Indonesia":      "https://www.garuda-indonesia.com",
+			"Saudia":                "https://www.saudia.com",
+			"Saudi Airlines":        "https://www.saudia.com",
+			"Saudia Airlines":       "https://www.saudia.com",
+			"Qatar Airways":         "https://www.qatarairways.com",
+			"Emirates":              "https://www.emirates.com",
+			"Etihad Airways":        "https://www.etihad.com",
+			"Oman Air":              "https://www.omanair.com",
+			"Oman Airlines":         "https://www.omanair.com",
+			"Turkish Airlines":      "https://www.turkishairlines.com",
 			"Royal Brunei Airlines": "https://www.flyroyalbrunei.com",
-			"Scoot":               "https://www.flyscoot.com",
-			"IndiGo":              "https://www.goindigo.in",
-			"EgyptAir":            "https://www.egyptair.com",
-			"AirAsia":             "https://www.airasia.com",
+			"Scoot":                 "https://www.flyscoot.com",
+			"IndiGo":                "https://www.goindigo.in",
+			"EgyptAir":              "https://www.egyptair.com",
+			"AirAsia":               "https://www.airasia.com",
 		}
 		for k, u := range urls {
 			if strings.Contains(name, k) {
@@ -257,6 +264,8 @@ func main() {
 		Views: engine,
 	})
 
+	// CSS diberi versi (?v=hash), jadi aman disimpan lama di browser.
+	app.Static("/static/css", "./web/static/css", fiber.Static{MaxAge: 31536000})
 	app.Static("/static", "./web/static")
 
 	repositories.InitDB()

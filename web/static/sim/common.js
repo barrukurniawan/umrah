@@ -111,7 +111,20 @@ export function createSim(opts = {}) {
   bubble.innerHTML = '<div class="rounded-xl bg-white shadow-lg px-3 py-1.5 text-center"><div class="ar text-lg leading-tight text-emerald-800" id="bubAr"></div><div class="text-[11px] italic text-gray-600" id="bubLat"></div></div>';
   labelsEl.appendChild(bubble);
   let bubbleUntil = 0;
-  sim.say = (ar, lat, secs = 2.6) => { $('bubAr').textContent = ar; $('bubLat').textContent = lat; bubble.style.opacity = 1; bubbleUntil = performance.now() + secs * 1000; };
+  // Gelembung di atas karakter: doa (Arab + latin) atau pesan singkat (teks saja).
+  let popTimers = [];
+  function showBubble(ar, lat, secs, plain) {
+    $('bubAr').textContent = ar; $('bubAr').style.display = ar ? '' : 'none';
+    const l = $('bubLat'); l.textContent = lat;
+    l.className = plain ? 'text-xs font-semibold text-emerald-800 max-w-[220px] whitespace-normal leading-snug' : 'text-[11px] italic text-gray-600';
+    bubble.style.opacity = 1; bubbleUntil = performance.now() + secs * 1000;
+  }
+  sim.say = (ar, lat, secs = 2.6) => { popTimers.forEach(clearTimeout); popTimers = []; showBubble(ar, lat, secs, false); };
+  // Beberapa pesan berurutan tanpa menghentikan simulasi.
+  sim.pops = (items, gap = 3.2) => {
+    popTimers.forEach(clearTimeout); popTimers = [];
+    items.forEach((t, i) => popTimers.push(setTimeout(() => showBubble('', t, gap - 0.2, true), i * gap * 1000)));
+  };
   const _v = new THREE.Vector3(), ray = new THREE.Raycaster(), _d = new THREE.Vector3();
   function hidden(world) {
     if (!hooks.occluder) return false;
@@ -212,7 +225,7 @@ export function createSim(opts = {}) {
     sim.setCounter();
   };
   sim.reset = () => {
-    S.phase = 'choose'; S.block = false; steps = []; input.fwd = input.back = false; tapWalk = false;
+    S.phase = 'choose'; S.block = false; steps = []; popTimers.forEach(clearTimeout); popTimers = []; input.fwd = input.back = false; tapWalk = false;
     if (sim.chibi) { scene.remove(sim.chibi.g); sim.chibi = null; }
     audio.pause(); duck(false);
     $('chooseOverlay').classList.remove('hidden'); $('simControls').classList.add('hidden');

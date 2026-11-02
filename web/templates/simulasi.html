@@ -8,6 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.min.js"}}</script>
+    <!-- Setelah importmap: unduh three.js & modul simulasi paralel, siapkan bagian lainnya -->
+    <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.min.js" crossorigin>
+    <link rel="modulepreload" href="/static/sim/common.js">
+    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=19">
+    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=19">
     <style>
         .ar { font-family: 'Amiri', serif; }
         .sim-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none; }
@@ -95,8 +100,8 @@
         <div id="chooseOverlay" class="absolute inset-0 lg:right-[400px] z-30 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
             <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-4 sm:p-5 my-auto">
                 <div class="inline-flex rounded-full bg-gray-100 p-1 text-sm font-semibold">
-                    <a href="/simulasi?bagian=tawaf" class="rounded-full px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Tawaf</a>
-                    <a href="/simulasi?bagian=sai" class="rounded-full px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Sa'i</a>
+                    <a href="/simulasi?bagian=tawaf" data-part="tawaf" onclick="return ukSwitch(this)" class="part-pill rounded-full px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Tawaf</a>
+                    <a href="/simulasi?bagian=sai" data-part="sai" onclick="return ukSwitch(this)" class="part-pill rounded-full px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Sa'i</a>
                 </div>
                 <h1 class="text-lg sm:text-xl font-bold text-gray-900 mt-3">Pilih karaktermu</h1>
                 <p class="text-sm text-gray-500 mt-1">{{if eq .Part "sai"}}Simulasi sa'i 7 lintasan antara bukit Shafa dan Marwah.{{else}}Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.{{end}}</p>
@@ -117,8 +122,32 @@
         </div>
     </main>
 
+    <!-- Layar memuat saat pindah Tawaf/Sa'i (halaman dimuat ulang, jadi beri tanda langsung) -->
+    <div id="simLoading" class="hidden fixed inset-0 z-[70] items-center justify-center bg-white/70 backdrop-blur-sm">
+        <div class="flex flex-col items-center gap-3 text-emerald-800">
+            <span class="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-700 animate-spin"></span>
+            <p id="simLoadingText" class="text-sm font-semibold">Memuat simulasi…</p>
+        </div>
+    </div>
+    <script>
+    function ukSwitch(a) {
+        if (a.dataset.part === '{{.Part}}') return false;
+        document.querySelectorAll('.part-pill').forEach(function (p) {
+            var on = p === a;
+            p.classList.toggle('bg-emerald-700', on); p.classList.toggle('text-white', on); p.classList.toggle('shadow', on);
+            p.classList.toggle('text-gray-600', !on);
+        });
+        document.getElementById('simLoadingText').textContent = 'Memuat simulasi ' + (a.dataset.part === 'sai' ? "Sa'i" : 'Tawaf') + '…';
+        var l = document.getElementById('simLoading'); l.classList.remove('hidden'); l.classList.add('flex');
+        // beri browser satu frame untuk menampilkan perubahan, baru pindah halaman
+        requestAnimationFrame(function () { requestAnimationFrame(function () { location.href = a.href; }); });
+        return false;
+    }
+    // Kembali dengan tombol Back (bfcache): sembunyikan layar memuat.
+    addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
+    </script>
     <audio id="simAudio" preload="none" loop src="https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/67.mp3"></audio>
-    <script type="module" src="/static/sim/{{.Part}}.js?v=16"></script>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=19"></script>
 </body>
 
 </html>

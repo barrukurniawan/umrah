@@ -229,13 +229,12 @@ function startLine() {
     dua: TAKBIR,
     actions: `<button type="button" id="btnRepeat" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi isyarat</button>`,
     onShow: () => { const b = $('btnRepeat'); if (b) b.onclick = () => { S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2); }; },
-    next: 'Lanjut →',
-  }, {
-    title: 'Mulai putaran 1',
-    body: (isM() ? `<p><b>Raml:</b> pada putaran 1 sampai 3, laki-laki disunnahkan berjalan cepat dengan langkah pendek, jika kondisi memungkinkan. Putaran 4 sampai 7 berjalan biasa.</p>` : '') +
-      `<p>Selama tawaf <b>tidak ada doa khusus</b> untuk tiap putaran. Perbanyak dzikir, doa, atau bacaan Al-Qur'an, dengan bahasa apa pun.</p>`,
     next: 'Mulai tawaf →',
-  }], () => { S.phase = 'tawaf'; S.travel = 0; S.done = 0; setRound(); info({ title: 'Putaran 1', body: '<p>Klik <b>Jalan</b>. Ka\'bah di sebelah kirimu. Berdzikir dan berdoalah dengan tenang.</p>' }); });
+  }], () => {
+    S.phase = 'tawaf'; S.travel = 0; S.done = 0; setRound();
+    // Pesan singkat di atas karakter, simulasi tetap berjalan.
+    sim.pops([...(isM() ? ['Raml: putaran 1 sampai 3, lelaki sunnahnya jalan cepat'] : []), 'Selama tawaf tidak ada doa khusus']);
+    info({ title: 'Putaran 1', body: '<p>Klik <b>Jalan</b>. Ka\'bah di sebelah kirimu. Berdzikir dan berdoalah dengan tenang.</p>' }); });
 }
 
 function onRel(prev, rel, round) {

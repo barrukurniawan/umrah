@@ -56,18 +56,61 @@
                 <button type="button" onclick="ukLive.close()" class="p-1 -m-1 text-white/80 hover:text-white" aria-label="Tutup"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
             </div>
         </div>
-        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-2xl" id="liveFrame"></div>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-2xl">
+            <div id="liveFrame" class="absolute inset-0"></div>
+            <button type="button" id="liveSound" onclick="ukLive.sound()" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white text-gray-900 shadow-lg px-4 py-2 text-sm font-semibold">
+                <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>Ketuk untuk nyalakan suara</button>
+        </div>
     </div>
 </div>
 <script>
+// Live Makkah: YouTube IFrame API supaya suara bisa langsung menyala pelan (10%).
+// Browser kadang menolak video bersuara yang diputar otomatis; bila itu terjadi video diputar
+// tanpa suara dan muncul tombol "Nyalakan suara" (satu ketukan cukup).
 window.ukLive = {
+    vid: 'eC4LfEVxvKg', vol: 10, player: null,
     open: function () {
         var m = document.getElementById('liveModal');
-        document.getElementById('liveFrame').innerHTML = '<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/eC4LfEVxvKg?autoplay=1&mute=1&playsinline=1" title="Live Makkah" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
         m.classList.remove('hidden'); m.classList.add('flex');
+        document.getElementById('liveFrame').innerHTML = '<div id="ytLive" class="absolute inset-0 w-full h-full"></div>';
+        var self = this;
+        if (window.YT && YT.Player) { self.make(); return; }
+        window.onYouTubeIframeAPIReady = function () { self.make(); };
+        if (!document.getElementById('ytApi')) {
+            var t = document.createElement('script'); t.id = 'ytApi'; t.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(t);
+        }
+    },
+    make: function () {
+        var self = this;
+        if (!document.getElementById('ytLive')) return; // sudah ditutup sebelum API siap
+        self.player = new YT.Player('ytLive', {
+            host: 'https://www.youtube-nocookie.com', videoId: self.vid, width: '100%', height: '100%',
+            playerVars: { autoplay: 1, playsinline: 1, rel: 0 },
+            events: {
+                onReady: function (e) {
+                    e.target.setVolume(self.vol); e.target.unMute(); e.target.playVideo();
+                    setTimeout(function () {
+                        if (!self.player || !self.player.getPlayerState) return;
+                        if (self.player.getPlayerState() !== YT.PlayerState.PLAYING) { // diblokir: putar tanpa suara
+                            self.player.mute(); self.player.playVideo(); self.showSound(true);
+                        }
+                    }, 1800);
+                }
+            }
+        });
+    },
+    showSound: function (on) {
+        var b = document.getElementById('liveSound'); if (!b) return;
+        b.classList.toggle('hidden', !on); b.classList.toggle('flex', on);
+    },
+    sound: function () {
+        if (!this.player) return;
+        this.player.unMute(); this.player.setVolume(this.vol); this.player.playVideo(); this.showSound(false);
     },
     close: function () {
         var m = document.getElementById('liveModal');
+        if (this.player && this.player.destroy) { try { this.player.destroy(); } catch (e) {} }
+        this.player = null; this.showSound(false);
         document.getElementById('liveFrame').innerHTML = '';
         m.classList.add('hidden'); m.classList.remove('flex');
     }

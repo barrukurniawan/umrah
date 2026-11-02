@@ -180,13 +180,12 @@ function arriveSafaFirst() {
   }, {
     title: "Menghadap Ka'bah, angkat kedua tangan",
     body: `<p>Naik ke Shafa, <b>hadapkan badan ke arah Ka'bah</b> (lihat panah hijau), lalu <b>angkat kedua tangan seperti berdoa</b>, bukan isyarat seperti di Hajar Aswad. Bacalah:</p>`,
-    dua: DZIKIR, after: '<p>Lalu berdoa dengan doa apa saja. Dzikir dan doa ini diulang <b>3 kali</b>.</p>', next: 'Lanjut →',
-  }, {
-    title: 'Mulai lintasan 1: ke Marwah',
-    body: `<p>Berjalanlah menuju Marwah. Selama sa'i <b>tidak ada doa khusus</b>; perbanyak dzikir dan doa.</p>` +
-      (isM() ? '<p>Nanti di <b>zona lampu hijau</b>, laki-laki disunnahkan <b>lari kecil</b>.</p>' : ''),
-    next: "Mulai sa'i →",
-  }], () => { stopPray(); S.phase = 'sai'; S.dir = 1; S.done = 0; sim.setCounter(); info({ title: 'Lintasan 1: menuju Marwah', body: '<p>Klik <b>Jalan</b>. Berdzikir dan berdoalah sepanjang jalan.</p>' }); });
+    dua: DZIKIR, after: '<p>Lalu berdoa dengan doa apa saja. Dzikir dan doa ini diulang <b>3 kali</b>.</p>', next: 'Mulai sa\'i →',
+  }], () => {
+    stopPray(); S.phase = 'sai'; S.dir = 1; S.done = 0; sim.setCounter();
+    // Pesan singkat di atas karakter, simulasi tetap berjalan.
+    sim.pops(["Selama sa'i tidak ada doa khusus", ...(isM() ? ['Di zona lampu hijau, lelaki sunnahnya lari kecil'] : [])]);
+    info({ title: 'Lintasan 1: menuju Marwah', body: '<p>Klik <b>Jalan</b>. Berdzikir dan berdoalah sepanjang jalan.</p>' }); });
 }
 
 function onGreen(enter, lap) {
