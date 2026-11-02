@@ -1,15 +1,15 @@
 package services
 
-import (
-	"strconv"
-	"strings"
-)
+import "strconv"
 
-// ShortJuta menulis harga dalam juta TANPA pembulatan: 28990000 -> "28,99 jt",
-// 23500000 -> "23,5 jt", 29995000 -> "29,995 jt". Pembulatan ke atas/bawah bisa
-// menyesatkan calon jamaah, jadi angka selalu sama persis dengan harga asli.
+// ShortJuta menulis harga dalam juta dengan SATU angka di belakang koma, dipotong (tidak
+// dibulatkan ke atas, supaya "29 jt" tidak muncul untuk 28.990.000): 28990000 -> "28,9 jt",
+// 23500000 -> "23,5 jt", 30000000 -> "30 jt". Harga lengkap tetap tampil di kartu.
 func ShortJuta(n int) string {
-	v := strconv.FormatFloat(float64(n)/1e6, 'f', 6, 64)
-	v = strings.TrimRight(strings.TrimRight(v, "0"), ".")
-	return strings.Replace(v, ".", ",", 1) + " jt"
+	tenths := n / 100000 // satuan 0,1 juta, dipotong
+	whole, frac := tenths/10, tenths%10
+	if frac == 0 {
+		return strconv.Itoa(whole) + " jt"
+	}
+	return strconv.Itoa(whole) + "," + strconv.Itoa(frac) + " jt"
 }
