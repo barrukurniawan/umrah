@@ -43,3 +43,11 @@ func TestGmapsMakkahURL(t *testing.T) {
 		t.Errorf("Jabal Omar harus ke King Fahd Gate, dapat %s", d)
 	}
 }
+
+func TestGmapsMakkahURLKnownPlace(t *testing.T) {
+	u, _ := url.Parse(GmapsMakkahURL("Al Olayan Golden"))
+	q := u.Query()
+	if q.Get("origin") != "21.4138065,39.8222496" || q.Get("destination") != "CRCG+2G8 Makkah" {
+		t.Errorf("Olayan Golden harus pakai titik pasti, dapat %v", q)
+	}
+}

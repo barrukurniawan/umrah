@@ -86,12 +86,27 @@ func MakkahGate(hotel string) string {
 	return gateKingAbdulAziz
 }
 
+// Titik pasti untuk hotel yang pencarian namanya di Google Maps bisa meleset, plus tujuan
+// khusus bila diminta pemilik situs. Kunci = potongan nama hotel (huruf kecil).
+type hotelPlace struct{ Origin, Dest string }
+
+var makkahPlaces = map[string]hotelPlace{
+	// Al Olayan Golden Hotel (maps.app.goo.gl/HPE7nQ8BVp3S15S96), diukur ke WC 3 Masjidil Haram.
+	"olayan golden": {Origin: "21.4138065,39.8222496", Dest: "CRCG+2G8 Makkah"},
+}
+
 // GmapsMakkahURL: rute jalan kaki dari hotel ke gerbang Masjidil Haram.
 // Kosong jika nama hotel tidak diketahui, supaya template tidak membuat link.
 func GmapsMakkahURL(hotel string) string {
 	h := CleanHotelName(hotel)
 	if h == "" {
 		return ""
+	}
+	lh := strings.ToLower(h)
+	for k, p := range makkahPlaces {
+		if strings.Contains(lh, k) {
+			return directionsURL(p.Origin, p.Dest)
+		}
 	}
 	return directionsURL(hotelQuery(h, "Makkah"), MakkahGate(h))
 }
