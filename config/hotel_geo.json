@@ -1,0 +1,1382 @@
+{
+ "_info": "Koordinat hotel & jarak garis lurus ke pelataran (Makkah: tepi pelataran Masjidil Haram; Madinah: gerbang pelataran Nabawi terdekat), dibulatkan ke atas per 50 m. verified=true: diukur langsung pemilik situs. Sumber gerbang: OpenStreetMap (ODbL).",
+ "hotels": [
+  {
+   "city": "makkah",
+   "name": "Al Massa Dar Al Fayzeen",
+   "aliases": [
+    "AL MASSA DAR AL FAYZEEN",
+    "Al Massa Dar Al Fayzeen"
+   ],
+   "lat": 21.4140675,
+   "lng": 39.8275973,
+   "distance_m": 650,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Massa Dar Al Faiezeen\" (شارع 119أجياد - السد, Al Hajlah, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Ramada Makkah Dar Al Fayzeen",
+   "aliases": [
+    "Ramada Fayzeen"
+   ],
+   "lat": 21.4133181,
+   "lng": 39.8277153,
+   "distance_m": 750,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Ramada Dar Al Fayzeen Makkah\" (CR7H+83G, شارع, Ajyad, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Grand Al Massa",
+   "aliases": [
+    "AL MASSA GRAND",
+    "Grand AL Massa",
+    "Grand Al Massa",
+    "Grand Al massa",
+    "Grand Al-Massa"
+   ],
+   "lat": 21.4143702,
+   "lng": 39.8276264,
+   "distance_m": 600,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Almassa Grand Hotel\" (6729 4804 Ajyad St, Al Hajlah, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Anjum Makkah",
+   "aliases": [
+    "ANJUM",
+    "Anjum"
+   ],
+   "lat": 21.4246408,
+   "lng": 39.819613,
+   "distance_m": 100,
+   "gate": "King Abdullah Gate -100",
+   "gate_lat": 21.4253914,
+   "gate_lng": 39.824132,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Hotel Anjum\" (3601 حي، MAJA7418، 7418 شارع جبل الكعبة, Makkah 24231, Arab ) + osm:w142230841",
+   "note": "Travel Al Hijaz menyebut 450 m. Travel Jejak Imani menyebut 650 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Abraj Al Qaswa",
+   "aliases": [
+    "Abraj Al Qashwa",
+    "Abraj Al Qaswa"
+   ],
+   "lat": 21.4068601,
+   "lng": 39.8299294,
+   "distance_m": 1450,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Al Qaswaa Tower Hotel\" (Ajyad St, Ar Rawabi, Makkah 24234, Arab Saudi)",
+   "note": "Google: Al Qaswaa Tower Hotel. Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Ayam Ajyad",
+   "aliases": [
+    "Al Ayam Ajyad"
+   ],
+   "lat": 21.4137602,
+   "lng": 39.8297023,
+   "distance_m": 750,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"AL AYAM HOTEL\" (شارع 24 بئر بليلة, Ajyad, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Hashimia Tower",
+   "aliases": [
+    "Al Hashimia Tower"
+   ],
+   "lat": 21.4094637,
+   "lng": 39.8023967,
+   "distance_m": 2500,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Al Hashmeih Tower Hotel\" (CR52+PXG, 7658, 4418 4418، Al Khalidiyyah, Makkah 24232, Ara)",
+   "note": "Google: Al Hashmeih Tower Hotel. Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Kiswah Towers",
+   "aliases": [
+    "Al Kiswah Towers Hotel"
+   ],
+   "lat": 21.4291537,
+   "lng": 39.8133742,
+   "distance_m": 850,
+   "gate": "King Abdullah Gate -100",
+   "gate_lat": 21.4253914,
+   "gate_lng": 39.824132,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Kiswah Towers Hotel\" (Tayseer Distrit, At Taysir, Makkah 24231, Arab Saudi) + osm:r9385065",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Marwa Rayhaan by Rotana",
+   "aliases": [
+    "Al Marwa Rayhaan By Rotana",
+    "Al Marwa Rayhaan by Rotana",
+    "Al Marwa Rayhan Rotana",
+    "Rotana"
+   ],
+   "lat": 21.4192179,
+   "lng": 39.8260077,
+   "distance_m": 100,
+   "gate": "King Abdul Aziz Gate 1",
+   "gate_lat": 21.4210447,
+   "gate_lng": 39.8258406,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Marwa Rayhaan by Rotana\" (Ajyad Street Abraj Al Bait, Makkah 24231, Arab Saudi) + osm:n6159278111",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Al Massa Bader",
+   "aliases": [
+    "Al Massa Bader Hotel",
+    "Bader Al Massa",
+    "Badr Al Massa"
+   ],
+   "lat": 21.4132108,
+   "lng": 39.821569,
+   "distance_m": 750,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Massa Bader Hotel\" (Ibrahim Al Khalil, Misfalah, Makkah 11211, Arab Saudi) + osm:w641854272",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Olayan Golden",
+   "aliases": [
+    "Al Olayan Golden"
+   ],
+   "lat": 21.4138065,
+   "lng": 39.8222496,
+   "distance_m": 800,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": true,
+   "confidence": "high",
+   "source": "gmaps:\"Al Olayan Golden Hotel فندق العليان الذهبي\" (Al Hajlah, Makkah 24231, Arab Saudi) + osm:w641241999",
+   "note": "Dicek pemilik situs: ±800 m ke WC 3 Masjidil Haram. Hitungan peta: 700 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Safwah Tower",
+   "aliases": [
+    "Al Safwa Tower 3",
+    "Al Safwah 3",
+    "Safwah Tower 3",
+    "Al Safwah Tower",
+    "Al Safwah Towers Hotel",
+    "Makkah Tower/Al Shafwa"
+   ],
+   "lat": 21.419245,
+   "lng": 39.8267641,
+   "distance_m": 100,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Al Ghufran Safwah Hotel Makkah\" (Ajyad St، Safwa Towers, Makkah Arab Saudi)",
+   "note": "Google: Al Ghufran Safwah Hotel (kompleks Safwah). Travel Khasanah Travel menyebut 300 m. Travel Jejak Imani menyebut 650 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Al Safwah Royale Orchid",
+   "aliases": [
+    "Al Safwah Royal Orchid Hotel",
+    "Al Safwah Royale Orchid",
+    "Safwa Royale Orchid"
+   ],
+   "lat": 21.4196875,
+   "lng": 39.8265625,
+   "distance_m": 50,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Safwah Royale Orchid\" (Ajyad St, Al Haram, Makkah 24211, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Al Shohada",
+   "aliases": [
+    "Al Shohada Hotel"
+   ],
+   "lat": 21.4148318,
+   "lng": 39.8281653,
+   "distance_m": 550,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Shohada Hotel\" (6415 Ajyad St, 4490, Makkah 24231, Arab Saudi) + osm:w640888427",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Azka Al Safa",
+   "aliases": [
+    "Azka Al Safa",
+    "Azka Al Safa Hotel",
+    "Azka Shafa/Anjum"
+   ],
+   "lat": 21.4203122,
+   "lng": 39.829734,
+   "distance_m": 300,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Azka Safa Hotel\" (7019، 7019 4701 طريق الملك عبدالعزيز مكة 24231 7019, Arab Sa) + osm:w640493458",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Dar Lamar",
+   "aliases": [
+    "Dar Lamar"
+   ],
+   "lat": 21.4020687,
+   "lng": 39.831419,
+   "distance_m": 2000,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Dar Lamar\" (2608, Makkah 24234, Arab Saudi) + osm:n12405018617",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Elaf Kinda",
+   "aliases": [
+    "Elaf Kinda",
+    "Elaf Kinda Hotel"
+   ],
+   "lat": 21.4188493,
+   "lng": 39.8242324,
+   "distance_m": 100,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Elaf Kinda Hotel\" (Al Mukrammah, Ibrahim Khalil Street, Makkah Arab Saudi) + osm:n5434306441",
+   "note": "Travel Jejak Imani menyebut 650 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Fairmont Makkah Clock Royal Tower",
+   "aliases": [
+    "Fairmont",
+    "Fairmont Makkah"
+   ],
+   "lat": 21.4180499,
+   "lng": 39.825567,
+   "distance_m": 200,
+   "gate": "King Abdul Aziz Gate 1",
+   "gate_lat": 21.4210447,
+   "gate_lng": 39.8258406,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Hotel Fairmont Makkah\" (King Abdul Aziz - 38 Rd, Endowment, Ajyad Street, Makkah 242) + osm:n5432376384",
+   "note": "Titik = tengah menara jam; pintu podium Abraj langsung ke pelataran (praktis <100 m)."
+  },
+  {
+   "city": "makkah",
+   "name": "Fajr Badea 4",
+   "aliases": [
+    "Fajr Badea 4",
+    "Fajar badie 4/Fajr Badie 5"
+   ],
+   "lat": 21.4135759,
+   "lng": 39.8221738,
+   "distance_m": 700,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Fajer Al Badia Hotel 4\" (3891, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Pullman Zamzam Makkah",
+   "aliases": [
+    "Hotel Pullman Zamzam Makkah",
+    "Pullman Zamzam",
+    "Pullman / Movenpick"
+   ],
+   "lat": 21.4196355,
+   "lng": 39.8237376,
+   "distance_m": 50,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Pullman ZamZam Makkah\" (Abraj Al Bait Complex, King Abdul Aziz - 38 Rd, Endowment, M)",
+   "note": "Beda 192 m dari OSM n5077417300."
+  },
+  {
+   "city": "makkah",
+   "name": "InterContinental Dar Al Tawhid",
+   "aliases": [
+    "Intercontinental Dar Al Tawhid Makkah"
+   ],
+   "lat": 21.4210048,
+   "lng": 39.8227473,
+   "distance_m": 100,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"InterContinental Dar al Tawhid Makkah\" (Ibrahim Al Khalil Rd, Al Haram, Makkah 21955, Arab Saudi) + osm:w142133165",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Jada Ajyad",
+   "aliases": [
+    "Jada Ajyad"
+   ],
+   "lat": 21.4207635,
+   "lng": 39.8325302,
+   "distance_m": 550,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Jada Ajiad Hotel\" (حي اجياد, 7079 135 اجياد المصافي MAAA7079 4948, Makkah 24231)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Jawharat Al Bait",
+   "aliases": [
+    "Jawharat Al Bait"
+   ],
+   "lat": 21.41569,
+   "lng": 39.82954,
+   "distance_m": 550,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"فندق جوهرة البيت\" + osm:way/187627310 + osm:w187627310",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Jumeirah Jabal Omar",
+   "aliases": [
+    "Jumairah Jabal Omar"
+   ],
+   "lat": 21.4184106,
+   "lng": 39.8223343,
+   "distance_m": 200,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Jumeirah Jabal Omar Makkah\" (Jabal Omar، Al Shubaikah, Ibrahim Al-Khalil Road, Makkah 242) + osm:r9582994",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Kunuz Ajyad",
+   "aliases": [
+    "Kunuz Ajyad"
+   ],
+   "lat": 21.4205816,
+   "lng": 39.8300993,
+   "distance_m": 300,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Kunuz Ajyad Hotel\" (جانب المبنى الرئاسي, Ajyad, Makkah 24231, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Le Meridien Towers Makkah",
+   "aliases": [
+    "Le Meridien Tower",
+    "Le Meridien Tower / Saja hotel",
+    "Le Meridien Towers"
+   ],
+   "lat": 21.4027954,
+   "lng": 39.8265432,
+   "distance_m": 1900,
+   "gate": "King Abdul Aziz Gate 1",
+   "gate_lat": 21.4210447,
+   "gate_lng": 39.8258406,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Le Méridien Towers Makkah\" (Kudai Road, Misfalah, Makkah 21955, Arab Saudi) + osm:n12406667873",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Maysan Al Maqam",
+   "aliases": [
+    "MAYSAN AL MAQAM EX FAJAR BADEA 2",
+    "Maysan Al Maqam",
+    "Maysan Al maqm"
+   ],
+   "lat": 21.4164812,
+   "lng": 39.8291275,
+   "distance_m": 450,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Maysan Al Maqam Hotel\" (4601 Ajyad St, Ajyad, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Maysan Al Mashaer",
+   "aliases": [
+    "Maysan Al Mashaer"
+   ],
+   "lat": 21.4166441,
+   "lng": 39.8284359,
+   "distance_m": 400,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Maysan Al Mashaer Hotel\" (Prince Muteb Ibn Abdulaziz Rd, Ajyad, MAAA4515, Makkah 24231)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Movenpick Hajar Tower",
+   "aliases": [
+    "MOVENPICK"
+   ],
+   "lat": 21.4190565,
+   "lng": 39.8263266,
+   "distance_m": 100,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Mövenpick Hotel Makkah\" (The Clock Towers, Al Haram, Makkah 21955, Arab Saudi) + osm:n5077716754",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Jabal Omar Marriott",
+   "aliases": [
+    "Marriot Jabal Omar"
+   ],
+   "lat": 21.4232245,
+   "lng": 39.8190541,
+   "distance_m": 250,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Jabal Omar Marriott Hotel, Makkah\" (Umm Al Qura, Ash Shubaikah, Makkah 21955, Arab Saudi) + osm:w521056949",
+   "note": ""
+  },
+  {
+   "city": "makkah",
+   "name": "Mather Al Eiman",
+   "aliases": [
+    "Mather Al Eiman"
+   ],
+   "lat": 21.4175564,
+   "lng": 39.8292837,
+   "distance_m": 350,
+   "gate": "Ajyad Gate 5",
+   "gate_lat": 21.4213059,
+   "gate_lng": 39.8268532,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Mather Al Eman Ajyad Hotel\" (Ajyad St, Central Area, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Mather Al Jiwar",
+   "aliases": [
+    "Mather Al Jiwar"
+   ],
+   "lat": 21.4131575,
+   "lng": 39.8232073,
+   "distance_m": 750,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Hotel Maather Al Jawar\" (6390 Ibrahim Al Khalil, Al Hajlah, Makkah 24231, Arab Saudi) + osm:w674428907",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x. Travel Umrah Bisa menyebut 500 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Nada Ajyad",
+   "aliases": [
+    "Nada Ajyad"
+   ],
+   "lat": 21.4141518,
+   "lng": 39.8276782,
+   "distance_m": 650,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Nada Ajyad\" (Al Hajlah, Makkah 24231, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Owais",
+   "aliases": [
+    "Owais"
+   ],
+   "lat": 21.4262357,
+   "lng": 39.8193284,
+   "distance_m": 150,
+   "gate": "King Abdullah Gate -100",
+   "gate_lat": 21.4253914,
+   "gate_lng": 39.824132,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Owais Hotel\" (Jabal Omar, Haratal Bab And Ash Shamiyyah, Kabah 24231, Arab)",
+   "note": "Travel Umrah Bisa menyebut 500 m."
+  },
+  {
+   "city": "makkah",
+   "name": "Prestige Al Mashaer",
+   "aliases": [
+    "PRESTIGE EX ELAF AL MASHAER",
+    "Prestige Al Mashaer Hotel"
+   ],
+   "lat": 21.4165413,
+   "lng": 39.8281658,
+   "distance_m": 400,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Prestige Ajyad Hotel\"",
+   "note": "Prestige Ajyad = ex Elaf Al Mashaer (data travel: \"PRESTIGE EX ELAF AL MASHAER\"). Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Prestige Ajyad",
+   "aliases": [
+    "Presetige Ajyad Hotel"
+   ],
+   "lat": 21.4165413,
+   "lng": 39.8281658,
+   "distance_m": 400,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Prestige Ajyad Hotel\" (Ajyad St, Ajyad, Makkah 21955, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Royal Majestic",
+   "aliases": [
+    "ROYAL MAJESTIC",
+    "Royal Majestic Hotel Makkah"
+   ],
+   "lat": 21.4159563,
+   "lng": 39.8280003,
+   "distance_m": 450,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Royal Majestic Hotel Makkah\" (CR7H+GR4, 4496 Ajyad St, Ajyad, 6603, Makkah 24231, Arab Sau) + osm:w678859338",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Rawdah Al Shariah",
+   "aliases": [
+    "Rawdah Al Shariah",
+    "Rawdah As Sharia"
+   ],
+   "lat": 21.4317661,
+   "lng": 39.847961,
+   "distance_m": 2250,
+   "gate": "Bab Al Marwah 25",
+   "gate_lat": 21.4253089,
+   "gate_lng": 39.8273881,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Rawdat Al Shareia\" (CRJX+P54, King Fahad Rd, Al Maabdah, Makkah 21955, Arab Saud)",
+   "note": "Google: Rawdat Al Shareia. Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Retaj Villa",
+   "aliases": [
+    "Retaj Villa"
+   ],
+   "lat": 21.4182824,
+   "lng": 39.8258059,
+   "distance_m": 200,
+   "gate": "King Abdul Aziz Gate 1",
+   "gate_lat": 21.4210447,
+   "gate_lng": 39.8258406,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Villa Retaj AlBayt\" (CR9G+887, Al Hajlah, Makkah 24231, Arab Saudi)",
+   "note": "Google: Villa Retaj AlBayt."
+  },
+  {
+   "city": "makkah",
+   "name": "Saja Makkah",
+   "aliases": [
+    "Saja Hotel"
+   ],
+   "lat": 21.4035813,
+   "lng": 39.8261687,
+   "distance_m": 1800,
+   "gate": "King Abdul Aziz Gate 1",
+   "gate_lat": 21.4210447,
+   "gate_lng": 39.8258406,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Saja by Warwick, Makkah\" (Misfalah, MCIE7996, 3909, Makkah 24233, Arab Saudi) + osm:n12406667872",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Saraya Al Taj",
+   "aliases": [
+    "Saraya Al Taj"
+   ],
+   "lat": 21.4134858,
+   "lng": 39.8230299,
+   "distance_m": 700,
+   "gate": "King Fahd Gate - 79",
+   "gate_lat": 21.421232,
+   "gate_lng": 39.8240461,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"فندق سرايا التاج | SARAYA AL TAJ HOTEL\" (Al Hejrah, Al Hajlah, Makkah 24211, Arab Saudi)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Waha Ajyad",
+   "aliases": [
+    "Waha Ajyad"
+   ],
+   "lat": 21.4139368,
+   "lng": 39.8280051,
+   "distance_m": 650,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Wahat Ajyad Hotel\" (7060 King Abdul Aziz - 38 Rd, 7060, Ajyad، 4855 طريق الملك ع)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "makkah",
+   "name": "Zowar Al Bait",
+   "aliases": [
+    "ZUWAR ALBAIT HOTEL",
+    "Zhowar Al-Bait",
+    "Zowar Al Bait"
+   ],
+   "lat": 21.4162396,
+   "lng": 39.8295238,
+   "distance_m": 500,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Zuwar Albait Hotel فندق زوار البيت\" (First Ring Rd, Ajyad, Makkah 24231, Arab Saudi) + osm:w187627206",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "madinah",
+   "name": "Al Ritz Al Madinah",
+   "aliases": [
+    "AL RITZ AL MADINAH",
+    "Al Ritz",
+    "Hotel Ritz Madinah"
+   ],
+   "lat": 24.4732826,
+   "lng": 39.6104477,
+   "distance_m": 300,
+   "gate": "Gate 331",
+   "gate_lat": 24.4709742,
+   "gate_lng": 39.6103761,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Ritz Al Madina Hotel\" (FJF5+5WH, Bada'ah, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Anwar Al Madinah Movenpick",
+   "aliases": [
+    "ANWAR ALMADINAH MOVENPICK",
+    "Anwar Al Madinah Movenpick"
+   ],
+   "lat": 24.4712972,
+   "lng": 39.6077118,
+   "distance_m": 100,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Anwar Al Madinah Mövenpick\" (Bada'ah, Madinah, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Golden Tulip Al Ansar",
+   "aliases": [
+    "Al Ansar Golden Tulip",
+    "Al Ansar Golden Tulip/ Durrat Al Eiman",
+    "Al Anshar Golden Tulip",
+    "Al-Anshar Golden Tulip",
+    "Anshar golden tulip",
+    "Golden Tulip Al Ansar"
+   ],
+   "lat": 24.4726538,
+   "lng": 39.6082927,
+   "distance_m": 200,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al Ansar Golden Tulip\" (فندق الانصار جولدن توليب, Bada'ah, FJF5+4FV، المنطقة المركزي)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Qasr Al Ansar Golden Tulip",
+   "aliases": [
+    "Qasr Al Ansar Golden Tulip",
+    "Qasr Golden Tulip"
+   ],
+   "lat": 24.47265,
+   "lng": 39.60829,
+   "distance_m": 200,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Al Ansar Golden Tulip\"",
+   "note": "Google hanya punya satu \"Al Ansar Golden Tulip\"."
+  },
+  {
+   "city": "madinah",
+   "name": "Dar Al Iman InterContinental",
+   "aliases": [
+    "Al Haram - Dar Al Iman",
+    "Dar Al Iman Intercontinental"
+   ],
+   "lat": 24.4714144,
+   "lng": 39.60872,
+   "distance_m": 100,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"InterContinental Dar al Iman Madinah by IHG\" (Unit No:10, 2657, Bada'ah, Unit No 10 2657, Madinah 42311, A)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Dar Al Eiman Al Haram",
+   "aliases": [
+    "Dar Al Eiman AL Haram"
+   ],
+   "lat": 24.47212,
+   "lng": 39.61327,
+   "distance_m": 150,
+   "gate": "Gate 339",
+   "gate_lat": 24.4709812,
+   "gate_lng": 39.6130951,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"HOTEL AL HARAM\" (= Al Haram Hotel by Al Rawda, ex Dar Aleiman Al Haram, kayak 2042492)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Al Mukhtara Al Gharbi",
+   "aliases": [
+    "Al Mukhtara Al Gharby",
+    "Al Mukhtaro Alghorbi",
+    "Mokhtara Al Gharbi",
+    "Mukhtara"
+   ],
+   "lat": 24.4682133,
+   "lng": 39.6035686,
+   "distance_m": 450,
+   "gate": "Gate 318",
+   "gate_lat": 24.4681979,
+   "gate_lng": 39.6078509,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Al-Mukhtara Al-Gharbi\" (شارع السلام، المركزية الغربية, Al Manakhah, Madinah 42311, A)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "madinah",
+   "name": "Mukhtara Golden",
+   "aliases": [
+    "Mukhtara Golden"
+   ],
+   "lat": 24.4657277,
+   "lng": 39.6051863,
+   "distance_m": 300,
+   "gate": "Gate 310,311",
+   "gate_lat": 24.4664354,
+   "gate_lng": 39.6078386,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"فندق المختارة الذهبي\" (Western Area, Al Haram, Madinah 42133, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Al-Sham Province",
+   "aliases": [
+    "Al-Sham Province",
+    "Sham Province"
+   ],
+   "lat": 24.47312,
+   "lng": 39.61021,
+   "distance_m": 350,
+   "gate": "Gate 331",
+   "gate_lat": 24.4709742,
+   "gate_lng": 39.6103761,
+   "verified": true,
+   "confidence": "high",
+   "source": "gmaps:\"Province Al Shams\" (7097 Abdurrahman bin Auf, Bada'ah)",
+   "note": "Dicek pemilik situs di Google Maps: jalan kaki 350 m / 5 menit. Hitungan peta: 250 m."
+  },
+  {
+   "city": "madinah",
+   "name": "Araek Taiba",
+   "aliases": [
+    "Araek Taiba",
+    "Araik Taiba",
+    "Araik taiba"
+   ],
+   "lat": 24.4697348,
+   "lng": 39.6046327,
+   "distance_m": 350,
+   "gate": "Gate 322",
+   "gate_lat": 24.4695271,
+   "gate_lng": 39.6078548,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Araek Taibah Hotel\" (6782 سعيد بن زيد القرشي, Al Manakhah, 2234, Madinah 42311, A)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Arkan Al Manar",
+   "aliases": [
+    "Arkan Al Manar"
+   ],
+   "lat": 24.4723797,
+   "lng": 39.6071248,
+   "distance_m": 200,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"فندق أركان المنار\" (Al Haram, FJC4+WRQ شارع أم سلمة بنت أبي أميمة, Madinah 42311)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Deyar Al Eiman",
+   "aliases": [
+    "DEYAR AL EIMAN"
+   ],
+   "lat": 24.4720525,
+   "lng": 39.6064573,
+   "distance_m": 200,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"فندق كينجزجيت ديار (1 Star)\" (DMAB6992، Al Ansari Street، Abu Dajana, Madinah 42311, Arab )",
+   "note": "Kini Kingsgate Diyar."
+  },
+  {
+   "city": "madinah",
+   "name": "Durrat Al Eiman",
+   "aliases": [
+    "DURRAT AL EIMAN"
+   ],
+   "lat": 24.472913,
+   "lng": 39.606478,
+   "distance_m": 300,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"فندق كينجزجيت درة (1 Star)\" (DMAF7007، Unit # 7079 Abu Dujanah Al Ansari، Dist, Madinah 4)",
+   "note": "Kini Kingsgate Durrat."
+  },
+  {
+   "city": "madinah",
+   "name": "Dar Al Naeem",
+   "aliases": [
+    "Dar Al Naeem",
+    "Dar Al Naem/Odest"
+   ],
+   "lat": 24.4735894,
+   "lng": 39.6127054,
+   "distance_m": 300,
+   "gate": "Gate 338",
+   "gate_lat": 24.4709806,
+   "gate_lng": 39.612417,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Dar Al-Naeem Hotel\" (شارع الستين امام الدفاع المدني طريق الملك فيصل المدينه المنو)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Emaar Elite Al Madinah",
+   "aliases": [
+    "Emaar Elite",
+    "Emaar Elite Al Madina Hotel"
+   ],
+   "lat": 24.4711553,
+   "lng": 39.6066329,
+   "distance_m": 150,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Hotel emaar elite madina\" (Hotel emaar elite, Bada'ah, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Golden Ergawan",
+   "aliases": [
+    "Golden Ergawan"
+   ],
+   "lat": 24.4708125,
+   "lng": 39.6039511,
+   "distance_m": 400,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Golden Ergwan Hotel\" (2169-2207 عمرو بن العاص، 6847, Al Manakhah, Madinah 42311, A)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "madinah",
+   "name": "Hayah Golden",
+   "aliases": [
+    "Hayah Golden",
+    "Hayyah Golden"
+   ],
+   "lat": 24.4691038,
+   "lng": 39.6046204,
+   "distance_m": 350,
+   "gate": "Gate 321",
+   "gate_lat": 24.4692224,
+   "gate_lng": 39.6078532,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"HAYAH GOLDEN HOTEL\" (Al-Manakhah, Madinah, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Hayyah Al Huda",
+   "aliases": [
+    "Hayyah Al Huda Madinah"
+   ],
+   "lat": 24.4684915,
+   "lng": 39.6037451,
+   "distance_m": 450,
+   "gate": "Gate 319",
+   "gate_lat": 24.4684804,
+   "gate_lng": 39.6078524,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Hayah Al Huda\" (6574 معاويه بن ابى سفيان, Al Manakhah, Madinah 42311, Arab S)",
+   "note": "Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "madinah",
+   "name": "Jawharat Al Rasheed",
+   "aliases": [
+    "Jauharat Al Rashed",
+    "Jawharat Al Rasheed",
+    "Jawharat Ar Rashed",
+    "Jawharat Ar Rasheed",
+    "Jawharat Ar-Rasheed",
+    "Jawharat Rasheed"
+   ],
+   "lat": 24.4660402,
+   "lng": 39.6049226,
+   "distance_m": 150,
+   "gate": "Gate 310,311",
+   "gate_lat": 24.4664354,
+   "gate_lng": 39.6078386,
+   "verified": true,
+   "confidence": "high",
+   "source": "gmaps:\"Jawharat Al Rasheed Hotel\" (Jawharat Al Rasheed Hotel، 2292 طريق السلام المدينة المنورة )",
+   "note": "Dicek langsung pemilik situs (pernah jalan kaki, 100-200 m). Hitungan peta: 300 m."
+  },
+  {
+   "city": "madinah",
+   "name": "Karam Silver",
+   "aliases": [
+    "Karam Silver"
+   ],
+   "lat": 24.4702796,
+   "lng": 39.6033502,
+   "distance_m": 500,
+   "gate": "Gate 324",
+   "gate_lat": 24.4702282,
+   "gate_lng": 39.6078585,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Silver Karam Hotel\" (6803 الزبير بن العوام, Al Manakhah, Madinah 42311, Arab Saud)",
+   "note": "Tepat di batas 500 m; koordinat Google \"Silver Karam Hotel\" konsisten dengan alamat barat Nabawi. Jarak garis lurus; jalan kaki biasanya 1,2-1,5x."
+  },
+  {
+   "city": "madinah",
+   "name": "Kayan Al Masi",
+   "aliases": [
+    "Kayan Al Masi",
+    "Kayan Almasi"
+   ],
+   "lat": 24.4669878,
+   "lng": 39.6049579,
+   "distance_m": 300,
+   "gate": "Gate 312,313",
+   "gate_lat": 24.4668593,
+   "gate_lng": 39.6078411,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Kayan Almasi hotel\" (Al Haram, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Kingsgate Durrat",
+   "aliases": [
+    "Kingsgate Durrat"
+   ],
+   "lat": 24.472913,
+   "lng": 39.606478,
+   "distance_m": 300,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"فندق كينجزجيت درة (1 Star)\" (DMAF7007، Unit # 7079 Abu Dujanah Al Ansari، Dist, Madinah 4)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Maden Hotel",
+   "aliases": [
+    "MADEN Hotel",
+    "Maden Al Rawda",
+    "Maden Al Rawdah"
+   ],
+   "lat": 24.4728205,
+   "lng": 39.6107152,
+   "distance_m": 250,
+   "gate": "Gate 331",
+   "gate_lat": 24.4709742,
+   "gate_lng": 39.6103761,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Maden Hotel | فندق مادن\" (King Fahd Rd, Bada'ah, Madinah 41441, Arab Saudi)",
+   "note": "Travel Jejak Imani menyebut 100 m."
+  },
+  {
+   "city": "madinah",
+   "name": "Maden Taiba",
+   "aliases": [
+    "Maden Taiba"
+   ],
+   "lat": 24.4724161,
+   "lng": 39.608571,
+   "distance_m": 200,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"MADEN TAIBA HOTEL\" (مصعب بن عمير, Bada'ah, Madinah 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Madinah Hilton",
+   "aliases": [
+    "Madinah Hilton"
+   ],
+   "lat": 24.4719021,
+   "lng": 39.6109279,
+   "distance_m": 150,
+   "gate": "Gate 331",
+   "gate_lat": 24.4709742,
+   "gate_lng": 39.6103761,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Madinah Hilton\" (King Fahd Rd, Bada'ah, Madinah 41419, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Maysan Al Harithia",
+   "aliases": [
+    "Maysan Al Harithia"
+   ],
+   "lat": 24.472375,
+   "lng": 39.6093843,
+   "distance_m": 200,
+   "gate": "Gate 329",
+   "gate_lat": 24.4709711,
+   "gate_lng": 39.6092044,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"The Venue Al Harithia\" (مصعب بن عمير, Bada'ah, Madinah 42311, Arab Saudi)",
+   "note": "Google: The Venue Al Harithia."
+  },
+  {
+   "city": "madinah",
+   "name": "Millennium Al Aqeeq",
+   "aliases": [
+    "Millennium Al Aqeeq",
+    "Millennium Al Aqeeq Hotel"
+   ],
+   "lat": 24.4720952,
+   "lng": 39.6093181,
+   "distance_m": 150,
+   "gate": "Gate 329",
+   "gate_lat": 24.4709711,
+   "gate_lng": 39.6092044,
+   "verified": false,
+   "confidence": "medium",
+   "source": "gmaps:\"Al Aqeeq Madinah Hotel\" (Musab bin Omeir Street, Bada'ah, Madinah 42313, Arab Saudi)",
+   "note": "Google: Al Aqeeq Madinah Hotel."
+  },
+  {
+   "city": "madinah",
+   "name": "Nozol Royal Inn",
+   "aliases": [
+    "Nozol Royal Inn"
+   ],
+   "lat": 24.472755,
+   "lng": 39.610553,
+   "distance_m": 200,
+   "gate": "Gate 331",
+   "gate_lat": 24.4709742,
+   "gate_lng": 39.6103761,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Nozol Royal Inn\" (أبي عبيدة بن الجراح، المنطقة المركزية الشمالية، بجوار سفراء )",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "ODST Al Madinah",
+   "aliases": [
+    "ODST ALMADINAH",
+    "ODST Al Madinah Hotel / Qasr Al Ansar Golden Tulip",
+    "ODST Madinah",
+    "Odest"
+   ],
+   "lat": 24.4736677,
+   "lng": 39.6081483,
+   "distance_m": 350,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Odst Al Madinah Hotel - فندق اودست المدينة\" (Budaah District, 7 Abdul Rahman Ibn Awaf Street, Madinah Ara)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Rose Holiday",
+   "aliases": [
+    "Rose Holiday"
+   ],
+   "lat": 24.4651835,
+   "lng": 39.6153969,
+   "distance_m": 300,
+   "gate": "Gate 363,364",
+   "gate_lat": 24.4664422,
+   "gate_lng": 39.6130457,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Rose Holiday\" (3309 Abu Ayyub Al-Ansari, 6230, Bani Khidrah, Madinah 42311,)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Rove Al Madinah",
+   "aliases": [
+    "Rove",
+    "Ruve Al Madinah",
+    "Ruve Hotel"
+   ],
+   "lat": 24.472725,
+   "lng": 39.6127616,
+   "distance_m": 200,
+   "gate": "Gate 339",
+   "gate_lat": 24.4709812,
+   "gate_lng": 39.6130951,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Ruve Hotel\" (Northern, Al Haram, Madinah 42310, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Taiba Front",
+   "aliases": [
+    "Taiba Front"
+   ],
+   "lat": 24.4713159,
+   "lng": 39.60946,
+   "distance_m": 50,
+   "gate": "Gate 329",
+   "gate_lat": 24.4709711,
+   "gate_lng": 39.6092044,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Taiba Front Hotel\" (Musab Bin Omair St, Bada'ah, Madinah 42313, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Triple One Hotel",
+   "aliases": [
+    "Triple One Hotel"
+   ],
+   "lat": 24.4722923,
+   "lng": 39.6062611,
+   "distance_m": 250,
+   "gate": "Gate 326,327",
+   "gate_lat": 24.4708615,
+   "gate_lng": 39.6078647,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Triple One Hotel فندق تريبل ون\" (ابو دجانه الانصارى Almadinah, almonawara 42311, Arab Saudi)",
+   "note": ""
+  },
+  {
+   "city": "madinah",
+   "name": "Zowar International",
+   "aliases": [
+    "Zowar Internasional"
+   ],
+   "lat": 24.4733476,
+   "lng": 39.6086315,
+   "distance_m": 300,
+   "gate": "Gate 328",
+   "gate_lat": 24.4709688,
+   "gate_lng": 39.608353,
+   "verified": false,
+   "confidence": "high",
+   "source": "gmaps:\"Zowar International Hotel\" (Abdul Rahman Ibn Ouf Street, Al Haram، بضاعة،, Madinah 42311)",
+   "note": ""
+  }
+ ]
+}

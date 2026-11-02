@@ -1,0 +1,97 @@
+package services
+
+import (
+	"encoding/json"
+	"log"
+	"os"
+	"strings"
+	"sync"
+)
+
+// Koordinat hotel dan jarak ke pelataran masjid (config/hotel_geo.json).
+// Makkah: garis lurus ke tepi pelataran Masjidil Haram. Madinah: ke gerbang pelataran
+// Nabawi terdekat. verified=true berarti diukur langsung oleh pemilik situs.
+
+type HotelGeo struct {
+	City             string   `json:"city"` // "makkah" | "madinah"
+	Name             string   `json:"name"`
+	Aliases          []string `json:"aliases"`
+	Lat              float64  `json:"lat"`
+	Lng              float64  `json:"lng"`
+	DistanceM        int      `json:"distance_m"`
+	Gate             string   `json:"gate"`
+	GateLat, GateLng float64
+	Verified         bool `json:"verified"`
+}
+
+func (h *HotelGeo) UnmarshalJSON(b []byte) error {
+	type alias HotelGeo
+	var raw struct {
+		alias
+		GateLat float64 `json:"gate_lat"`
+		GateLng float64 `json:"gate_lng"`
+	}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	*h = HotelGeo(raw.alias)
+	h.GateLat, h.GateLng = raw.GateLat, raw.GateLng
+	return nil
+}
+
+var (
+	geoOnce  sync.Once
+	geoIndex map[string]HotelGeo // city|nama-normal -> data
+)
+
+func geoKey(city, name string) string {
+	return city + "|" + strings.Join(strings.Fields(strings.ToLower(CleanHotelName(name))), " ")
+}
+
+func loadHotelGeo() {
+	geoIndex = map[string]HotelGeo{}
+	path := os.Getenv("HOTEL_GEO")
+	if path == "" {
+		path = "config/hotel_geo.json"
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return
+	}
+	var doc struct {
+		Hotels []HotelGeo `json:"hotels"`
+	}
+	if err := json.Unmarshal(data, &doc); err != nil {
+		log.Printf("[geo] %s tidak valid: %v", path, err)
+		return
+	}
+	for _, h := range doc.Hotels {
+		geoIndex[geoKey(h.City, h.Name)] = h
+		for _, a := range h.Aliases {
+			geoIndex[geoKey(h.City, a)] = h
+		}
+	}
+	log.Printf("[geo] %d hotel dengan koordinat", len(doc.Hotels))
+}
+
+// LookupHotelGeo mencari hotel berdasarkan nama persis seperti di data travel (atau variasinya).
+func LookupHotelGeo(city, name string) (HotelGeo, bool) {
+	geoOnce.Do(loadHotelGeo)
+	if strings.TrimSpace(name) == "" {
+		return HotelGeo{}, false
+	}
+	h, ok := geoIndex[geoKey(city, name)]
+	return h, ok
+}
+
+// geoDistanceLabel: "150m" (diukur langsung) atau "±650m" (hitungan peta); "" bila tidak dikenal.
+func geoDistanceLabel(city, hotel string) string {
+	h, ok := LookupHotelGeo(city, hotel)
+	if !ok || h.DistanceM <= 0 {
+		return ""
+	}
+	if h.Verified {
+		return formatMeters(h.DistanceM)
+	}
+	return "±" + formatMeters(h.DistanceM)
+}

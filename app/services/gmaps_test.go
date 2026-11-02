@@ -31,12 +31,12 @@ func TestGmapsMakkahURL(t *testing.T) {
 	if GmapsMakkahURL("") != "" || GmapsMakkahURL(" / Setaraf") != "" {
 		t.Fatal("hotel kosong harus menghasilkan URL kosong (bukan #)")
 	}
-	u, err := url.Parse(GmapsMakkahURL("Zowar Al Bait"))
+	u, err := url.Parse(GmapsMakkahURL("Hotel Contoh Tak Dikenal"))
 	if err != nil || u.Host != "www.google.com" {
 		t.Fatalf("bad url %v %v", u, err)
 	}
 	q := u.Query()
-	if q.Get("origin") != "Zowar Al Bait Hotel, Makkah" || !strings.Contains(q.Get("destination"), "King Abdul Aziz Gate") || q.Get("travelmode") != "walking" {
+	if q.Get("origin") != "Hotel Contoh Tak Dikenal, Makkah" || !strings.Contains(q.Get("destination"), "King Abdul Aziz Gate") || q.Get("travelmode") != "walking" {
 		t.Errorf("query salah: %v", q)
 	}
 	if d := MakkahGate("Marriot Jabal Omar"); !strings.Contains(d, "King Fahd Gate") {

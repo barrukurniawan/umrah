@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
@@ -108,14 +109,22 @@ func GmapsMakkahURL(hotel string) string {
 			return directionsURL(p.Origin, p.Dest)
 		}
 	}
+	if g, ok := LookupHotelGeo("makkah", hotel); ok && g.GateLat != 0 {
+		return directionsURL(latLng(g.Lat, g.Lng), latLng(g.GateLat, g.GateLng)) // ke gerbang terdekat
+	}
 	return directionsURL(hotelQuery(h, "Makkah"), MakkahGate(h))
 }
+
+func latLng(lat, lng float64) string { return fmt.Sprintf("%.7f,%.7f", lat, lng) }
 
 // GmapsMadinahURL: rute jalan kaki dari hotel ke pelataran Masjid Nabawi.
 func GmapsMadinahURL(hotel string) string {
 	h := CleanHotelName(hotel)
 	if h == "" {
 		return ""
+	}
+	if g, ok := LookupHotelGeo("madinah", hotel); ok && g.GateLat != 0 {
+		return directionsURL(latLng(g.Lat, g.Lng), latLng(g.GateLat, g.GateLng)) // ke gerbang pelataran terdekat
 	}
 	return directionsURL(hotelQuery(h, "Madinah"), nabawiCourtyard)
 }

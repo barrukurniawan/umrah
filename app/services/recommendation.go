@@ -118,8 +118,19 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 		// Jarak: klaim travel dulu; jika tidak ada, perkiraan dari hotel yang dikenal
 		// (diberi "±"); jika hotel tidak dikenal, kosong (chip tidak menampilkan jarak).
-		distMakkah := formatMeters(pkg.DistanceMakkah)
-		distMadinah := formatMeters(pkg.DistanceMadinah)
+		// Urutan sumber jarak: koordinat hotel (diukur pemilik situs / hitungan peta, sama untuk
+		// semua travel) -> klaim travel -> tabel perkiraan lama.
+		distMakkah, distMadinah := "", ""
+		if len(pkg.Details) > 0 {
+			distMakkah = geoDistanceLabel("makkah", pkg.Details[0].HotelMakkah)
+			distMadinah = geoDistanceLabel("madinah", pkg.Details[0].HotelMadinah)
+		}
+		if distMakkah == "" {
+			distMakkah = formatMeters(pkg.DistanceMakkah)
+		}
+		if distMadinah == "" {
+			distMadinah = formatMeters(pkg.DistanceMadinah)
+		}
 		if len(pkg.Details) > 0 {
 			if distMakkah == "" {
 				if d := getDistanceMakkah(pkg.Details[0].HotelMakkah); d != "" {

@@ -566,8 +566,6 @@
                 var el = box.querySelector('[data-cal-month]');
                 if (el) { month = el.dataset.calMonth; months[month] = months[month] || Promise.resolve(html); }
                 hijri(box);
-                var u = new URL(location.href); u.searchParams.set('mode', 'kalender'); if (month) u.searchParams.set('bulan', month);
-                history.replaceState(null, '', u.pathname + u.search);
                 if (!prefetched) {
                     prefetched = true;
                     setTimeout(function () {
@@ -589,9 +587,7 @@
                 document.getElementById('modeBtnBudget').setAttribute('aria-pressed', !cal);
                 ['modeBudget', 'travelFilter', 'budgetSubmit', 'results'].forEach(function (id) { document.getElementById(id).classList.toggle('hidden', cal); });
                 document.getElementById('modeCal').classList.toggle('hidden', !cal);
-                try { localStorage.setItem('uk_mode', cal ? 'kalender' : 'budget'); } catch (e) { }
                 if (cal) { load(); beacon('cal_open'); }
-                else { var u = new URL(location.href); u.searchParams.delete('mode'); u.searchParams.delete('bulan'); history.replaceState(null, '', u.pathname + u.search); }
             }
             // Isi pop-up diambil sekali per tanggal+filter, mulai saat jari menyentuh tanggal (prefetch).
             var cache = {};
@@ -637,10 +633,14 @@
                 }, { passive: true });
             });
             document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-            var q = new URLSearchParams(location.search), saved = null;
-            try { saved = localStorage.getItem('uk_mode'); } catch (e) { }
+            // Selalu terbuka di Budget; Kalender langsung hanya lewat link yang dibagikan (?mode=kalender).
+            var q = new URLSearchParams(location.search);
             month = q.get('bulan') || '';
-            if (q.get('mode') === 'kalender' || (!q.get('mode') && saved === 'kalender')) mode(true);
+            if (q.get('mode') === 'kalender') {
+                mode(true);
+                history.replaceState(null, '', location.pathname); // refresh berikutnya kembali ke Budget
+            }
+            try { localStorage.removeItem('uk_mode'); } catch (e) { }
             return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { cache = {}; months = {}; prefetched = false; if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
         })();
     </script>
