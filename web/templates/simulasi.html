@@ -28,30 +28,40 @@
 </head>
 
 <body class="bg-[#f3f6f2] text-gray-800 h-[100dvh] flex flex-col overflow-hidden" data-logged-in="{{if .User}}1{{end}}">
-    {{template "nav" .}}
+    <!-- Header hanya di desktop; di HP diganti chip "← Umrohku" supaya layar 3D lebih lega -->
+    <div class="hidden lg:block">{{template "nav" .}}</div>
 
-    <main class="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[1fr_400px]">
+    <main class="relative flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[1fr_400px]">
         <!-- Panggung 3D -->
-        <section id="simStage" class="relative flex-none h-[52%] lg:h-full overflow-hidden bg-[#e7ede6] select-none">
+        <section id="simStage" class="relative flex-none h-[58%] lg:h-full overflow-hidden bg-[#e7ede6] select-none">
             <canvas id="simCanvas" class="block w-full h-full touch-none"></canvas>
             <div id="simLabels" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
-            <!-- Status putaran -->
-            <div class="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-semibold text-gray-700">
-                <span id="simRound">Belum mulai</span>
-                <span id="simDots" class="flex gap-1"></span>
+            <!-- Kiri atas: kembali (HP), status putaran, mini-peta sa'i -->
+            <div class="absolute top-3 left-3 right-3 sm:right-[132px] z-30 flex flex-col items-start gap-2 pointer-events-none">
+                <div class="flex w-max items-center gap-1.5 sm:gap-2">
+                    <a href="/" class="lg:hidden pointer-events-auto inline-flex items-center gap-1 rounded-full bg-emerald-700 text-white shadow px-3 py-1.5 text-xs font-bold" aria-label="Kembali ke beranda Umrohku">
+                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Umrohku</a>
+                    <div class="pointer-events-auto flex items-center gap-2 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-semibold text-gray-700 whitespace-nowrap">
+                        <span id="simRound">Belum mulai</span>
+                        <!-- Titik progres hanya di layar lebar; di HP angka putaran sudah cukup -->
+                        <span id="simDots" class="hidden sm:flex gap-1"></span>
+                    </div>
+                </div>
+                <!-- Mini-peta sa'i (diisi oleh sai.js) -->
+                <div id="simMap" class="hidden pointer-events-auto w-[min(100%,320px)] min-w-[180px] rounded-full bg-white/90 shadow px-3 py-1.5"></div>
             </div>
 
             <!-- Tombol atas kanan -->
-            <div class="absolute top-3 right-3 flex flex-col items-end gap-2">
-                <div class="flex items-center gap-2">
+            <div class="absolute top-3 right-3 z-40 flex flex-row sm:flex-col items-center sm:items-end gap-1.5 sm:gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                 <button id="btnAudio" type="button" class="w-8 h-8 rounded-full bg-white/90 shadow text-emerald-700 hover:bg-white flex items-center justify-center" title="Murottal Surah Al-Mulk (Syekh Mishary Rashid Alafasy): klik untuk matikan/nyalakan" aria-label="Matikan murottal" aria-pressed="true">
                     <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" fill-opacity=".15"/><g id="audioOn"><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></g><g id="audioOff" style="display:none"><path d="m22 9-6 6M16 9l6 6"/></g></svg></button>
-                <button id="btnReset" type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
-                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Mulai Ulang</button>
+                <button id="btnReset" type="button" title="Mulai Ulang" aria-label="Mulai Ulang" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/90 shadow w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
+                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="hidden sm:inline">Mulai Ulang</span></button>
                 </div>
-                <button id="btnCam" type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
-                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/></svg><span id="camLabel">Lihat dari atas</span></button>
+                <button id="btnCam" type="button" title="Lihat dari atas" aria-label="Lihat dari atas" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/90 shadow w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
+                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/></svg><span id="camLabel" class="hidden sm:inline">Lihat dari atas</span></button>
             </div>
 
             <!-- Kontrol jalan -->
@@ -68,44 +78,47 @@
 
             <div id="simToast" class="hidden absolute top-14 left-1/2 -translate-x-1/2 max-w-[90%] rounded-xl bg-gray-900/90 text-white text-sm px-4 py-2.5 shadow-lg text-center"></div>
 
-            <!-- Pilih karakter -->
-            <div id="chooseOverlay" class="absolute inset-0 flex items-center justify-center bg-emerald-950/30 backdrop-blur-[2px] p-4">
-                <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-5">
-                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Simulasi Tawaf</p>
-                    <h1 class="text-xl font-bold text-gray-900 mt-0.5">Pilih karaktermu</h1>
-                    <p class="text-sm text-gray-500 mt-1">Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.</p>
-                    <div class="grid grid-cols-2 gap-3 mt-4">
-                        <button type="button" data-gender="m" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-3 transition">
-                            <span class="block w-10 h-10 rounded-full bg-[#f1c7a1] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-x-0 top-0 h-3 bg-gray-800"></span></span>
-                            <span class="block font-bold text-gray-900">Laki-laki</span>
-                            <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Ihram 2 lembar kain putih. Bahu kanan terbuka saat tawaf.</span>
-                        </button>
-                        <button type="button" data-gender="f" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-3 transition">
-                            <span class="block w-10 h-10 rounded-full bg-[#ece6dc] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-[9px] top-[11px] rounded-full bg-[#f1c7a1]"></span></span>
-                            <span class="block font-bold text-gray-900">Perempuan</span>
-                            <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Pakaian menutup aurat. Wajah dan telapak tangan terbuka.</span>
-                        </button>
-                    </div>
-                    <p class="text-[11px] text-gray-400 mt-4">Simulasi ini alat bantu belajar. Untuk detail fikih, ikuti arahan pembimbing manasik travelmu.</p>
-                </div>
-            </div>
         </section>
 
         <!-- Pemandu -->
         <aside id="guideScroll" class="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-white lg:border-l border-gray-200">
-            <div class="px-4 pt-3 pb-6 lg:p-5">
+            <div class="px-3 pt-2.5 pb-6 lg:p-5">
                 <div class="hidden lg:flex items-center justify-between">
-                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Pemandu Tawaf</p>
+                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Pemandu {{if eq .Part "sai"}}Sa'i{{else}}Tawaf{{end}}</p>
                     <p id="panelRound" class="text-xs font-semibold text-gray-400"></p>
                 </div>
                 <div id="guide" class="lg:mt-3"></div>
                 <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">Audio: Murottal Surah Al-Mulk oleh Syekh Mishary Rashid Alafasy, dari QuranicAudio.com. Kontrol: klik <b>Jalan</b> untuk jalan atau berhenti (bisa juga ditahan, lepas untuk berhenti), atau tombol panah di keyboard.</p>
             </div>
         </aside>
+        <!-- Pilih karakter: di HP menutupi area 3D + panel supaya kartunya muat utuh -->
+        <div id="chooseOverlay" class="absolute inset-0 lg:right-[400px] z-30 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
+            <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-4 sm:p-5 my-auto">
+                <div class="inline-flex rounded-full bg-gray-100 p-1 text-sm font-semibold">
+                    <a href="/simulasi?bagian=tawaf" class="rounded-full px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Tawaf</a>
+                    <a href="/simulasi?bagian=sai" class="rounded-full px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600 hover:text-emerald-700{{end}}">Sa'i</a>
+                </div>
+                <h1 class="text-lg sm:text-xl font-bold text-gray-900 mt-3">Pilih karaktermu</h1>
+                <p class="text-sm text-gray-500 mt-1">{{if eq .Part "sai"}}Simulasi sa'i 7 lintasan antara bukit Shafa dan Marwah.{{else}}Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.{{end}}</p>
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mt-3 sm:mt-4">
+                    <button type="button" data-gender="m" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                        <span class="block w-10 h-10 rounded-full bg-[#f1c7a1] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-x-0 top-0 h-3 bg-gray-800"></span></span>
+                        <span class="block font-bold text-gray-900">Laki-laki</span>
+                        <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Ihram 2 lembar kain putih. Bahu kanan terbuka saat tawaf.</span>
+                    </button>
+                    <button type="button" data-gender="f" class="pick text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                        <span class="block w-10 h-10 rounded-full bg-[#ece6dc] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-[9px] top-[11px] rounded-full bg-[#f1c7a1]"></span></span>
+                        <span class="block font-bold text-gray-900">Perempuan</span>
+                        <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Pakaian menutup aurat. Wajah dan telapak tangan terbuka.</span>
+                    </button>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-3 sm:mt-4">Simulasi ini alat bantu belajar. Untuk detail fikih, ikuti arahan pembimbing manasik travelmu.</p>
+            </div>
+        </div>
     </main>
 
     <audio id="simAudio" preload="none" loop src="https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/67.mp3"></audio>
-    <script type="module" src="/static/sim/tawaf.js?v=10"></script>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=16"></script>
 </body>
 
 </html>

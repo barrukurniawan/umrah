@@ -1,45 +1,15 @@
 // Simulasi tawaf Umrohku. Semua bentuk dibuat dari kode (tanpa model 3D), supaya ringan di HP.
 // Arah: x = timur, -z = utara. Sudut θ diukur berlawanan jarum jam dari timur (dilihat dari atas),
 // jadi tawaf = θ bertambah, dan Ka'bah selalu di sebelah kiri.
-import * as THREE from 'three';
+import { createSim, THREE, $, TAU, mod } from './common.js';
 
-const $ = (id) => document.getElementById(id);
-const TAU = Math.PI * 2;
-const mod = (a, n) => ((a % n) + n) % n;
 const angOf = (x, z) => Math.atan2(-z, x);
 const atAngle = (a, r, y = 0) => new THREE.Vector3(Math.cos(a) * r, y, -Math.sin(a) * r);
 
-// ---------- Renderer ----------
-const stage = $('simStage'), canvas = $('simCanvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-const scene = new THREE.Scene();
-scene.background = new THREE.Color('#e7ede6');
-scene.fog = new THREE.Fog('#e7ede6', 130, 260);
-const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 420);
-scene.add(new THREE.HemisphereLight('#ffffff', '#cbbf9f', 1.25));
-const sun = new THREE.DirectionalLight('#fff4df', 1.5);
-sun.position.set(-40, 80, 30);
-scene.add(sun);
+const sim = createSim({ part: 'tawaf' });
+const { scene, camera, S, input, cam, M, mat, canvasTex, instanced, hooks } = sim;
 
 const R = 19; // jari-jari lintasan tawaf karakter
-const mat = (color, o = {}) => new THREE.MeshLambertMaterial({ color, ...o });
-const M = {
-  marble: mat('#f1f0ec'), stone: mat('#e6dcc4'), stoneDark: mat('#cdbf9f'), pillar: mat('#efe6d2'),
-  arch: mat('#b98d5a'), dome: mat('#e9e2d3'), dark: mat('#4d453b'), black: mat('#121212'),
-  gold: new THREE.MeshStandardMaterial({ color: '#d4a93a', metalness: 0.6, roughness: 0.35 }),
-  silver: new THREE.MeshStandardMaterial({ color: '#d9d9d9', metalness: 0.8, roughness: 0.3 }),
-  tile: mat('#5d7fae'), white: mat('#fbfbf6'), skin: mat('#f1c7a1'), hair: mat('#2b2420'),
-};
-
-function canvasTex(w, h, draw) {
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  draw(c.getContext('2d'), w, h);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  return t;
-}
-
 // ---------- Lantai mataf (lingkaran-lingkaran seperti foto) ----------
 const floorTex = canvasTex(1024, 1024, (g, s) => {
   g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, s, s);
@@ -74,11 +44,6 @@ function octPoints(ap, spacing) {
     }
   }
   return out;
-}
-function instanced(geo, material, items, place) {
-  const im = new THREE.InstancedMesh(geo, material, items.length), o = new THREE.Object3D();
-  items.forEach((it, i) => { o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1); place(o, it); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
-  scene.add(im); return im;
 }
 // Serambi Utsmani: tiang, lengkung, atap, kubah
 const COL_AP = 49, COL_H = 4.6, SP = 3.4;
@@ -211,167 +176,39 @@ function updateCrowd(dt) {
   crowdBody.instanceMatrix.needsUpdate = true; crowdHead.instanceMatrix.needsUpdate = true;
 }
 
-// ---------- Karakter chibi ----------
-function limb(r, len, material) {
-  const pivot = new THREE.Group(); const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 8), material); m.position.y = -len / 2 - r * 0.4; pivot.add(m); return { pivot, m };
-}
-function makeChibi(gender) {
-  const g = new THREE.Group(), parts = {};
-  const cloth = gender === 'm' ? M.white : mat('#f4efe6'), veil = mat('#e6ddcf');
-  if (gender === 'm') {
-    const legL = limb(0.11, 0.38, M.skin), legR = limb(0.11, 0.38, M.skin);
-    legL.pivot.position.set(-0.15, 0.62, 0); legR.pivot.position.set(0.15, 0.62, 0); g.add(legL.pivot, legR.pivot);
-    parts.legL = legL.pivot; parts.legR = legR.pivot;
-    const izar = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.62, 14), cloth); izar.position.y = 0.72; g.add(izar);
-    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.35, 0.55, 14), cloth); torso.position.y = 1.25; g.add(torso);
-    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), M.skin); shoulder.position.set(-0.27, 1.43, 0.02); g.add(shoulder);
-    parts.shoulder = shoulder;
-  } else {
-    const dress = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.52, 1.35, 16), cloth); dress.position.y = 0.72; g.add(dress);
-    const cape = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.5, 0.55, 16), veil); cape.position.y = 1.42; g.add(cape);
-  }
-  for (const side of [-1, 1]) {
-    // Karakter menghadap +z, jadi sisi kanannya ada di -x.
-    const bare = gender === 'm' && side === -1;
-    const arm = limb(0.085, 0.36, bare ? M.skin : (gender === 'm' ? M.white : mat('#f4efe6')));
-    arm.pivot.position.set(side * 0.38, 1.45, 0); g.add(arm.pivot);
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), M.skin); hand.position.y = -0.62; arm.pivot.add(hand);
-    parts[side < 0 ? 'armR' : 'armL'] = arm.pivot;
-  }
-  for (const side of [-1, 1]) {
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.08, 0.3), mat('#7a5a3c')); foot.position.set(side * 0.15, 0.04, 0.05); g.add(foot);
-  }
-  const head = new THREE.Group(); head.position.y = 2.0; g.add(head); parts.head = head;
-  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 16), M.skin));
-  if (gender === 'm') {
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.455, 20, 12, 0, TAU, 0, Math.PI * 0.42), M.hair); hair.rotation.x = -0.35; head.add(hair);
-  } else {
-    const hijab = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 16), veil); hijab.position.z = -0.1; hijab.scale.set(1, 1.04, 1); head.add(hijab);
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.07, 8, 24), veil); rim.position.z = 0.17; head.add(rim);
-  }
-  for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), M.black); eye.position.set(side * 0.15, 0.02, 0.4); eye.scale.set(1, 1.25, 0.6); head.add(eye);
-    const blush = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), mat('#f59e9e')); blush.position.set(side * 0.24, -0.1, 0.36); blush.scale.set(1.3, 0.6, 0.4); head.add(blush);
-  }
-  const sh = new THREE.Mesh(new THREE.CircleGeometry(0.75, 20), new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (c, s) => { const gr = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); gr.addColorStop(0, 'rgba(0,0,0,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, s, s); }), transparent: true, depthWrite: false }));
-  sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; g.add(sh);
-  g.scale.setScalar(2);
-  return { g, parts };
-}
-
 // ---------- Kondisi simulasi ----------
 const START = A_HA - 0.32;  // berdiri sedikit sebelum garis start
 const BASE_SPEED = 6.2;     // m/detik (dipercepat supaya 1 putaran ±20 detik)
 const relOf = (a) => mod(a - A_HA, TAU);
 const REL_DOOR = 0.45, REL_HIJR = relOf(angOf(HIJR_MID.x, HIJR_MID.z)) - 0.25, REL_YAMANI = relOf(A_YM) - 0.06;
 
-let chibi = null;
-const S = { phase: 'choose', gender: 'm', theta: START, travel: 0, done: 0, fired: {}, block: false, walkT: 0, moving: false, gesture: 0, toFinal: null };
-const input = { fwd: false, back: false, auto: false };
-const cam = { top: false, zoom: 1, pos: new THREE.Vector3(70, 50, 70), tgt: new THREE.Vector3(), orbit: 0.6 };
+Object.assign(S, { theta: START, travel: 0, done: 0, fired: {}, toFinal: null });
 
-// ---------- Label & gelembung ----------
-const labelsEl = $('simLabels');
-function addLabel(text, pos, cls = '') {
-  const el = document.createElement('div'); el.className = 'sim-label ' + cls; el.innerHTML = `<span>${text}</span>`; labelsEl.appendChild(el);
-  return { el, pos };
-}
-const labels = [
-  addLabel('Hajar Aswad', C_HA.clone().setY(4.2), 'hl'),
-  addLabel('Rukun Yamani', C_YM.clone().setY(4.2)),
-  addLabel('Hijr Ismail', HIJR_MID.clone().setY(2.6)),
-  addLabel('Maqam Ibrahim', MQ.clone().setY(4.6)),
-  addLabel('Lampu hijau · Start', LAMP.clone().setY(6.2), 'hl'),
-];
-const bubble = document.createElement('div'); bubble.className = 'sim-bubble'; bubble.style.opacity = 0;
-bubble.innerHTML = '<div class="rounded-xl bg-white shadow-lg px-3 py-1.5 text-center"><div class="ar text-lg leading-tight text-emerald-800" id="bubAr"></div><div class="text-[11px] italic text-gray-600" id="bubLat"></div></div>';
-labelsEl.appendChild(bubble);
-let bubbleUntil = 0;
-function say(ar, lat, secs = 2.6) { $('bubAr').textContent = ar; $('bubLat').textContent = lat; bubble.style.opacity = 1; bubbleUntil = performance.now() + secs * 1000; }
-const _v = new THREE.Vector3();
-const ray = new THREE.Raycaster(), _d = new THREE.Vector3();
-function hiddenBehindKaaba(world) {
-  _d.copy(world).sub(camera.position); const dist = _d.length();
-  ray.set(camera.position, _d.normalize()); ray.far = dist - 1.2;
-  return ray.intersectObject(body, false).length > 0;
-}
-function placeEl(el, world, w, h, occl = false) {
-  _v.copy(world).project(camera);
-  const vis = _v.z < 1 && Math.abs(_v.x) < 1.2 && Math.abs(_v.y) < 1.2 && !(occl && hiddenBehindKaaba(world));
-  el.style.display = vis ? '' : 'none';
-  if (vis) el.style.transform = `translate(${(_v.x * 0.5 + 0.5) * w}px, ${(-_v.y * 0.5 + 0.5) * h}px) translate(-50%, -100%)`;
-}
+// ---------- Label ----------
+hooks.occluder = body;
+[
+  ['Hajar Aswad', C_HA.clone().setY(4.2), 'hl'], ['Rukun Yamani', C_YM.clone().setY(4.2)], ['Hijr Ismail', HIJR_MID.clone().setY(2.6)],
+  ['Maqam Ibrahim', MQ.clone().setY(4.6)], ['Lampu hijau · Start', LAMP.clone().setY(6.2), 'hl'],
+].forEach(([t, p, c]) => sim.addLabel(t, p, c));
+const { say, info, pauseWith, toast, setCounter: setRound } = sim;
+const chibi = () => sim.chibi;
 
 // ---------- UI pemandu ----------
-const guide = $('guide');
 const TAKBIR = { ar: 'بِسْمِ اللهِ، اللهُ أَكْبَرُ', lat: 'Bismillāhi Allāhu akbar', arti: 'Dengan nama Allah, Allah Maha Besar.' };
 const SAPU_JAGAD = { ar: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', lat: "Rabbanā ātinā fid-dunyā ḥasanah, wa fil-ākhirati ḥasanah, wa qinā 'adzāban-nār.", arti: 'Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka. (QS. Al-Baqarah: 201)' };
 const MAQAM_AYAT = { ar: 'وَاتَّخِذُوا مِنْ مَقَامِ إِبْرَاهِيمَ مُصَلًّى', lat: 'Wattakhiżū mim maqāmi Ibrāhīma muṣallā.', arti: 'Dan jadikanlah sebagian Maqam Ibrahim tempat shalat. (QS. Al-Baqarah: 125)' };
 
-function cardHTML(c) {
-  let h = `<div class="${c.pause ? 'card-in border-amber-200 bg-amber-50' : 'fade-in border-gray-200 bg-white'} rounded-2xl border p-3.5 lg:p-4">`;
-  if (c.pause) h += `<p class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-1 lg:mb-2"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Kita berhenti di sini</p>`;
-  h += `<h2 class="font-bold text-gray-900 text-base lg:text-lg leading-snug">${c.title}</h2>`;
-  if (c.body) h += `<div class="mt-1.5 lg:mt-2 text-sm text-gray-600 leading-snug lg:leading-relaxed space-y-1.5 lg:space-y-2">${c.body}</div>`;
-  if (c.dua) h += `<div class="mt-2 lg:mt-3 rounded-xl bg-emerald-50 px-3.5 lg:px-4 py-2 lg:py-3"><p class="ar text-xl lg:text-2xl leading-relaxed lg:leading-loose text-emerald-900 text-right" dir="rtl">${c.dua.ar}</p><p class="text-sm italic text-emerald-800 lg:mt-1">${c.dua.lat}</p><p class="text-xs text-gray-500 mt-0.5 lg:mt-1">${c.dua.arti}</p></div>`;
-  if (c.after) h += `<div class="mt-3 text-sm text-gray-600 leading-relaxed space-y-2">${c.after}</div>`;
-  if (c.hint) h += `<p class="mt-3 text-xs text-emerald-700 font-medium">${c.hint}</p>`;
-  // Tombol aksi menempel di bawah area panel, jadi selalu terlihat walau teksnya panjang.
-  if (c.actions) h += `<div class="sticky bottom-0 -mx-3.5 -mb-3.5 lg:-mx-4 lg:-mb-4 mt-2 lg:mt-3 px-3.5 lg:px-4 pt-2 pb-3.5 lg:pb-4 rounded-b-2xl bg-amber-50 flex flex-wrap gap-2">${c.actions}</div>`;
-  return h + '</div>';
-}
-let steps = [], stepDone = null;
-function pauseWith(list, onDone) {
-  S.block = true; steps = list.slice(); stepDone = onDone; input.fwd = false; tapWalk = false; renderStep(); duck(true);
-}
-function renderStep() {
-  const c = steps[0], last = steps.length === 1; lastInfo = '';
-  guide.innerHTML = cardHTML({ ...c, pause: true, actions: (c.actions || '') + `<button id="btnNext" type="button" class="rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-2 lg:py-2.5 text-sm">${c.next || (last ? 'Lanjut jalan →' : 'Lanjut →')}</button>` });
-  if (c.onShow) c.onShow();
-  $('guideScroll').scrollTop = 0;
-  $('btnNext').onclick = () => {
-    steps.shift();
-    if (steps.length) { renderStep(); return; }
-    S.block = false; duck(false); const f = stepDone; stepDone = null; f && f();
-  };
-}
-let lastInfo = '';
-function info(c) { const h = cardHTML(c); if (h === lastInfo) return; lastInfo = h; guide.innerHTML = h; $('guideScroll').scrollTop = 0; }
-
-function setRound() {
+hooks.counter = () => {
   const r = S.phase === 'tawaf' ? Math.min(7, S.done + 1) : S.phase === 'finish' ? 7 : 0;
-  $('simRound').textContent = S.phase === 'tawaf' ? `Putaran ${r}/7` : S.phase === 'finish' ? 'Selesai 7/7' : 'Belum mulai';
-  $('panelRound').textContent = S.phase === 'tawaf' ? `Putaran ${r} dari 7` : '';
-  $('simDots').innerHTML = Array.from({ length: 7 }, (_, i) => `<i class="block w-2 h-2 rounded-full ${i < S.done ? 'bg-emerald-600' : (S.phase === 'tawaf' && i === S.done ? 'bg-emerald-300 animate-pulse' : 'bg-gray-200')}"></i>`).join('');
-}
-
-let toastT = 0;
-function toast(msg) { const t = $('simToast'); t.textContent = msg; t.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('hidden'), 2600); }
-
-// ---------- Audio murottal (pelan) ----------
-const audio = $('simAudio'); let audioOn = true;
-const VOL = 0.3, VOL_DUCK = 0.12;
-audio.volume = VOL;
-function duck(on) { audio.volume = on ? VOL_DUCK : VOL; }
-function playAudio() { if (audioOn) audio.play().catch(() => {}); }
-$('btnAudio').onclick = () => {
-  audioOn = !audioOn;
-  $('audioOn').style.display = audioOn ? '' : 'none'; $('audioOff').style.display = audioOn ? 'none' : '';
-  const b = $('btnAudio'); b.setAttribute('aria-pressed', audioOn); b.setAttribute('aria-label', audioOn ? 'Matikan murottal' : 'Nyalakan murottal');
-  b.classList.toggle('text-emerald-700', audioOn); b.classList.toggle('text-gray-400', !audioOn);
-  if (!audioOn) audio.pause(); else if (S.phase !== 'choose') playAudio();
+  return { text: S.phase === 'tawaf' ? `Putaran ${r}/7` : S.phase === 'finish' ? 'Selesai 7/7' : 'Belum mulai', panel: S.phase === 'tawaf' ? `Putaran ${r} dari 7` : '', done: S.done, active: S.phase === 'tawaf' };
 };
 
 // ---------- Alur tawaf ----------
-const isM = () => S.gender === 'm';
-function begin(gender) {
-  S.gender = gender;
-  if (chibi) scene.remove(chibi.g);
-  chibi = makeChibi(gender); scene.add(chibi.g);
-  Object.assign(S, { phase: 'intro', theta: START, travel: 0, done: 0, fired: {}, gesture: 0, toFinal: null });
-  $('chooseOverlay').classList.add('hidden'); $('simControls').classList.remove('hidden');
-  cam.top = false; $('camLabel').textContent = 'Lihat dari atas';
-  setRound(); playAudio();
+const isM = sim.isM;
+hooks.canWalk = () => S.phase === 'approach' || S.phase === 'tawaf';
+hooks.onBack = () => toast("Tawaf berlawanan arah jarum jam. Ka'bah selalu di sebelah kirimu.");
+hooks.begin = () => {
+  Object.assign(S, { phase: 'intro', theta: START, travel: 0, done: 0, fired: {}, gesture: 0, gestureKind: 'right', toFinal: null });
   pauseWith([{
     title: 'Sebelum mulai',
     body: `<p>Pastikan kamu sudah <b>berwudhu</b>, karena tawaf harus dalam keadaan suci. Niat cukup di dalam hati.</p>
@@ -380,17 +217,17 @@ function begin(gender) {
         : `<p>Perempuan memakai pakaian biasa yang menutup aurat. Saat ihram, <b>wajah dan telapak tangan tidak ditutup</b> (tanpa cadar dan sarung tangan).</p>`),
     hint: 'Setelah ini, klik tombol Jalan untuk menuju lampu hijau (garis start).',
   }], () => { S.phase = 'approach'; info({ title: 'Menuju garis start', body: '<p>Klik tombol <b>Jalan</b> (atau tahan tombol panah ⬆/➡ di keyboard) untuk berjalan ke garis sejajar Hajar Aswad, ditandai <b>lampu hijau</b> di dinding masjid.</p>' }); });
-}
+};
 
 function startLine() {
   S.theta = A_HA; S.phase = 'line';
-  S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2);
+  S.gestureKind = 'right'; S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2);
   pauseWith([{
     title: 'Ini garis start',
     body: `<p>Lihat <b>lampu hijau</b> di dinding kanan masjid. Hadapkan badan ke <b>Hajar Aswad</b>.</p>
            <p>Usap dan cium Hajar Aswad. Jika ramai (biasanya begitu), cukup <b>isyaratkan tangan kanan</b> ke arahnya sambil mengucapkan:</p>`,
     dua: TAKBIR,
-    actions: `<button type="button" id="btnRepeat" class="rounded-xl border border-gray-200 px-4 py-2 lg:py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi isyarat</button>`,
+    actions: `<button type="button" id="btnRepeat" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi isyarat</button>`,
     onShow: () => { const b = $('btnRepeat'); if (b) b.onclick = () => { S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2); }; },
     next: 'Lanjut →',
   }, {
@@ -448,86 +285,22 @@ function finish() {
   }, {
     title: 'Minum Zamzam, lalu menuju Shafa',
     body: '<p>Setelah shalat, minum air <b>Zamzam</b> dan berdoa. Berikutnya adalah <b>sa\'i</b>: 7 kali perjalanan antara bukit Shafa dan Marwah.</p>',
-    actions: `<button type="button" disabled class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-400 cursor-not-allowed">Lanjut ke Sa'i (segera hadir)</button>`,
-    next: 'Mulai Ulang',
-  }], () => reset());
+    actions: `<button type="button" id="btnRestart" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Mulai Ulang</button>`,
+    onShow: () => { $('btnRestart').onclick = () => sim.reset(); },
+    next: "Lanjut ke Sa'i →",
+  }], () => { location.href = '/simulasi?bagian=sai&g=' + S.gender; });
 }
 
-function reset() {
-  S.phase = 'choose'; S.block = false; steps = []; input.fwd = input.back = false; tapWalk = false;
-  if (chibi) { scene.remove(chibi.g); chibi = null; }
-  audio.pause(); duck(false);
-  $('chooseOverlay').classList.remove('hidden'); $('simControls').classList.add('hidden');
+hooks.reset = () => {
+  S.phase = 'choose';
   info({ title: 'Selamat datang', body: '<p>Pilih karakter untuk memulai simulasi tawaf.</p>' });
-  setRound();
-}
-$('btnReset').onclick = reset;
-document.querySelectorAll('.pick').forEach((b) => (b.onclick = () => begin(b.dataset.gender)));
-$('btnCam').onclick = () => { cam.top = !cam.top; $('camLabel').textContent = cam.top ? 'Ikuti karakter' : 'Lihat dari atas'; };
-$('chkAuto').onchange = (e) => (input.auto = e.target.checked);
-
-// Saat simulasi berhenti dan pengguna menekan Jalan: arahkan ke kotak penjelasan & tombol Lanjut.
-function showPending() {
-  const b = $('btnNext'); if (!b) return;
-  if (window.innerWidth < 1024) toast('Baca penjelasan di bawah, lalu tekan Lanjut.');
-  else toast('Baca penjelasan di panel kanan, lalu tekan Lanjut.');
-  b.classList.remove('nudge'); void b.offsetWidth; b.classList.add('nudge');
-}
-
-// ---------- Input ----------
-// Tombol Jalan: sekali ketuk = jalan terus (ketuk lagi untuk berhenti); ditahan = jalan selama ditahan.
-const fwdBtn = $('btnFwd');
-let tapWalk = false, downAt = 0, wasTapWalk = false;
-fwdBtn.addEventListener('pointerdown', (e) => {
-  e.preventDefault();
-  if (S.block) { showPending(); return; }
-  wasTapWalk = tapWalk; tapWalk = false; downAt = performance.now();
-  input.fwd = !wasTapWalk; fwdBtn.classList.add('on');
-});
-const fwdUp = () => {
-  if (!downAt) return;
-  const tap = performance.now() - downAt < 280; downAt = 0; fwdBtn.classList.remove('on');
-  if (tap && !wasTapWalk) { tapWalk = true; input.fwd = true; } else { input.fwd = false; }
 };
-['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => fwdBtn.addEventListener(ev, fwdUp));
-fwdBtn.addEventListener('contextmenu', (e) => e.preventDefault());
-let fwdState = '';
-function syncFwdBtn() {
-  const canWalk = !!chibi && !S.block && (S.phase === 'approach' || S.phase === 'tawaf');
-  const walking = canWalk && (input.fwd || input.auto);
-  const holding = walking && downAt && input.fwd; // sedang ditahan
-  const st = holding ? 'hold' : walking ? 'walk' : canWalk ? 'idle' : 'off';
-  if (st === fwdState) return; fwdState = st;
-  fwdBtn.classList.toggle('wait-tap', st === 'idle');
-  fwdBtn.classList.toggle('opacity-60', st === 'off');
-  $('fwdIcon').innerHTML = walking ? '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>' : '<path d="M9 5l8 7-8 7z"/>';
-  const [top, main] = st === 'hold' ? ['Lepas untuk', 'Berhenti'] : st === 'walk' ? ['Klik untuk', 'Berhenti'] : ['Klik untuk', 'Jalan'];
-  $('fwdLabel').innerHTML = `<span class="text-[10px] font-medium text-emerald-100 mb-0.5">${top}</span><span class="text-base">${main}</span>`;
-}
-const FWD = ['ArrowUp', 'ArrowRight', 'KeyW', 'KeyD'], BACK = ['ArrowDown', 'ArrowLeft', 'KeyS', 'KeyA'];
-addEventListener('keydown', (e) => { if (FWD.includes(e.code)) { if (!input.fwd && S.block) showPending(); input.fwd = true; e.preventDefault(); } if (BACK.includes(e.code)) { input.back = true; e.preventDefault(); } });
-addEventListener('keyup', (e) => { if (FWD.includes(e.code)) input.fwd = false; if (BACK.includes(e.code)) input.back = false; });
-addEventListener('blur', () => { input.fwd = input.back = false; });
-canvas.addEventListener('wheel', (e) => { e.preventDefault(); cam.zoom = THREE.MathUtils.clamp(cam.zoom * (1 + e.deltaY * 0.001), 0.55, 1.9); }, { passive: false });
-let pinch = 0;
-canvas.addEventListener('touchmove', (e) => {
-  if (e.touches.length !== 2) return;
-  const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-  if (pinch) cam.zoom = THREE.MathUtils.clamp(cam.zoom * (pinch / d), 0.55, 1.9);
-  pinch = d; e.preventDefault();
-}, { passive: false });
-canvas.addEventListener('touchend', () => (pinch = 0));
 
 // ---------- Loop ----------
-let backWarned = 0;
-function update(dt) {
-  updateCrowd(dt);
-  glow.material.opacity = 0.55 + Math.sin(performance.now() / 380) * 0.35;
-  if (!chibi) return;
-  const p = chibi.parts;
+hooks.update = (dt) => {
+  if (!chibi()) return;
   let speed = 0;
-  const canWalk = !S.block && (S.phase === 'approach' || S.phase === 'tawaf');
-  if (canWalk && (input.fwd || input.auto)) {
+  if (sim.walking()) {
     speed = BASE_SPEED * (isM() && S.phase === 'tawaf' && S.done < 3 ? 1.3 : 1);
     const dTh = speed * dt / R, prevTheta = S.theta;
     S.theta += dTh;
@@ -536,71 +309,33 @@ function update(dt) {
       const prevRel = mod(S.travel, TAU); S.travel += dTh; const rel = mod(S.travel, TAU);
       if (Math.floor(S.travel / TAU) > S.done) onLine(); else onRel(prevRel, rel, S.done + 1);
     }
-  } else if (canWalk && input.back && performance.now() - backWarned > 2500) {
-    backWarned = performance.now(); toast("Tawaf berlawanan arah jarum jam. Ka'bah selalu di sebelah kirimu.");
   }
   // posisi & arah hadap
   let pos = atAngle(S.theta, R), face = Math.atan2(-Math.sin(S.theta), -Math.cos(S.theta)); // tangen CCW
   if (S.toFinal) {
-    const cur = chibi.g.position, d = S.toFinal.clone().sub(cur); d.y = 0;
+    const cur = chibi().g.position, d = S.toFinal.clone().sub(cur); d.y = 0;
     if (d.length() > 0.15) { const step = Math.min(d.length(), 5 * dt); cur.add(d.normalize().multiplyScalar(step)); speed = 5; face = Math.atan2(d.x, d.z); pos = cur.clone(); }
     else { pos = S.toFinal.clone(); face = Math.atan2(-pos.x, -pos.z); }
   }
   if (S.gesture > 0 || S.phase === 'line') face = Math.atan2(C_HA.x - pos.x, C_HA.z - pos.z);
-  chibi.g.position.copy(pos);
-  let dr = mod(face - chibi.g.rotation.y + Math.PI, TAU) - Math.PI;
-  chibi.g.rotation.y += dr * Math.min(1, dt * 10);
-  // animasi jalan
-  const moving = speed > 0;
-  S.walkT += dt * (moving ? speed * 1.6 : 0);
-  const sw = moving ? Math.sin(S.walkT) : 0;
-  const ease = (o, v) => (o.rotation.x += (v - o.rotation.x) * Math.min(1, dt * 12));
-  if (p.legL) { ease(p.legL, sw * 0.7); ease(p.legR, -sw * 0.7); }
-  ease(p.armL, -sw * 0.6);
-  if (S.gesture > 0) { S.gesture -= dt; p.armR.rotation.x += (-2.5 - p.armR.rotation.x) * Math.min(1, dt * 10); }
-  else ease(p.armR, sw * 0.6);
-  p.head.position.y = 2.0 + (moving ? Math.abs(Math.sin(S.walkT)) * 0.06 : 0);
-}
+  chibi().g.position.copy(pos);
+  sim.face(face, dt);
+  sim.animate(dt, speed);
+};
 
-function updateCamera(dt) {
-  let pos, tgt;
-  if (!chibi || S.phase === 'choose') {
+hooks.camera = (dt) => {
+  if (!chibi() || S.phase === 'choose') {
     cam.orbit += dt * 0.08;
-    pos = new THREE.Vector3(Math.cos(cam.orbit) * 78, 52, Math.sin(cam.orbit) * 78); tgt = new THREE.Vector3(0, 2, 0);
-  } else if (cam.top) {
-    pos = new THREE.Vector3(0, 92 * cam.zoom, 46 * cam.zoom); tgt = new THREE.Vector3(0, 0, 4);
-  } else {
-    // Layar tegak (HP): kamera lebih jauh & fokus lebih dekat ke karakter supaya tidak keluar bingkai.
-    const tall = camera.aspect < 1;
-    const a = (S.toFinal ? angOf(chibi.g.position.x, chibi.g.position.z) : S.theta) - (tall ? 0.22 : 0.42);
-    pos = atAngle(a, R + (tall ? 19 : 13) * cam.zoom, (tall ? 21 : 16) * cam.zoom);
-    tgt = chibi.g.position.clone().multiplyScalar(tall ? 0.8 : 0.62).setY(2);
+    return { pos: new THREE.Vector3(Math.cos(cam.orbit) * 78, 52, Math.sin(cam.orbit) * 78), tgt: new THREE.Vector3(0, 2, 0) };
   }
-  const k = 1 - Math.exp(-dt * 2.8);
-  cam.pos.lerp(pos, k); cam.tgt.lerp(tgt, k);
-  camera.position.copy(cam.pos); camera.lookAt(cam.tgt);
-}
+  if (cam.top) return { pos: new THREE.Vector3(0, 92 * cam.zoom, 46 * cam.zoom), tgt: new THREE.Vector3(0, 0, 4) };
+  // Layar tegak (HP): kamera lebih jauh & fokus lebih dekat ke karakter supaya tidak keluar bingkai.
+  const tall = camera.aspect < 1, cp = chibi().g.position;
+  const a = (S.toFinal ? angOf(cp.x, cp.z) : S.theta) - (tall ? 0.22 : 0.42);
+  return { pos: atAngle(a, R + (tall ? 19 : 13) * cam.zoom, (tall ? 21 : 16) * cam.zoom), tgt: cp.clone().multiplyScalar(tall ? 0.8 : 0.62).setY(2) };
+};
 
-function resize() {
-  const w = stage.clientWidth, h = stage.clientHeight;
-  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
-}
-new ResizeObserver(resize).observe(stage); resize();
-
-const clock = new THREE.Clock();
-function frame() {
-  requestAnimationFrame(frame);
-  if (document.hidden) return;
-  const dt = Math.min(clock.getDelta(), 0.05);
-  update(dt); updateCamera(dt); syncFwdBtn();
-  renderer.render(scene, camera);
-  const w = stage.clientWidth, h = stage.clientHeight;
-  labels.forEach((l) => placeEl(l.el, l.pos, w, h, true));
-  if (chibi) { placeEl(bubble, chibi.g.position.clone().setY(5.4), w, h); if (performance.now() > bubbleUntil) bubble.style.opacity = 0; }
-  else bubble.style.opacity = 0;
-}
-cam.pos.set(78, 52, 0); cam.tgt.set(0, 2, 0);
-// Kait pengujian (dipakai skrip uji otomatis; tidak memengaruhi pengguna).
-window.__sim = { S, input, tick(sec) { for (let t = 0; t < sec; t += 0.05) { update(0.05); updateCamera(0.05); } syncFwdBtn(); } };
-reset();
-frame();
+// Lampu hijau berkedip & jamaah lain tetap bergerak walau karakter belum dipilih.
+const baseUpdate = hooks.update;
+hooks.update = (dt) => { updateCrowd(dt); glow.material.opacity = 0.55 + Math.sin(performance.now() / 380) * 0.35; baseUpdate(dt); };
+sim.start({ pos: new THREE.Vector3(78, 52, 0), tgt: new THREE.Vector3(0, 2, 0) });
