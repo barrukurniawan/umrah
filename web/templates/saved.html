@@ -21,7 +21,7 @@
                 <div class="flex justify-between items-start gap-3">
                     <div>
                         <h2 class="font-bold text-gray-900">{{.Travel}}</h2>
-                        <p class="text-sm text-gray-500">{{.Package}}</p>
+                        <p class="text-sm text-gray-500">{{pkgName .Package}}</p>
                     </div>
                     <button type="button" class="save-btn p-1.5 -m-1.5 rounded-full hover:bg-rose-50" data-save-key="{{.Key}}" aria-pressed="true" title="Hapus dari tersimpan">
                         <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>
@@ -72,7 +72,7 @@
             <div class="px-6 py-6 space-y-5 {{if $i}}hidden{{end}}" data-insight="{{$i}}">
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="text-sm font-semibold text-gray-900">{{$in.Travel}}</span>
-                    <span class="text-sm text-gray-500 truncate max-w-full">{{$in.Package}}</span>
+                    <span class="text-sm text-gray-500 truncate max-w-full">{{pkgName $in.Package}}</span>
                 </div>
                 <div class="flex flex-wrap gap-2 -mt-3">
                     <span class="text-xs rounded-full px-2.5 py-1 font-medium {{if eq $in.Tone "sejuk"}}bg-sky-50 text-sky-700{{else if eq $in.Tone "peralihan"}}bg-teal-50 text-teal-700{{else if eq $in.Tone "hangat"}}bg-amber-50 text-amber-700{{else if eq $in.Tone "panas"}}bg-orange-50 text-orange-700{{else}}bg-rose-50 text-rose-700{{end}}">{{$in.Season}}</span>

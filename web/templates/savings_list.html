@@ -25,7 +25,7 @@
             <a href="/tabungan/{{.ID}}" class="group block min-w-0 bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-emerald-300 hover:shadow-md transition p-5">
                 <div class="flex items-start justify-between gap-2">
                     <h2 class="font-semibold text-gray-900 group-hover:text-emerald-700 min-w-0 truncate">{{.Title}}</h2>
-                    {{if .AchievedAt}}<span class="shrink-0 text-[11px] font-semibold bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">🎉 Tercapai</span>
+                    {{if .AchievedAt}}<span class="shrink-0 text-[11px] font-semibold bg-amber-100 text-amber-800 rounded-full px-2 py-0.5 inline-flex items-center gap-1">{{template "ic" (dict "N" "sparkle" "C" "w-3 h-3")}}Tercapai</span>
                     {{else}}<span class="shrink-0 text-sm font-bold text-emerald-700">{{.P.Percent}}%</span>{{end}}
                 </div>
                 {{if .PackageLabel}}<p class="text-xs text-gray-500 mt-0.5 truncate">{{.PackageLabel}}</p>{{end}}
@@ -58,7 +58,7 @@
                 <li>✓ Target otomatis dari harga paket incaranmu × jumlah orang</li>
                 <li>✓ Hitungan "perlu menabung Rp X per bulan" sampai tanggal tujuan</li>
                 <li>✓ Penanda saat DP sudah cukup untuk mendaftar</li>
-                <li>✓ Perayaan saat target tercapai 🎉</li>
+                <li>✓ Perayaan saat target tercapai</li>
             </ul>
             <div class="px-7 pb-7">
                 {{if .LoginEnabled}}<a href="/auth/google/login?next=%2Ftabungan%2Fbaru" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-2.5">Masuk dengan Google untuk mulai</a>{{end}}

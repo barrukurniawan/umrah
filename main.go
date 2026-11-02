@@ -179,6 +179,8 @@ func main() {
 	engine.AddFunc("contains", strings.Contains)
 	// Mode Kalender.
 	engine.AddFunc("jt", services.ShortJuta)
+	engine.AddFunc("pkgName", services.PkgNameHTML) // ✈️ di nama paket -> ikon pesawat bertema
+	engine.AddFunc("noEmoji", services.StripEmoji)
 	// Kota keberangkatan hanya ditampilkan bila bukan Jakarta (hampir semua lewat CGK).
 	engine.AddFunc("notJakarta", func(s string) bool {
 		l := strings.ToLower(s)
