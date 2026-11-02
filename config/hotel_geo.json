@@ -191,14 +191,14 @@
    ],
    "lat": 21.4138065,
    "lng": 39.8222496,
-   "distance_m": 800,
+   "distance_m": 700,
    "gate": "King Fahd Gate - 79",
    "gate_lat": 21.421232,
    "gate_lng": 39.8240461,
    "verified": true,
    "confidence": "high",
    "source": "gmaps:\"Al Olayan Golden Hotel فندق العليان الذهبي\" (Al Hajlah, Makkah 24231, Arab Saudi) + osm:w641241999",
-   "note": "Dicek pemilik situs: ±800 m ke WC 3 Masjidil Haram. Hitungan peta: 700 m."
+   "note": "Hitungan peta 662 m garis lurus (dibulatkan 700 m), dipilih pemilik situs. Rute ke WC 3 Masjidil Haram."
   },
   {
    "city": "makkah",

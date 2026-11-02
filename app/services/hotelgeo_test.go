@@ -16,7 +16,7 @@ func TestHotelGeo(t *testing.T) {
 		{"madinah", "Jawharat Al Rasheed (Madinah)", "150m"}, // diukur pemilik situs, tanpa ±
 		{"madinah", "Jauharat Al Rashed", "150m"},            // variasi ejaan
 		{"madinah", "Al-Sham Province", "350m"},
-		{"makkah", "Al Olayan Golden", "800m"},
+		{"makkah", "Al Olayan Golden", "700m"},
 		{"makkah", "AL MASSA DAR AL FAYZEEN", "±650m"}, // hitungan peta
 		{"makkah", "Fajr Al-Nusuk Ajyad (Makkah)", "550m"}, // Google: "Luluat Al Shark"
 	}

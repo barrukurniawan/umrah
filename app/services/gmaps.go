@@ -92,7 +92,7 @@ func MakkahGate(hotel string) string {
 type hotelPlace struct{ Origin, Dest string }
 
 var makkahPlaces = map[string]hotelPlace{
-	// Al Olayan Golden Hotel (maps.app.goo.gl/HPE7nQ8BVp3S15S96), diukur ke WC 3 Masjidil Haram.
+	// Al Olayan Golden Hotel (maps.app.goo.gl/HPE7nQ8BVp3S15S96), rute ke WC 3 Masjidil Haram.
 	"olayan golden": {Origin: "21.4138065,39.8222496", Dest: "CRCG+2G8 Makkah"},
 }
 
