@@ -17,7 +17,7 @@ func HomePage(c *fiber.Ctx) error {
 }
 
 func SimulasiPage(c *fiber.Ctx) error {
-	return c.Render("simulasi", viewer(c, fiber.Map{"Title": "Simulasi Tawaf"}))
+	return c.Render("simulasi", viewer(c, fiber.Map{"Title": "Simulasi Tawaf", "HideChat": true}))
 }
 
 func PrivacyPage(c *fiber.Ctx) error {

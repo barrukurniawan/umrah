@@ -309,31 +309,34 @@ const SAPU_JAGAD = { ar: 'رَبَّنَا آتِنَا فِي الدُّنْي�
 const MAQAM_AYAT = { ar: 'وَاتَّخِذُوا مِنْ مَقَامِ إِبْرَاهِيمَ مُصَلًّى', lat: 'Wattakhiżū mim maqāmi Ibrāhīma muṣallā.', arti: 'Dan jadikanlah sebagian Maqam Ibrahim tempat shalat. (QS. Al-Baqarah: 125)' };
 
 function cardHTML(c) {
-  let h = `<div class="card-in rounded-2xl border ${c.pause ? 'border-amber-200 bg-amber-50/60' : 'border-gray-200 bg-white'} p-4">`;
-  if (c.pause) h += `<p class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-2"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Kita berhenti di sini</p>`;
-  h += `<h2 class="font-bold text-gray-900 text-lg leading-snug">${c.title}</h2>`;
-  if (c.body) h += `<div class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2">${c.body}</div>`;
-  if (c.dua) h += `<div class="mt-3 rounded-xl bg-emerald-50 px-4 py-3"><p class="ar text-2xl leading-loose text-emerald-900 text-right" dir="rtl">${c.dua.ar}</p><p class="text-sm italic text-emerald-800 mt-1">${c.dua.lat}</p><p class="text-xs text-gray-500 mt-1">${c.dua.arti}</p></div>`;
+  let h = `<div class="${c.pause ? 'card-in border-amber-200 bg-amber-50' : 'fade-in border-gray-200 bg-white'} rounded-2xl border p-3.5 lg:p-4">`;
+  if (c.pause) h += `<p class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-1 lg:mb-2"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Kita berhenti di sini</p>`;
+  h += `<h2 class="font-bold text-gray-900 text-base lg:text-lg leading-snug">${c.title}</h2>`;
+  if (c.body) h += `<div class="mt-1.5 lg:mt-2 text-sm text-gray-600 leading-snug lg:leading-relaxed space-y-1.5 lg:space-y-2">${c.body}</div>`;
+  if (c.dua) h += `<div class="mt-2 lg:mt-3 rounded-xl bg-emerald-50 px-3.5 lg:px-4 py-2 lg:py-3"><p class="ar text-xl lg:text-2xl leading-relaxed lg:leading-loose text-emerald-900 text-right" dir="rtl">${c.dua.ar}</p><p class="text-sm italic text-emerald-800 lg:mt-1">${c.dua.lat}</p><p class="text-xs text-gray-500 mt-0.5 lg:mt-1">${c.dua.arti}</p></div>`;
   if (c.after) h += `<div class="mt-3 text-sm text-gray-600 leading-relaxed space-y-2">${c.after}</div>`;
   if (c.hint) h += `<p class="mt-3 text-xs text-emerald-700 font-medium">${c.hint}</p>`;
-  if (c.actions) h += `<div class="mt-4 flex flex-wrap gap-2">${c.actions}</div>`;
+  // Tombol aksi menempel di bawah area panel, jadi selalu terlihat walau teksnya panjang.
+  if (c.actions) h += `<div class="sticky bottom-0 -mx-3.5 -mb-3.5 lg:-mx-4 lg:-mb-4 mt-2 lg:mt-3 px-3.5 lg:px-4 pt-2 pb-3.5 lg:pb-4 rounded-b-2xl bg-amber-50 flex flex-wrap gap-2">${c.actions}</div>`;
   return h + '</div>';
 }
 let steps = [], stepDone = null;
 function pauseWith(list, onDone) {
-  S.block = true; steps = list.slice(); stepDone = onDone; input.fwd = false; renderStep(); duck(true);
+  S.block = true; steps = list.slice(); stepDone = onDone; input.fwd = false; tapWalk = false; renderStep(); duck(true);
 }
 function renderStep() {
-  const c = steps[0], last = steps.length === 1;
-  guide.innerHTML = cardHTML({ ...c, pause: true, actions: (c.actions || '') + `<button id="btnNext" type="button" class="rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 text-sm">${c.next || (last ? 'Lanjut jalan →' : 'Lanjut →')}</button>` });
+  const c = steps[0], last = steps.length === 1; lastInfo = '';
+  guide.innerHTML = cardHTML({ ...c, pause: true, actions: (c.actions || '') + `<button id="btnNext" type="button" class="rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-2 lg:py-2.5 text-sm">${c.next || (last ? 'Lanjut jalan →' : 'Lanjut →')}</button>` });
   if (c.onShow) c.onShow();
+  $('guideScroll').scrollTop = 0;
   $('btnNext').onclick = () => {
     steps.shift();
     if (steps.length) { renderStep(); return; }
     S.block = false; duck(false); const f = stepDone; stepDone = null; f && f();
   };
 }
-function info(c) { guide.innerHTML = cardHTML(c); }
+let lastInfo = '';
+function info(c) { const h = cardHTML(c); if (h === lastInfo) return; lastInfo = h; guide.innerHTML = h; $('guideScroll').scrollTop = 0; }
 
 function setRound() {
   const r = S.phase === 'tawaf' ? Math.min(7, S.done + 1) : S.phase === 'finish' ? 7 : 0;
@@ -353,8 +356,9 @@ function duck(on) { audio.volume = on ? VOL_DUCK : VOL; }
 function playAudio() { if (audioOn) audio.play().catch(() => {}); }
 $('btnAudio').onclick = () => {
   audioOn = !audioOn;
-  $('audioLabel').textContent = audioOn ? 'Murottal: Nyala' : 'Murottal: Mati';
-  $('audioWave').style.display = audioOn ? '' : 'none';
+  $('audioOn').style.display = audioOn ? '' : 'none'; $('audioOff').style.display = audioOn ? 'none' : '';
+  const b = $('btnAudio'); b.setAttribute('aria-pressed', audioOn); b.setAttribute('aria-label', audioOn ? 'Matikan murottal' : 'Nyalakan murottal');
+  b.classList.toggle('text-emerald-700', audioOn); b.classList.toggle('text-gray-400', !audioOn);
   if (!audioOn) audio.pause(); else if (S.phase !== 'choose') playAudio();
 };
 
@@ -374,8 +378,8 @@ function begin(gender) {
            <p>Tawaf umrah terdiri dari <b>7 putaran</b>, dimulai dan diakhiri di garis <b>Hajar Aswad</b>, berlawanan arah jarum jam: <b>Ka'bah selalu di sebelah kirimu</b>.</p>` +
       (isM() ? `<p><b>Idhtiba':</b> letakkan bagian tengah kain atas di bawah ketiak kanan dan kedua ujungnya di bahu kiri, sehingga <b>bahu kanan terbuka</b>. Ini hanya selama tawaf.</p>`
         : `<p>Perempuan memakai pakaian biasa yang menutup aurat. Saat ihram, <b>wajah dan telapak tangan tidak ditutup</b> (tanpa cadar dan sarung tangan).</p>`),
-    hint: 'Setelah ini, tahan tombol Jalan untuk menuju lampu hijau (garis start).',
-  }], () => { S.phase = 'approach'; info({ title: 'Menuju garis start', body: '<p>Tahan tombol <b>Jalan</b> (atau tombol panah ⬆/➡ di keyboard) untuk berjalan ke garis sejajar Hajar Aswad, ditandai <b>lampu hijau</b> di dinding masjid.</p>' }); });
+    hint: 'Setelah ini, klik tombol Jalan untuk menuju lampu hijau (garis start).',
+  }], () => { S.phase = 'approach'; info({ title: 'Menuju garis start', body: '<p>Klik tombol <b>Jalan</b> (atau tahan tombol panah ⬆/➡ di keyboard) untuk berjalan ke garis sejajar Hajar Aswad, ditandai <b>lampu hijau</b> di dinding masjid.</p>' }); });
 }
 
 function startLine() {
@@ -383,10 +387,10 @@ function startLine() {
   S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2);
   pauseWith([{
     title: 'Ini garis start',
-    body: `<p>Kamu sejajar dengan <b>Hajar Aswad</b>, lihat lampu hijau di dinding masjid. Hadapkan badan ke Hajar Aswad.</p>
-           <p>Jika bisa, usap dan cium Hajar Aswad. Jika ramai (biasanya begitu), cukup <b>isyaratkan tangan kanan</b> ke arahnya sambil mengucapkan:</p>`,
+    body: `<p>Lihat <b>lampu hijau</b> di dinding kanan masjid. Hadapkan badan ke <b>Hajar Aswad</b>.</p>
+           <p>Usap dan cium Hajar Aswad. Jika ramai (biasanya begitu), cukup <b>isyaratkan tangan kanan</b> ke arahnya sambil mengucapkan:</p>`,
     dua: TAKBIR,
-    actions: `<button type="button" id="btnRepeat" class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi isyarat</button>`,
+    actions: `<button type="button" id="btnRepeat" class="rounded-xl border border-gray-200 px-4 py-2 lg:py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi isyarat</button>`,
     onShow: () => { const b = $('btnRepeat'); if (b) b.onclick = () => { S.gesture = 3.2; say(TAKBIR.ar, TAKBIR.lat, 3.2); }; },
     next: 'Lanjut →',
   }, {
@@ -394,7 +398,7 @@ function startLine() {
     body: (isM() ? `<p><b>Raml:</b> pada putaran 1 sampai 3, laki-laki disunnahkan berjalan cepat dengan langkah pendek, jika kondisi memungkinkan. Putaran 4 sampai 7 berjalan biasa.</p>` : '') +
       `<p>Selama tawaf <b>tidak ada doa khusus</b> untuk tiap putaran. Perbanyak dzikir, doa, atau bacaan Al-Qur'an, dengan bahasa apa pun.</p>`,
     next: 'Mulai tawaf →',
-  }], () => { S.phase = 'tawaf'; S.travel = 0; S.done = 0; setRound(); info({ title: 'Putaran 1', body: '<p>Tahan <b>Jalan</b>. Ka\'bah di sebelah kirimu. Berdzikir dan berdoalah dengan tenang.</p>' }); });
+  }], () => { S.phase = 'tawaf'; S.travel = 0; S.done = 0; setRound(); info({ title: 'Putaran 1', body: '<p>Klik <b>Jalan</b>. Ka\'bah di sebelah kirimu. Berdzikir dan berdoalah dengan tenang.</p>' }); });
 }
 
 function onRel(prev, rel, round) {
@@ -450,7 +454,7 @@ function finish() {
 }
 
 function reset() {
-  S.phase = 'choose'; S.block = false; steps = []; input.fwd = input.back = false;
+  S.phase = 'choose'; S.block = false; steps = []; input.fwd = input.back = false; tapWalk = false;
   if (chibi) { scene.remove(chibi.g); chibi = null; }
   audio.pause(); duck(false);
   $('chooseOverlay').classList.remove('hidden'); $('simControls').classList.add('hidden');
@@ -462,16 +466,46 @@ document.querySelectorAll('.pick').forEach((b) => (b.onclick = () => begin(b.dat
 $('btnCam').onclick = () => { cam.top = !cam.top; $('camLabel').textContent = cam.top ? 'Ikuti karakter' : 'Lihat dari atas'; };
 $('chkAuto').onchange = (e) => (input.auto = e.target.checked);
 
-// ---------- Input ----------
-function hold(btn, key) {
-  const on = (e) => { e.preventDefault(); input[key] = true; btn.classList.add('on'); if (key === 'fwd' && S.block) toast('Baca penjelasan di panel, lalu tekan Lanjut.'); };
-  const off = () => { input[key] = false; btn.classList.remove('on'); };
-  btn.addEventListener('pointerdown', on); ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => btn.addEventListener(ev, off));
-  btn.addEventListener('contextmenu', (e) => e.preventDefault());
+// Saat simulasi berhenti dan pengguna menekan Jalan: arahkan ke kotak penjelasan & tombol Lanjut.
+function showPending() {
+  const b = $('btnNext'); if (!b) return;
+  if (window.innerWidth < 1024) toast('Baca penjelasan di bawah, lalu tekan Lanjut.');
+  else toast('Baca penjelasan di panel kanan, lalu tekan Lanjut.');
+  b.classList.remove('nudge'); void b.offsetWidth; b.classList.add('nudge');
 }
-hold($('btnFwd'), 'fwd'); hold($('btnBack'), 'back');
+
+// ---------- Input ----------
+// Tombol Jalan: sekali ketuk = jalan terus (ketuk lagi untuk berhenti); ditahan = jalan selama ditahan.
+const fwdBtn = $('btnFwd');
+let tapWalk = false, downAt = 0, wasTapWalk = false;
+fwdBtn.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  if (S.block) { showPending(); return; }
+  wasTapWalk = tapWalk; tapWalk = false; downAt = performance.now();
+  input.fwd = !wasTapWalk; fwdBtn.classList.add('on');
+});
+const fwdUp = () => {
+  if (!downAt) return;
+  const tap = performance.now() - downAt < 280; downAt = 0; fwdBtn.classList.remove('on');
+  if (tap && !wasTapWalk) { tapWalk = true; input.fwd = true; } else { input.fwd = false; }
+};
+['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => fwdBtn.addEventListener(ev, fwdUp));
+fwdBtn.addEventListener('contextmenu', (e) => e.preventDefault());
+let fwdState = '';
+function syncFwdBtn() {
+  const canWalk = !!chibi && !S.block && (S.phase === 'approach' || S.phase === 'tawaf');
+  const walking = canWalk && (input.fwd || input.auto);
+  const holding = walking && downAt && input.fwd; // sedang ditahan
+  const st = holding ? 'hold' : walking ? 'walk' : canWalk ? 'idle' : 'off';
+  if (st === fwdState) return; fwdState = st;
+  fwdBtn.classList.toggle('wait-tap', st === 'idle');
+  fwdBtn.classList.toggle('opacity-60', st === 'off');
+  $('fwdIcon').innerHTML = walking ? '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>' : '<path d="M9 5l8 7-8 7z"/>';
+  const [top, main] = st === 'hold' ? ['Lepas untuk', 'Berhenti'] : st === 'walk' ? ['Klik untuk', 'Berhenti'] : ['Klik untuk', 'Jalan'];
+  $('fwdLabel').innerHTML = `<span class="text-[10px] font-medium text-emerald-100 mb-0.5">${top}</span><span class="text-base">${main}</span>`;
+}
 const FWD = ['ArrowUp', 'ArrowRight', 'KeyW', 'KeyD'], BACK = ['ArrowDown', 'ArrowLeft', 'KeyS', 'KeyA'];
-addEventListener('keydown', (e) => { if (FWD.includes(e.code)) { input.fwd = true; e.preventDefault(); } if (BACK.includes(e.code)) { input.back = true; e.preventDefault(); } });
+addEventListener('keydown', (e) => { if (FWD.includes(e.code)) { if (!input.fwd && S.block) showPending(); input.fwd = true; e.preventDefault(); } if (BACK.includes(e.code)) { input.back = true; e.preventDefault(); } });
 addEventListener('keyup', (e) => { if (FWD.includes(e.code)) input.fwd = false; if (BACK.includes(e.code)) input.back = false; });
 addEventListener('blur', () => { input.fwd = input.back = false; });
 canvas.addEventListener('wheel', (e) => { e.preventDefault(); cam.zoom = THREE.MathUtils.clamp(cam.zoom * (1 + e.deltaY * 0.001), 0.55, 1.9); }, { passive: false });
@@ -558,7 +592,7 @@ function frame() {
   requestAnimationFrame(frame);
   if (document.hidden) return;
   const dt = Math.min(clock.getDelta(), 0.05);
-  update(dt); updateCamera(dt);
+  update(dt); updateCamera(dt); syncFwdBtn();
   renderer.render(scene, camera);
   const w = stage.clientWidth, h = stage.clientHeight;
   labels.forEach((l) => placeEl(l.el, l.pos, w, h, true));
@@ -567,6 +601,6 @@ function frame() {
 }
 cam.pos.set(78, 52, 0); cam.tgt.set(0, 2, 0);
 // Kait pengujian (dipakai skrip uji otomatis; tidak memengaruhi pengguna).
-window.__sim = { S, input, tick(sec) { for (let t = 0; t < sec; t += 0.05) { update(0.05); updateCamera(0.05); } } };
+window.__sim = { S, input, tick(sec) { for (let t = 0; t < sec; t += 0.05) { update(0.05); updateCamera(0.05); } syncFwdBtn(); } };
 reset();
 frame();

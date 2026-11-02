@@ -5,26 +5,26 @@
         <div class="flex flex-col">
             <a href="/" class="text-xl min-[400px]:text-2xl font-bold text-emerald-700 whitespace-nowrap flex items-center gap-0">
                 <svg viewBox="0 0 3000 3000" class="w-10 h-10 text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaaba"/></svg>
-                <span>Umrohku</span></a>
+                <span class="max-[359px]:hidden">Umrohku</span></a>
             <span class="hidden sm:block text-xs text-gray-400 pl-10 -mt-1">Ikhtiar untuk kepulangan</span>
         </div>
         <div class="flex items-center gap-2 sm:gap-3">
-        <div class="flex items-center gap-3 min-[400px]:gap-4 sm:gap-6 mr-1.5 min-[400px]:mr-3 sm:mr-5">
+        <div class="flex items-center gap-4 sm:gap-6 mr-2 min-[400px]:mr-3 sm:mr-5">
         <button type="button" onclick="ukLive.open()" title="Siaran langsung Masjidil Haram" class="inline-flex items-center gap-1 min-[400px]:gap-1.5 py-1.5 text-sm font-semibold text-emerald-800 hover:text-emerald-600 transition-colors whitespace-nowrap">
             <span class="relative flex w-2 h-2 mr-0.5" aria-hidden="true"><span class="absolute inset-0 rounded-full bg-emerald-600 opacity-60 animate-ping"></span><span class="relative w-2 h-2 rounded-full bg-emerald-700"></span></span>
-            Live <svg viewBox="820 820 1360 1360" class="w-3 h-3 sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
+            Live <svg viewBox="820 820 1360 1360" class="hidden sm:inline-block sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
         </button>
         <a href="/simulasi" title="Simulasi tawaf" class="relative inline-flex items-center gap-1 min-[400px]:gap-1.5 py-1.5 text-sm font-semibold text-emerald-800 hover:text-emerald-600 transition-colors whitespace-nowrap">
-            Simulasi <svg viewBox="820 820 1360 1360" class="w-3 h-3 sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
+            Simulasi <svg viewBox="820 820 1360 1360" class="hidden sm:inline-block sm:w-[13px] sm:h-[13px] text-emerald-700" fill="currentColor" aria-hidden="true"><use href="#ukKaabaPath"/></svg>
         </a>
         </div>
         {{if .User}}
         <details class="relative" id="userMenu">
-            <summary class="list-none flex items-center gap-2 cursor-pointer rounded-full border border-gray-200 pl-1 pr-3 py-1 hover:border-emerald-300">
+            <summary class="list-none flex items-center gap-2 cursor-pointer rounded-full sm:border sm:border-gray-200 sm:pl-1 sm:pr-3 sm:py-1 hover:border-emerald-300">
                 {{if .User.Picture}}<img src="{{.User.Picture}}" alt="" referrerpolicy="no-referrer" class="w-8 h-8 rounded-full">
                 {{else}}<span class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-semibold">{{initial .User.Name}}</span>{{end}}
                 <span class="hidden sm:inline text-sm font-medium text-gray-700 max-w-[120px] truncate">{{firstName .User.Name}}</span>
-                <svg class="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>
+                <svg class="hidden sm:block w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>
             </summary>
             <div class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-2 text-sm">
                 <p class="px-4 pb-2 mb-1 border-b text-xs text-gray-500 truncate">{{.User.Email}}</p>
@@ -74,5 +74,5 @@ window.ukLive = {
 };
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && window.ukLive) ukLive.close(); });
 </script>
-{{template "support_chat" .}}
+{{if not .HideChat}}{{template "support_chat" .}}{{end}}
 {{end}}
