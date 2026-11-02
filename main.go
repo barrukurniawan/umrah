@@ -192,7 +192,7 @@ func main() {
 		return strings.ToUpper(s[:1]) + s[1:]
 	})
 	engine.AddFunc("toneColor", func(t string) string {
-		return map[string]string{"sejuk": "text-sky-500", "nyaman": "text-emerald-500", "hangat": "text-amber-500", "panas": "text-orange-500", "ekstrem": "text-rose-500"}[t]
+		return map[string]string{"sejuk": "text-sky-500", "nyaman": "text-emerald-500", "hangat": "text-orange-500", "panas": "text-red-500", "ekstrem": "text-rose-500"}[t]
 	})
 	engine.AddFunc("toneLabel", func(t string) string {
 		return map[string]string{"sejuk": "Sejuk", "nyaman": "Nyaman", "hangat": "Hangat", "panas": "Panas", "ekstrem": "Sangat panas"}[t]
