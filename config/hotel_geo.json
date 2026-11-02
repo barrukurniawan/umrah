@@ -1398,6 +1398,82 @@
    "confidence": "high",
    "source": "https://maps.app.goo.gl/VNBHpTzWeBRKVHvP7 (Google: \"Luluat Al Shark - Fajar Al Nusuk Hotel Ajyad\")",
    "note": "Dicek pemilik situs di Google Maps: jalan kaki 550 m / 8 menit lewat King Abdul Aziz Rd ke terowongan Ajyad."
+  },
+  {
+   "city": "makkah",
+   "name": "Manazel Ajyad",
+   "aliases": [
+    "Manazel Ajyad/Tara Ajyad",
+    "Manazel Ajyad",
+    "Manazel Al Ain Ajyad",
+    "Manazel Al Ain Ajyad Hotel"
+   ],
+   "lat": 21.4073519,
+   "lng": 39.8298054,
+   "distance_m": 1400,
+   "gate": "Bab Ajyad - Gate 3",
+   "gate_lat": 21.4210652,
+   "gate_lng": 39.8264059,
+   "verified": false,
+   "confidence": "high",
+   "source": "https://maps.app.goo.gl/yfA2d9Wg4hhbBb3V8 (Google: \"Manazel Al Ain Ajyad Hotel\")",
+   "note": "1391 m garis lurus ke tepi pelataran; link dari pemilik situs."
+  },
+  {
+   "city": "makkah",
+   "name": "Villa Hilton",
+   "aliases": [
+    "Villa Hilton",
+    "Villa Hilton Makkah"
+   ],
+   "lat": 0,
+   "lng": 0,
+   "distance_m": 0,
+   "gate": "",
+   "gate_lat": 0,
+   "gate_lng": 0,
+   "verified": true,
+   "confidence": "high",
+   "source": "pemilik situs",
+   "note": "Menempel pada pelataran Masjidil Haram (tepat di depannya). Koordinat belum ada, rute pakai pencarian nama."
+  },
+  {
+   "city": "makkah",
+   "name": "Zad Al Qimmah",
+   "aliases": [
+    "Zad Al Qimmah",
+    "Zad Al Qimma",
+    "Zad Al Qimma Hotel"
+   ],
+   "lat": 21.38893,
+   "lng": 39.87291,
+   "distance_m": 6300,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": true,
+   "confidence": "high",
+   "source": "gmaps:\"Zad Al Qimmah Al Naseem Hotel\"; jarak dari pemilik situs",
+   "note": "Al Naseem, Al Aziziyah. ±6,3 km, ada shuttle bus gratis ke area Ajyad/Makarem."
+  },
+  {
+   "city": "makkah",
+   "name": "Holiday Inn Makkah",
+   "aliases": [
+    "Holiday Inn",
+    "Holiday Inn Makkah",
+    "Holiday Inn Makkah Al Aziziah"
+   ],
+   "lat": 21.41631,
+   "lng": 39.86044,
+   "distance_m": 3500,
+   "gate": "Al Nabi Gate 14",
+   "gate_lat": 21.4222008,
+   "gate_lng": 39.8276781,
+   "verified": true,
+   "confidence": "high",
+   "source": "gmaps:\"Holiday Inn Makkah Al Aziziah\"; jarak dari pemilik situs",
+   "note": "Al Aziziyah. ±3,5 km, shuttle bus gratis ke sekitar Abraj Al Bait / Ajyad."
   }
  ]
 }

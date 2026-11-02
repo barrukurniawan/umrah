@@ -87,8 +87,11 @@ func LookupHotelGeo(city, name string) (HotelGeo, bool) {
 // geoDistanceLabel: "150m" (diukur langsung) atau "±650m" (hitungan peta); "" bila tidak dikenal.
 func geoDistanceLabel(city, hotel string) string {
 	h, ok := LookupHotelGeo(city, hotel)
-	if !ok || h.DistanceM <= 0 {
+	if !ok || h.DistanceM < 0 || (h.DistanceM == 0 && !h.Verified) {
 		return ""
+	}
+	if h.DistanceM == 0 {
+		return "0m" // menempel pada pelataran (diukur pemilik situs)
 	}
 	if h.Verified {
 		return formatMeters(h.DistanceM)
