@@ -8,7 +8,7 @@ const { scene, camera, S, cam, M, mat, canvasTex, instanced, hooks } = sim;
 const L = 150;                       // panjang lorong di simulasi (aslinya ±400 m)
 const W = 26;                        // lebar lorong
 const X0 = 3, X1 = L - 3;            // titik berdiri di kaki bukit Shafa / Marwah
-const GZ0 = L * 0.3, GZ1 = L * 0.44; // zona lampu hijau
+const GZ0 = L * 0.23, GZ1 = L * 0.51; // zona lampu hijau (dipanjangkan 2x supaya doa terbaca sampai selesai)
 const LANE = { toMarwah: -5.5, toSafa: 5.5 };
 const CEIL = 9.6;
 const BASE_SPEED = 6.2;
@@ -129,7 +129,11 @@ const DZIKIR = {
   lat: "Allāhu akbar (3×). Lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamdu wa huwa 'alā kulli syai'in qadīr. Lā ilāha illallāhu waḥdah, anjaza wa'dah, wa naṣara 'abdah, wa hazamal-aḥzāba waḥdah.",
   arti: 'Allah Maha Besar (3×). Tiada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Tiada tuhan selain Allah semata; Dia menepati janji-Nya, menolong hamba-Nya, dan mengalahkan golongan-golongan musuh sendirian. (HR. Muslim)',
 };
-const RABBIGHFIR = { ar: 'رَبِّ اغْفِرْ وَارْحَمْ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ', lat: "Rabbighfir warḥam, innaka antal-a'azzul-akram.", arti: 'Ya Rabb, ampunilah dan rahmatilah, sesungguhnya Engkau Mahaperkasa lagi Mahamulia. (Diriwayatkan dari Ibnu Mas\'ud dan Ibnu Umar; boleh dibaca, tidak wajib.)' };
+const RABBIGHFIR = {
+  ar: 'رَبِّ اغْفِرْ وَارْحَمْ وَاعْفُ وَتَكَرَّمْ، وَتَجَاوَزْ عَمَّا تَعْلَمُ، إِنَّكَ تَعْلَمُ مَا لَا نَعْلَمُ، إِنَّكَ أَنْتَ اللهُ الْأَعَزُّ الْأَكْرَمُ',
+  lat: "Rabbighfir warḥam wa'fu wa takarram, wa tajāwaz 'ammā ta'lam, innaka ta'lamu mā lā na'lam, innaka antallāhul-a'azzul-akram.",
+  arti: 'Ya Rabb, ampunilah, rahmatilah, maafkanlah, dan muliakanlah; hapuskanlah apa yang Engkau ketahui. Sesungguhnya Engkau mengetahui apa yang tidak kami ketahui. Sesungguhnya Engkaulah Allah Yang Mahaperkasa lagi Mahamulia.',
+};
 const COUNT_CARD = `<div class="mt-2 grid grid-cols-2 gap-2 text-center text-xs">
   <div class="rounded-xl border border-rose-200 bg-rose-50 px-2 py-2"><p class="font-bold text-rose-700">✕ Salah</p><p class="text-gray-600 mt-0.5">Shafa → Marwah → Shafa dihitung 1</p></div>
   <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-2 py-2"><p class="font-bold text-emerald-700">✓ Benar</p><p class="text-gray-600 mt-0.5">Shafa → Marwah = 1, Marwah → Shafa = 2, dst.</p></div></div>`;
@@ -191,15 +195,16 @@ function arriveSafaFirst() {
 function onGreen(enter, lap) {
   const key = lap + ':' + (enter ? 'in' : 'out'); if (S.fired[key]) return; S.fired[key] = 1;
   if (enter) {
-    const body = isM()
-      ? "<p>Kamu masuk <b>zona lampu hijau</b>. Laki-laki disunnahkan <b>lari kecil</b> sampai lampu hijau berikutnya, jika kondisi memungkinkan.</p><p>Ini mengenang Siti Hajar yang berlari mencari air untuk putranya, Ismail.</p>"
-      : "<p>Kamu masuk <b>zona lampu hijau</b>. Lari kecil hanya untuk laki-laki; <b>perempuan tetap berjalan biasa</b>.</p><p>Zona ini mengenang Siti Hajar yang berlari mencari air untuk putranya, Ismail.</p>";
-    if (lap === 1) pauseWith([{ title: 'Zona lampu hijau', body }], () => info({ title: 'Zona lampu hijau', body: isM() ? '<p>Lari kecil sampai lampu hijau berikutnya.</p>' : '<p>Tetap berjalan biasa.</p>' }));
-    else info({ title: `Lintasan ${lap} · zona lampu hijau`, body: isM() ? '<p>Lari kecil sampai lampu hijau berikutnya.</p>' : '<p>Perempuan tetap berjalan biasa.</p>' });
+    // Doa dibaca selama berada di antara dua lampu hijau (boleh, tidak wajib).
+    const run = isM() ? '<b>Laki-laki lari kecil</b> sampai lampu hijau berikutnya, jika memungkinkan.' : '<b>Perempuan tetap berjalan biasa.</b>';
+    if (lap === 1) pauseWith([{
+      title: 'Zona lampu hijau',
+      body: `<p>${run} Zona ini mengenang Siti Hajar yang berlari mencari air untuk Ismail. Sambil melintas, bacalah:</p>`,
+      dua: RABBIGHFIR,
+    }], () => info({ title: 'Zona lampu hijau', body: `<p>${run}</p>`, dua: RABBIGHFIR }));
+    else info({ title: `Lintasan ${lap} · zona lampu hijau`, body: `<p>${run}</p>`, dua: RABBIGHFIR });
   } else {
-    info(lap === 2
-      ? { title: `Lintasan ${lap} · keluar zona hijau`, body: '<p>Kembali berjalan biasa. Doa berikut banyak dibaca jamaah selama sa\'i (boleh, tidak wajib):</p>', dua: RABBIGHFIR }
-      : { title: `Lintasan ${lap} · keluar zona hijau`, body: `<p>Kembali berjalan biasa menuju ${hillName(S.dir > 0)}. Terus berdzikir dan berdoa.</p>` });
+    info({ title: `Lintasan ${lap} · keluar zona hijau`, body: `<p>Kembali berjalan biasa menuju ${hillName(S.dir > 0)}. Terus berdzikir dan berdoa.</p>` });
   }
 }
 

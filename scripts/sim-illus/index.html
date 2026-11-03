@@ -41,7 +41,7 @@ function archWall(x0, x1, z, h, m) {
   }
 }
 function ground(color, size = 80) { const g = new THREE.Mesh(new THREE.PlaneGeometry(size, size), mat(color)); g.rotation.x = -Math.PI / 2; scene.add(g); }
-function hero(gender, opts = {}, x = 0, z = 0, ry = 0.25) { const c = makeChibi(gender, { scale: 1, ...opts }); c.g.position.set(x, 0, z); c.g.rotation.y = ry; scene.add(c.g); return c; }
+function hero(gender, opts = {}, x = 0, z = 0, ry = 0.25) { const c = makeChibi(gender, { scale: 1, draped: true, ...opts }); c.g.position.set(x, 0, z); c.g.rotation.y = ry; scene.add(c.g); return c; }
 const look = (p, t) => { camera.position.set(...p); camera.lookAt(...t); };
 
 const scenes = {

@@ -180,7 +180,8 @@ function updateCrowd(dt) {
 const START = A_HA - 0.32;  // berdiri sedikit sebelum garis start
 const BASE_SPEED = 6.2;     // m/detik (dipercepat supaya 1 putaran ±20 detik)
 const relOf = (a) => mod(a - A_HA, TAU);
-const REL_DOOR = 0.45, REL_HIJR = relOf(angOf(HIJR_MID.x, HIJR_MID.z)) - 0.25, REL_YAMANI = relOf(A_YM) - 0.06;
+const REL_DOOR = 0.45, REL_HIJR = relOf(angOf(HIJR_MID.x, HIJR_MID.z)) - 0.25, REL_HIJR_END = REL_HIJR + 0.75, REL_YAMANI = relOf(A_YM) - 0.06;
+let hijrShownAt = 0;
 
 Object.assign(S, { theta: START, travel: 0, done: 0, fired: {}, toFinal: null });
 
@@ -243,8 +244,17 @@ function onRel(prev, rel, round) {
     if (round === 1) info({ title: 'Pintu Ka\'bah & Multazam', body: `<p>Di sebelah kirimu pintu Ka'bah. Dinding di antara pintu dan Hajar Aswad disebut <b>Multazam</b>, tempat yang baik untuk berdoa.</p><p>Bangunan kecil keemasan di depannya adalah <b>Maqam Ibrahim</b>. Shalat 2 rakaat dilakukan di belakangnya setelah tawaf selesai.</p>` });
   });
   if (prev < REL_HIJR && rel >= REL_HIJR) once('hijr', () => {
-    if (round === 1) pauseWith([{ title: 'Hijr Ismail', body: `<p>Tembok rendah setengah lingkaran ini adalah <b>Hijr Ismail</b>. Area di dalamnya termasuk bagian Ka'bah.</p><p>Karena itu tawaf harus <b>lewat di luarnya</b>. Jika masuk lewat celahnya dan keluar di sisi lain, putaran itu tidak sah dan harus diulang.</p>` }], () => info({ title: `Putaran ${round}`, body: '<p>Terus berjalan, Ka\'bah di sebelah kirimu.</p>' }));
-    else info({ title: `Putaran ${round}`, body: '<p>Tetap di luar Hijr Ismail. Terus berdzikir dan berdoa.</p>' });
+    // Tidak berhenti: info tampil, lalu hilang setelah melewati Hijr Ismail (minimal 4 detik terbaca).
+    hijrShownAt = performance.now();
+    if (round === 1) info({ title: 'Hijr Ismail', body: `<p>Tembok rendah setengah lingkaran ini adalah <b>Hijr Ismail</b>. Area di dalamnya termasuk bagian Ka'bah.</p><p>Karena itu tawaf harus <b>lewat di luarnya</b>. Jika masuk lewat celahnya dan keluar di sisi lain, putaran itu tidak sah dan harus diulang.</p>` });
+    else info({ title: 'Hijr Ismail', body: '<p>Tetap di luar Hijr Ismail. Terus berdzikir dan berdoa.</p>' });
+  });
+  if (prev < REL_HIJR_END && rel >= REL_HIJR_END) once('hijrEnd', () => {
+    const wait = Math.max(0, 4000 - (performance.now() - hijrShownAt));
+    setTimeout(() => {
+      const h = document.querySelector('#guide h2');
+      if (h && h.textContent === 'Hijr Ismail' && S.phase === 'tawaf') info({ title: `Putaran ${round}`, body: "<p>Terus berjalan, Ka'bah di sebelah kirimu. Berdzikir dan berdoalah.</p>" });
+    }, wait);
   });
   if (prev < REL_YAMANI && rel >= REL_YAMANI) once('yamani', () => {
     if (round === 1) pauseWith([

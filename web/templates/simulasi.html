@@ -11,8 +11,8 @@
     <!-- Setelah importmap: unduh three.js & modul simulasi paralel, siapkan bagian lainnya -->
     <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.min.js" crossorigin>
     <link rel="modulepreload" href="/static/sim/common.js">
-    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=22">
-    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=22">
+    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=26">
+    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=26">
     <style>
         .ar { font-family: 'Amiri', serif; }
         .sim-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none; }
@@ -65,7 +65,7 @@
             <!-- Tombol atas kanan -->
             <div class="absolute top-3 right-3 z-40 flex flex-row sm:flex-col items-center sm:items-end gap-1.5 sm:gap-2">
                 <div class="flex items-center gap-1.5 sm:gap-2">
-                <button id="btnAudio" type="button" class="w-8 h-8 rounded-full bg-white/90 shadow text-emerald-700 hover:bg-white flex items-center justify-center" title="Murottal {{if eq .Part "sai"}}Al-Baqarah 157–170{{else}}Surah Al-Mulk{{end}} (Syekh Mishary Rashid Alafasy): klik untuk matikan/nyalakan" aria-label="Matikan murottal" aria-pressed="true">
+                <button id="btnAudio" type="button" class="w-8 h-8 rounded-full bg-white/90 shadow text-emerald-700 hover:bg-white flex items-center justify-center" title="Murottal {{if eq .Part "sai"}}Al-Baqarah 157–170{{else}}Al-Baqarah 195–205{{end}} (Syekh Mishary Rashid Alafasy): klik untuk matikan/nyalakan" aria-label="Matikan murottal" aria-pressed="true">
                     <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" fill-opacity=".15"/><g id="audioOn"><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></g><g id="audioOff" style="display:none"><path d="m22 9-6 6M16 9l6 6"/></g></svg></button>
                 <button id="btnReset" type="button" title="Mulai Ulang" aria-label="Mulai Ulang" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/90 shadow w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
                     <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="hidden sm:inline">Mulai Ulang</span></button>
@@ -98,7 +98,7 @@
                     <p id="panelRound" class="text-xs font-semibold text-gray-400"></p>
                 </div>
                 <div id="guide" class="lg:mt-3"></div>
-                <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">{{if eq .Part "sai"}}Audio: Murottal Al-Baqarah ayat 157–170 (ayat tentang Shafa dan Marwah) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{else}}Audio: Murottal Surah Al-Mulk oleh Syekh Mishary Rashid Alafasy, dari QuranicAudio.com.{{end}} Kontrol: klik <b>Jalan</b> untuk jalan atau berhenti (bisa juga ditahan, lepas untuk berhenti), atau tombol panah di keyboard.</p>
+                <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">{{if eq .Part "sai"}}Audio: Murottal Al-Baqarah ayat 157–170 (ayat tentang Shafa dan Marwah) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{else}}Audio: Murottal Al-Baqarah ayat 195–205 (termasuk doa sapu jagad, ayat 201) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{end}} Kontrol: klik <b>Jalan</b> untuk jalan atau berhenti (bisa juga ditahan, lepas untuk berhenti), atau tombol panah di keyboard.</p>
             </div>
         </aside>
         <!-- Pilih karakter: di HP menutupi area 3D + panel supaya kartunya muat utuh -->
@@ -226,8 +226,8 @@
     // Kembali dengan tombol Back (bfcache): sembunyikan layar memuat.
     addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
     </script>
-    <audio id="simAudio" preload="none" loop src="{{if eq .Part "sai"}}/static/sim/audio/baqarah-157-170.mp3{{else}}https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/67.mp3{{end}}"></audio>
-    <script type="module" src="/static/sim/{{.Part}}.js?v=22"></script>
+    <audio id="simAudio" preload="none" loop src="{{if eq .Part "sai"}}/static/sim/audio/baqarah-157-170.mp3{{else}}/static/sim/audio/baqarah-195-205.mp3{{end}}"></audio>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=26"></script>
 </body>
 
 </html>

@@ -28,23 +28,40 @@ export function chibiKit() {
     const pivot = new THREE.Group(); const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 8), material); m.position.y = -len / 2 - r * 0.4; pivot.add(m); return { pivot, m };
   }
   // clothColor/veilColor: untuk ilustrasi (mis. tukang cukur berbaju biasa).
-  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null } = {}) {
+  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null, draped = false } = {}) {
     const g = new THREE.Group(), parts = {};
     const cloth = clothColor ? mat(clothColor) : gender === 'm' ? M.white : mat('#f4efe6'), veil = mat(veilColor || '#e6ddcf');
+    const ihram = gender === 'm' && !clothColor;
     if (gender === 'm') {
       const legL = limb(0.11, 0.38, M.skin), legR = limb(0.11, 0.38, M.skin);
       legL.pivot.position.set(-0.15, 0.62, 0); legR.pivot.position.set(0.15, 0.62, 0); g.add(legL.pivot, legR.pivot);
       parts.legL = legL.pivot; parts.legR = legR.pivot;
       const izar = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.62, 14), cloth); izar.position.y = 0.72; g.add(izar);
-      const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.35, 0.55, 14), cloth); torso.position.y = 1.25; g.add(torso);
-      if (shoulderBare) { const sh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), M.skin); sh.position.set(-0.27, 1.43, 0.02); g.add(sh); }
+      if (ihram) { // izar: gulungan di pinggang + tumpukan kain di depan
+        const hem = mat('#e4ded0');
+        const roll = new THREE.Mesh(new THREE.TorusGeometry(0.345, 0.035, 6, 20), hem); roll.rotation.x = Math.PI / 2; roll.position.y = 1.02; g.add(roll);
+        const fold = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.6, 0.02), hem); fold.position.set(0.12, 0.72, 0.39); fold.rotation.x = -0.12; g.add(fold);
+      }
+      if (!ihram || !draped) {
+        // Kain atas sederhana (dipakai di simulasi); saat tawaf bahu kanan terbuka.
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.35, 0.55, 14), cloth); torso.position.y = 1.25; g.add(torso);
+        if (ihram && shoulderBare) { const sh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), M.skin); sh.position.set(-0.27, 1.43, 0.02); g.add(sh); }
+      } else {
+        // Kain atas berlipat (dipakai di ilustrasi Niat/Tahallul): rida menutup kedua bahu,
+        // ujungnya dilempar ke bahu kiri -> selempang kain lebar melintang dada.
+        const rida = mat('#f5f2ea'), band = mat('#ece7db');
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.355, 0.55, 14), rida); torso.position.y = 1.25; g.add(torso);
+        for (const sx of [-1, 1]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 8), rida); cap.scale.set(1.15, 0.75, 1); cap.position.set(sx * 0.28, 1.47, 0); g.add(cap); }
+        // selempang: torus yang dipipihkan jadi pita lebar mengikuti badan (bukan tali bulat)
+        const sash = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.055, 8, 32), band); sash.rotation.set(Math.PI / 2, 0.62, 0); sash.position.y = 1.29; sash.scale.set(1, 0.86, 2.4); g.add(sash);
+      }
     } else {
       const dress = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.52, 1.35, 16), cloth); dress.position.y = 0.72; g.add(dress);
       const cape = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.5, 0.55, 16), veil); cape.position.y = 1.42; g.add(cape);
     }
     for (const side of [-1, 1]) {
-      const bare = gender === 'm' && shoulderBare && side === -1;
-      const arm = limb(0.085, 0.36, bare ? M.skin : cloth);
+      // Ilustrasi: lengan terbuka (ihram tak berlengan). Simulasi: seperti semula, lengan kanan terbuka saat idhtiba'.
+      const arm = limb(0.085, 0.36, ihram && (draped || (shoulderBare && side === -1)) ? M.skin : cloth);
       arm.pivot.position.set(side * 0.38, 1.45, 0); g.add(arm.pivot);
       const hand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), M.skin); hand.position.y = -0.62; arm.pivot.add(hand);
       parts[side < 0 ? 'armR' : 'armL'] = arm.pivot;
@@ -203,7 +220,7 @@ export function createSim(opts = {}) {
   audio.volume = VOL;
   function duck(on) { audio.volume = on ? VOL_DUCK : VOL; }
   sim.duck = duck;
-  // Lanjutkan posisi hanya bila file audionya sama (Tawaf: Al-Mulk, Sa'i: Al-Baqarah 158–170).
+  // Lanjutkan posisi hanya bila file audionya sama (Tawaf: Al-Baqarah 195–205, Sa'i: Al-Baqarah 157–170).
   audio.addEventListener('loadedmetadata', () => {
     const t = +sessionStorage.getItem('ukAudioT') || 0;
     if (sessionStorage.getItem('ukAudioSrc') === audio.currentSrc && t > 0 && t < audio.duration) audio.currentTime = t;
