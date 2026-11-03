@@ -166,6 +166,18 @@ func ventParse(html, travel, url string) (CrawledPackage, bool) {
 	}
 	p.Departures = []CrawledDeparture{d}
 
+	// Hanya paket umrah: penerbangannya harus mendarat di Jeddah/Madinah. Paket wisata
+	// (mis. "VCATION CHINA ...") yang juga dijual Ventour tidak diambil.
+	toSaudi := false
+	for _, f := range flights {
+		if f[2] == "JED" || f[2] == "MED" || f[3] == "JED" || f[3] == "MED" {
+			toSaudi = true
+		}
+	}
+	nameUp := strings.ToUpper(p.PackageName)
+	if (len(flights) > 0 && !toSaudi) || strings.Contains(nameUp, "VCATION") || strings.Contains(nameUp, "VACATION") {
+		return p, false
+	}
 	// Penerbangan berangkat = penerbangan sebelum tiba di JED/MED pertama kali.
 	landMED := false
 	if len(flights) > 0 {
