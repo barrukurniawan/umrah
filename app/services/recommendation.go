@@ -24,14 +24,13 @@ type FilterInput struct {
 }
 
 // Travel partner/promo: selalu di urutan teratas, tapi hanya pada budget tertentu
-// (dipilih pemilik situs). Di luar rentang ini paketnya tidak ditampilkan sama sekali.
+// (dipilih pemilik situs). Di luar rentang ini paketnya tidak ditampilkan, kecuali
+// pengunjung memilih travel itu di filter.
 type featuredRange struct{ MinBudget, MaxBudget int }
 
 var featuredTravels = map[string]featuredRange{
 	"Alviandra Travel": {MinBudget: 28000000, MaxBudget: 29000000},
 }
-
-func isFeatured(travel string) bool { _, ok := featuredTravels[travel]; return ok }
 
 // Paket promo boleh sedikit di atas budget (mis. Rp28,5 jt sudah tampil di budget Rp28 jt).
 const featuredBudgetSlack = 500000
@@ -39,7 +38,8 @@ const featuredBudgetSlack = 500000
 type ScoredPackage struct {
 	models.Package
 	Key               string // PackageKey, untuk ♡ simpan
-	Featured          bool
+	Featured          bool   // label "Promo Spesial" (dalam rentang budget promo)
+	Pinned            bool   // disematkan paling atas: promo, atau travel promo yang dipilih di filter
 	Score             int
 	FacilityList      []string
 	FacilityGeneric   bool   // travel belum merinci; FacilityList = fasilitas umum umroh
@@ -118,11 +118,19 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		pkg.Price = availablePrice(pkg.Price, upcoming)
 
 		budget := input.Budget
+		featured, pinned := false, false
 		if fr, ok := featuredTravels[pkg.Travel.Name]; ok {
-			if input.Budget < fr.MinBudget || input.Budget > fr.MaxBudget {
+			inRange := input.Budget >= fr.MinBudget && input.Budget <= fr.MaxBudget
+			// Di luar rentang promo paketnya disembunyikan, kecuali pengunjung sengaja memilih
+			// travel ini di filter: maka tampil seperti travel biasa (tanpa disematkan di atas).
+			if !inRange && !(hasTravelFilter && travelFilter[pkg.Travel.Name]) {
 				continue
 			}
-			budget += featuredBudgetSlack
+			pinned = true
+			if inRange {
+				featured = true
+				budget += featuredBudgetSlack
+			}
 		}
 		if pkg.Price > budget {
 			continue
@@ -243,7 +251,8 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		scored = append(scored, ScoredPackage{
 			Package:           pkg,
 			Key:               PackageKey(pkg.Travel.Name, pkg.Name),
-			Featured:          isFeatured(pkg.Travel.Name),
+			Featured:          featured,
+			Pinned:            pinned,
 			Score:             score,
 			FacilityList:      facilitiesOrGeneric(pkg.Facilities),
 			FacilityGeneric:   len(parseFacilities(pkg.Facilities)) == 0,
@@ -260,8 +269,8 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 	// Server-side sort
 	sort.Slice(scored, func(i, j int) bool {
 		// Paket promo partner selalu paling atas, apa pun urutan yang dipilih.
-		if scored[i].Featured != scored[j].Featured {
-			return scored[i].Featured
+		if scored[i].Pinned != scored[j].Pinned {
+			return scored[i].Pinned
 		}
 		switch input.Sort {
 		case "price_asc":
@@ -277,8 +286,8 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		case "dp_asc":
 			return scored[i].DownPayment < scored[j].DownPayment
 		default:
-			if scored[i].Featured != scored[j].Featured {
-				return scored[i].Featured
+			if scored[i].Pinned != scored[j].Pinned {
+				return scored[i].Pinned
 			}
 			return scored[i].Score > scored[j].Score
 		}
