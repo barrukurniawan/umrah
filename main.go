@@ -192,6 +192,7 @@ func main() {
 	}
 	engine.AddFunc("cssV", func() string { return cssV })
 	engine.AddFunc("dpPromo", repositories.DPPromoNote)
+	engine.AddFunc("dayShort", services.DayShort)
 	engine.AddFunc("travelName", services.TravelDisplayName)
 	engine.AddFunc("travelInitials", services.TravelInitials)
 	// Logo travel: web/static/logos/<slug>.(webp|png|jpg|svg); "" bila belum ada.

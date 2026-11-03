@@ -12,5 +12,7 @@
   {"name": "PT Labbaika Cipta Imani", "url": "https://labbaika.co.id/transaksi/paket-umrah", "parser": "labbaika", "travel_name": "PT Labbaika Cipta Imani"},
   {"name": "Rahmah Travel", "url": "https://rahmahtravel.id/jadwal-biaya-umroh-2026-2027", "parser": "rahmah", "travel_name": "Rahmah Travel"},
   {"name": "Fandiego Travel", "url": "https://fandiegotravel.com/", "parser": "fandiego", "travel_name": "PT Wisata Hati Universal"},
-  {"name": "Jejak Imani", "url": "https://www.jejakimani.com/umroh", "parser": "jejakimani", "travel_name": "Jejak Imani"}
+  {"name": "Jejak Imani", "url": "https://www.jejakimani.com/umroh", "parser": "jejakimani", "travel_name": "Jejak Imani"},
+  {"name": "Armina", "url": "https://jamaah.arminarekaperdana.com/site/jadwal", "parser": "armina", "travel_name": "Armina"},
+  {"name": "Ventour Travel", "url": "https://ventour.co.id/", "parser": "ventour", "travel_name": "Ventour Travel"}
 ]

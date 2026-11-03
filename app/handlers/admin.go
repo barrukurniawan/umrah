@@ -12,8 +12,9 @@ import (
 	"time"
 
 	"umrah/app/accounts"
-	"umrah/app/repositories"
 	"umrah/app/analytics"
+	"umrah/app/repositories"
+	"umrah/app/services"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -37,6 +38,7 @@ var adminTabs = []struct{ Key, Label string }{
 	{"live", "Live"},
 	{"pengguna", "Pengguna"},
 	{"pesan", "Pesan"},
+	{"kalender", "Kalender Paket"},
 }
 
 var (
@@ -137,8 +139,13 @@ func AdminDashboard(c *fiber.Ctx) error {
 	if tab == "pengguna" {
 		users = accounts.AdminUserStats(rng.From, rng.To)
 	}
+	var cal services.AdminCalendarView
+	if tab == "kalender" {
+		cal = services.AdminCalendar(c.Query("bulan"), c.Query("tanggal"), c.Query("travel"))
+	}
 	return c.Render("admin/index", fiber.Map{
 		"U":       users,
+		"Cal":     cal,
 		"Import":  repositories.LastImport(),
 		"Tab":     tab,
 		"Tabs":    adminTabs,

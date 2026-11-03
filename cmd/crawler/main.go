@@ -100,6 +100,10 @@ func main() {
 			parser = &crawlers.RahmahParser{URL: site.URL}
 		case "fandiego":
 			parser = &crawlers.FandiegoParser{URL: site.URL}
+		case "armina":
+			parser = &crawlers.ArminaParser{URL: site.URL, TravelName: site.TravelName}
+		case "ventour":
+			parser = &crawlers.VentourParser{URL: site.URL, TravelName: site.TravelName}
 		case "jejakimani":
 			parser = crawlers.NewJejakImaniParser()
 		case "uhudtour_list":

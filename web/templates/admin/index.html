@@ -39,7 +39,7 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-6">
-        {{if and (ne .Tab "live") (ne .Tab "pesan")}}
+        {{if and (ne .Tab "live") (ne .Tab "pesan") (ne .Tab "kalender")}}
         <div class="flex items-center justify-between flex-wrap gap-2 mb-5">
             <h1 class="text-lg font-bold">{{.R.Range.Label}}</h1>
             <div class="flex gap-1 bg-white border border-gray-200 rounded-full p-1">
@@ -297,6 +297,121 @@
             </table>
             {{else}}{{template "empty"}}{{end}}
         </section>
+        {{end}}
+
+        {{if eq .Tab "kalender"}}
+        {{$c := .Cal}}
+        {{$q := printf "tab=kalender&travel=%s" ($c.Travel | urlquery)}}
+        <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <div>
+                <h1 class="text-lg font-bold">Kalender paket</h1>
+                <p class="text-xs text-gray-500">Data terbaru{{if not .Import.At.IsZero}} {{wib .Import.At}}{{end}} · diperbarui otomatis tiap crawl (05:00 &amp; 17:00 WIB).</p>
+            </div>
+            <form method="GET" action="/admin" class="flex items-center gap-2 text-sm">
+                <input type="hidden" name="tab" value="kalender"><input type="hidden" name="bulan" value="{{$c.MonthKey}}">{{if $c.Selected}}<input type="hidden" name="tanggal" value="{{$c.Selected}}">{{end}}
+                <select name="travel" onchange="this.form.submit()" class="rounded-lg border border-gray-200 bg-white px-3 py-1.5">
+                    <option value="">Semua travel</option>
+                    {{range $c.Travels}}<option value="{{.}}" {{if eq . $c.Travel}}selected{{end}}>{{travelName .}}</option>{{end}}
+                </select>
+            </form>
+        </div>
+
+        <!-- Ringkasan 6 bulan: tanggal kosong per bulan -->
+        <section class="bg-white border border-gray-200 rounded-xl overflow-hidden mb-5">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
+                <thead class="bg-gray-50 text-xs text-gray-500"><tr><th class="text-left px-3 py-2 w-24 sm:w-32">Bulan</th><th class="text-left px-3 py-2">Tanggal kosong (belum ada paket{{if $c.Travel}} dari travel ini{{end}})</th><th class="text-left px-3 py-2 hidden md:table-cell">Hanya penuh</th><th class="text-right px-3 py-2 w-16 sm:w-24 hidden sm:table-cell">Hari ada paket</th></tr></thead>
+                <tbody class="divide-y divide-gray-100">
+                {{range $c.Months}}
+                <tr class="{{if eq .Key $c.MonthKey}}bg-emerald-50/50{{end}}">
+                    <td class="px-3 py-2 align-top"><a class="font-semibold text-emerald-700 hover:underline" href="/admin?{{$q}}&bulan={{.Key}}">{{.Title}}</a></td>
+                    <td class="px-3 py-2">{{if .EmptyDates}}<div class="flex flex-wrap gap-1">{{range .EmptyDates}}<a href="/admin?{{$q}}&bulan={{slice . 0 7}}&tanggal={{.}}" class="inline-block min-w-[26px] text-center rounded-md bg-rose-50 text-rose-700 text-xs font-semibold px-1.5 py-0.5 hover:bg-rose-100">{{dayShort .}}</a>{{end}}</div>{{else}}<span class="text-xs text-gray-400">Tidak ada</span>{{end}}</td>
+                    <td class="px-3 py-2 hidden md:table-cell">{{if .FullOnlyDates}}<div class="flex flex-wrap gap-1">{{range .FullOnlyDates}}<a href="/admin?{{$q}}&bulan={{slice . 0 7}}&tanggal={{.}}" class="inline-block min-w-[26px] text-center rounded-md bg-gray-200 text-gray-600 text-xs font-semibold px-1.5 py-0.5">{{dayShort .}}</a>{{end}}</div>{{else}}<span class="text-xs text-gray-300">-</span>{{end}}</td>
+                    <td class="px-3 py-2 text-right tabular-nums hidden sm:table-cell">{{.OpenCount}}</td>
+                </tr>
+                {{end}}
+                </tbody>
+            </table></div>
+            <p class="px-3 py-2 text-[11px] text-gray-400 border-t border-gray-100">Tanggal musim haji (visa umrah biasanya ditutup) tidak dihitung sebagai kosong.</p>
+        </section>
+
+        <div class="grid lg:grid-cols-[minmax(0,1fr)_380px] gap-5 min-w-0">
+            <!-- Kalender bulan -->
+            <section class="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 min-w-0">
+                <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                    <h2 class="font-bold">{{$c.Month.Title}}</h2>
+                    <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-500">
+                        <span class="inline-flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-full bg-emerald-500"></i>Ada seat</span>
+                        <span class="inline-flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-full bg-amber-400"></i>Seat tak disebut</span>
+                        <span class="inline-flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-full bg-gray-400"></i>Penuh</span>
+                        <span class="inline-flex items-center gap-1"><i class="w-2.5 h-2.5 rounded bg-rose-100 ring-1 ring-rose-300"></i>Kosong</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 gap-1 sm:gap-1.5 text-center text-[11px] font-semibold text-gray-400 mb-1.5">
+                    <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
+                </div>
+                <div class="grid grid-cols-7 gap-1 sm:gap-1.5">
+                    {{range $c.Month.Lead}}<span></span>{{end}}
+                    {{range $c.Month.Days}}
+                    {{$empty := and (not .Past) (eq (add .Open (add .Unknown .Full)) 0) (not .Haj)}}
+                    <a href="/admin?{{$q}}&bulan={{$c.MonthKey}}&tanggal={{.Date}}"
+                        class="relative min-w-0 min-h-[56px] sm:min-h-[64px] rounded-lg border p-1 sm:p-1.5 text-left transition hover:border-emerald-400
+                        {{if .Selected}}ring-2 ring-emerald-600 border-emerald-600{{else if .Past}}bg-gray-50 border-gray-100 opacity-50{{else if $empty}}bg-rose-50 border-rose-200{{else if .Haj}}bg-gray-100 border-gray-200{{else}}bg-white border-gray-200{{end}}">
+                        <span class="text-xs font-semibold {{if .Today}}text-emerald-700{{else}}text-gray-700{{end}}">{{.Day}}</span>
+                        {{if .Travels}}<span class="hidden sm:inline absolute top-1.5 right-1.5 text-[10px] text-gray-400">{{.Travels}} trv</span>{{end}}
+                        <div class="mt-1 flex flex-wrap gap-0.5 sm:gap-1 text-[10px] font-bold">
+                            {{if .Open}}<span class="rounded bg-emerald-100 text-emerald-800 px-1">{{.Open}}</span>{{end}}
+                            {{if .Unknown}}<span class="rounded bg-amber-100 text-amber-800 px-1">{{.Unknown}}</span>{{end}}
+                            {{if .Full}}<span class="rounded bg-gray-200 text-gray-600 px-1">{{.Full}}</span>{{end}}
+                            {{if $empty}}<span class="hidden sm:inline text-rose-500 font-semibold">kosong</span>{{end}}
+                            {{if and .Haj (not .Past) (eq (add .Open (add .Unknown .Full)) 0)}}<span class="text-gray-400 font-medium">haji</span>{{end}}
+                        </div>
+                    </a>
+                    {{end}}
+                </div>
+            </section>
+
+            <!-- Detail tanggal / ringkasan travel -->
+            <section class="bg-white border border-gray-200 rounded-xl p-4 self-start min-w-0">
+                {{if $c.Selected}}
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-bold">{{$c.SelectedFmt}}</h2>
+                    <a href="/admin?{{$q}}&bulan={{$c.MonthKey}}" class="text-xs text-gray-400 hover:text-gray-700">Tutup ✕</a>
+                </div>
+                {{if $c.Deps}}
+                <ul class="divide-y divide-gray-100 -mx-1">
+                    {{range $c.Deps}}
+                    <li class="px-1 py-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-900">{{.Travel}}</p>
+                                <p class="text-xs text-gray-500 leading-snug">{{.Package}}</p>
+                            </div>
+                            {{if eq .Status "ada"}}<span class="shrink-0 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5">Sisa {{.Seats}} seat</span>
+                            {{else if eq .Status "penuh"}}<span class="shrink-0 rounded-full bg-gray-200 text-gray-600 text-[11px] font-bold px-2 py-0.5">Penuh</span>
+                            {{else}}<span class="shrink-0 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5">Seat tak disebut</span>{{end}}
+                        </div>
+                        <p class="mt-1 text-xs text-gray-600">Rp {{formatCurrency .Price}}{{if .Duration}} · {{.Duration}} hari{{end}}{{if .Airline}} · {{.Airline}}{{end}}{{if .ReturnDate}} · pulang {{formatDateShort .ReturnDate}}{{end}}{{if .URL}} · <a href="{{.URL}}" target="_blank" rel="noopener" class="text-emerald-700 hover:underline">buka ↗</a>{{end}}</p>
+                    </li>
+                    {{end}}
+                </ul>
+                {{else}}
+                <p class="text-sm text-rose-600 font-semibold">Belum ada paket{{if $c.Travel}} dari {{travelName $c.Travel}}{{end}} di tanggal ini.</p>
+                <p class="text-xs text-gray-500 mt-1">Cocok dicarikan dari travel lain.</p>
+                {{end}}
+                {{else}}
+                <h2 class="font-bold mb-3">Per travel (semua tanggal mendatang)</h2>
+                <table class="w-full text-sm">
+                    <thead class="text-[11px] text-gray-500"><tr><th class="text-left pb-1">Travel</th><th class="text-right pb-1" title="Ada seat">Seat</th><th class="text-right pb-1" title="Seat tak disebut">?</th><th class="text-right pb-1">Penuh</th><th class="text-right pb-1">Terdekat</th></tr></thead>
+                    <tbody class="divide-y divide-gray-100">
+                    {{range $c.TravelRows}}
+                    <tr><td class="py-1.5 pr-2">{{.Name}}</td><td class="py-1.5 text-right tabular-nums text-emerald-700">{{.Open}}</td><td class="py-1.5 text-right tabular-nums text-amber-700">{{.Unknown}}</td><td class="py-1.5 text-right tabular-nums text-gray-400">{{.Full}}</td><td class="py-1.5 pl-2 text-right text-xs text-gray-600 whitespace-nowrap">{{if .Next}}{{formatDateShort .Next}}{{else}}-{{end}}</td></tr>
+                    {{end}}
+                    </tbody>
+                </table>
+                <p class="mt-3 text-[11px] text-gray-400">Klik tanggal di kalender untuk melihat paket, harga, dan sisa seat per travel.</p>
+                {{end}}
+            </section>
+        </div>
         {{end}}
 
         {{if eq .Tab "pesan"}}
