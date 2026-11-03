@@ -15,10 +15,11 @@
 <div>
     <input type="hidden" name="travels" value="{{.Travels}}">
     <input type="hidden" name="sort" value="{{.Sort}}">
+    <input type="hidden" name="sort_auto" value="{{if .SortAuto}}1{{end}}">
     <input type="hidden" name="month" value="{{.Month}}">
     <input type="hidden" name="flight" value="{{.Flight}}">
     <div id="fApply" class="hidden" hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML show:#results:top" hx-indicator="#results" hx-trigger="apply"
-        hx-include="[name='budget'],[name='advanced'],[name='travels'],[name='sort'],[name='month'],[name='flight']"></div>
+        hx-include="[name='budget'],[name='advanced'],[name='travels'],[name='sort'],[name='sort_auto'],[name='month'],[name='flight']"></div>
     <div class="flex items-start justify-between gap-3 mb-3">
         <div class="min-w-0">
             <h2 class="text-xl font-bold text-gray-900 mb-1">Hasil Rekomendasi</h2>
@@ -32,7 +33,7 @@
     {{if .FilterCount}}
     <div class="flex flex-wrap gap-1.5 mb-4">
             {{if .Flight}}<button type="button" onclick="ukF.clear('flight')" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium pl-2.5 pr-1.5 py-1">{{if eq .Flight "direct"}}Direct{{else}}Transit{{end}}{{template "ic" (dict "N" "x" "C" "w-3.5 h-3.5")}}</button>{{end}}
-            {{if ne .Sort "price_desc"}}<button type="button" onclick="ukF.clear('sort')" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium pl-2.5 pr-1.5 py-1">{{.SortLabel}}{{template "ic" (dict "N" "x" "C" "w-3.5 h-3.5")}}</button>{{end}}
+            {{if ne .Sort .DefaultSort}}<button type="button" onclick="ukF.clear('sort')" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium pl-2.5 pr-1.5 py-1">{{.SortLabel}}{{template "ic" (dict "N" "x" "C" "w-3.5 h-3.5")}}</button>{{end}}
             {{if .Month}}<button type="button" onclick="ukF.clear('month')" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium pl-2.5 pr-1.5 py-1">{{.MonthLabel}}{{template "ic" (dict "N" "x" "C" "w-3.5 h-3.5")}}</button>{{end}}
     </div>
     {{end}}
@@ -81,12 +82,14 @@
         apply: function () {
             var f = document.querySelector('input[name=f_flight]:checked');
             this.el('flight').value = f ? f.value : '';
-            this.el('sort').value = document.getElementById('fSort').value;
+            var fs = document.getElementById('fSort').value;
+            if (fs !== this.el('sort').value) this.el('sort_auto').value = ''; // pengunjung memilih urutan sendiri
+            this.el('sort').value = fs;
             this.el('month').value = document.getElementById('fMonth').value;
             this.go();
         },
-        reset: function () { this.el('flight').value = ''; this.el('sort').value = 'price_desc'; this.el('month').value = ''; this.go(); },
-        clear: function (n) { this.el(n).value = n === 'sort' ? 'price_desc' : ''; this.go(); }
+        reset: function () { this.el('flight').value = ''; this.el('sort').value = ''; this.el('sort_auto').value = '1'; this.el('month').value = ''; this.go(); },
+        clear: function (n) { this.el(n).value = ''; if (n === 'sort') this.el('sort_auto').value = '1'; this.go(); }
     };
     </script>
 
@@ -273,7 +276,7 @@
     <div class="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-100">
         {{if .HasPrev}}
         <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML show:#results:top" hx-indicator="#results"
-            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort'],[name='travels'],[name='month'],[name='flight']"
+            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort'],[name='sort_auto'],[name='travels'],[name='month'],[name='flight']"
             hx-vals='{"page":"{{.PrevPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
             &#8592; Sebelumnya
@@ -289,7 +292,7 @@
 
         {{if .HasNext}}
         <button hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML show:#results:top" hx-indicator="#results"
-            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort'],[name='travels'],[name='month'],[name='flight']"
+            hx-include="[name='budget'],[name='priority'],[name='advanced'],[name='sort'],[name='sort_auto'],[name='travels'],[name='month'],[name='flight']"
             hx-vals='{"page":"{{.NextPage}}"}'
             class="text-xs bg-white border border-gray-200 text-gray-600 font-medium px-4 py-2 rounded-full hover:bg-gray-50 transition-colors">
             Selanjutnya &#8594;

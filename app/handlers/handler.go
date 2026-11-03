@@ -43,7 +43,13 @@ func GetRecommendations(c *fiber.Ctx) error {
 	priority := c.FormValue("priority", "all")
 	advanced := c.FormValue("advanced", "")
 	page, _ := strconv.Atoi(c.FormValue("page", "1"))
-	sort := c.FormValue("sort", "price_desc")
+	// Urutan bawaan: Harga Tertinggi, kecuali budget 23-24 jt (paket paling murah lebih relevan).
+	// sort_auto=1 berarti pengunjung belum memilih urutan sendiri -> ikut bawaan budget baru.
+	sort := c.FormValue("sort")
+	sortAuto := sort == "" || c.FormValue("sort_auto") == "1"
+	if sortAuto {
+		sort = defaultSort(budget)
+	}
 	month := c.FormValue("month", "")
 	travels := c.FormValue("travels", "")
 	flight := c.FormValue("flight", "")
@@ -51,7 +57,7 @@ func GetRecommendations(c *fiber.Ctx) error {
 		sort, flight = "price_desc", "direct"
 	}
 	if _, ok := sortLabels[sort]; !ok {
-		sort = "price_desc"
+		sort, sortAuto = defaultSort(budget), true
 	}
 	if flight != "direct" && flight != "transit" {
 		flight = ""
@@ -106,8 +112,10 @@ func GetRecommendations(c *fiber.Ctx) error {
 		"NearestTravel": nearestTravel,
 		"NearestBudget": nearest / 1000000 * 1000000,
 		"SortLabel":     sortLabels[sort],
+		"SortAuto":      sortAuto,
+		"DefaultSort":   defaultSort(budget),
 		"MonthLabel":    monthLabels[month],
-		"FilterCount":   boolCount(flight != "", sort != "price_desc", month != ""),
+		"FilterCount":   boolCount(flight != "", sort != defaultSort(budget), month != ""),
 	})
 }
 
@@ -129,4 +137,11 @@ func boolCount(bs ...bool) int {
 		}
 	}
 	return n
+}
+
+func defaultSort(budget int) string {
+	if budget >= 23000000 && budget <= 24000000 {
+		return "price_asc"
+	}
+	return "price_desc"
 }

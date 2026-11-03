@@ -119,7 +119,7 @@
                     <button type="button" id="modeBtnCal" aria-pressed="false" onclick="ukCal.mode(true)" class="px-5 py-2 rounded-full transition-all text-gray-600 inline-flex items-center gap-2">{{template "ic" (dict "N" "calendar" "C" "w-4 h-4 text-emerald-600")}}Kalender</button>
                 </div>
             </div>
-            <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML" hx-include="#results [name='sort'],#results [name='month'],#results [name='flight']">
+            <form hx-post="/recommendations" hx-target="#results" hx-swap="innerHTML" hx-include="#results [name='sort'],#results [name='sort_auto'],#results [name='month'],#results [name='flight']">
                 <div class="mb-10" id="modeBudget">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
@@ -179,6 +179,10 @@
                             class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Armina</button>
                         <button type="button" onclick="toggleTravel(this)" data-travel="Ventour Travel"
                             class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Ventour</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="MHU"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">MHU</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Adhiya Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Adhiya</button>
                     </div>
                 </div>
                 

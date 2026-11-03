@@ -14,5 +14,7 @@
   {"name": "Fandiego Travel", "url": "https://fandiegotravel.com/", "parser": "fandiego", "travel_name": "PT Wisata Hati Universal"},
   {"name": "Jejak Imani", "url": "https://www.jejakimani.com/umroh", "parser": "jejakimani", "travel_name": "Jejak Imani"},
   {"name": "Armina", "url": "https://jamaah.arminarekaperdana.com/site/jadwal", "parser": "armina", "travel_name": "Armina"},
-  {"name": "Ventour Travel", "url": "https://ventour.co.id/", "parser": "ventour", "travel_name": "Ventour Travel"}
+  {"name": "Ventour Travel", "url": "https://ventour.co.id/", "parser": "ventour", "travel_name": "Ventour Travel"},
+  {"name": "MHU", "url": "https://manasikhajiumrah.com/transaksi/paket-umrah", "parser": "mhu", "travel_name": "MHU"},
+  {"name": "Adhiya Travel", "url": "https://adhiyatravel.co.id/v2/", "parser": "adhiya", "travel_name": "Adhiya Travel"}
 ]
