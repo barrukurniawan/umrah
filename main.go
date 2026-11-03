@@ -275,6 +275,7 @@ func main() {
 		hup := make(chan os.Signal, 1)
 		signal.Notify(hup, syscall.SIGHUP)
 		for range hup {
+			services.ReloadPrep()
 			services.ReloadHotelGeo() // koreksi jarak hotel ikut berlaku tanpa restart
 			if repositories.Reload() == nil {
 				services.ResetCalendarCache()
@@ -325,6 +326,8 @@ func main() {
 	app.Post("/api/saved/import", handlers.SavedImport)
 
 	// Tabungan umroh (perlu login).
+	app.Get("/persiapan", handlers.PrepPage)
+	app.Post("/api/persiapan", handlers.PrepSave)
 	app.Get("/tabungan", handlers.SavingsList)
 	app.Get("/tabungan/baru", handlers.SavingsNew)
 	app.Post("/tabungan", handlers.SavingsCreate)

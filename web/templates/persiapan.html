@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" .}}
+    <meta name="description" content="Checklist persiapan umrah: paspor, vaksin meningitis, perlengkapan ihram, dan manasik.">
+    <style>
+        .prep-cb { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; border-radius: 7px; border: 2px solid #cbd5e1; background: #fff; display: inline-grid; place-content: center; cursor: pointer; flex: none; transition: background .15s, border-color .15s; }
+        .prep-cb::after { content: ""; width: 11px; height: 6px; border: solid #fff; border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+        .prep-cb:checked { background: #047857; border-color: #047857; }
+        .prep-cb:checked::after { opacity: 1; }
+        .prep-item.done .prep-title { color: #9ca3af; text-decoration: line-through; }
+        details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
+        details[open] .chev { transform: rotate(180deg); }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="{{if .User}}1{{end}}">
+    {{template "nav" .}}
+
+    <main class="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+            Persiapan Umrah</h1>
+        <p class="text-sm text-gray-500 mt-1">Centang yang sudah beres. Ketuk judul untuk info &amp; tips.</p>
+
+        <!-- Ringkasan: progres, tanggal berangkat, jenis kelamin -->
+        <section class="mt-5 bg-white rounded-2xl border border-emerald-100 shadow-sm p-4 sm:p-5">
+            <div class="flex items-baseline justify-between gap-3">
+                <p class="text-sm font-semibold text-gray-900"><span id="prepDone">0</span> dari <span id="prepTotal">0</span> selesai</p>
+                <p id="prepCountdown" class="text-sm text-emerald-700 font-semibold"></p>
+            </div>
+            <div class="mt-2 h-2.5 rounded-full bg-gray-100 overflow-hidden"><div id="prepBar" class="h-full rounded-full bg-emerald-600 transition-[width] duration-300" style="width:0%"></div></div>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <label class="block">
+                    <span class="text-xs font-semibold text-gray-500">Tanggal berangkat</span>
+                    <input id="prepDepart" type="date" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                    {{if .DepartHint}}<button type="button" id="prepHint" data-date="{{.DepartHint}}" class="hidden mt-1 text-xs text-emerald-700 underline">Pakai tanggal dari target tabungan ({{formatDateID .DepartHint}})</button>{{end}}
+                </label>
+                <div>
+                    <span class="text-xs font-semibold text-gray-500">Perlengkapan untuk</span>
+                    <div class="mt-1 inline-flex w-full rounded-xl bg-gray-100 p-1 text-sm font-semibold" role="radiogroup">
+                        <button type="button" data-g="" class="g-btn flex-1 rounded-lg py-1.5">Semua</button>
+                        <button type="button" data-g="m" class="g-btn flex-1 rounded-lg py-1.5">Laki-laki</button>
+                        <button type="button" data-g="f" class="g-btn flex-1 rounded-lg py-1.5">Perempuan</button>
+                    </div>
+                </div>
+            </div>
+            {{if not .User}}
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-amber-50 border border-amber-100 px-3 py-2.5 text-sm text-amber-800">
+                <span>Progres tersimpan di browser ini saja. Masuk supaya tidak hilang saat ganti HP.</span>
+                {{if .LoginEnabled}}<a href="/auth/google/login?next=/persiapan" class="font-semibold underline">Masuk dengan Google</a>{{end}}
+            </div>
+            {{end}}
+        </section>
+
+        {{range $s := .Sections}}
+        <section class="prep-sec mt-5 bg-white rounded-2xl border border-gray-200 overflow-hidden" data-sec="{{$s.Key}}">
+            <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-gray-100 bg-gray-50/60">
+                <h2 class="font-bold text-gray-900">{{$s.Title}}</h2>
+                <span class="sec-count text-xs font-semibold text-gray-500"></span>
+            </div>
+            <ul class="divide-y divide-gray-100">
+                {{range $s.Items}}
+                <li class="prep-item px-4 sm:px-5 py-3" data-key="{{.Key}}" data-gender="{{.Gender}}" data-due="{{.DueDays}}">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="prep-cb mt-0.5" aria-label="{{.Title}}">
+                        <details class="flex-1 min-w-0">
+                            <summary class="cursor-pointer">
+                                <div class="flex items-start justify-between gap-2">
+                                    <span class="prep-title text-[15px] font-medium text-gray-900 leading-snug">{{.Title}}</span>
+                                    {{if or .Desc .Tips .Link}}<svg class="chev w-4 h-4 mt-1 shrink-0 text-gray-400 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>{{end}}
+                                </div>
+                                <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                                    {{if eq .Tag "wajib"}}<span class="rounded-full bg-rose-50 text-rose-700 text-[11px] font-semibold px-2 py-0.5">Wajib</span>
+                                    {{else if eq .Tag "cek"}}<span class="rounded-full bg-amber-50 text-amber-700 text-[11px] font-semibold px-2 py-0.5">Cek</span>
+                                    {{else}}<span class="rounded-full bg-gray-100 text-gray-500 text-[11px] font-semibold px-2 py-0.5">Opsional</span>{{end}}
+                                    {{if eq .Gender "m"}}<span class="rounded-full bg-sky-50 text-sky-700 text-[11px] font-semibold px-2 py-0.5">Laki-laki</span>{{end}}
+                                    {{if eq .Gender "f"}}<span class="rounded-full bg-pink-50 text-pink-700 text-[11px] font-semibold px-2 py-0.5">Perempuan</span>{{end}}
+                                    <span class="due hidden rounded-full text-[11px] font-semibold px-2 py-0.5"></span>
+                                </div>
+                            </summary>
+                            {{if or .Desc .Tips .Link}}
+                            <div class="mt-2 text-[13px] text-gray-600 leading-relaxed space-y-2">
+                                {{if .Desc}}<p>{{.Desc}}</p>{{end}}
+                                {{if .Tips}}<ul class="list-disc pl-5 space-y-1">{{range .Tips}}<li>{{.}}</li>{{end}}</ul>{{end}}
+                                {{with .Link}}<a href="{{.URL}}" {{if hasPrefix .URL "http"}}target="_blank" rel="noopener"{{end}} class="inline-flex items-center gap-1 font-semibold text-emerald-700 hover:underline">{{.Label}} →</a>{{end}}
+                            </div>
+                            {{end}}
+                        </details>
+                    </div>
+                </li>
+                {{end}}
+            </ul>
+        </section>
+        {{end}}
+
+        <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">Aturan visa dan vaksin dapat berubah. Selalu konfirmasi ke travel dan instansi terkait (Imigrasi, Kemenkes) sebelum berangkat.</p>
+    </main>
+
+    <script id="prepState" type="application/json">{{if .State}}{{.State}}{{else}}null{{end}}</script>
+    <script>
+    (function () {
+        var LS = 'ukPrep';
+        var logged = document.body.dataset.loggedIn === '1';
+        var server = null; try { server = JSON.parse(document.getElementById('prepState').textContent); } catch (e) {}
+        var local = null; try { local = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) {}
+        var st = { checks: [], depart: '', gender: '' };
+        if (server) st = { checks: server.checks || [], depart: server.depart || '', gender: server.gender || '' };
+        var needSync = false;
+        if (local) {
+            // Gabungkan progres dari browser (sebelum login) ke akun.
+            (local.checks || []).forEach(function (k) { if (st.checks.indexOf(k) < 0) { st.checks.push(k); needSync = logged; } });
+            if (!st.depart && local.depart) { st.depart = local.depart; needSync = logged; }
+            if (!st.gender && local.gender) { st.gender = local.gender; needSync = logged; }
+        }
+        var items = [].slice.call(document.querySelectorAll('.prep-item'));
+        var depart = document.getElementById('prepDepart');
+
+        var timer = null;
+        function persist() {
+            if (!logged) { try { localStorage.setItem(LS, JSON.stringify(st)); } catch (e) {} return; }
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                fetch('/api/persiapan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(st) })
+                    .then(function (r) { if (r.ok) { try { localStorage.removeItem(LS); } catch (e) {} } });
+            }, 400);
+        }
+        var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        function fmt(d) { return d.getDate() + ' ' + MON[d.getMonth()]; }
+
+        function render() {
+            var dep = st.depart ? new Date(st.depart + 'T00:00:00') : null, today = new Date(); today.setHours(0, 0, 0, 0);
+            var done = 0, total = 0;
+            items.forEach(function (li) {
+                var g = li.dataset.gender, show = !g || !st.gender || g === st.gender;
+                li.classList.toggle('hidden', !show);
+                var on = st.checks.indexOf(li.dataset.key) >= 0;
+                li.querySelector('.prep-cb').checked = on; li.classList.toggle('done', on);
+                if (show) { total++; if (on) done++; }
+                var due = li.querySelector('.due'), n = +li.dataset.due;
+                if (dep && n && !on) {
+                    var d = new Date(dep); d.setDate(d.getDate() - n);
+                    var late = d < today;
+                    due.textContent = (late ? 'Lewat tenggat ' : 'Paling lambat ') + fmt(d);
+                    due.className = 'due rounded-full text-[11px] font-semibold px-2 py-0.5 ' + (late ? 'bg-rose-600 text-white' : 'bg-emerald-50 text-emerald-700');
+                } else due.className = 'due hidden';
+            });
+            document.querySelectorAll('.prep-sec').forEach(function (sec) {
+                var vis = sec.querySelectorAll('.prep-item:not(.hidden)'), ok = sec.querySelectorAll('.prep-item.done:not(.hidden)');
+                sec.querySelector('.sec-count').textContent = ok.length + '/' + vis.length;
+            });
+            document.getElementById('prepDone').textContent = done;
+            document.getElementById('prepTotal').textContent = total;
+            document.getElementById('prepBar').style.width = (total ? done / total * 100 : 0) + '%';
+            var cd = document.getElementById('prepCountdown');
+            if (dep) { var days = Math.round((dep - today) / 864e5); cd.textContent = days > 0 ? days + ' hari lagi' : days === 0 ? 'Berangkat hari ini' : 'Sudah berangkat'; } else cd.textContent = '';
+            document.querySelectorAll('.g-btn').forEach(function (b) {
+                var on = b.dataset.g === st.gender;
+                b.classList.toggle('bg-white', on); b.classList.toggle('shadow', on); b.classList.toggle('text-emerald-700', on); b.classList.toggle('text-gray-500', !on);
+            });
+            depart.value = st.depart || '';
+            var hint = document.getElementById('prepHint'); if (hint) hint.classList.toggle('hidden', !!st.depart);
+        }
+
+        items.forEach(function (li) {
+            li.querySelector('.prep-cb').addEventListener('change', function (e) {
+                var k = li.dataset.key, i = st.checks.indexOf(k);
+                if (e.target.checked && i < 0) st.checks.push(k); else if (!e.target.checked && i >= 0) st.checks.splice(i, 1);
+                render(); persist();
+            });
+        });
+        depart.addEventListener('change', function () { st.depart = depart.value; render(); persist(); });
+        var hint = document.getElementById('prepHint');
+        if (hint) hint.addEventListener('click', function () { st.depart = hint.dataset.date; render(); persist(); });
+        document.querySelectorAll('.g-btn').forEach(function (b) { b.addEventListener('click', function () { st.gender = b.dataset.g; render(); persist(); }); });
+
+        render();
+        if (needSync) persist();
+    })();
+    </script>
+</body>
+
+</html>

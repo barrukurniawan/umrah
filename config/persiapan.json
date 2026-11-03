@@ -1,0 +1,110 @@
+{
+  "_catatan": "Isi checklist halaman /persiapan. Ubah teks di sini lalu muat ulang data (SIGHUP) atau restart. key jangan diganti setelah live (progres pengguna tersimpan per key). gender: m|f|kosong. tag: wajib|opsional|cek. due_days: tenggat N hari sebelum berangkat.",
+  "sections": [
+    {
+      "key": "dokumen",
+      "title": "Dokumen",
+      "icon": "doc",
+      "items": [
+        {
+          "key": "paspor",
+          "title": "Paspor masih berlaku minimal 6 bulan saat berangkat",
+          "tag": "wajib",
+          "due_days": 45,
+          "desc": "Paspor dipakai travel untuk mengurus visa umrah. Bila belum punya atau masa berlaku kurang dari 6 bulan, buat/perpanjang dulu.",
+          "tips": [
+            "<b>Lewat app M-Paspor (disarankan):</b> pilih kantor imigrasi &amp; jadwal, bayar sebelum batas waktu (antrean batal otomatis bila terlambat), lalu datang membawa berkas asli untuk foto dan wawancara.",
+            "<b>Datang langsung:</b> datanglah sekitar <b>jam 6 pagi</b> untuk mengambil antrean; sebagian kantor membatasi kuota harian.",
+            "Biaya (PP 45/2024): paspor elektronik Rp650 rb (5 th) / Rp950 rb (10 th); paspor biasa Rp350 rb (5 th) / Rp650 rb (10 th). Cek ulang di situs Imigrasi.",
+            "Bawa KTP, KK, dan akta lahir/ijazah/buku nikah asli."
+          ],
+          "link": {"label": "Info M-Paspor (Imigrasi)", "url": "https://www.imigrasi.go.id/"}
+        },
+        {
+          "key": "berkas",
+          "title": "Siapkan KTP, KK, dan akta lahir/buku nikah",
+          "tag": "wajib",
+          "desc": "Biasanya diminta travel untuk pendaftaran. Perempuan di bawah 45 tahun sebaiknya menanyakan ke travel soal syarat mahram.",
+          "tips": ["Simpan foto/scan semua dokumen di HP dan email, berjaga-jaga bila hilang."]
+        },
+        {
+          "key": "foto",
+          "title": "Pas foto latar putih",
+          "tag": "cek",
+          "desc": "Ukuran dan jumlahnya ikuti permintaan travel (umumnya 4x6, wajah tampak 80%)."
+        },
+        {
+          "key": "visa",
+          "title": "Serahkan berkas visa ke travel",
+          "tag": "wajib",
+          "due_days": 30,
+          "desc": "Visa umrah diurus travel. Pastikan paspor, foto, dan sertifikat vaksin sudah diserahkan tepat waktu."
+        }
+      ]
+    },
+    {
+      "key": "kesehatan",
+      "title": "Kesehatan & Vaksin",
+      "icon": "health",
+      "items": [
+        {
+          "key": "vaksin_meningitis",
+          "title": "Vaksin meningitis (ACWY) + sertifikat ICV",
+          "tag": "wajib",
+          "due_days": 10,
+          "desc": "Wajib bagi jemaah umrah (SE Kemenkes 2024). Paling lambat 10 hari sebelum berangkat, dan Anda akan menerima <b>sertifikat vaksin internasional (ICV)</b>, jadi lakukan di tempat yang dapat menerbitkan ICV.",
+          "tips": [
+            "Tempat: Balai Kekarantinaan Kesehatan (dulu KKP), RSUD, atau klinik/rumah sakit yang terdaftar menerbitkan ICV. Tanyakan harga dan ketersediaan vaksin sebelum datang.",
+            "Bawa paspor (nama di ICV harus sama dengan paspor) dan KTP."
+          ]
+        },
+        {
+          "key": "vaksin_polio",
+          "title": "Vaksin polio",
+          "tag": "cek",
+          "due_days": 28,
+          "desc": "Arab Saudi mewajibkan vaksin polio sejak Februari 2025 (minimal 4 minggu sebelum tiba), namun informasinya untuk umrah dari Indonesia masih berbeda-beda. <b>Tanyakan ke travel atau tempat vaksin</b> apakah wajib untuk keberangkatanmu."
+        },
+        {
+          "key": "vaksin_influenza",
+          "title": "Vaksin influenza",
+          "tag": "opsional",
+          "desc": "Tidak wajib, tetapi dianjurkan, terutama untuk lansia dan yang punya penyakit penyerta, karena Tanah Suci sangat ramai."
+        },
+        {
+          "key": "cek_kesehatan",
+          "title": "Cek kesehatan & siapkan obat pribadi",
+          "tag": "cek",
+          "desc": "Konsultasikan ke dokter bila punya penyakit kronis. Bawa obat rutin secukupnya beserta resep/surat dokter."
+        }
+      ]
+    },
+    {
+      "key": "perlengkapan",
+      "title": "Perlengkapan",
+      "icon": "bag",
+      "items": [
+        {"key": "ihram", "gender": "m", "title": "2 set kain ihram + sabuk ihram", "tag": "wajib", "desc": "Satu dipakai, satu cadangan. Kain putih tanpa jahitan."},
+        {"key": "sandal_pria", "gender": "m", "title": "Sandal yang tidak menutup mata kaki", "tag": "wajib", "desc": "Saat ihram laki-laki tidak boleh memakai alas kaki yang menutup mata kaki."},
+        {"key": "cukur", "gender": "m", "title": "Alat cukur/gunting kecil untuk tahallul", "tag": "opsional"},
+        {"key": "gamis", "gender": "f", "title": "Gamis/mukena putih atau warna lembut", "tag": "wajib", "desc": "Pakaian longgar yang menutup aurat. Saat ihram wajah dan telapak tangan tidak ditutup."},
+        {"key": "kaos_kaki", "gender": "f", "title": "Kaos kaki, kerudung cadangan, bros/peniti", "tag": "opsional"},
+        {"key": "sajadah", "title": "Sajadah lipat & tas kecil untuk sandal", "tag": "opsional"},
+        {"key": "tanpa_wangi", "title": "Sabun & sampo tanpa pewangi", "tag": "cek", "desc": "Memakai wewangian termasuk larangan ihram."},
+        {"key": "semprot", "title": "Botol semprot air & masker", "tag": "opsional", "desc": "Udara di Makkah dan Madinah kering dan panas."},
+        {"key": "elektronik", "title": "Power bank & colokan tipe G", "tag": "opsional", "desc": "Arab Saudi memakai colokan 3 kaki (tipe G)."},
+        {"key": "riyal", "title": "Sedikit uang riyal tunai", "tag": "opsional", "desc": "Untuk jajan atau sedekah; sebagian besar toko juga menerima kartu."}
+      ]
+    },
+    {
+      "key": "ibadah",
+      "title": "Ibadah & Manasik",
+      "icon": "kaaba",
+      "items": [
+        {"key": "manasik", "title": "Ikut manasik dari travel", "tag": "wajib"},
+        {"key": "simulasi", "title": "Coba Simulasi Tawaf & Sa'i", "tag": "opsional", "desc": "Belajar urutan tawaf dan sa'i secara interaktif.", "link": {"label": "Buka Simulasi", "url": "/simulasi"}},
+        {"key": "hafalan", "title": "Hafalkan niat, talbiyah, dan doa sapu jagad", "tag": "opsional", "desc": "Labbaika Allāhumma ‘umratan · Labbaika Allāhumma labbaik · Rabbanā ātinā fid-dunyā ḥasanah…", "link": {"label": "Lihat bagian Niat", "url": "/simulasi?tab=niat"}}
+      ]
+    }
+  ]
+}

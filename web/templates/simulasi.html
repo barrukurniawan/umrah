@@ -223,6 +223,8 @@
         document.getElementById('chooseOverlay').scrollTop = 0;
         return false;
     }
+    // /simulasi?tab=niat atau ?tab=tahallul: langsung buka penjelasannya (mis. dari halaman Persiapan).
+    addEventListener('DOMContentLoaded', function () { var t = new URLSearchParams(location.search).get('tab'); if (t === 'niat' || t === 'tahallul') ukTab(t); });
     // Kembali dengan tombol Back (bfcache): sembunyikan layar memuat.
     addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
     </script>
