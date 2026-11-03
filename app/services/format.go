@@ -2,6 +2,7 @@ package services
 
 import (
 	"html/template"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -42,8 +43,13 @@ func PkgNameHTML(s string) template.HTML {
 	for i, p := range parts {
 		parts[i] = template.HTMLEscapeString(StripEmoji(p))
 	}
-	return template.HTML(strings.Join(parts, " "+planeSVG+" "))
+	out := strings.Join(parts, " "+planeSVG+" ")
+	// Keterangan promo dalam kurung ditandai merah, seperti label DP promo.
+	out = promoNoteRe.ReplaceAllString(out, `<span class="text-rose-600 font-semibold">$0</span>`)
+	return template.HTML(out)
 }
+
+var promoNoteRe = regexp.MustCompile(`\((?i:promo)[^()]*\)`)
 
 // TravelDisplayName: nama travel untuk judul, tanpa badan usaha ("PT Labbaika Cipta Imani"
 // -> "Labbaika Cipta Imani"). Nama asli tetap dipakai untuk data, filter, dan analitik.

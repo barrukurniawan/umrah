@@ -18,6 +18,7 @@ func TestFixPackageName(t *testing.T) {
 		{"Umrah Desember 2026", d("2026-12-20", ""), "Umrah Desember 2026"},
 		{"Umrah Liburan 26 Des 2026-3 Jan 2027", d("2026-12-26", "2027-01-03"), "Umrah Liburan 26 Des 2026-3 Jan 2027"},
 		{"Paket 2026 Promo", []crawlers.CrawledDeparture{{Date: "2026-12-01"}, {Date: "2027-01-10"}}, "Paket 2026 Promo"},
+		{"Umroh Plus City Tour Oman & Thaif (Promo, normal Rp31,5 jt, s.d. 5 Des 2026)", []crawlers.CrawledDeparture{{Date: "2027-01-14"}, {Date: "2027-02-10"}}, "Umroh Plus City Tour Oman & Thaif (Promo, normal Rp31,5 jt, s.d. 5 Des 2026)"},
 		{"Umrah 12 Hari 1009 Januari", d("2027-01-10", "2027-01-21"), "Umrah 12 Hari 1009 Januari"},
 		{"Umrah Ceria Januari 2026", []crawlers.CrawledDeparture{{Date: "2027-01-02"}, {Date: "2027-01-03"}}, "Umrah Ceria Januari 2027"},
 		{"Umroh 2 Desember 2026", d("2026-12-02", "2026-12-26"), "Umroh 2 Desember 2026"},

@@ -176,7 +176,7 @@ func buildFromCrawl(db *gorm.DB, results []crawlResultLite, dpOverrides map[stri
 			continue
 		}
 		for _, cp := range result.Packages {
-			if cp.Price < 5000000 {
+			if cp.Price < 5000000 || isNonUmrah(cp.PackageName) {
 				continue
 			}
 			travelName := firstNonEmpty(cp.TravelName, result.Site)
@@ -499,4 +499,11 @@ func addDays(date string, n int) string {
 		return ""
 	}
 	return t.AddDate(0, 0, n).Format("2006-01-02")
+}
+
+// isNonUmrah: paket wisata non-umrah yang ikut dijual travel (mis. Ventour "VCATION CHINA ...").
+// Disaring juga di sini supaya data lama yang masih tersimpan tidak ikut tampil.
+func isNonUmrah(name string) bool {
+	u := strings.ToUpper(name)
+	return strings.Contains(u, "VCATION") || strings.Contains(u, "VACATION")
 }
