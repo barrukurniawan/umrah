@@ -308,7 +308,7 @@ func buildFromCrawl(db *gorm.DB, results []crawlResultLite, dpOverrides map[stri
 
 		pkg := models.Package{
 			TravelID:        travel.ID,
-			Name:            cp.PackageName,
+			Name:            fixPackageName(cp.PackageName, deps),
 			Price:           price,
 			HotelDistance:   cp.DistanceMakkah,
 			Duration:        duration,
