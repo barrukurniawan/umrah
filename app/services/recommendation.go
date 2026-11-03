@@ -35,6 +35,9 @@ var featuredTravels = map[string]featuredRange{
 // Paket promo boleh sedikit di atas budget (mis. Rp28,5 jt sudah tampil di budget Rp28 jt).
 const featuredBudgetSlack = 500000
 
+// Budget dibaca "jutaan": slider per Rp1 jt, jadi budget 23 jt mencakup harga hingga 23,9 jt.
+const budgetJutaan = 999999
+
 type ScoredPackage struct {
 	models.Package
 	Key               string // PackageKey, untuk ♡ simpan
@@ -117,7 +120,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 		pkg.Details = upcoming
 		pkg.Price = availablePrice(pkg.Price, upcoming)
 
-		budget := input.Budget
+		budget := input.Budget + budgetJutaan
 		featured, pinned := false, false
 		if fr, ok := featuredTravels[pkg.Travel.Name]; ok {
 			inRange := input.Budget >= fr.MinBudget && input.Budget <= fr.MaxBudget
@@ -584,4 +587,18 @@ func parseMinDistance(dist string) int {
 		return unknownDistance // tidak terbaca: anggap paling jauh, bukan 1 km
 	}
 	return val // "0m" = menempel pelataran
+}
+
+// NearestPrice: harga termurah yang tersedia dengan filter yang sama tanpa batas budget
+// (untuk saran "harga terdekat" saat hasil kosong), beserta nama travelnya. 0 bila tidak ada.
+func NearestPrice(input FilterInput) (int, string) {
+	input.Budget, input.Sort, input.Page = 1000000000, "price_asc", 1
+	res, _ := GetRecommendations(input)
+	min, travel := 0, ""
+	for _, r := range res {
+		if min == 0 || r.Price < min {
+			min, travel = r.Price, r.Travel.Name
+		}
+	}
+	return min, TravelDisplayName(travel)
 }

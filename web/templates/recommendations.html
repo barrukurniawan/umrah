@@ -1,22 +1,15 @@
 <style>
-    @keyframes glow-green {
-
-        0%,
-        100% {
-            box-shadow: 0 0 5px #10b981, 0 0 10px #10b98133;
-            border-color: #10b981;
-        }
-
-        50% {
-            box-shadow: 0 0 15px #059669, 0 0 25px #05966955;
-            border-color: #059669;
-        }
+    /* Kartu teratas berpendar. Hanya opacity sebuah lapisan bayangan statis yang dianimasikan
+       (diproses GPU), bukan box-shadow itu sendiri yang memaksa browser menggambar ulang
+       kartu setiap frame dan membuat scroll di HP tersendat. */
+    .card-top { position: relative; border-width: 2px; border-color: #10b981; }
+    .card-top::after {
+        content: ""; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+        box-shadow: 0 0 16px #059669, 0 0 28px #05966955;
+        opacity: .35; animation: glow-green 2s ease-in-out infinite; will-change: opacity;
     }
-
-    .card-top {
-        animation: glow-green 2s ease-in-out infinite;
-        border-width: 2px;
-    }
+    @keyframes glow-green { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .card-top::after { animation: none; } }
 </style>
 {{if or .Results .Searched}}
 <div>
@@ -269,6 +262,9 @@
             <i data-lucide="calendar-x" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
             <p class="text-sm text-gray-600 font-medium">Belum ada paket yang cocok{{if .Month}} di bulan ini{{end}}.</p>
             <p class="text-xs text-gray-400 mt-1">{{if or (eq .Month "04") (eq .Month "05") (eq .Month "06")}}April sampai Juni bertepatan dengan musim haji, visa umroh biasanya ditutup. {{end}}Coba bulan lain{{if .Month}} atau pilih Semua Bulan{{end}}, atau naikkan budget.</p>
+            {{if and .Travels (eq .Nearest 0)}}<p class="text-sm text-gray-600 mt-3">Travel yang dipilih belum punya jadwal yang tersedia. Coba pilih travel lain.</p>{{end}}
+            {{if gt .Nearest .Budget}}<p class="text-sm text-gray-600 mt-3">Harga terdekat yang ada yaitu
+                <button type="button" onclick="ukSetBudget({{.NearestBudget}})" class="font-bold text-emerald-700 underline decoration-2 underline-offset-2 hover:text-emerald-800">{{jt .Nearest}}</button>{{if .NearestTravel}} <span class="text-gray-500">({{.NearestTravel}})</span>{{end}}</p>{{end}}
         </div>
         {{end}}
     </div>

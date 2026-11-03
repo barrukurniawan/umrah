@@ -11,12 +11,12 @@ import (
 	"umrah/app/repositories"
 )
 
-// Mode Kalender: keberangkatan per tanggal untuk 6 bulan ke depan, dengan suhu rata-rata
+// Mode Kalender: keberangkatan per tanggal untuk 9 bulan ke depan, dengan suhu rata-rata
 // iklim harian Makkah/Madinah, tema cuaca, dan momen (libur sekolah, Ramadhan, musim haji).
 // Aturan data sama dengan mode Budget: tanggal lewat dan tanggal penuh tidak dihitung.
 
 const (
-	CalendarMonths   = 6
+	CalendarMonths   = 9        // Nov s.d. Juli: termasuk jadwal setelah musim haji
 	calendarNoBudget = 50000000 // slider di ujung kanan = semua harga
 )
 

@@ -125,8 +125,11 @@
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
                         <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 26.000.000</span>
                     </div>
+                    <!-- Area sentuh lebih tinggi dari garisnya: ketuk/klik di mana saja pada garis langsung pindah ke harga terdekat. -->
+                    <div id="budgetTrack" class="relative py-3 -my-3 cursor-pointer touch-pan-y">
                     <input type="range" name="budget" id="budgetSlider" min="20000000" max="50000000" step="1000000"
                         value="26000000" class="w-full" oninput="updateBudget(this.value)" />
+                    </div>
                     <div class="flex justify-between text-xs text-gray-400 mt-1">
                         <span>Rp 20 jt</span>
                         <span>Rp 50 jt</span>
@@ -172,6 +175,10 @@
                             class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Khasanah</button>
                         <button type="button" onclick="toggleTravel(this)" data-travel="Umrah Bisa"
                             class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Umrah Bisa</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Armina"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Armina</button>
+                        <button type="button" onclick="toggleTravel(this)" data-travel="Ventour Travel"
+                            class="travel-chip flex-shrink-0 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 bg-white hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer select-none">Ventour</button>
                     </div>
                 </div>
                 
@@ -311,7 +318,45 @@
         function updateBudget(val) {
             const num = parseInt(val);
             document.getElementById('budgetDisplay').innerText = 'Rp ' + num.toLocaleString('id-ID');
+            paintBudget();
         }
+        // Dari saran "harga terdekat" di hasil kosong: geser budget ke harga itu lalu cari ulang.
+        function ukSetBudget(v) {
+            var sl = document.getElementById('budgetSlider'); if (!sl) return;
+            sl.value = v; updateBudget(sl.value);
+            var btn = document.getElementById('budgetSubmit'); if (btn) btn.click();
+            sl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // Garis terisi hijau sampai posisi bulatan.
+        function paintBudget() {
+            var sl = document.getElementById('budgetSlider'); if (!sl) return;
+            var p = (sl.value - sl.min) / (sl.max - sl.min) * 100;
+            sl.style.background = 'linear-gradient(to right, #34d399 0%, #34d399 ' + p + '%, #d1fae5 ' + p + '%, #d1fae5 100%)';
+        }
+        // Ketuk/klik garis: bulatan pindah ke kelipatan Rp1 jt terdekat dari titik yang ditekan,
+        // lalu bisa langsung digeser. (Di HP, slider bawaan hanya bergerak bila bulatannya ditahan.)
+        (function () {
+            var track = document.getElementById('budgetTrack'), sl = document.getElementById('budgetSlider');
+            if (!track || !sl) return;
+            var THUMB = 24, dragging = false;
+            function setFromX(x) {
+                var r = sl.getBoundingClientRect();
+                var ratio = Math.min(1, Math.max(0, (x - r.left - THUMB / 2) / (r.width - THUMB)));
+                var min = +sl.min, max = +sl.max, step = +sl.step;
+                var v = Math.round((min + ratio * (max - min)) / step) * step;
+                v = Math.min(max, Math.max(min, v));
+                if (+sl.value !== v) { sl.value = v; updateBudget(v); }
+            }
+            track.addEventListener('pointerdown', function (e) {
+                if (e.button > 0) return;
+                dragging = true; setFromX(e.clientX);
+                try { track.setPointerCapture(e.pointerId); } catch (_) { }
+                e.preventDefault();
+            });
+            track.addEventListener('pointermove', function (e) { if (dragging) setFromX(e.clientX); });
+            ['pointerup', 'pointercancel'].forEach(function (ev) { track.addEventListener(ev, function () { dragging = false; }); });
+            paintBudget();
+        })();
 
         document.body.addEventListener('htmx:afterSwap', function (evt) {
             if (evt.detail.target.id === 'results') {
@@ -544,7 +589,11 @@
             function load() {
                 var want = month, box = document.getElementById('calendar');
                 // Umpan balik seketika: tab yang diklik langsung menyala, grid meredup bila belum tersimpan.
-                box.querySelectorAll('[data-month-tab]').forEach(function (b) { b.dataset.active = b.dataset.monthTab === want ? '1' : ''; });
+                box.querySelectorAll('[data-month-tab]').forEach(function (b) {
+                    b.dataset.active = b.dataset.monthTab === want ? '1' : '';
+                    // Tab bulan bisa digeser; tab aktif selalu digulir ke tengah supaya terlihat.
+                    if (b.dataset.active) b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+                });
                 var t = setTimeout(function () { box.style.opacity = '.55'; }, 60);
                 getMonth(want).then(function (html) { clearTimeout(t); if (want === month) show(html); })
                     .catch(function () { clearTimeout(t); box.style.opacity = ''; });

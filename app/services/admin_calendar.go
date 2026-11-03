@@ -130,7 +130,7 @@ func AdminCalendar(monthKey, selected, travel string) AdminCalendarView {
 
 	// 6 bulan ke depan.
 	first := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, wib)
-	for i := 0; i < 6; i++ {
+	for i := 0; i < CalendarMonths; i++ {
 		m := first.AddDate(0, i, 0)
 		am := AdminMonth{Key: m.Format("2006-01"), Title: fmt.Sprintf("%s %d", idMonths[m.Month()], m.Year())}
 		am.Lead = make([]int, (int(m.Weekday())+6)%7)

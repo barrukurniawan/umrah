@@ -69,6 +69,10 @@ func GetRecommendations(c *fiber.Ctx) error {
 	}
 
 	results, total := services.GetRecommendations(input)
+	nearest, nearestTravel := 0, ""
+	if total == 0 {
+		nearest, nearestTravel = services.NearestPrice(input)
+	}
 	totalPages := int(math.Ceil(float64(total) / 5))
 
 	shown := make([]analytics.Impression, 0, len(results))
@@ -83,24 +87,27 @@ func GetRecommendations(c *fiber.Ctx) error {
 	}
 
 	return c.Render("recommendations", fiber.Map{
-		"Searched":    true, // tampilkan dropdown urutan/bulan walau hasilnya kosong
-		"Saved":       saved,
-		"LoggedIn":    accounts.Current(c) != nil,
-		"Results":     results,
-		"Budget":      budget,
-		"Page":        page,
-		"TotalPages":  totalPages,
-		"HasPrev":     page > 1,
-		"HasNext":     page < totalPages,
-		"PrevPage":    page - 1,
-		"NextPage":    page + 1,
-		"Sort":        sort,
-		"Month":       month,
-		"Travels":     travels,
-		"Flight":      flight,
-		"SortLabel":   sortLabels[sort],
-		"MonthLabel":  monthLabels[month],
-		"FilterCount": boolCount(flight != "", sort != "price_desc", month != ""),
+		"Searched":      true, // tampilkan dropdown urutan/bulan walau hasilnya kosong
+		"Saved":         saved,
+		"LoggedIn":      accounts.Current(c) != nil,
+		"Results":       results,
+		"Budget":        budget,
+		"Page":          page,
+		"TotalPages":    totalPages,
+		"HasPrev":       page > 1,
+		"HasNext":       page < totalPages,
+		"PrevPage":      page - 1,
+		"NextPage":      page + 1,
+		"Sort":          sort,
+		"Month":         month,
+		"Travels":       travels,
+		"Flight":        flight,
+		"Nearest":       nearest,
+		"NearestTravel": nearestTravel,
+		"NearestBudget": nearest / 1000000 * 1000000,
+		"SortLabel":     sortLabels[sort],
+		"MonthLabel":    monthLabels[month],
+		"FilterCount":   boolCount(flight != "", sort != "price_desc", month != ""),
 	})
 }
 

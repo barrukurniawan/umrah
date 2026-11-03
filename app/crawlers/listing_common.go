@@ -22,10 +22,31 @@ const (
 )
 
 // lstFetch downloads a page and returns its body as a string.
+// lstFetch mengunduh halaman. Gangguan sesaat (galat jaringan, 5xx seperti 520 dari
+// Cloudflare) dicoba ulang hingga 3 kali dengan jeda, supaya satu kegagalan tidak
+// membuat seluruh data travel itu tertinggal sampai crawl berikutnya.
 func lstFetch(url string) (string, error) {
+	var lastErr error
+	for attempt := 0; attempt < 3; attempt++ {
+		if attempt > 0 {
+			time.Sleep(time.Duration(attempt) * 3 * time.Second)
+		}
+		body, retry, err := lstFetchOnce(url)
+		if err == nil {
+			return body, nil
+		}
+		lastErr = err
+		if !retry {
+			break
+		}
+	}
+	return "", lastErr
+}
+
+func lstFetchOnce(url string) (string, bool, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	req.Header.Set("User-Agent", lstUserAgent)
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml")
@@ -33,17 +54,17 @@ func lstFetch(url string) (string, error) {
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", true, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("GET %s: status %d", url, resp.StatusCode)
+		return "", resp.StatusCode >= 500 || resp.StatusCode == 429, fmt.Errorf("GET %s: status %d", url, resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", true, err
 	}
-	return string(body), nil
+	return string(body), false, nil
 }
 
 // lstCutoff returns today's date (Asia/Jakarta, 00:00). Departures before it are dropped.
