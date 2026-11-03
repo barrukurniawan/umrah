@@ -191,6 +191,7 @@ func main() {
 		cssV = fmt.Sprintf("%x", sha256.Sum256(b))[:10]
 	}
 	engine.AddFunc("cssV", func() string { return cssV })
+	engine.AddFunc("dpPromo", repositories.DPPromoNote)
 	engine.AddFunc("travelName", services.TravelDisplayName)
 	engine.AddFunc("travelInitials", services.TravelInitials)
 	// Logo travel: web/static/logos/<slug>.(webp|png|jpg|svg); "" bila belum ada.

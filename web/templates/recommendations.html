@@ -155,7 +155,7 @@
                 {{if gt $v.DownPayment 0}}
                 <div class="flex items-center gap-1 text-gray-600">
                     <i data-lucide="credit-card" class="w-3.5 h-3.5 flex-shrink-0"></i> <span{{if $v.DPAssumed}} title="Travel belum menyebut DP. Perkiraan 20% harga."{{end}}>DP Rp {{formatCurrency
-                        $v.DownPayment}}{{if $v.DPAssumed}} <span class="text-gray-400">(perkiraan)</span>{{end}}</span>
+                        $v.DownPayment}}{{if $v.DPAssumed}} <span class="text-gray-400">(perkiraan)</span>{{else}}{{with dpPromo $v.Travel.Name}} <span class="text-rose-600 font-semibold">({{.}})</span>{{end}}{{end}}</span>
                 </div>
                 {{end}}
                 {{if and $v.Details (index $v.Details 0).RoomType}}

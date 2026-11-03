@@ -59,7 +59,7 @@ func importCrawlerData(db *gorm.DB) bool {
 	dpOverrides := map[string]int{
 		"Khasanah Travel":          14000000,
 		"PT Labbaika Cipta Imani":  15000000,
-		"Rahmah Travel":            7500000,
+		"Rahmah Travel":            rahmahDP(),
 		"Umrah Bisa":               5000000,
 		"PT Wisata Hati Universal": 5000000,
 		"Marwa Mustajab":           5000000,
@@ -322,4 +322,23 @@ func seedData() {
 	DB.Create(&details)
 
 	log.Println("Database seeded with", len(travels), "travels,", len(packages), "packages, and", len(details), "details")
+}
+
+// rahmahDP: promo Rahmah Travel (rahmahtravel.id, dicek 3 Nov 2026) DP Rp500 ribu/pax s.d. 31 Des 2026,
+// setelahnya DP Rp1 juta/pax; cicilan Rp1 juta/bulan, pelunasan H-45. ("DP Rp10–15 juta" di situs
+// mereka adalah syarat ikut Spin Wheel hadiah, bukan DP minimum.) Data dimuat ulang tiap crawl,
+// jadi angka ini berganti sendiri setelah promo berakhir.
+func rahmahDP() int {
+	if time.Now().In(time.FixedZone("WIB", 7*3600)).Before(time.Date(2027, 1, 1, 0, 0, 0, 0, time.FixedZone("WIB", 7*3600))) {
+		return 500000
+	}
+	return 1000000
+}
+
+// DPPromoNote: keterangan DP promo per travel untuk ditampilkan di kartu ("" = bukan promo).
+func DPPromoNote(travel string) string {
+	if travel == "Rahmah Travel" && rahmahDP() == 500000 {
+		return "promo s.d. 31 Des"
+	}
+	return ""
 }
