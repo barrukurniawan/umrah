@@ -1,7 +1,8 @@
 // Bagian bersama simulasi Umrohku (tawaf & sa'i): renderer, karakter chibi, kotak pemandu,
 // tombol Jalan, audio murottal, label, dan loop. Tiap adegan mengisi `sim.hooks`.
 import * as THREE from 'three';
-export { THREE };
+import { createChibi, createCrowd, RIG_SCALE, SKIN_TONES } from './chibi.js?v=30';
+export { THREE, createCrowd, SKIN_TONES };
 
 export const $ = (id) => document.getElementById(id);
 export const TAU = Math.PI * 2;
@@ -23,78 +24,37 @@ export function chibiKit() {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
     return t;
   }
-  // ---------- Karakter chibi (menghadap +z; sisi kanannya ada di -x) ----------
-  function limb(r, len, material) {
-    const pivot = new THREE.Group(); const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 8), material); m.position.y = -len / 2 - r * 0.4; pivot.add(m); return { pivot, m };
-  }
+  // ---------- Karakter chibi (rig gaya wedding-summer di chibi.js; menghadap +z, sisi kanannya di -x) ----------
   // clothColor/veilColor: untuk ilustrasi (mis. tukang cukur berbaju biasa).
-  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null, draped = false } = {}) {
-    const g = new THREE.Group(), parts = {};
-    const cloth = clothColor ? mat(clothColor) : gender === 'm' ? M.white : mat('#f4efe6'), veil = mat(veilColor || '#e6ddcf');
-    const ihram = gender === 'm' && !clothColor;
-    if (gender === 'm') {
-      const legL = limb(0.11, 0.38, M.skin), legR = limb(0.11, 0.38, M.skin);
-      legL.pivot.position.set(-0.15, 0.62, 0); legR.pivot.position.set(0.15, 0.62, 0); g.add(legL.pivot, legR.pivot);
-      parts.legL = legL.pivot; parts.legR = legR.pivot;
-      const izar = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.62, 14), cloth); izar.position.y = 0.72; g.add(izar);
-      if (ihram) { // izar: gulungan di pinggang + tumpukan kain di depan
-        const hem = mat('#e4ded0');
-        const roll = new THREE.Mesh(new THREE.TorusGeometry(0.345, 0.035, 6, 20), hem); roll.rotation.x = Math.PI / 2; roll.position.y = 1.02; g.add(roll);
-        const fold = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.6, 0.02), hem); fold.position.set(0.12, 0.72, 0.39); fold.rotation.x = -0.12; g.add(fold);
-      }
-      if (!ihram || !draped) {
-        // Kain atas sederhana (dipakai di simulasi); saat tawaf bahu kanan terbuka.
-        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.35, 0.55, 14), cloth); torso.position.y = 1.25; g.add(torso);
-        if (ihram && shoulderBare) { const sh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), M.skin); sh.position.set(-0.27, 1.43, 0.02); g.add(sh); }
-      } else {
-        // Kain atas berlipat (dipakai di ilustrasi Niat/Tahallul): rida menutup kedua bahu,
-        // ujungnya dilempar ke bahu kiri -> selempang kain lebar melintang dada.
-        const rida = mat('#f5f2ea'), band = mat('#ece7db');
-        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.355, 0.55, 14), rida); torso.position.y = 1.25; g.add(torso);
-        for (const sx of [-1, 1]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 8), rida); cap.scale.set(1.15, 0.75, 1); cap.position.set(sx * 0.28, 1.47, 0); g.add(cap); }
-        // selempang: torus yang dipipihkan jadi pita lebar mengikuti badan (bukan tali bulat)
-        const sash = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.055, 8, 32), band); sash.rotation.set(Math.PI / 2, 0.62, 0); sash.position.y = 1.29; sash.scale.set(1, 0.86, 2.4); g.add(sash);
-      }
-    } else {
-      const dress = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.52, 1.35, 16), cloth); dress.position.y = 0.72; g.add(dress);
-      const cape = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.5, 0.55, 16), veil); cape.position.y = 1.42; g.add(cape);
-    }
-    for (const side of [-1, 1]) {
-      // Ilustrasi: lengan terbuka (ihram tak berlengan). Simulasi: seperti semula, lengan kanan terbuka saat idhtiba'.
-      const arm = limb(0.085, 0.36, ihram && (draped || (shoulderBare && side === -1)) ? M.skin : cloth);
-      arm.pivot.position.set(side * 0.38, 1.45, 0); g.add(arm.pivot);
-      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), M.skin); hand.position.y = -0.62; arm.pivot.add(hand);
-      parts[side < 0 ? 'armR' : 'armL'] = arm.pivot;
-    }
-    for (const side of [-1, 1]) {
-      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.08, 0.3), mat('#7a5a3c')); foot.position.set(side * 0.15, 0.04, 0.05); g.add(foot);
-    }
-    const head = new THREE.Group(); head.position.y = 2.0; g.add(head); parts.head = head;
-    head.add(new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 16), M.skin));
-    if (gender === 'm') {
-      const hair = new THREE.Mesh(new THREE.SphereGeometry(0.455, 20, 12, 0, TAU, 0, Math.PI * 0.42), M.hair); hair.rotation.x = -0.35; head.add(hair);
-    } else {
-      const hijab = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 16), veil); hijab.position.z = -0.1; hijab.scale.set(1, 1.04, 1); head.add(hijab);
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.07, 8, 24), veil); rim.position.z = 0.17; head.add(rim);
-    }
-    for (const side of [-1, 1]) {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), M.black); eye.position.set(side * 0.15, 0.02, 0.4); eye.scale.set(1, 1.25, 0.6); head.add(eye);
-      const blush = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), mat('#f59e9e')); blush.position.set(side * 0.24, -0.1, 0.36); blush.scale.set(1.3, 0.6, 0.4); head.add(blush);
-    }
-    const sh = new THREE.Mesh(new THREE.CircleGeometry(0.75, 20), new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (c, s) => { const gr = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); gr.addColorStop(0, 'rgba(0,0,0,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, s, s); }), transparent: true, depthWrite: false }));
-    sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; g.add(sh);
+  // draped: ihram dengan kedua bahu tertutup (ilustrasi Niat/Tahallul).
+  const shadowMat = new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (c, s) => { const gr = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); gr.addColorStop(0, 'rgba(0,0,0,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, s, s); }), transparent: true, depthWrite: false });
+  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null, draped = false, skin = '#eab48a', bald = false } = {}) {
+    const rig = createChibi(gender, {
+      shoulderBare: shoulderBare && !draped, outfit: gender === 'm' && clothColor ? 'casual' : 'ihram',
+      cloth: clothColor, veil: veilColor, skin, bald,
+    });
+    const g = new THREE.Group(); rig.root.scale.setScalar(RIG_SCALE); g.add(rig.root);
+    const sh = new THREE.Mesh(new THREE.CircleGeometry(0.75, 20), shadowMat); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; g.add(sh);
     g.scale.setScalar(scale);
-    return { g, parts };
+    const parts = { head: rig.head, armR: rig.arms[0], armL: rig.arms[1], legR: rig.legs[0], legL: rig.legs[1] };
+    return { g, parts, rig };
   }
   return { M, mat, canvasTex, makeChibi };
 }
 
 export function createSim(opts = {}) {
   const bg = opts.bg || '#e7ede6';
-  const stage = $('simStage'), canvas = $('simCanvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // Mode ringan untuk HP lemah: ketajaman 1x, tanpa antialias, jamaah separuh. Diingat selama sesi
+  // (pindah Tawaf -> Sa'i langsung ringan tanpa mengukur ulang).
+  const LITE_KEY = 'ukSimLite';
+  let startLite = false; try { startLite = sessionStorage.getItem(LITE_KEY) === '1'; } catch (e) {}
+  const makeRenderer = (cv, lite) => {
+    const r = new THREE.WebGLRenderer({ canvas: cv, antialias: !lite, powerPreference: 'low-power' });
+    r.setPixelRatio(lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
+    r.outputColorSpace = THREE.SRGBColorSpace; return r;
+  };
+  const stage = $('simStage');
+  let canvas = $('simCanvas'), renderer = makeRenderer(canvas, startLite);
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(bg);
   scene.fog = new THREE.Fog(bg, opts.fogNear || 130, opts.fogFar || 260);
@@ -117,9 +77,9 @@ export function createSim(opts = {}) {
   const cam = { top: false, zoom: 1, pos: new THREE.Vector3(70, 50, 70), tgt: new THREE.Vector3(), orbit: 0.6 };
   const hooks = {
     canWalk: () => false, update: () => {}, camera: () => null, begin: () => {}, reset: () => {},
-    onBack: null, occluder: null, chibiOpts: () => ({}), counter: () => ({ text: 'Belum mulai', panel: '', done: 0, active: false }),
+    onBack: null, occluder: null, chibiOpts: () => ({}), lite: () => {}, counter: () => ({ text: 'Belum mulai', panel: '', done: 0, active: false }),
   };
-  const sim = { THREE, scene, camera, renderer, stage, S, input, cam, M, mat, canvasTex, instanced, makeChibi, hooks, chibi: null };
+  const sim = { THREE, scene, camera, renderer, stage, S, input, cam, M, mat, canvasTex, instanced, makeChibi, hooks, chibi: null, lite: startLite, fps: null };
   const isM = () => S.gender === 'm';
   sim.isM = isM;
 
@@ -304,15 +264,18 @@ export function createSim(opts = {}) {
   addEventListener('keydown', (e) => { if (FWD.includes(e.code)) { if (!input.fwd && S.block) showPending(); input.fwd = true; e.preventDefault(); } if (BACK.includes(e.code)) { input.back = true; e.preventDefault(); } });
   addEventListener('keyup', (e) => { if (FWD.includes(e.code)) input.fwd = false; if (BACK.includes(e.code)) input.back = false; });
   addEventListener('blur', () => { input.fwd = input.back = false; });
-  canvas.addEventListener('wheel', (e) => { e.preventDefault(); cam.zoom = THREE.MathUtils.clamp(cam.zoom * (1 + e.deltaY * 0.001), 0.55, 1.9); }, { passive: false });
   let pinch = 0;
-  canvas.addEventListener('touchmove', (e) => {
-    if (e.touches.length !== 2) return;
-    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-    if (pinch) cam.zoom = THREE.MathUtils.clamp(cam.zoom * (pinch / d), 0.55, 1.9);
-    pinch = d; e.preventDefault();
-  }, { passive: false });
-  canvas.addEventListener('touchend', () => (pinch = 0));
+  function bindCanvas(cv) { // dipasang ulang bila canvas diganti (mode ringan)
+    cv.addEventListener('wheel', (e) => { e.preventDefault(); cam.zoom = THREE.MathUtils.clamp(cam.zoom * (1 + e.deltaY * 0.001), 0.55, 1.9); }, { passive: false });
+    cv.addEventListener('touchmove', (e) => {
+      if (e.touches.length !== 2) return;
+      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      if (pinch) cam.zoom = THREE.MathUtils.clamp(cam.zoom * (pinch / d), 0.55, 1.9);
+      pinch = d; e.preventDefault();
+    }, { passive: false });
+    cv.addEventListener('touchend', () => (pinch = 0));
+  }
+  bindCanvas(canvas);
   let backWarned = 0;
   sim.walking = () => !!sim.chibi && !S.block && hooks.canWalk() && (input.fwd || input.auto);
   sim.backPressed = () => {
@@ -322,18 +285,14 @@ export function createSim(opts = {}) {
 
   // ---------- Animasi karakter ----------
   // gestureKind: 'right' = isyarat tangan kanan (Hajar Aswad), 'doa' = kedua tangan terangkat (Shafa/Marwah)
+  // Simulasi dipercepat (±6 m/detik), jadi irama langkah diatur tersendiri supaya tetap wajar.
   sim.animate = (dt, speed, { run = false } = {}) => {
-    const p = sim.chibi.parts, moving = speed > 0;
-    S.walkT += dt * (moving ? speed * (run ? 2.1 : 1.6) : 0);
-    const amp = run ? 1.05 : 0.7, sw = moving ? Math.sin(S.walkT) : 0;
-    const ease = (o, v) => (o.rotation.x += (v - o.rotation.x) * Math.min(1, dt * 12));
-    if (p.legL) { ease(p.legL, sw * amp); ease(p.legR, -sw * amp); }
-    if (S.gesture > 0) {
-      S.gesture -= dt;
-      if (S.gestureKind === 'doa') { ease(p.armR, -1.75); ease(p.armL, -1.75); }
-      else { p.armR.rotation.x += (-2.5 - p.armR.rotation.x) * Math.min(1, dt * 10); ease(p.armL, -sw * 0.6); }
-    } else { ease(p.armL, -sw * (run ? 0.9 : 0.6)); ease(p.armR, sw * (run ? 0.9 : 0.6)); }
-    p.head.position.y = 2.0 + (moving ? Math.abs(Math.sin(S.walkT)) * (run ? 0.1 : 0.06) : 0);
+    const c = sim.chibi, ws = c.g.scale.x * RIG_SCALE, moving = speed > 0;
+    const gesture = S.gesture > 0 ? (S.gestureKind === 'doa' ? 'doa' : 'right') : null;
+    if (S.gesture > 0) S.gesture -= dt;
+    const turn = c.lastYaw == null ? 0 : (mod(c.g.rotation.y - c.lastYaw + Math.PI, TAU) - Math.PI) / Math.max(dt, 1e-3);
+    c.lastYaw = c.g.rotation.y;
+    c.rig.animate({ dt, speed: moving ? speed / ws : 0, cadence: moving ? (run ? 2.3 : 1.55) : 0, run: run && moving, gesture, turn: -turn });
   };
   sim.face = (dir, dt) => {
     const g = sim.chibi.g; const dr = mod(dir - g.rotation.y + Math.PI, TAU) - Math.PI;
@@ -354,12 +313,34 @@ export function createSim(opts = {}) {
   }
   const clock = new THREE.Clock();
   function step(dt) { hooks.update(dt); sim.backPressed(); updateCamera(dt); }
+  // Antialias hanya bisa diatur saat renderer dibuat, jadi mode ringan memakai canvas & renderer baru
+  // (geometri/tekstur diunggah ulang otomatis oleh three.js).
+  sim.setLite = () => {
+    if (sim.lite) return;
+    sim.lite = true; try { sessionStorage.setItem(LITE_KEY, '1'); } catch (e) {}
+    const next = canvas.cloneNode(false); canvas.replaceWith(next);
+    renderer.dispose(); renderer.forceContextLoss();
+    canvas = next; renderer = makeRenderer(canvas, true); sim.renderer = renderer;
+    bindCanvas(canvas); resize(); hooks.lite();
+  };
+  // Ukur FPS selama 2,5 detik (setelah 0,8 detik pemanasan). Di bawah 40 fps -> mode ringan.
+  const probe = { from: 0, n: 0, done: startLite };
+  function measure(now) {
+    if (probe.done) return;
+    if (!probe.from) { probe.from = now + 800; return; }
+    if (now < probe.from) return;
+    probe.n++;
+    if (now - probe.from < 2500) return;
+    probe.done = true; sim.fps = Math.round(probe.n * 1000 / (now - probe.from));
+    if (sim.fps < 40) sim.setLite();
+  }
   function frame() {
     requestAnimationFrame(frame);
-    if (document.hidden) return;
+    if (document.hidden) { probe.from = 0; probe.n = 0; return; } // tab tersembunyi: ukur ulang dari awal
     const dt = Math.min(clock.getDelta(), 0.05);
     step(dt); syncFwdBtn();
     renderer.render(scene, camera);
+    measure(performance.now());
     const w = stage.clientWidth, h = stage.clientHeight;
     labels.forEach((l) => placeEl(l.el, l.pos, w, h, true, l.visible));
     if (sim.chibi) { placeEl(bubble, sim.chibi.g.position.clone().setY(2.7 * sim.chibi.g.scale.y), w, h); if (performance.now() > bubbleUntil) bubble.style.opacity = 0; }
@@ -369,6 +350,7 @@ export function createSim(opts = {}) {
     if (initialCam) { cam.pos.copy(initialCam.pos); cam.tgt.copy(initialCam.tgt); }
     // Kait pengujian (dipakai skrip uji otomatis; tidak memengaruhi pengguna).
     window.__sim = { S, input, sim, tick(sec) { for (let t = 0; t < sec; t += 0.05) step(0.05); syncFwdBtn(); } };
+    if (sim.lite) hooks.lite();
     sim.reset();
     // Dari tombol "Lanjut ke Sa'i": karakter yang sama langsung dimulai.
     const g = new URLSearchParams(location.search).get('g');

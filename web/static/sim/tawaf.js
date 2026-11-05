@@ -1,7 +1,7 @@
 // Simulasi tawaf Umrohku. Semua bentuk dibuat dari kode (tanpa model 3D), supaya ringan di HP.
 // Arah: x = timur, -z = utara. Sudut θ diukur berlawanan jarum jam dari timur (dilihat dari atas),
 // jadi tawaf = θ bertambah, dan Ka'bah selalu di sebelah kiri.
-import { createSim, THREE, $, TAU, mod } from './common.js';
+import { createSim, createCrowd, SKIN_TONES, THREE, $, TAU, mod } from './common.js?v=30';
 
 const angOf = (x, z) => Math.atan2(-z, x);
 const atAngle = (a, r, y = 0) => new THREE.Vector3(Math.cos(a) * r, y, -Math.sin(a) * r);
@@ -153,27 +153,30 @@ glow.position.copy(LAMP).setY(4.4); glow.scale.set(5, 5, 1); scene.add(glow);
   line.rotation.x = -Math.PI / 2; line.rotation.z = A_HA; line.position.copy(atAngle(A_HA, (r0 + r1) / 2, 0.04)); scene.add(line);
 }
 
-// ---------- Jamaah lain (kapsul sederhana, satu draw call) ----------
-const CROWD = 110, crowd = [];
-const crowdBody = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.34, 0.75, 2, 8), new THREE.MeshLambertMaterial({ color: '#ffffff' }), CROWD);
-const crowdHead = new THREE.InstancedMesh(new THREE.SphereGeometry(0.24, 8, 6), new THREE.MeshLambertMaterial({ color: '#ffffff' }), CROWD);
-const skinTones = ['#f1c7a1', '#d9a47c', '#a8754f', '#7a5236'];
-for (let i = 0; i < CROWD; i++) {
+// ---------- Jamaah lain (chibi ringan, di-instance per jenis pakaian) ----------
+// Laki-laki ber-idhtiba' (bahu kanan terbuka), perempuan bergamis + khimar putih / hitam / berwarna.
+const CROWD = 110;
+const KINDS = [
+  { gender: 'm', opts: { shoulderBare: true } },
+  { gender: 'f', opts: { cloth: '#f4efe6', veil: '#ece6dc' } },
+  { gender: 'f', opts: { cloth: '#2f2f33', veil: '#26262a', shoe: '#2a2a2a' } },
+  { gender: 'f', opts: { cloth: '#e9e3d6', veil: '#8d9fb5' } },
+];
+const pickKind = () => { const r = Math.random(); return r < 0.65 ? 0 : r < 0.79 ? 1 : r < 0.93 ? 2 : 3; };
+const crowdPlan = Array.from({ length: CROWD }, pickKind);
+const crowd = createCrowd(scene, KINDS.map((k, i) => ({ ...k, count: crowdPlan.filter((x) => x === i).length })));
+crowdPlan.forEach((kind, i) => {
   let r = 16 + Math.random() * 18; if (Math.abs(r - R) < 1.8) r += 3.8;
-  const woman = Math.random() < 0.35, abaya = woman && Math.random() < 0.6;
-  crowd.push({ a: Math.random() * TAU, r, v: (0.5 + Math.random() * 0.6) / r });
-  crowdBody.setColorAt(i, new THREE.Color(abaya ? '#2f2f33' : woman ? '#e9e3d6' : '#fbfbf6'));
-  crowdHead.setColorAt(i, new THREE.Color(woman ? (abaya ? '#2f2f33' : '#e2dccd') : skinTones[i % 4]));
-}
-scene.add(crowdBody, crowdHead);
-const _o = new THREE.Object3D();
+  const v = 0.5 + Math.random() * 0.6;
+  crowd.add({ kind, a: Math.random() * TAU, r, v: v / r, speed: v * 1.6, scale: 0.8 + Math.random() * 0.12, skin: SKIN_TONES[i % SKIN_TONES.length], x: 0, z: 0, yaw: 0 });
+});
+hooks.lite = () => crowd.thin(0.5); // HP lemah: separuh jamaah
 function updateCrowd(dt) {
-  crowd.forEach((c, i) => {
+  for (const c of crowd.people) {
     c.a += c.v * dt;
-    _o.position.copy(atAngle(c.a, c.r, 0.72)); _o.updateMatrix(); crowdBody.setMatrixAt(i, _o.matrix);
-    _o.position.y = 1.45; _o.updateMatrix(); crowdHead.setMatrixAt(i, _o.matrix);
-  });
-  crowdBody.instanceMatrix.needsUpdate = true; crowdHead.instanceMatrix.needsUpdate = true;
+    c.x = Math.cos(c.a) * c.r; c.z = -Math.sin(c.a) * c.r; c.yaw = Math.atan2(-Math.sin(c.a), -Math.cos(c.a));
+  }
+  crowd.update(dt);
 }
 
 // ---------- Kondisi simulasi ----------

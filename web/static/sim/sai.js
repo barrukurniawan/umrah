@@ -1,6 +1,6 @@
 // Simulasi sa'i Umrohku: lorong Mas'a dari bukit Shafa (x = 0) ke bukit Marwah (x = L).
 // Ka'bah berada di sisi -z (barat). Semua bentuk dibuat dari kode supaya ringan.
-import { createSim, THREE, $ } from './common.js';
+import { createSim, createCrowd, SKIN_TONES, THREE, $ } from './common.js?v=30';
 
 const sim = createSim({ part: 'sai', bg: '#efebe2', fogNear: 70, fogFar: 230 });
 const { scene, camera, S, cam, M, mat, canvasTex, instanced, hooks } = sim;
@@ -85,29 +85,33 @@ const kaabaArrow = new THREE.Group();
 }
 const kaabaDir = (atMarwah) => new THREE.Vector3(atMarwah ? -0.35 : 0.35, 0, -1).normalize();
 
-// ---------- Jamaah lain (dua arah) ----------
-const CROWD = 90, crowd = [];
-const crowdBody = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.34, 0.75, 2, 8), new THREE.MeshLambertMaterial({ color: '#ffffff' }), CROWD);
-const crowdHead = new THREE.InstancedMesh(new THREE.SphereGeometry(0.24, 8, 6), new THREE.MeshLambertMaterial({ color: '#ffffff' }), CROWD);
-const skinTones = ['#f1c7a1', '#d9a47c', '#a8754f', '#7a5236'];
-for (let i = 0; i < CROWD; i++) {
+// ---------- Jamaah lain (dua arah, chibi ringan) ----------
+// Setelah tawaf bahu kanan laki-laki ditutup lagi; laki-laki berlari kecil di zona lampu hijau.
+const CROWD = 90;
+const KINDS = [
+  { gender: 'm', opts: { shoulderBare: false } },
+  { gender: 'f', opts: { cloth: '#f4efe6', veil: '#ece6dc' } },
+  { gender: 'f', opts: { cloth: '#2f2f33', veil: '#26262a', shoe: '#2a2a2a' } },
+  { gender: 'f', opts: { cloth: '#e9e3d6', veil: '#8d9fb5' } },
+];
+const pickKind = () => { const r = Math.random(); return r < 0.65 ? 0 : r < 0.79 ? 1 : r < 0.93 ? 2 : 3; };
+const crowdPlan = Array.from({ length: CROWD }, pickKind);
+const crowd = createCrowd(scene, KINDS.map((k, i) => ({ ...k, count: crowdPlan.filter((x) => x === i).length })));
+crowdPlan.forEach((kind, i) => {
   const toM = i % 2 === 0;
   let z = toM ? -2.6 - Math.random() * 8.6 : 2.6 + Math.random() * 8.6;
   if (Math.abs(z - (toM ? LANE.toMarwah : LANE.toSafa)) < 1.3) z += toM ? -2.4 : 2.4;
-  const woman = Math.random() < 0.35, abaya = woman && Math.random() < 0.6;
-  crowd.push({ x: 6 + Math.random() * (L - 12), z, v: (toM ? 1 : -1) * (2.2 + Math.random() * 1.6) });
-  crowdBody.setColorAt(i, new THREE.Color(abaya ? '#2f2f33' : woman ? '#e9e3d6' : '#fbfbf6'));
-  crowdHead.setColorAt(i, new THREE.Color(woman ? (abaya ? '#2f2f33' : '#e2dccd') : skinTones[i % 4]));
-}
-scene.add(crowdBody, crowdHead);
-const _o = new THREE.Object3D();
+  const v = (toM ? 1 : -1) * (2.2 + Math.random() * 1.6);
+  crowd.add({ kind, x: 6 + Math.random() * (L - 12), z, v, speed: Math.abs(v), yaw: toM ? Math.PI / 2 : -Math.PI / 2, scale: 0.8 + Math.random() * 0.12, skin: SKIN_TONES[i % SKIN_TONES.length] });
+});
+hooks.lite = () => crowd.thin(0.5); // HP lemah: separuh jamaah
 function updateCrowd(dt) {
-  crowd.forEach((c, i) => {
-    c.x += c.v * dt; if (c.x > L - 6) c.x = 6; if (c.x < 6) c.x = L - 6;
-    _o.position.set(c.x, 0.72, c.z); _o.updateMatrix(); crowdBody.setMatrixAt(i, _o.matrix);
-    _o.position.y = 1.45; _o.updateMatrix(); crowdHead.setMatrixAt(i, _o.matrix);
-  });
-  crowdBody.instanceMatrix.needsUpdate = true; crowdHead.instanceMatrix.needsUpdate = true;
+  for (const c of crowd.people) {
+    const run = c.kind === 0 && c.x > GZ0 && c.x < GZ1 ? 1.5 : 1;
+    c.x += c.v * run * dt; if (c.x > L - 6) c.x = 6; if (c.x < 6) c.x = L - 6;
+    c.speed = Math.abs(c.v) * run;
+  }
+  crowd.update(dt);
 }
 
 // ---------- Label & mini-peta ----------

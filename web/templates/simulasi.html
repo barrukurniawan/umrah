@@ -10,9 +10,10 @@
     <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.min.js"}}</script>
     <!-- Setelah importmap: unduh three.js & modul simulasi paralel, siapkan bagian lainnya -->
     <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.min.js" crossorigin>
-    <link rel="modulepreload" href="/static/sim/common.js">
-    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=26">
-    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=26">
+    <link rel="modulepreload" href="/static/sim/common.js?v=30">
+    <link rel="modulepreload" href="/static/sim/chibi.js?v=30">
+    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=30">
+    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=30">
     <style>
         .ar { font-family: 'Amiri', serif; }
         .sim-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none; }
@@ -229,7 +230,7 @@
     addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
     </script>
     <audio id="simAudio" preload="none" loop src="{{if eq .Part "sai"}}/static/sim/audio/baqarah-157-170.mp3{{else}}/static/sim/audio/baqarah-195-205.mp3{{end}}"></audio>
-    <script type="module" src="/static/sim/{{.Part}}.js?v=26"></script>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=30"></script>
 </body>
 
 </html>
