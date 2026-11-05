@@ -17,6 +17,7 @@ import (
 	"umrah/app/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 )
@@ -167,10 +168,10 @@ func main() {
 			"UMI Tour & Travel":        "https://api.whatsapp.com/send/?phone=628159888154&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+UMI+Tour",
 			"Jejak Imani":              "https://api.whatsapp.com/send/?phone=6281519898880&text=Assalamualaikum%20Susi%2C%20saya%20mau%20tanya%20info%20paket%20umroh%20di%20Jejak%20Imani.%20Saya%20lihat%20dari%20website.",
 			"Rabbani Tour":             "https://api.whatsapp.com/send/?phone=6282280001799&text=Assalamualaikum%2C+saya+ingin+informasi+paket+umroh+Rabbani+Tour",
-			"Alviandra Travel":         "https://api.whatsapp.com/send/?phone=6285183032548&text=Assalamualaikum%2C+saya+ingin+informasi+paket+Umroh+Plus+City+Tour+Oman+%2815+Januari+2027%29.+Saya+lihat+dari+Umrohku.",
+			"Alviandra Travel":         "https://api.whatsapp.com/send/?phone=6285183032548&text=Assalamualaikum%2C+saya+ingin+informasi+paket+Umroh+Plus+City+Tour+Oman+%2815+Januari+2027%29.+Saya+lihat+dari+umrohku.web.id.",
 		}
 		if u, ok := urls[name]; ok {
-			return u
+			return services.WATagUmrohku(u)
 		}
 		return "#"
 	})
@@ -191,6 +192,14 @@ func main() {
 		cssV = fmt.Sprintf("%x", sha256.Sum256(b))[:10]
 	}
 	engine.AddFunc("cssV", func() string { return cssV })
+	// assetV: hash isi berkas di web/static (dihitung sekali saat boot) untuk ?v= skrip vendor.
+	assetVs := map[string]string{}
+	for _, f := range []string{"js/vendor/htmx-1.9.12.min.js", "js/vendor/lucide-icons.js", "admin/konten.js"} {
+		if b, err := os.ReadFile("web/static/" + f); err == nil {
+			assetVs[f] = fmt.Sprintf("%x", sha256.Sum256(b))[:10]
+		}
+	}
+	engine.AddFunc("assetV", func(f string) string { return assetVs[f] })
 	engine.AddFunc("dpPromo", repositories.DPPromoNote)
 	engine.AddFunc("dayShort", services.DayShort)
 	engine.AddFunc("travelName", services.TravelDisplayName)
@@ -268,6 +277,9 @@ func main() {
 
 	// CSS diberi versi (?v=hash), jadi aman disimpan lama di browser.
 	app.Static("/static/css", "./web/static/css", fiber.Static{MaxAge: 31536000})
+	// nginx di depan tidak mengompres JavaScript, jadi skrip vendor dikompres di sini (htmx 48 KB -> ~16 KB).
+	app.Use("/static/js/vendor", compress.New(compress.Config{Level: compress.LevelBestSpeed}))
+	app.Static("/static/js/vendor", "./web/static/js/vendor", fiber.Static{MaxAge: 31536000})
 	app.Static("/static", "./web/static", fiber.Static{ByteRange: true}) // byte range: audio bisa diputar & digeser di Safari/iPhone
 
 	repositories.InitDB()
