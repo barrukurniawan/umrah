@@ -330,7 +330,7 @@ func AdminBizCicil(c *fiber.Ctx) error {
 	}
 	total := max(1, len(rows))
 	var pathRows, travelRows []kv
-	for _, k := range []string{"sebelum", "pembiayaan", "lihat"} {
+	for _, k := range []string{"sebelum", "pembiayaan"} {
 		pathRows = append(pathRows, kv{k, paths[k], paths[k] * 100 / total})
 	}
 	for k, n := range byTravel {

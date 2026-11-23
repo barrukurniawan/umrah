@@ -101,7 +101,7 @@ func DemoTravelProfile(c *fiber.Ctx) error {
 		"Avg": avg, "N": n, "Packages": pkgs}))
 }
 
-// Simulasi chat WhatsApp ke travel fiktif: pesan masuk ke Kotak masuk travel (bukan WA sungguhan).
+// Simulasi chat WhatsApp ke travel fiktif: pesan masuk ke Notifikasi travel (bukan WA sungguhan).
 func DemoWAChat(c *fiber.Ctx) error {
 	t := demo.TravelBySlug(c.Query("travel"))
 	if t == nil {

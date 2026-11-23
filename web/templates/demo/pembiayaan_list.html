@@ -1,7 +1,7 @@
 <main class="max-w-3xl mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold text-gray-900">Pengajuan pembiayaan</h1>
     <p class="text-sm text-gray-500 mt-1">Status dari mitra pembiayaan syariah. Umrohku hanya merujuk.</p>
-    {{if .Sent}}<p class="mt-4 rounded-xl bg-emerald-50 text-emerald-800 text-sm px-4 py-3">Pengajuan terkirim ke mitra. Kabar terbaru juga masuk ke <a href="/inbox" class="underline">Kotak masuk</a>.</p>{{end}}
+    {{if .Sent}}<p class="mt-4 rounded-xl bg-emerald-50 text-emerald-800 text-sm px-4 py-3">Pengajuan terkirim ke mitra. Kabar terbaru juga masuk ke <a href="/inbox" class="underline">Notifikasi</a>.</p>{{end}}
     {{if .Error}}<p class="mt-4 rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-3">{{.Error}}</p>{{end}}
     <div class="mt-6 grid grid-cols-1 [&>*]:min-w-0 gap-3">
         {{range .Apps}}

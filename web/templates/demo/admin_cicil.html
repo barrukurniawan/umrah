@@ -2,7 +2,7 @@
     {{template "stat" (dict "Label" "Klik “Mau cicil?” 30 hari" "Value" .Total)}}
     {{range .Paths}}{{template "stat" (dict "Label" (printf "Jalur: %s" .K) "Value" (printf "%d%%" .Pct) "Note" (printf "%d klik" .N) "Tone" "sky")}}{{end}}
 </div>
-<p class="mt-2 text-xs text-gray-500">sebelum = cicil sebelum berangkat (tabungan) · pembiayaan = berangkat dulu · lihat = cuma lihat-lihat. Rata-rata harga paket yang diminati Rp {{rpShort .Avg}}.</p>
+<p class="mt-2 text-xs text-gray-500">sebelum = cicil sebelum berangkat (tabungan) · pembiayaan = berangkat dulu (pembiayaan mitra). Rata-rata harga paket yang diminati Rp {{rpShort .Avg}}.</p>
 <div class="mt-4 grid grid-cols-1 [&>*]:min-w-0 gap-4 lg:grid-cols-2">
     <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
         <h2 class="font-bold text-gray-900">Tenor yang dipilih (jalur pembiayaan)</h2>

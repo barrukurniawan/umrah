@@ -271,7 +271,7 @@
                 {{if demoOn}}
                 <div class="mt-2 grid {{if demoTerms $v.Travel.Name}}grid-cols-2{{else}}grid-cols-1{{end}} gap-2">
                     <button type="button" hx-get="/cicil?key={{urlquery $v.Key}}" hx-target="#demoSheetBody" hx-swap="innerHTML" onclick="ukSheet.open()"
-                        class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold bg-amber-50 text-amber-800 hover:bg-amber-100 ring-1 ring-amber-200">🤲 Mau cicil?</button>
+                        class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 ring-1 ring-emerald-200">{{template "ic" (dict "N" "wallet" "C" "w-4 h-4")}}Mau cicil?</button>
                     {{if demoTerms $v.Travel.Name}}<a href="/booking/baru?key={{urlquery $v.Key}}" class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 no-underline">Pesan & bayar DP</a>{{end}}
                 </div>
                 {{end}}

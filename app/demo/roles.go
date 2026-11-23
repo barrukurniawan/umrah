@@ -32,7 +32,7 @@ func (r Role) String() string {
 	return r.Kind
 }
 
-// Audience: kunci Kotak masuk untuk peran ini (jamaah memakai user:<id>, lihat InboxAudience).
+// Audience: kunci Notifikasi untuk peran ini (jamaah memakai user:<id>, lihat InboxAudience).
 func (r Role) Audience() string {
 	switch r.Kind {
 	case "admin":

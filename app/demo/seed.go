@@ -309,7 +309,7 @@ func seedBusiness() {
 		for i := 0; i < 3+rng.Intn(6); i++ {
 			t := travels[rng.Intn(len(travels))]
 			pk := seedPkgNames(t.Slug)
-			path := []string{"sebelum", "sebelum", "sebelum", "pembiayaan", "pembiayaan", "lihat"}[rng.Intn(6)]
+			path := []string{"sebelum", "sebelum", "sebelum", "pembiayaan", "pembiayaan"}[rng.Intn(5)]
 			tenor := 0
 			if path == "pembiayaan" {
 				tenor = []int{6, 12, 12, 24}[rng.Intn(4)]

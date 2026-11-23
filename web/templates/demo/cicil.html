@@ -10,16 +10,15 @@
     </div>
 
     {{$base := printf "/cicil?key=%s&orang=%d&tenor=%d&awal=%d" (urlquery .Key) .People .Tenor .Initial}}
-    <div class="mt-4 grid grid-cols-3 gap-2 text-xs font-semibold">
-        <button hx-get="{{$base}}&jalur=sebelum" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "sebelum"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white ring-gray-200 hover:ring-emerald-300{{end}}">Cicil sebelum berangkat</button>
-        <button hx-get="{{$base}}&jalur=pembiayaan" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "pembiayaan"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white ring-gray-200 hover:ring-emerald-300{{end}}">Berangkat dulu (pembiayaan)</button>
-        <button hx-get="{{$base}}&jalur=lihat" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "lihat"}}bg-gray-700 text-white ring-gray-700{{else}}bg-white ring-gray-200 hover:ring-gray-300{{end}}">Cuma lihat-lihat</button>
+    <div class="mt-4 grid grid-cols-2 gap-2.5 text-sm font-semibold">
+        <button hx-get="{{$base}}&jalur=sebelum" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-2xl px-3 py-3 text-left ring-1 transition-colors {{if eq .Path "sebelum"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-emerald-50 text-emerald-800 ring-emerald-200 hover:bg-emerald-100{{end}}">
+            Cicil sebelum berangkat<span class="block text-[11px] font-normal {{if eq .Path "sebelum"}}text-emerald-100{{else}}text-emerald-700/80{{end}}">Tabungan, tanpa utang</span></button>
+        <button hx-get="{{$base}}&jalur=pembiayaan" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-2xl px-3 py-3 text-left ring-1 transition-colors {{if eq .Path "pembiayaan"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-emerald-50 text-emerald-800 ring-emerald-200 hover:bg-emerald-100{{end}}">
+            Berangkat dulu<span class="block text-[11px] font-normal {{if eq .Path "pembiayaan"}}text-emerald-100{{else}}text-emerald-700/80{{end}}">Pembiayaan syariah mitra</span></button>
     </div>
 
     {{if eq .Path ""}}
-    <p class="mt-4 text-sm text-gray-600">Pilih jalur untuk melihat simulasinya. Kami mencatat pilihan Anda (tanpa data pribadi) untuk mengukur minat cicilan.</p>
-    {{else if eq .Path "lihat"}}
-    <p class="mt-4 text-sm text-gray-600">Terima kasih, minat Anda tercatat. Kapan pun siap, Anda bisa mulai dari setoran kecil lewat <b>Tabungan umroh</b>.</p>
+    <p class="mt-4 text-sm text-gray-600">Pilih salah satu untuk melihat simulasinya.</p>
     {{else}}
     <form hx-get="/cicil" hx-target="#cicilSheet" hx-swap="outerHTML" hx-trigger="change, submit" class="mt-4 grid grid-cols-2 gap-3 text-sm">
         <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="jalur" value="{{.Path}}">

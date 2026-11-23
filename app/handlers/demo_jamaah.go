@@ -121,7 +121,7 @@ func CicilSheet(c *fiber.Ctx) error {
 }
 
 func recordIntent(c *fiber.Ctx, cur *services.CurrentPackage, path string, tenor int) {
-	if path != "sebelum" && path != "pembiayaan" && path != "lihat" {
+	if path != "sebelum" && path != "pembiayaan" {
 		return
 	}
 	visitor, _, _, bot := analytics.FromRequest(c)

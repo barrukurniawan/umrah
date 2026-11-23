@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Kotak masuk demo: semua "WA" dan "email" berakhir di sini, tidak pernah dikirim keluar.
+// Notifikasi: semua "WA" dan "email" berakhir di sini, tidak pernah dikirim keluar.
 
 func UserAudience(userID uint) string { return fmt.Sprintf("user:%d", userID) }
 

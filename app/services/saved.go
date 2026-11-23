@@ -53,14 +53,25 @@ func CurrentByKeys(keys map[string]bool) map[string]*CurrentPackage {
 		if len(upcoming) == 0 {
 			continue
 		}
+		// Harga = termurah di antara tanggal mendatang (sama seperti kartu pencarian). Harga level
+		// paket hanya cadangan: hasil crawl kadang rusak (mis. Hamdan "23"), harga per tanggal benar.
+		price := 0
+		for _, d := range upcoming {
+			if d.Price > 0 && (price == 0 || d.Price < price) {
+				price = d.Price
+			}
+		}
+		if price == 0 {
+			price = p.Price
+		}
 		cp, ok := out[key]
 		if !ok {
-			cp = &CurrentPackage{Key: key, Travel: p.Travel.Name, Name: p.Name, MinPrice: p.Price, DownPayment: p.DownPayment, Duration: p.Duration, Airline: p.Airline,
+			cp = &CurrentPackage{Key: key, Travel: p.Travel.Name, Name: p.Name, MinPrice: price, DownPayment: p.DownPayment, Duration: p.Duration, Airline: p.Airline,
 				HotelMakkah: upcoming[0].HotelMakkah, HotelMadinah: upcoming[0].HotelMadinah}
 			out[key] = cp
 		}
-		if p.Price < cp.MinPrice {
-			cp.MinPrice = p.Price
+		if price < cp.MinPrice {
+			cp.MinPrice = price
 		}
 		for _, d := range upcoming {
 			cp.Departures = append(cp.Departures, d.DepartureDate)

@@ -29,7 +29,7 @@ func PartnerDashboard(c *fiber.Ctx) error {
 		fee += a.ReferralFee
 	}
 	return demoRender(c, "demo/partner", viewer(c, fiber.Map{"Title": p.Name, "P": p, "Apps": apps, "Counts": counts, "Fee": fee, "Err": c.Query("err"),
-		"Badge": "Dasbor mitra pembiayaan (contoh)", "Sub": p.Note, "Tabs": tabs("/mitra-pembiayaan", "/mitra-pembiayaan", "Pengajuan masuk", "/inbox", "Kotak masuk")}))
+		"Badge": "Dasbor mitra pembiayaan (contoh)", "Sub": p.Note, "Tabs": tabs("/mitra-pembiayaan", "/mitra-pembiayaan", "Pengajuan masuk", "/inbox", "Notifikasi")}))
 }
 
 func PartnerDecide(c *fiber.Ctx) error {

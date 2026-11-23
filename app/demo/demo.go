@@ -11,7 +11,7 @@
 //   - umrohku tidak memberi pinjaman (pembiayaan hanya rujukan) dan tidak punya "saldo umrohku"
 //   - travel & lembaga keuangan di alur bisnis semuanya fiktif; tidak ada nomor izin karangan
 //     atas nama pihak sungguhan
-//   - WA/email tidak dikirim keluar; semuanya masuk Kotak masuk demo
+//   - WA/email tidak dikirim keluar; semuanya masuk Notifikasi
 package demo
 
 import (
@@ -119,7 +119,7 @@ var Cfg = Config{
 	SAR:           4300,
 	Plans: []Plan{
 		{Key: "gratis", Name: "Gratis", Price: 0, Features: []string{"Profil travel & badge PPIU", "Paket tampil di pencarian", "Laporan klik bulanan ringkas"}},
-		{Key: "pro", Name: "Pro", Price: 499000, Features: []string{"Kelola paket & sisa seat sendiri", "Laporan lead harian + ekspor CSV", "Terima booking & DP lewat umrohku", "Kotak masuk lead terpadu"}},
+		{Key: "pro", Name: "Pro", Price: 499000, Features: []string{"Kelola paket & sisa seat sendiri", "Laporan lead harian + ekspor CSV", "Terima booking & DP lewat umrohku", "Notifikasi lead terpadu"}},
 		{Key: "premium", Name: "Premium", Price: 1490000, Features: []string{"Semua fitur Pro", "Diskon 20% posisi Promo Spesial", "Laporan pesaing & tren harga", "Manajer akun khusus"}},
 	},
 	Partners: []Partner{

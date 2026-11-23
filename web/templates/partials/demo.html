@@ -4,7 +4,7 @@
 {{define "demo_ribbon"}}
 <div class="bg-amber-400 text-amber-950 text-[11px] sm:text-xs font-semibold relative z-50">
     <div class="max-w-5xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
-        <span class="inline-flex items-center gap-1.5 min-w-0"><span class="shrink-0 rounded bg-amber-950 text-amber-300 px-1.5 py-px tracking-wider">DEMO</span><span class="truncate">Data contoh, tidak ada transaksi sungguhan</span></span>
+        <span class="inline-flex items-center gap-1.5 min-w-0"><span class="shrink-0 rounded bg-amber-950 text-amber-300 px-1.5 py-px tracking-wider">DEMO</span><span class="truncate">For illustrative purposes only</span></span>
         <span class="flex items-center gap-3 shrink-0">
             <a href="/demo" class="underline underline-offset-2 hover:no-underline">Tur demo</a>
             <a href="/keuntungan" class="hidden sm:inline underline underline-offset-2 hover:no-underline">Keuntungan</a>
@@ -57,7 +57,7 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
             {{end}}
         </div>
         <div class="border-t border-gray-100 p-2 grid grid-cols-2 gap-1 text-xs font-semibold">
-            <a href="/inbox" class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 bg-gray-50 hover:bg-gray-100">Kotak masuk{{if gt $unread 0}} <span class="rounded-full bg-rose-500 text-white text-[10px] px-1.5">{{$unread}}</span>{{end}}</a>
+            <a href="/inbox" class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 bg-gray-50 hover:bg-gray-100">Notifikasi{{if gt $unread 0}} <span class="rounded-full bg-rose-500 text-white text-[10px] px-1.5">{{$unread}}</span>{{end}}</a>
             <a href="/demo" class="flex items-center justify-center rounded-xl px-2 py-2 bg-gray-50 hover:bg-gray-100">Tur demo</a>
         </div>
     </div>

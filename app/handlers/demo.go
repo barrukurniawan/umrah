@@ -32,7 +32,7 @@ func demoView(c *fiber.Ctx) DemoInfo {
 	return DemoInfo{Role: r.String(), Label: r.Label(), Unread: demo.UnreadCount(inboxAudience(c)), Path: c.OriginalURL()}
 }
 
-// inboxAudience: kotak masuk peran aktif; jamaah = akun yang login.
+// inboxAudience: notifikasi peran aktif; jamaah = akun yang login.
 func inboxAudience(c *fiber.Ctx) string {
 	r := demo.CurrentRole(c)
 	if r.Kind == "" || r.Kind == "jamaah" {
@@ -140,7 +140,7 @@ func DemoInbox(c *fiber.Ctx) error {
 		}
 	}
 	demo.MarkRead(aud)
-	return demoRender(c, "demo/inbox", viewer(c, fiber.Map{"Title": "Kotak masuk demo", "Messages": msgs, "Unread": unread,
+	return demoRender(c, "demo/inbox", viewer(c, fiber.Map{"Title": "Notifikasi", "Messages": msgs, "Unread": unread,
 		"Audience": aud, "RoleLabel": demo.CurrentRole(c).Label()}))
 }
 

@@ -37,7 +37,7 @@
 
 <div class="mt-4 grid grid-cols-1 [&>*]:min-w-0 gap-4 lg:grid-cols-2">
     <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
-        <h2 class="font-bold text-gray-900">Kotak masuk admin</h2>
+        <h2 class="font-bold text-gray-900">Notifikasi admin</h2>
         <ul class="mt-2 divide-y divide-gray-100 text-sm">{{range .Inbox}}<li class="py-2"><p class="font-medium text-gray-800">{{.Subject}}</p><p class="text-xs text-gray-500">{{ago .CreatedAt}}</p></li>{{end}}</ul>
     </section>
     <section class="rounded-2xl bg-white ring-1 ring-rose-200 p-5">

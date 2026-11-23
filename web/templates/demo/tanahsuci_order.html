@@ -34,7 +34,7 @@
             <form method="POST" action="/tanah-suci/oleh-oleh/{{.Code}}/lanjut" class="mt-5">
                 <button class="w-full rounded-xl ring-1 ring-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-5 py-3 text-sm">Simulasikan status berikutnya: {{statusLabel $.Next}}</button>
             </form>
-            <p class="text-[11px] text-gray-400 mt-2 text-center">Setiap perubahan status dikirim sebagai WA simulasi ke <a href="/inbox" class="underline">Kotak masuk</a>.</p>
+            <p class="text-[11px] text-gray-400 mt-2 text-center">Setiap perubahan status dikirim sebagai WA simulasi ke <a href="/inbox" class="underline">Notifikasi</a>.</p>
             {{else}}
             <p class="mt-4 text-sm text-emerald-700 font-medium">Paket sudah sampai. Alhamdulillah. 🎉</p>
             {{end}}

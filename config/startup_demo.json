@@ -6,7 +6,7 @@
   "access_code": "",
   "plans": [
     {"key": "gratis", "name": "Gratis", "price": 0, "features": ["Profil travel & badge PPIU", "Paket tampil di pencarian", "Laporan klik bulanan ringkas"]},
-    {"key": "pro", "name": "Pro", "price": 499000, "features": ["Kelola paket & sisa seat sendiri", "Laporan lead harian + ekspor CSV", "Terima booking & DP lewat umrohku", "Kotak masuk lead terpadu"]},
+    {"key": "pro", "name": "Pro", "price": 499000, "features": ["Kelola paket & sisa seat sendiri", "Laporan lead harian + ekspor CSV", "Terima booking & DP lewat umrohku", "Notifikasi lead terpadu"]},
     {"key": "premium", "name": "Premium", "price": 1490000, "features": ["Semua fitur Pro", "Diskon 20% posisi Promo Spesial", "Laporan pesaing & tren harga", "Manajer akun khusus"]}
   ],
   "partners": [
