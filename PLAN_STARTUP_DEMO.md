@@ -133,7 +133,7 @@ Setelah Tahap 0 + Tahap 1 + Tahap 5 (±2 minggu), demo sudah cukup untuk pengaju
 
 ## 7. Status (23 Nov 2026) · branch `startup-demo`
 
-Semua tahap di atas sudah bisa diklik di mode demo (`DEMO_MODE=1`). Cara deploy subdomain ada di [docs/DEPLOY_STARTUP_DEMO.md](docs/DEPLOY_STARTUP_DEMO.md).
+Semua tahap di atas sudah bisa diklik di mode demo (`DEMO_MODE=1`), **live di https://startup.umrohku.web.id sejak 23 Nov 2026**. Cara deploy subdomain ada di [docs/DEPLOY_STARTUP_DEMO.md](docs/DEPLOY_STARTUP_DEMO.md).
 
 | Bagian | Route utama | Kode |
 |---|---|---|
