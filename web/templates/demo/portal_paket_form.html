@@ -1,0 +1,24 @@
+<a href="/portal/paket" class="text-sm text-emerald-700 hover:underline">← Paket & seat</a>
+{{if .Error}}<p class="mt-3 rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-2.5">{{.Error}}</p>{{end}}
+<form method="POST" action="/portal/paket" class="mt-3 rounded-2xl bg-white ring-1 ring-gray-200 p-5 grid gap-4 sm:grid-cols-4 text-sm">
+    <input type="hidden" name="id" value="{{.P.ID}}">
+    <label class="sm:col-span-4 block"><span class="text-xs text-gray-500">Nama paket</span><input name="name" value="{{.P.Name}}" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Harga quad (Rp)</span><input name="price" value="{{if .P.Price}}{{.P.Price}}{{end}}" inputmode="numeric" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Harga triple</span><input name="triple" value="{{if .P.PriceTriple}}{{.P.PriceTriple}}{{end}}" inputmode="numeric" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Harga double</span><input name="double" value="{{if .P.PriceDouble}}{{.P.PriceDouble}}{{end}}" inputmode="numeric" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Durasi (hari)</span><input name="duration" type="number" value="{{.P.Duration}}" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Maskapai</span><input name="airline" value="{{.P.Airline}}" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Penerbangan</span><select name="direct" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"><option value="1" {{if .P.Direct}}selected{{end}}>Direct</option><option value="0" {{if not .P.Direct}}selected{{end}}>Transit</option></select></label>
+    <label class="block"><span class="text-xs text-gray-500">Transit via</span><input name="via" value="{{.P.TransitVia}}" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="block"><span class="text-xs text-gray-500">Pembimbing</span><input name="guide" value="{{.P.Guide}}" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+    <label class="sm:col-span-2 block"><span class="text-xs text-gray-500">Hotel Makkah · bintang · jarak (m)</span><div class="mt-1 flex gap-2"><input name="hm" value="{{.P.HotelMakkah}}" class="flex-1 min-w-0 rounded-xl border border-gray-300 px-3 py-2.5"><input name="sm" type="number" value="{{.P.StarsMakkah}}" class="w-16 rounded-xl border border-gray-300 px-2 py-2.5"><input name="dm" type="number" value="{{.P.DistMakkah}}" class="w-20 rounded-xl border border-gray-300 px-2 py-2.5"></div></label>
+    <label class="sm:col-span-2 block"><span class="text-xs text-gray-500">Hotel Madinah · bintang · jarak (m)</span><div class="mt-1 flex gap-2"><input name="hd" value="{{.P.HotelMadinah}}" class="flex-1 min-w-0 rounded-xl border border-gray-300 px-3 py-2.5"><input name="sd" type="number" value="{{.P.StarsMadinah}}" class="w-16 rounded-xl border border-gray-300 px-2 py-2.5"><input name="dd" type="number" value="{{.P.DistMadinah}}" class="w-20 rounded-xl border border-gray-300 px-2 py-2.5"></div></label>
+    <label class="sm:col-span-2 block"><span class="text-xs text-gray-500">Fasilitas (satu per baris)</span><textarea name="facilities" rows="6" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">{{.P.Facilities}}</textarea></label>
+    <label class="sm:col-span-2 block"><span class="text-xs text-gray-500">Tidak termasuk</span><textarea name="excludes" rows="6" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">{{.P.Excludes}}</textarea></label>
+    <div class="sm:col-span-4 rounded-xl bg-gray-50 p-3 grid gap-2 sm:grid-cols-3 items-end">
+        <label class="block"><span class="text-xs text-gray-500">Tambah tanggal berangkat</span><input type="date" name="new_date" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"></label>
+        <label class="block"><span class="text-xs text-gray-500">Total seat</span><input type="number" name="new_seats" value="45" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"></label>
+        <p class="text-xs text-gray-500">{{len .P.Departures}} tanggal sudah ada. Ubah sisa seat di daftar paket.</p>
+    </div>
+    <button class="sm:col-span-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">Simpan & tayangkan</button>
+</form>

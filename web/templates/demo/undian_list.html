@@ -1,0 +1,17 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-gray-900">Undian umroh gratis</h1>
+    <p class="text-sm text-gray-600 mt-1">Setiap jamaah dalam booking yang DP-nya lunas otomatis mendapat 1 kode. <b>Gratis, tanpa beli kupon, harga paket tidak dinaikkan.</b></p>
+    <div class="mt-6 grid grid-cols-1 [&>*]:min-w-0 gap-4">
+        {{range .Draws}}
+        <a href="/undian/{{.ID}}" class="block rounded-2xl bg-white ring-1 ring-gray-200 hover:ring-violet-300 p-5">
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0"><p class="font-bold text-gray-900">{{.Title}}</p><p class="text-sm text-gray-600 mt-0.5">🎁 {{.PrizeDesc}}</p></div>
+                {{template "pill" (dict "S" .Status)}}
+            </div>
+            <div class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
+                <span>Periode {{tgl .StartsAt}} – {{tgl .EndsAt}}</span><span>Diundi {{tgl .DrawAt}}</span><span>{{.ActiveCount}} kode aktif</span><span>Izin Kemensos: {{.PermitNo}}</span>
+            </div>
+        </a>
+        {{else}}<p class="text-sm text-gray-500">Belum ada undian.</p>{{end}}
+    </div>
+</main>

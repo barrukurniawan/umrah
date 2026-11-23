@@ -263,7 +263,7 @@ func SavingsDetail(c *fiber.Ctx) error {
 	return c.Render("savings_detail", viewer(c, fiber.Map{
 		"Goal": g, "P": p, "Entries": entries, "Today": todayWIB(), "Current": current, "Travel": travel,
 		"Celebrate": c.Query("tercapai") == "1", "Milestone": c.Query("tonggak"), "IsNew": c.Query("baru") == "1",
-		"EntryError": c.Query("err"),
+		"EntryError": c.Query("err"), "BankLink": savingsLinkFor(g.ID),
 	}))
 }
 

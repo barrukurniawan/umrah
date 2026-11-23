@@ -1,0 +1,70 @@
+{{/* Lembar bawah "Mau cicil?" (dimuat htmx ke #demoSheetBody). */}}
+<div class="p-5 sm:p-6" id="cicilSheet">
+    <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+            <p class="text-[11px] font-bold tracking-wider text-emerald-700">MAU CICIL?</p>
+            <p class="font-bold text-gray-900 leading-snug">{{.Cur.Travel}}</p>
+            <p class="text-xs text-gray-500 truncate">{{.Cur.Name}} · Rp {{formatCurrency .Cur.MinPrice}}/orang</p>
+        </div>
+        <button type="button" onclick="ukSheet.close()" class="shrink-0 rounded-full p-2 -m-2 text-gray-400 hover:text-gray-700" aria-label="Tutup">✕</button>
+    </div>
+
+    {{$base := printf "/cicil?key=%s&orang=%d&tenor=%d&awal=%d" (urlquery .Key) .People .Tenor .Initial}}
+    <div class="mt-4 grid grid-cols-3 gap-2 text-xs font-semibold">
+        <button hx-get="{{$base}}&jalur=sebelum" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "sebelum"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white ring-gray-200 hover:ring-emerald-300{{end}}">Cicil sebelum berangkat</button>
+        <button hx-get="{{$base}}&jalur=pembiayaan" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "pembiayaan"}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white ring-gray-200 hover:ring-emerald-300{{end}}">Berangkat dulu (pembiayaan)</button>
+        <button hx-get="{{$base}}&jalur=lihat" hx-target="#cicilSheet" hx-swap="outerHTML" class="rounded-xl px-2 py-2.5 ring-1 {{if eq .Path "lihat"}}bg-gray-700 text-white ring-gray-700{{else}}bg-white ring-gray-200 hover:ring-gray-300{{end}}">Cuma lihat-lihat</button>
+    </div>
+
+    {{if eq .Path ""}}
+    <p class="mt-4 text-sm text-gray-600">Pilih jalur untuk melihat simulasinya. Kami mencatat pilihan Anda (tanpa data pribadi) untuk mengukur minat cicilan.</p>
+    {{else if eq .Path "lihat"}}
+    <p class="mt-4 text-sm text-gray-600">Terima kasih, minat Anda tercatat. Kapan pun siap, Anda bisa mulai dari setoran kecil lewat <b>Tabungan umroh</b>.</p>
+    {{else}}
+    <form hx-get="/cicil" hx-target="#cicilSheet" hx-swap="outerHTML" hx-trigger="change, submit" class="mt-4 grid grid-cols-2 gap-3 text-sm">
+        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="jalur" value="{{.Path}}">
+        <label class="block"><span class="text-xs text-gray-500">Jumlah orang</span>
+            <select name="orang" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2">{{range seq 6}}<option value="{{.}}" {{if eq . $.People}}selected{{end}}>{{.}} orang</option>{{end}}</select></label>
+        {{if eq .Path "sebelum"}}
+        <label class="block"><span class="text-xs text-gray-500">Setoran awal (Rp)</span>
+            <input name="awal" inputmode="numeric" value="{{if .Initial}}{{.Initial}}{{end}}" placeholder="0" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"></label>
+        <label class="block col-span-2"><span class="text-xs text-gray-500">Target berangkat</span>
+            <select name="target" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2">
+                {{range .Cur.Departures}}<option value="{{.}}" {{if eq . $.Depart}}selected{{end}}>{{formatDate .}}</option>{{end}}
+                <option value="{{addDays365}}" {{if eq $.Depart addDays365}}selected{{end}}>Tahun depan (±12 bulan lagi)</option>
+                <option value="{{addDays730}}" {{if eq $.Depart addDays730}}selected{{end}}>±2 tahun lagi</option>
+            </select></label>
+        {{else}}
+        <label class="block"><span class="text-xs text-gray-500">Tenor</span>
+            <select name="tenor" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2">{{range (list "6" "12" "24")}}<option value="{{.}}" {{if eq . (printf "%d" $.Tenor)}}selected{{end}}>{{.}} bulan</option>{{end}}</select></label>
+        {{end}}
+    </form>
+
+    {{if eq .Path "sebelum"}}
+    <div class="mt-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-4">
+        <p class="text-xs font-semibold text-emerald-700">Tanpa margin, tanpa utang</p>
+        <p class="mt-1 text-2xl font-bold text-emerald-900">Rp {{rp .Saving.Monthly}}<span class="text-sm font-medium">/bulan</span></p>
+        <p class="text-xs text-emerald-800 mt-1">selama {{.Saving.Months}} bulan sampai {{tgl .Saving.Deadline}} (H-{{.HMinus}} dari keberangkatan {{tgl .Depart}}). Total Rp {{rp .Total}}{{if .Initial}}, setoran awal Rp {{rp .Initial}}{{end}}.</p>
+        <p class="text-xs text-emerald-800 mt-2">Disimpan di tabungan umroh <b>atas nama Anda</b> di Bank Syariah Contoh (akad wadiah), bisa autodebet. {{with .Terms}}Begitu terkumpul Rp {{rp .DPMinUmrohku}}/orang, Anda sudah bisa pesan dengan DP ringan.{{end}}</p>
+    </div>
+    <form method="POST" action="/cicil/tabungan" class="mt-3">
+        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="orang" value="{{.People}}"><input type="hidden" name="awal" value="{{.Initial}}"><input type="hidden" name="tgl" value="{{.Depart}}">
+        <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 text-sm">Buat rencana tabungan</button>
+    </form>
+    {{else}}
+    <div class="mt-4 rounded-2xl bg-amber-50 ring-1 ring-amber-300 p-3">
+        <p class="text-xs font-bold text-amber-900">Contoh perhitungan, bukan penawaran. Angka resmi dari mitra setelah pengajuan.</p>
+    </div>
+    <div class="mt-3 grid grid-cols-1 [&>*]:min-w-0 gap-2">
+        {{range .Estimates}}
+        <div class="rounded-xl bg-white ring-1 ring-gray-200 p-3 flex items-center justify-between gap-3">
+            <div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">{{.Partner.Name}}</p><p class="text-[11px] text-gray-500">ujrah/margin ±{{.UjrahPct}}% · admin Rp {{rpShort .Admin}} · total Rp {{rpShort .Total}}</p></div>
+            <div class="text-right shrink-0"><p class="font-bold text-gray-900">Rp {{rp .Monthly}}</p><p class="text-[11px] text-gray-500">/bulan × {{.Tenor}}</p></div>
+        </div>
+        {{else}}<p class="text-sm text-gray-500">Tenor ini belum tersedia di mitra.</p>{{end}}
+    </div>
+    <a href="/pembiayaan/ajukan?key={{urlquery .Key}}&tenor={{.Tenor}}&orang={{.People}}" class="mt-3 block text-center w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 text-sm">Ajukan ke mitra</a>
+    <p class="mt-2 text-[11px] text-gray-500 text-center">Umrohku tidak memberi pinjaman. Pengajuan diteruskan ke mitra berizin OJK hanya dengan persetujuan Anda.</p>
+    {{end}}
+    {{end}}
+</div>

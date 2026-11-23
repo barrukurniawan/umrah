@@ -1,0 +1,19 @@
+{{if .Done}}<p class="rounded-xl bg-emerald-50 text-emerald-800 text-sm px-4 py-2.5 mb-3">Langganan diperbarui (simulasi). Tagihan masuk ke tagihan bulan ini.</p>{{end}}
+{{if eq .Feature "csv"}}<p class="rounded-xl bg-amber-50 text-amber-800 text-sm px-4 py-2.5 mb-3">Ekspor CSV tersedia mulai paket Pro.</p>{{end}}
+<p class="text-sm text-gray-600">Paket aktif: <b>{{.Plan.Name}}</b>{{if .T.PlanUntil}} sampai {{tgl .T.PlanUntil}}{{end}}. Contoh harga untuk demo.</p>
+<div class="mt-4 grid grid-cols-1 [&>*]:min-w-0 gap-4 md:grid-cols-3">
+    {{range .Plans}}
+    <form method="POST" action="/portal/langganan" class="rounded-2xl bg-white p-5 flex flex-col {{if eq .Key $.T.Plan}}ring-2 ring-emerald-600{{else}}ring-1 ring-gray-200{{end}}">
+        <input type="hidden" name="plan" value="{{.Key}}">
+        <p class="font-bold text-gray-900">{{.Name}} {{if eq .Key $.T.Plan}}<span class="ml-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 align-middle">AKTIF</span>{{end}}</p>
+        <p class="mt-1 text-2xl font-bold text-gray-900">{{if .Price}}Rp {{rpShort .Price}}<span class="text-sm font-medium text-gray-500">/bulan</span>{{else}}Gratis{{end}}</p>
+        <ul class="mt-3 space-y-1.5 text-sm text-gray-600 flex-1">{{range .Features}}<li>✓ {{.}}</li>{{end}}</ul>
+        {{if .Price}}<select name="bulan" class="mt-4 rounded-xl border border-gray-300 px-3 py-2 text-sm"><option value="1">1 bulan</option><option value="3">3 bulan</option><option value="12">12 bulan (2 bulan gratis)</option></select>{{end}}
+        <button class="mt-3 rounded-xl {{if eq .Key $.T.Plan}}bg-white ring-1 ring-emerald-600 text-emerald-700{{else}}bg-emerald-600 text-white hover:bg-emerald-700{{end}} font-semibold py-2.5 text-sm">{{if eq .Key $.T.Plan}}Perpanjang{{else}}Pilih {{.Name}}{{end}}</button>
+    </form>
+    {{end}}
+</div>
+<section class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+    <h2 class="font-bold text-gray-900">Riwayat langganan</h2>
+    <ul class="mt-2 divide-y divide-gray-100 text-sm">{{range .Logs}}<li class="py-2 flex justify-between gap-2"><span>{{planName .Plan}} · {{.Months}} bulan <span class="text-gray-500">({{tgl .From}} – {{tgl .Until}})</span></span><span class="tabular-nums">Rp {{rp .Amount}}</span></li>{{else}}<li class="py-2 text-gray-500">Belum ada.</li>{{end}}</ul>
+</section>

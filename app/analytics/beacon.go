@@ -16,6 +16,10 @@ type beacon struct {
 	Position int    `json:"pos"`
 }
 
+// OnClick (opsional) dipanggil untuk klik WA/website yang lolos saring bot. Mode demo memakainya
+// untuk mencatat lead travel mitra.
+var OnClick func(kind, travel, pkg, visitor, device string)
+
 // BeaconHandler menerima klik dari navigator.sendBeacon (POST /t). Selalu 204 supaya tidak bocor info.
 func BeaconHandler(c *fiber.Ctx) error {
 	var b beacon
@@ -39,6 +43,9 @@ func BeaconHandler(c *fiber.Ctx) error {
 		Price:    b.Price,
 		Position: b.Position,
 	})
+	if OnClick != nil && (b.Type == "click_wa" || b.Type == "click_web") {
+		OnClick(b.Type, b.Travel, b.Package, visitor, device)
+	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
 

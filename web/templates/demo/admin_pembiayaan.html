@@ -1,0 +1,13 @@
+<div class="grid gap-3 grid-cols-2 lg:grid-cols-4">
+    {{template "stat" (dict "Label" "Pengajuan dirujuk" "Value" (len .Apps))}}
+    {{template "stat" (dict "Label" "Disetujui / cair" "Value" (printf "%d / %d" (index .Counts "disetujui") (index .Counts "dicairkan")) "Tone" "sky")}}
+    {{template "stat" (dict "Label" "Pembiayaan cair" "Value" (printf "Rp %s" (rpShort .Disbursed)) "Tone" "gray")}}
+    {{template "stat" (dict "Label" "Fee rujukan" "Value" (printf "Rp %s" (rpShort .Fee)) "Tone" "amber")}}
+</div>
+<p class="mt-2 text-xs text-gray-500">Umrohku tidak memberi pinjaman. Data jamaah hanya diteruskan ke mitra pilihan jamaah setelah persetujuan (UU PDP). Mitra fiktif di demo: {{range $i, $p := .Partners}}{{if $i}}, {{end}}{{$p.Name}}{{end}}.</p>
+<section class="mt-4 rounded-2xl bg-white ring-1 ring-gray-200 overflow-x-auto">
+    <table class="w-full text-sm min-w-[720px]">
+        <thead><tr class="text-left text-xs text-gray-400 border-b bg-gray-50"><th class="px-4 py-2 font-medium">Kode</th><th class="py-2 font-medium">Jamaah</th><th class="py-2 font-medium">Mitra</th><th class="py-2 font-medium text-right">Pokok · tenor</th><th class="py-2 font-medium text-right">Fee</th><th class="py-2 px-4 font-medium">Status</th></tr></thead>
+        <tbody>{{range .Apps}}<tr class="border-b border-gray-50"><td class="px-4 py-2 font-mono text-xs">{{.Code}}<span class="block font-sans text-gray-400">{{tgl .CreatedAt}}</span></td><td class="py-2">{{.Name}}<span class="block text-xs text-gray-500">{{.City}}</span></td><td class="py-2 text-xs">{{partnerName .PartnerSlug}}</td><td class="py-2 text-right tabular-nums">Rp {{rpShort .Amount}} · {{.Tenor}} bln</td><td class="py-2 text-right tabular-nums">{{if .ReferralFee}}Rp {{rp .ReferralFee}}{{else}}—{{end}}</td><td class="py-2 px-4">{{template "pill" (dict "S" .Status)}}{{if .ConsentRevokedAt}}<span class="block text-[10px] text-gray-400">data dicabut</span>{{end}}</td></tr>{{end}}</tbody>
+    </table>
+</section>

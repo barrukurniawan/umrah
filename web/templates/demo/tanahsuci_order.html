@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "oleh")}}
+        {{with .O}}
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-xs text-gray-500">Pesanan oleh-oleh</p>
+                <h1 class="text-2xl font-bold text-gray-900 font-mono">{{.Code}}</h1>
+                <p class="text-xs text-gray-500 mt-0.5">Dibuat {{tglJam .CreatedAt}}</p>
+            </div>
+            {{template "pill" (dict "S" .Status)}}
+        </div>
+
+        {{if eq .Status "menunggu_bayar"}}
+        {{template "ts_qris" (dict "Payload" .QRPayload "Amount" .Total "Holder" $.Supplier "Action" (printf "/tanah-suci/oleh-oleh/%s/bayar" .Code) "Code" .Code "Label" "Total oleh-oleh + ongkir")}}
+        {{else}}
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Lacak pengiriman</h2>
+            <ol class="mt-4 relative">
+                {{range .Timeline}}
+                <li class="relative pl-9 pb-5 last:pb-0">
+                    <span class="absolute left-[11px] top-6 bottom-0 w-0.5 {{if .Done}}bg-emerald-300{{else}}bg-gray-200{{end}}"></span>
+                    <span class="absolute left-0 top-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold {{if .Current}}bg-emerald-600 text-white ring-4 ring-emerald-100{{else if .Done}}bg-emerald-100 text-emerald-700{{else}}bg-gray-100 text-gray-400{{end}}">{{if and .Done (not .Current)}}✓{{else}}•{{end}}</span>
+                    <p class="text-sm font-semibold {{if .Done}}text-gray-900{{else}}text-gray-400{{end}}">{{.Label}}</p>
+                    <p class="text-xs {{if .Done}}text-gray-500{{else}}text-gray-300{{end}}">{{.Note}}{{if and .Done .At}} · {{tglJam .At}}{{end}}</p>
+                </li>
+                {{end}}
+            </ol>
+            {{if $.Next}}
+            <form method="POST" action="/tanah-suci/oleh-oleh/{{.Code}}/lanjut" class="mt-5">
+                <button class="w-full rounded-xl ring-1 ring-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-5 py-3 text-sm">Simulasikan status berikutnya: {{statusLabel $.Next}}</button>
+            </form>
+            <p class="text-[11px] text-gray-400 mt-2 text-center">Setiap perubahan status dikirim sebagai WA simulasi ke <a href="/inbox" class="underline">Kotak masuk</a>.</p>
+            {{else}}
+            <p class="mt-4 text-sm text-emerald-700 font-medium">Paket sudah sampai. Alhamdulillah. 🎉</p>
+            {{end}}
+        </section>
+        {{end}}
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Isi paket</h2>
+            {{template "ts_lines" (dict "Lines" .Lines "Cur" "rp")}}
+            <dl class="mt-2 pt-3 border-t border-gray-100 text-sm space-y-1">
+                <div class="flex justify-between"><dt class="text-gray-500">Subtotal</dt><dd class="tabular-nums">Rp {{rp .Subtotal}}</dd></div>
+                <div class="flex justify-between"><dt class="text-gray-500">Ongkir</dt><dd class="tabular-nums">{{if .Shipping}}Rp {{rp .Shipping}}{{else}}Gratis{{end}}</dd></div>
+                <div class="flex justify-between font-bold text-gray-900"><dt>Total</dt><dd class="tabular-nums">Rp {{rp .Total}}</dd></div>
+            </dl>
+        </section>
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5 text-sm">
+            <h2 class="font-semibold text-gray-900">Dikirim ke</h2>
+            <p class="mt-2 text-gray-800 font-medium">{{.Recipient}} · {{.Phone}}</p>
+            <p class="text-gray-600 break-words">{{.Address}}, {{.City}}{{if .Postal}} {{.Postal}}{{end}}</p>
+            <p class="text-xs text-gray-400 mt-2">Pengirim: {{$.Supplier}}</p>
+        </section>
+        {{end}}
+        <div class="flex flex-wrap gap-3 text-sm">
+            <a href="/tanah-suci/oleh-oleh" class="font-semibold text-emerald-700 hover:underline">Belanja oleh-oleh lagi →</a>
+            <a href="/tanah-suci" class="text-gray-500 hover:underline">Semua layanan Tanah Suci</a>
+        </div>
+    </main>
+</body>
+</html>

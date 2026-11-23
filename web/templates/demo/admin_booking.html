@@ -1,0 +1,10 @@
+<div class="flex flex-wrap gap-1.5 text-xs font-semibold">
+    <a href="/admin/bisnis/booking" class="rounded-full px-3 py-1.5 {{if not .Status}}bg-gray-900 text-white{{else}}bg-white ring-1 ring-gray-200{{end}}">Semua</a>
+    {{range (list "menunggu_dp" "dp_lunas" "lunas" "berangkat" "pulang" "batal")}}<a href="?status={{.}}" class="rounded-full px-3 py-1.5 {{if eq . $.Status}}bg-gray-900 text-white{{else}}bg-white ring-1 ring-gray-200{{end}}">{{statusLabel .}}</a>{{end}}
+</div>
+<section class="mt-4 rounded-2xl bg-white ring-1 ring-gray-200 overflow-x-auto">
+    <table class="w-full text-sm min-w-[760px]">
+        <thead><tr class="text-left text-xs text-gray-400 border-b bg-gray-50"><th class="px-4 py-2 font-medium">Kode</th><th class="py-2 font-medium">Travel</th><th class="py-2 font-medium">Jamaah</th><th class="py-2 font-medium text-right">Total</th><th class="py-2 font-medium text-right">Promo</th><th class="py-2 px-4 font-medium">Status</th></tr></thead>
+        <tbody>{{range .Bookings}}<tr class="border-b border-gray-50"><td class="px-4 py-2 font-mono text-xs">{{.Code}}<span class="block font-sans text-gray-400">{{tgl .CreatedAt}}</span></td><td class="py-2">{{.TravelName}}<span class="block text-xs text-gray-500">{{.PackageName}} · {{tgl .DepartureDate}}</span></td><td class="py-2">{{.ContactName}}<span class="block text-xs text-gray-500">{{.People}} org · {{.City}}</span></td><td class="py-2 text-right tabular-nums">Rp {{rpShort .Total}}</td><td class="py-2 text-right tabular-nums text-xs">Rp {{rpShort (add64 .DPDiscount .CashbackPromised)}}</td><td class="py-2 px-4">{{template "pill" (dict "S" .Status)}}</td></tr>{{end}}</tbody>
+    </table>
+</section>

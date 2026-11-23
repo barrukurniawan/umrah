@@ -1,0 +1,14 @@
+<main class="max-w-lg mx-auto px-4 py-8">
+    <a href="/booking/{{.B.ID}}" class="text-sm text-emerald-700 hover:underline">← Booking {{.B.Code}}</a>
+    <h1 class="mt-2 text-2xl font-bold text-gray-900">Ulasan untuk {{.B.TravelName}}</h1>
+    <p class="text-sm text-gray-500">{{.B.PackageName}} · berangkat {{tgl .B.DepartureDate}}</p>
+    {{if .Error}}<p class="mt-4 rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-3">{{.Error}}</p>{{end}}
+    <form method="POST" class="mt-5 rounded-2xl bg-white ring-1 ring-gray-200 p-5 space-y-4">
+        <div class="flex flex-row-reverse justify-end gap-1 text-3xl">
+            {{range (list "5" "4" "3" "2" "1")}}<input type="radio" id="r{{.}}" name="rating" value="{{.}}" class="peer sr-only" {{if eq . "5"}}checked{{end}}><label for="r{{.}}" class="cursor-pointer text-gray-300 peer-checked:text-amber-400 hover:text-amber-400 [&:has(~input:checked)]:text-amber-400">★</label>{{end}}
+        </div>
+        <textarea name="text" rows="5" required minlength="10" class="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm" placeholder="Bagaimana pembimbing, hotel, makanan, ketepatan jadwal?"></textarea>
+        <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">Kirim ulasan</button>
+        <p class="text-[11px] text-gray-400">Nama ditampilkan disamarkan. Ulasan diberi tanda “Berangkat via umrohku”.</p>
+    </form>
+</main>

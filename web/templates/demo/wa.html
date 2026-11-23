@@ -1,0 +1,27 @@
+<main class="max-w-md mx-auto px-4 py-8">
+    <div class="rounded-2xl overflow-hidden ring-1 ring-gray-200 shadow-sm bg-[#efeae2]">
+        <div class="bg-[#075e54] text-white px-4 py-3 flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm">{{travelInitials .T.Name}}</span>
+            <div><p class="font-semibold text-sm">{{.T.Name}}</p><p class="text-[11px] text-emerald-100">WhatsApp simulasi · demo</p></div>
+        </div>
+        <div class="p-4 space-y-3 min-h-[220px]">
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 text-sm shadow-sm">Assalamu'alaikum, terima kasih sudah menghubungi {{.T.Name}} lewat umrohku 🙏 Silakan tinggalkan nama & nomor WA, tim kami segera membalas.</div>
+            {{if .Sent}}
+            <div class="ml-auto max-w-[85%] rounded-lg rounded-tr-none bg-[#d9fdd3] px-3 py-2 text-sm shadow-sm">Saya tertarik paket {{.Pkg}}. Mohon info jadwal & kamar. ✓✓</div>
+            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 text-sm shadow-sm">Pesan sudah kami terima. Admin akan menghubungi Anda. <span class="block mt-1 text-[11px] text-gray-400">Lead ini tercatat di portal travel (Lead → Baru).</span></div>
+            {{end}}
+        </div>
+        {{if not .Sent}}
+        <form method="POST" action="/demo/wa" class="bg-white p-4 grid gap-2">
+            <input type="hidden" name="travel" value="{{.T.Slug}}"><input type="hidden" name="pkg" value="{{.Pkg}}">
+            <p class="text-xs text-gray-500">Paket: <b>{{.Pkg}}</b></p>
+            <input name="name" value="{{.Name}}" placeholder="Nama" required class="rounded-xl border border-gray-300 px-3 py-2.5 text-sm">
+            <input name="phone" placeholder="No. WhatsApp" required class="rounded-xl border border-gray-300 px-3 py-2.5 text-sm">
+            <input name="city" placeholder="Kota" class="rounded-xl border border-gray-300 px-3 py-2.5 text-sm">
+            <button class="rounded-xl bg-[#25d366] hover:bg-[#1ebe5b] text-white font-semibold py-2.5 text-sm">Kirim (simulasi)</button>
+        </form>
+        {{else}}
+        <div class="bg-white p-4 text-center"><a href="/" class="text-sm font-semibold text-emerald-700 hover:underline">← Kembali ke pencarian</a></div>
+        {{end}}
+    </div>
+</main>

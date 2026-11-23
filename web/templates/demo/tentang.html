@@ -1,0 +1,10 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-gray-900">Tentang umrohku</h1>
+    <p class="mt-3 text-gray-600 leading-relaxed">umrohku membantu calon jamaah membandingkan paket umroh dari banyak travel PPIU dalam satu tempat: harga, jarak hotel, maskapai, DP, dan jadwal. Kini berkembang menjadi tempat memesan dengan DP ringan, cicilan syariah, dan perlindungan dana jamaah.</p>
+    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        {{range (list "Badan usaha|PT umrohku · dalam proses pendirian" "NIB|[isi setelah terbit]" "Tanda daftar PSE Komdigi|Dalam proses" "Izin undian gratis berhadiah (Kemensos)|Dalam proses" "Alamat|[isi]" "Kontak|halo@umrohku.web.id")}}{{$p := splitPipe .}}
+        <div class="rounded-xl bg-white ring-1 ring-gray-200 p-4"><p class="text-xs text-gray-400">{{index $p 0}}</p><p class="font-medium text-gray-800">{{index $p 1}}</p></div>
+        {{end}}
+    </div>
+    <p class="mt-6 text-xs text-gray-400">Nomor izin tidak dikarang: yang belum terbit ditulis “dalam proses”.</p>
+</main>

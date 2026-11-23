@@ -1,0 +1,127 @@
+<main class="max-w-4xl mx-auto px-4 py-8">
+    <a href="/akun/booking" class="text-sm text-emerald-700 hover:underline">← Booking saya</a>
+    {{if .Paid}}<div class="mt-3 rounded-2xl bg-emerald-600 text-white px-5 py-4 flex items-center gap-3"><span class="text-2xl">✅</span><div><p class="font-bold">Pembayaran berhasil (simulasi)</p><p class="text-sm text-emerald-100">Konfirmasi & kuitansi dikirim ke WhatsApp dan email. Lihat di <a href="/inbox" class="underline">Kotak masuk demo</a>.</p></div></div>{{end}}
+
+    <div class="mt-3 flex flex-wrap items-start justify-between gap-3">
+        <div class="min-w-0">
+            <p class="text-xs text-gray-500">Booking <span class="font-mono font-semibold text-gray-800">{{.B.Code}}</span> · {{tglJam .B.CreatedAt}}</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{.B.PackageName}}</h1>
+            <p class="text-sm text-gray-600">{{.B.TravelName}} · {{tgl .B.DepartureDate}} → {{tgl .B.ReturnDate}} · {{.B.People}} jamaah · {{.B.RoomLabel}}</p>
+        </div>
+        {{template "pill" (dict "S" .B.Status)}}
+    </div>
+
+    {{/* Garis waktu */}}
+    {{$s := .B.Status}}
+    <ol class="mt-5 grid grid-cols-5 gap-1 text-[10px] sm:text-xs text-center">
+        {{range $i, $st := (list "Dipesan" "DP lunas" "Lunas" "Berangkat" "Pulang")}}
+        {{$done := false}}
+        {{if eq $i 0}}{{$done = true}}{{end}}
+        {{if and (eq $i 1) (or (eq $s "dp_lunas") (eq $s "lunas") (eq $s "berangkat") (eq $s "pulang"))}}{{$done = true}}{{end}}
+        {{if and (eq $i 2) (or (eq $s "lunas") (eq $s "berangkat") (eq $s "pulang"))}}{{$done = true}}{{end}}
+        {{if and (eq $i 3) (or (eq $s "berangkat") (eq $s "pulang"))}}{{$done = true}}{{end}}
+        {{if and (eq $i 4) (eq $s "pulang")}}{{$done = true}}{{end}}
+        <li><span class="block h-1.5 rounded-full {{if eq $s "batal"}}bg-gray-200{{else if $done}}bg-emerald-500{{else}}bg-gray-200{{end}}"></span><span class="block mt-1.5 {{if $done}}text-emerald-800 font-semibold{{else}}text-gray-400{{end}}">{{$st}}</span></li>
+        {{end}}
+    </ol>
+    {{if eq $s "batal"}}<p class="mt-3 rounded-xl bg-gray-100 text-gray-700 text-sm px-4 py-3">Dibatalkan {{tglJam .B.CancelledAt}}: {{.B.CancelReason}}</p>{{end}}
+
+    <div class="mt-6 grid grid-cols-1 [&>*]:min-w-0 gap-6 lg:grid-cols-5">
+        <div class="lg:col-span-3 space-y-5">
+            {{with .Open}}
+            <section id="bayar" class="rounded-2xl bg-white ring-2 ring-emerald-500 p-5">
+                <div class="flex items-baseline justify-between gap-2">
+                    <h2 class="font-bold text-gray-900">{{if eq .Kind "dp"}}Bayar DP{{else}}Bayar pelunasan{{end}}</h2>
+                    <span class="text-xs text-amber-700">bayar sebelum {{tglJam .ExpiresAt}}</span>
+                </div>
+                <p class="mt-1 text-3xl font-bold text-gray-900 tabular-nums">Rp {{rp .Amount}}</p>
+                {{if eq .Method "qris"}}
+                <div class="mt-4 flex flex-col sm:flex-row items-center gap-4">
+                    <div class="rounded-2xl ring-1 ring-gray-200 p-3 bg-white">{{fakeQR .QRPayload 180}}</div>
+                    <div class="text-sm text-gray-600"><p class="font-semibold text-gray-800">QRIS · {{.Holder}}</p><p class="mt-1">Pindai dari aplikasi e-wallet atau m-banking. <span class="text-amber-700">(Gambar contoh, tidak bisa dipindai.)</span></p></div>
+                </div>
+                {{else}}
+                <div class="mt-4 rounded-xl bg-gray-50 p-4">
+                    <p class="text-xs text-gray-500">Virtual account {{.Bank}}</p>
+                    <p class="mt-1 font-mono text-xl sm:text-2xl font-bold tracking-wider text-gray-900 break-all">{{.VANumber}}</p>
+                    <p class="text-xs text-gray-500 mt-1">a.n. <b class="text-gray-700">{{.Holder}}</b></p>
+                </div>
+                {{end}}
+                <div class="mt-4">{{template "escrow_note" (dict "Holder" .Holder "Bank" .Bank "Account" "")}}</div>
+                <form method="POST" action="/bayar/{{.ID}}/simulasi" class="mt-4">
+                    <button class="w-full rounded-xl bg-amber-400 hover:bg-amber-300 text-gray-900 font-bold py-3">Simulasikan pembayaran berhasil</button>
+                    <p class="mt-1.5 text-[11px] text-gray-400 text-center">Khusus demo: menggantikan notifikasi dari bank/payment gateway.</p>
+                </form>
+            </section>
+            {{end}}
+
+            {{if and (eq .B.Status "dp_lunas") (not .Open)}}
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-bold text-gray-900">Pelunasan</h2>
+                <dl class="mt-3 space-y-1.5 text-sm">
+                    <div class="flex justify-between"><dt class="text-gray-600">Harga paket</dt><dd class="tabular-nums">Rp {{rp .B.Total}}</dd></div>
+                    <div class="flex justify-between"><dt class="text-gray-600">DP tercatat di travel</dt><dd class="tabular-nums">− Rp {{rp .B.DPAmount}}</dd></div>
+                    {{if .B.CashbackPromised}}<div class="flex justify-between"><dt class="text-gray-600">Cashback umrohku (dipotong dari tagihan)</dt><dd class="tabular-nums text-emerald-700">− Rp {{rp .B.CashbackPromised}}</dd></div>{{end}}
+                    <div class="flex justify-between border-t border-gray-100 pt-1.5 font-bold text-gray-900"><dt>Sisa pelunasan</dt><dd class="tabular-nums">Rp {{rp .B.Remaining}}</dd></div>
+                </dl>
+                <p class="mt-2 text-xs text-gray-500">Paling lambat {{tgl .B.PelunasanDue}} ({{daysUntil .B.PelunasanDue}} hari lagi).</p>
+                <div class="mt-4 grid sm:grid-cols-2 gap-2">
+                    <form method="POST" action="/booking/{{.B.ID}}/pelunasan"><input type="hidden" name="metode" value="va"><button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 text-sm">Bayar via VA</button></form>
+                    <form method="POST" action="/booking/{{.B.ID}}/pelunasan"><input type="hidden" name="metode" value="qris"><button class="w-full rounded-xl bg-white ring-1 ring-emerald-600 text-emerald-700 font-semibold py-2.5 text-sm hover:bg-emerald-50">Bayar via QRIS</button></form>
+                </div>
+                <a href="/pembiayaan/ajukan?booking={{.B.ID}}" class="mt-3 block text-center text-sm font-semibold text-emerald-700 hover:underline">Belum cukup? Ajukan pembiayaan syariah untuk sisa →</a>
+            </section>
+            {{end}}
+
+            {{if eq .B.Status "pulang"}}
+            <section class="rounded-2xl bg-violet-50 ring-1 ring-violet-200 p-5">
+                {{if .HasReview}}<p class="font-semibold text-violet-900">Terima kasih, ulasan Anda sudah tayang di <a class="underline" href="/travel/{{.B.TravelSlug}}#ulasan">profil travel</a>.</p>
+                {{else}}<p class="font-semibold text-violet-900">Alhamdulillah sudah pulang. Bagikan pengalaman Anda?</p>
+                <p class="text-sm text-violet-800 mt-1">Ulasan Anda diberi tanda “Berangkat via umrohku”.</p>
+                <a href="/booking/{{.B.ID}}/ulasan" class="inline-block mt-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-4 py-2.5">Tulis ulasan</a>{{end}}
+            </section>
+            {{end}}
+
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-bold text-gray-900">Riwayat pembayaran</h2>
+                <ul class="mt-3 divide-y divide-gray-100 text-sm">
+                    {{range .Payments}}
+                    <li class="py-2.5 flex items-center justify-between gap-3">
+                        <div class="min-w-0"><p class="font-medium text-gray-800">{{if eq .Kind "dp"}}DP{{else}}Pelunasan{{end}} · {{if eq .Method "qris"}}QRIS{{else}}VA {{.Bank}}{{end}}</p><p class="text-[11px] text-gray-400 truncate">ke {{.Holder}}{{if .PaidAt}} · {{tglJam .PaidAt}}{{end}}</p></div>
+                        <div class="text-right shrink-0"><p class="font-semibold tabular-nums">Rp {{rp .Amount}}</p>{{template "pill" (dict "S" .Status)}}</div>
+                    </li>
+                    {{end}}
+                </ul>
+                {{if .B.PaidAt}}<a href="/booking/{{.B.ID}}/kuitansi" target="_blank" class="inline-block mt-3 text-sm font-semibold text-emerald-700 hover:underline">Lihat e-kuitansi →</a>{{end}}
+            </section>
+        </div>
+
+        <aside class="lg:col-span-2 space-y-5">
+            {{if .Entries}}
+            <section class="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-800 text-white p-5">
+                <p class="text-xs font-bold tracking-wider text-violet-200">KODE UNDIAN</p>
+                <div class="mt-2 flex flex-wrap gap-2">{{range .Entries}}<span class="font-mono font-bold rounded-lg px-2.5 py-1 {{if .Void}}bg-white/10 line-through opacity-60{{else}}bg-white/20{{end}}">{{.Code}}</span>{{end}}</div>
+                <p class="mt-2 text-xs text-violet-100">Gratis, otomatis dari booking ini. <a href="/akun/undian" class="underline">Semua kode saya</a></p>
+            </section>
+            {{end}}
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 text-sm">
+                <h2 class="font-bold text-gray-900">Jamaah</h2>
+                <ol class="mt-2 list-decimal pl-5 space-y-0.5 text-gray-700">{{range .B.PilgrimNames}}<li>{{.}}</li>{{end}}</ol>
+                <p class="mt-3 text-xs text-gray-500">Kontak: {{.B.ContactName}} · {{.B.ContactPhone}} · {{.B.City}}</p>
+            </section>
+            {{if .Promos}}
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 text-sm">
+                <h2 class="font-bold text-gray-900">Promo umrohku</h2>
+                <ul class="mt-2 space-y-1.5">{{range .Promos}}<li class="flex justify-between gap-2"><span class="text-gray-600">{{if eq .Kind "diskon_dp"}}Diskon DP{{else}}Cashback pelunasan{{end}}</span><span class="flex items-center gap-2"><span class="tabular-nums font-semibold">Rp {{rp .Amount}}</span>{{template "pill" (dict "S" .Status)}}</span></li>{{end}}</ul>
+                <p class="mt-2 text-[11px] text-gray-400">Ditanggung umrohku dari komisinya. Tidak bisa dicairkan.</p>
+            </section>
+            {{end}}
+            {{with .T}}<section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 text-sm">
+                <h2 class="font-bold text-gray-900">{{.Name}}</h2>
+                <p class="text-xs text-gray-500 mt-1">{{if eq .PPIUStatus "terverifikasi"}}✓ PPIU {{.PPIUNo}} · {{end}}PIC {{.PIC}}</p>
+                <a href="/travel/{{.Slug}}" class="inline-block mt-2 text-sm font-semibold text-emerald-700 hover:underline">Profil travel →</a>
+            </section>{{end}}
+            {{if eq .B.Status "menunggu_dp"}}<form method="POST" action="/booking/{{.B.ID}}/batal"><button class="w-full text-sm text-rose-600 hover:underline">Batalkan booking</button></form>{{end}}
+        </aside>
+    </div>
+</main>

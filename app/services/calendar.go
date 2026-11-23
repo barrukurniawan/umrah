@@ -116,7 +116,7 @@ func calendarRows(budget int, travels []string, from, to string) []calRow {
 			continue
 		}
 		// Partner promo selalu tampil di Kalender (aturan budget 28-29 jt hanya untuk mode Budget).
-		_, featured := featuredTravels[p.Travel.Name]
+		_, featured := featuredFor(p.Travel.Name)
 		for _, d := range p.Details {
 			if d.IsFull || d.DepartureDate < today || d.DepartureDate < from || d.DepartureDate > to {
 				continue
@@ -269,7 +269,7 @@ func buildCalendarMonth(key string, budget int, travels []string) CalendarView {
 		if p := rowPrice(r); a.min == 0 || p < a.min {
 			a.min = p
 		}
-		_, f := featuredTravels[r.pkg.Travel.Name]
+		_, f := featuredFor(r.pkg.Travel.Name)
 		a.feat = a.feat || f
 		monthTravels[r.pkg.Travel.Name] = true
 		v.Departures++
@@ -333,7 +333,7 @@ func CalendarDay(date string, budget int, travels []string) (CalendarDayView, bo
 	}
 	groups := map[string][]CalPackage{}
 	for _, r := range calendarRows(budget, travels, date, date) {
-		_, f := featuredTravels[r.pkg.Travel.Name]
+		_, f := featuredFor(r.pkg.Travel.Name)
 		groups[r.pkg.Travel.Name] = append(groups[r.pkg.Travel.Name], CalPackage{
 			Key: PackageKey(r.pkg.Travel.Name, r.pkg.Name), Travel: r.pkg.Travel.Name, Name: r.pkg.Name, URL: r.pkg.URL,
 			Price: rowPrice(r), Duration: r.pkg.Duration, ReturnDate: r.d.ReturnDate, Airline: r.pkg.Airline, FlightType: r.pkg.FlightType,

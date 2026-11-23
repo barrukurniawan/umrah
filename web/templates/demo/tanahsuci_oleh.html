@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "oleh")}}
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Oleh-oleh dikirim ke rumah</h1>
+            <p class="text-sm text-gray-500 mt-1">Dikirim oleh <b>{{.Supplier}}</b>. Gratis ongkir mulai Rp {{rp .FreeFrom}}.</p>
+        </div>
+        {{template "ts_proto_notice"}}
+
+        {{if .Added}}<p class="rounded-xl bg-emerald-50 ring-1 ring-emerald-200 px-3 py-2 text-sm text-emerald-800">✓ Keranjang diperbarui.</p>{{end}}
+
+        <section class="grid sm:grid-cols-2 gap-3">
+            {{range .Items}}
+            {{$n := index $.InCart .Key}}
+            <div class="bg-white rounded-2xl ring-1 {{if $n}}ring-emerald-300{{else}}ring-gray-200{{end}} p-4 flex gap-3 min-w-0">
+                <span class="w-12 h-12 shrink-0 rounded-xl bg-emerald-50 flex items-center justify-center text-2xl">{{.Emoji}}</span>
+                <div class="min-w-0 flex-1">
+                    <p class="font-semibold text-gray-900">{{.Name}}</p>
+                    <p class="text-xs text-gray-500">{{.Desc}}</p>
+                    <div class="mt-2 flex items-center justify-between gap-2">
+                        <p class="text-sm font-bold text-emerald-700 tabular-nums">Rp {{rp .Price}} <span class="font-normal text-xs text-gray-400">/ {{.Unit}}</span></p>
+                        <form method="POST" action="/tanah-suci/oleh-oleh/keranjang">
+                            <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="qty" value="1"><input type="hidden" name="mode" value="add">
+                            <button class="text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 whitespace-nowrap">+ Keranjang{{if $n}} ({{$n}}){{end}}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </section>
+
+        <section id="keranjang" class="bg-white rounded-2xl ring-1 ring-gray-200 p-5 scroll-mt-20">
+            <h2 class="font-semibold text-gray-900">Keranjang</h2>
+            {{if .Lines}}
+            <ul class="mt-2 divide-y divide-gray-100">
+                {{range .Lines}}
+                <li class="py-3 flex flex-wrap items-center gap-3 text-sm">
+                    <span class="w-9 h-9 shrink-0 rounded-xl bg-emerald-50 flex items-center justify-center">{{.Emoji}}</span>
+                    <span class="min-w-0 flex-1"><span class="block font-medium text-gray-800">{{.Name}}</span><span class="block text-xs text-gray-500">Rp {{rp .Price}} / {{.Unit}}</span></span>
+                    <form method="POST" action="/tanah-suci/oleh-oleh/keranjang" class="flex items-center gap-1.5">
+                        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="mode" value="set">
+                        <input type="number" name="qty" value="{{.Qty}}" min="0" max="20" class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm" aria-label="Jumlah {{.Name}}">
+                        <button class="text-xs font-semibold rounded-lg ring-1 ring-gray-300 px-2 py-1.5 hover:bg-gray-50">Ubah</button>
+                    </form>
+                    <form method="POST" action="/tanah-suci/oleh-oleh/keranjang">
+                        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="mode" value="set"><input type="hidden" name="qty" value="0">
+                        <button class="text-xs text-rose-600 hover:underline">Hapus</button>
+                    </form>
+                    <span class="w-full sm:w-auto sm:ml-2 text-right font-semibold tabular-nums text-gray-900">Rp {{rp .Sub}}</span>
+                </li>
+                {{end}}
+            </ul>
+            <dl class="mt-3 pt-3 border-t border-gray-100 text-sm space-y-1">
+                <div class="flex justify-between"><dt class="text-gray-500">Subtotal</dt><dd class="tabular-nums">Rp {{rp .Subtotal}}</dd></div>
+                <div class="flex justify-between"><dt class="text-gray-500">Ongkir (contoh)</dt><dd class="tabular-nums">{{if .Shipping}}Rp {{rp .Shipping}}{{else}}Gratis{{end}}</dd></div>
+                <div class="flex justify-between font-bold text-gray-900 text-base"><dt>Total</dt><dd class="tabular-nums">Rp {{rp (add64 .Subtotal .Shipping)}}</dd></div>
+            </dl>
+            {{if .Shipping}}<p class="text-xs text-amber-700 mt-2">Tambah Rp {{rp (sub64 .FreeFrom .Subtotal)}} lagi untuk gratis ongkir.</p>{{end}}
+            <a href="/tanah-suci/oleh-oleh/checkout" class="mt-4 block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-3">Lanjut isi alamat</a>
+            {{else}}
+            <p class="text-sm text-gray-500 mt-2">Keranjang masih kosong. Tekan "+ Keranjang" pada barang di atas.</p>
+            {{end}}
+        </section>
+    </main>
+</body>
+</html>

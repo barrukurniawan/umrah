@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "oleh")}}
+        <div>
+            <a href="/tanah-suci/oleh-oleh#keranjang" class="text-sm text-emerald-700 hover:underline">← Kembali ke keranjang</a>
+            <h1 class="text-2xl font-bold text-gray-900 mt-2">Alamat pengiriman</h1>
+            <p class="text-sm text-gray-500 mt-1">Paket dikirim dari pemasok di Indonesia ke alamat ini.</p>
+        </div>
+
+        {{if .Error}}<p class="rounded-xl bg-rose-50 ring-1 ring-rose-200 px-3 py-2 text-sm text-rose-700">{{.Error}}</p>{{end}}
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Ringkasan</h2>
+            {{template "ts_lines" (dict "Lines" .Lines "Cur" "rp")}}
+            <dl class="mt-2 pt-3 border-t border-gray-100 text-sm space-y-1">
+                <div class="flex justify-between"><dt class="text-gray-500">Subtotal</dt><dd class="tabular-nums">Rp {{rp .Subtotal}}</dd></div>
+                <div class="flex justify-between"><dt class="text-gray-500">Ongkir (contoh)</dt><dd class="tabular-nums">{{if .Shipping}}Rp {{rp .Shipping}}{{else}}Gratis{{end}}</dd></div>
+                <div class="flex justify-between font-bold text-gray-900 text-base"><dt>Total</dt><dd class="tabular-nums">Rp {{rp .Total}}</dd></div>
+            </dl>
+        </section>
+
+        <form method="POST" action="/tanah-suci/oleh-oleh/checkout" class="bg-white rounded-2xl ring-1 ring-gray-200 p-5 space-y-4">
+            {{with .Form}}
+            <label class="block text-sm"><span class="font-medium text-gray-800">Nama penerima</span>
+                <input name="recipient" value="{{.Recipient}}" maxlength="80" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            <label class="block text-sm"><span class="font-medium text-gray-800">Nomor HP penerima</span>
+                <input name="phone" value="{{.Phone}}" maxlength="20" inputmode="tel" placeholder="08xx-xxxx-xxxx" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            <label class="block text-sm"><span class="font-medium text-gray-800">Alamat lengkap</span>
+                <textarea name="address" rows="3" maxlength="300" required placeholder="Jalan, nomor rumah, RT/RW, kelurahan, kecamatan" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">{{.Address}}</textarea></label>
+            <div class="grid grid-cols-3 gap-3">
+                <label class="block text-sm col-span-2"><span class="font-medium text-gray-800">Kota/kabupaten</span>
+                    <input name="city" value="{{.City}}" maxlength="60" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+                <label class="block text-sm"><span class="font-medium text-gray-800">Kode pos</span>
+                    <input name="postal" value="{{.Postal}}" maxlength="5" inputmode="numeric" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            </div>
+            {{end}}
+            <p class="text-xs text-gray-400">Data alamat hanya tersimpan di database demo.</p>
+            <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-3">Buat pesanan &amp; bayar dengan QRIS</button>
+        </form>
+    </main>
+</body>
+</html>

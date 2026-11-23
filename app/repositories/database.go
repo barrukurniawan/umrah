@@ -94,6 +94,10 @@ func importCrawlerData(db *gorm.DB) bool {
 	var allFiles []string
 	for _, e := range entries {
 		name := e.Name()
+		// Paket travel fiktif mode demo hanya boleh dimuat oleh instance demo (DEMO_MODE=1).
+		if name == "all_zz_demo_portal.json" && os.Getenv("DEMO_MODE") != "1" {
+			continue
+		}
 		if strings.HasPrefix(name, "all_") && strings.HasSuffix(name, ".json") {
 			allFiles = append(allFiles, name)
 		}

@@ -1,0 +1,97 @@
+<main class="max-w-5xl mx-auto px-4 py-8">
+    {{if .Error}}
+    <div class="max-w-lg mx-auto rounded-2xl bg-white ring-1 ring-gray-200 p-6 text-center">
+        <p class="font-semibold text-gray-900">Paket belum bisa dipesan</p>
+        <p class="text-sm text-gray-500 mt-1">{{.Error}}</p>
+        <a href="/" class="inline-block mt-4 text-sm font-semibold text-emerald-700 hover:underline">← Kembali ke pencarian</a>
+    </div>
+    {{else}}
+    <a href="/" class="text-sm text-emerald-700 hover:underline">← Pencarian</a>
+    <h1 class="mt-2 text-2xl font-bold text-gray-900">Pesan & bayar DP</h1>
+    <div class="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+        <span class="font-semibold text-gray-800">{{.Q.Opt.Travel.Name}}</span>
+        {{if eq .Q.Opt.Travel.PPIUStatus "terverifikasi"}}<span class="rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-2 py-0.5">✓ PPIU {{.Q.Opt.Travel.PPIUNo}}</span>{{end}}
+        <span class="text-gray-400">·</span><span>{{.Q.Opt.Package.Name}}</span>
+    </div>
+    {{if .FormError}}<p class="mt-4 rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-3">{{.FormError}}</p>{{end}}
+
+    <form method="POST" action="/booking" id="bookForm" class="mt-6 grid grid-cols-1 [&>*]:min-w-0 gap-6 lg:grid-cols-5"
+        hx-get="/booking/baru" hx-trigger="change delay:150ms, keyup changed delay:500ms from:#kodePromo" hx-target="#bookSummary" hx-swap="outerHTML" hx-select="#bookSummary">
+        <input type="hidden" name="key" value="{{.In.Key}}">
+        <div class="lg:col-span-3 space-y-5">
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">1 · Jadwal & kamar</h2>
+                <div class="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+                    <label class="block sm:col-span-3"><span class="text-xs text-gray-500">Tanggal berangkat</span>
+                        <select name="tgl" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">
+                            {{range .Q.Opt.Departures}}<option value="{{.DepartureDate}}" {{if eq .DepartureDate $.Q.Dep.DepartureDate}}selected{{end}}>{{formatDate .DepartureDate}} → {{formatDate .ReturnDate}} · Rp {{formatCurrency .Price}}{{if .AvailableQuota}} · sisa {{.AvailableQuota}} seat{{end}}</option>{{end}}
+                        </select></label>
+                    <label class="block"><span class="text-xs text-gray-500">Kamar</span>
+                        <select name="kamar" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">
+                            <option value="quad" {{if eq .In.Room "quad"}}selected{{end}}>Quad (ber-4)</option>
+                            {{if .Q.Dep.AddonTriple}}<option value="triple" {{if eq .In.Room "triple"}}selected{{end}}>Triple +Rp {{rpShort (i64 .Q.Dep.AddonTriple)}}</option>{{end}}
+                            {{if .Q.Dep.AddonDouble}}<option value="double" {{if eq .In.Room "double"}}selected{{end}}>Double +Rp {{rpShort (i64 .Q.Dep.AddonDouble)}}</option>{{end}}
+                        </select></label>
+                    <label class="block"><span class="text-xs text-gray-500">Jumlah jamaah</span>
+                        <select name="orang" id="orang" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">{{range seq 9}}<option value="{{.}}" {{if eq . $.People}}selected{{end}}>{{.}} orang</option>{{end}}</select></label>
+                </div>
+            </section>
+
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">2 · Nama jamaah sesuai paspor</h2>
+                <div class="mt-3 grid gap-2 sm:grid-cols-2" id="pilgrims">
+                    {{range $i := seq 9}}{{$v := ""}}{{if le $i (len $.In.Pilgrims)}}{{$v = index $.In.Pilgrims (add $i -1)}}{{end}}{{if eq $v "-"}}{{$v = ""}}{{end}}
+                    <input name="jamaah{{$i}}" data-i="{{$i}}" value="{{if and (eq $i 1) (not $v)}}{{with $.User}}{{.Name}}{{end}}{{else}}{{$v}}{{end}}" placeholder="Jamaah {{$i}}" class="rounded-xl border border-gray-300 px-3 py-2.5 text-sm {{if gt $i $.People}}hidden{{end}}">
+                    {{end}}
+                </div>
+            </section>
+
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">3 · DP & promo</h2>
+                <p class="text-xs text-gray-500 mt-1">DP minimal lewat umrohku Rp {{rp .Q.Opt.Terms.DPMinUmrohku}}/orang (langsung ke travel Rp {{rp .Q.Opt.Terms.DPNormalTravel}}/orang).</p>
+                <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+                    {{$min := .Q.Opt.Terms.DPMinUmrohku}}
+                    {{range dpOptions $min}}{{$v := .}}
+                    <label class="cursor-pointer"><input type="radio" name="dp" value="{{$v}}" class="peer sr-only" {{if eq $v $.In.DPPerPerson}}checked{{end}}>
+                        <span class="block text-center rounded-xl ring-1 ring-gray-200 px-2 py-2.5 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:ring-emerald-600 font-semibold">Rp {{rpShort $v}}<span class="block text-[10px] font-normal opacity-75">/orang</span></span></label>
+                    {{end}}
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <input id="kodePromo" name="kode" value="{{.In.PromoCode}}" placeholder="Kode promo (mis. UMROHKU500)" class="flex-1 min-w-0 rounded-xl border border-gray-300 px-3 py-2.5 text-sm uppercase">
+                </div>
+            </section>
+
+            <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">4 · Kontak & pembayaran</h2>
+                <div class="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+                    <input name="kontak" required value="{{if .In.ContactName}}{{.In.ContactName}}{{else}}{{with .User}}{{.Name}}{{end}}{{end}}" placeholder="Nama pemesan" class="rounded-xl border border-gray-300 px-3 py-2.5">
+                    <input name="hp" required value="{{if .In.ContactPhone}}{{.In.ContactPhone}}{{else}}0812-3456-7890{{end}}" placeholder="No. WhatsApp" class="rounded-xl border border-gray-300 px-3 py-2.5">
+                    <input name="kota" value="{{if .In.City}}{{.In.City}}{{else}}Bandung{{end}}" placeholder="Kota" class="rounded-xl border border-gray-300 px-3 py-2.5">
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
+                    <label class="cursor-pointer"><input type="radio" name="metode" value="va" class="peer sr-only" checked><span class="block rounded-xl ring-1 ring-gray-200 px-3 py-2.5 peer-checked:ring-2 peer-checked:ring-emerald-600 font-semibold">Virtual account<span class="block text-[11px] font-normal text-gray-500">{{.Q.Opt.Travel.EscrowBank}}</span></span></label>
+                    <label class="cursor-pointer"><input type="radio" name="metode" value="qris" class="peer sr-only"><span class="block rounded-xl ring-1 ring-gray-200 px-3 py-2.5 peer-checked:ring-2 peer-checked:ring-emerald-600 font-semibold">QRIS<span class="block text-[11px] font-normal text-gray-500">semua e-wallet & m-banking</span></span></label>
+                </div>
+            </section>
+        </div>
+
+        <aside class="lg:col-span-2 space-y-4 lg:sticky lg:top-4 self-start">
+            {{template "booking_summary_inner" .}}
+            {{template "escrow_note" (dict "Holder" .Q.Opt.Travel.EscrowHolder "Bank" .Q.Opt.Travel.EscrowBank "Account" "")}}
+            <div class="rounded-2xl bg-white ring-1 ring-gray-200 p-4 text-xs text-gray-600 space-y-2">
+                <p><b class="text-gray-800">Pelunasan:</b> paling lambat H-{{.Q.Opt.Terms.PelunasanHMinus}} sebelum berangkat. Lewat batas, booking dapat dibatalkan.</p>
+                <p><b class="text-gray-800">Pembatalan:</b> {{.Q.Opt.Terms.DPHangusRule}}</p>
+                <label class="flex items-start gap-2 pt-1 text-gray-700"><input type="checkbox" name="setuju" value="1" required class="mt-0.5 rounded border-gray-300 text-emerald-600"> Saya memahami aturan pembayaran & pembatalan di atas.</label>
+            </div>
+            <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 shadow-sm">Lanjut ke pembayaran DP</button>
+        </aside>
+    </form>
+    <script>
+    (function () {
+        var sel = document.getElementById('orang');
+        function sync() { var n = +sel.value; document.querySelectorAll('#pilgrims input').forEach(function (el) { el.classList.toggle('hidden', +el.dataset.i > n); el.required = +el.dataset.i <= n; }); }
+        sel.addEventListener('change', sync); sync();
+    })();
+    </script>
+    {{end}}
+</main>

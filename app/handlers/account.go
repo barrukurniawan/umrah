@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"umrah/app/accounts"
+	"umrah/app/demo"
 	"umrah/app/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,6 +18,9 @@ func viewer(c *fiber.Ctx, m fiber.Map) fiber.Map {
 	m["User"] = accounts.Current(c)
 	m["LoginEnabled"] = accounts.Enabled()
 	m["Path"] = c.OriginalURL()
+	if demo.Enabled() {
+		m["Demo"] = demoView(c)
+	}
 	return m
 }
 

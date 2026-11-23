@@ -1,0 +1,17 @@
+<main class="max-w-lg mx-auto px-4 py-12">
+    <div class="rounded-2xl bg-white ring-1 ring-gray-200 shadow-sm p-6">
+        <h1 class="text-xl font-bold text-gray-900">{{.Title}}</h1>
+        <p class="text-sm text-gray-500 mt-1">Halaman ini untuk peran
+            {{if eq .Need "travel"}}<b>travel mitra</b>{{else if eq .Need "admin"}}<b>admin umrohku</b>{{else if eq .Need "pembiayaan"}}<b>mitra pembiayaan</b>{{else}}<b>{{.Need}}</b>{{end}}.
+            Pilih peran untuk masuk (khusus demo, tanpa password).</p>
+        <div class="mt-4 grid grid-cols-1 [&>*]:min-w-0 gap-2">
+            {{range .Roles}}{{if hasPrefix .Value $.Need}}
+            <form method="POST" action="/demo/peran"><input type="hidden" name="peran" value="{{.Value}}">
+                <button class="w-full text-left flex items-center gap-3 rounded-xl ring-1 ring-gray-200 px-4 py-3 hover:ring-emerald-300 hover:bg-emerald-50">
+                    <span class="w-9 h-9 rounded-lg {{.Color}} flex items-center justify-center">{{.Icon}}</span>
+                    <span><span class="block font-semibold text-gray-900 text-sm">{{.Label}}</span><span class="block text-xs text-gray-500">{{.Hint}}</span></span>
+                </button></form>
+            {{end}}{{end}}
+        </div>
+    </div>
+</main>

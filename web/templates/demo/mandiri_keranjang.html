@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "mandiri")}}
+        <div>
+            <a href="/mandiri/katalog" class="text-sm text-emerald-700 hover:underline">← Katalog prototipe</a>
+            <h1 class="text-2xl font-bold text-gray-900 mt-2">Keranjang umrah mandiri</h1>
+        </div>
+        {{template "ts_mandiri_notice"}}
+        {{if .Error}}<p class="rounded-xl bg-rose-50 ring-1 ring-rose-200 px-3 py-2 text-sm text-rose-700">{{.Error}}</p>{{end}}
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            {{if .Lines}}
+            <ul class="divide-y divide-gray-100">
+                {{range .Lines}}
+                <li class="py-3 flex flex-wrap items-center gap-3 text-sm">
+                    <span class="w-9 h-9 shrink-0 rounded-xl bg-amber-50 flex items-center justify-center">{{.Emoji}}</span>
+                    <span class="min-w-0 flex-1"><span class="block font-medium text-gray-800">{{.Name}}</span><span class="block text-xs text-gray-500">Rp {{rp .Price}} / {{.Unit}}</span></span>
+                    <form method="POST" action="/mandiri/keranjang" class="flex items-center gap-1.5">
+                        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="mode" value="set">
+                        <input type="number" name="qty" value="{{.Qty}}" min="0" max="20" class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm" aria-label="Jumlah {{.Name}}">
+                        <button class="text-xs font-semibold rounded-lg ring-1 ring-gray-300 px-2 py-1.5 hover:bg-gray-50">Ubah</button>
+                    </form>
+                    <form method="POST" action="/mandiri/keranjang">
+                        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="mode" value="set"><input type="hidden" name="qty" value="0">
+                        <button class="text-xs text-rose-600 hover:underline">Hapus</button>
+                    </form>
+                    <span class="w-full sm:w-auto sm:ml-2 text-right font-semibold tabular-nums text-gray-900">Rp {{rp .Sub}}</span>
+                </li>
+                {{end}}
+            </ul>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between font-bold text-gray-900"><span>Total</span><span class="tabular-nums">Rp {{rp .Total}}</span></div>
+            {{else}}
+            <p class="text-sm text-gray-500">Keranjang masih kosong. <a href="/mandiri/katalog" class="text-emerald-700 underline">Pilih hotel, transport, atau muthawwif</a>.</p>
+            {{end}}
+        </section>
+
+        {{if .Lines}}
+        <form method="POST" action="/mandiri/checkout" class="bg-white rounded-2xl ring-1 ring-gray-200 p-5 space-y-4">
+            <h2 class="font-semibold text-gray-900">Data pemesan</h2>
+            {{with .Form}}
+            <label class="block text-sm"><span class="font-medium text-gray-800">Nama pemesan</span>
+                <input name="contact" value="{{.Contact}}" maxlength="80" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            <label class="block text-sm"><span class="font-medium text-gray-800">Nomor HP</span>
+                <input name="phone" value="{{.Phone}}" maxlength="20" inputmode="tel" placeholder="08xx-xxxx-xxxx" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            <label class="block text-sm"><span class="font-medium text-gray-800">Rencana tanggal berangkat</span>
+                <input type="date" name="depart" value="{{.Depart}}" min="{{$.MinDate}}" required class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5 bg-white"></label>
+            {{end}}
+            <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-3">Checkout simulasi</button>
+            <p class="text-[11px] text-gray-400">Prototipe: tidak ada pesanan yang diteruskan ke hotel atau penyedia mana pun.</p>
+        </form>
+        {{end}}
+    </main>
+</body>
+</html>

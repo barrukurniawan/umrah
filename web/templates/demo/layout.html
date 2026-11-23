@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    {{template "demo_head" .}}
+</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700" data-logged-in="{{if .User}}1{{end}}">
+    {{template "nav" .}}
+    {{embed}}
+    {{template "demo_footer" .}}
+</body>
+</html>

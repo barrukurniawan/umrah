@@ -1,0 +1,39 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-gray-900">Ajukan pembiayaan syariah</h1>
+    <p class="text-sm text-gray-500 mt-1">Berangkat dulu, angsur ke mitra pembiayaan berizin OJK. <b>Umrohku tidak memberi pinjaman</b>, hanya meneruskan pengajuan Anda.</p>
+    {{if .Error}}<p class="mt-4 rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-3">{{.Error}}</p>{{end}}
+    <form method="GET" class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-5 grid gap-3 sm:grid-cols-3 text-sm">
+        <input type="hidden" name="key" value="{{.Key}}">{{if .BookingID}}<input type="hidden" name="booking" value="{{.BookingID}}">{{end}}
+        <div class="sm:col-span-3"><p class="text-xs text-gray-500">Untuk</p><p class="font-semibold text-gray-900">{{with .B}}Sisa pelunasan booking {{.Code}} · {{.PackageName}}{{else}}{{with .Cur}}{{.Travel}} · {{.Name}}{{else}}Paket umroh{{end}}{{end}}</p></div>
+        <label class="block"><span class="text-xs text-gray-500">Nominal (Rp)</span><input name="nominal" inputmode="numeric" value="{{.Amount}}" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+        <label class="block"><span class="text-xs text-gray-500">Tenor</span><select name="tenor" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5">{{range (list "6" "12" "24")}}<option value="{{.}}" {{if eq . (printf "%d" $.Tenor)}}selected{{end}}>{{.}} bulan</option>{{end}}</select></label>
+        <button class="self-end rounded-xl bg-gray-900 text-white font-semibold py-2.5">Hitung ulang</button>
+    </form>
+    <div class="mt-4 rounded-2xl bg-amber-50 ring-1 ring-amber-300 p-3 text-xs font-bold text-amber-900">Contoh perhitungan, bukan penawaran. Angka resmi (akad, margin/ujrah, angsuran) dari mitra setelah pengajuan.</div>
+
+    <form method="POST" action="/pembiayaan" class="mt-4 space-y-4">
+        <input type="hidden" name="key" value="{{.Key}}"><input type="hidden" name="nominal" value="{{.Amount}}"><input type="hidden" name="tenor" value="{{.Tenor}}">{{if .BookingID}}<input type="hidden" name="booking" value="{{.BookingID}}">{{end}}
+        <div class="grid gap-2">
+            {{range $i, $e := .Estimates}}
+            <label class="cursor-pointer"><input type="radio" name="mitra" value="{{$e.Partner.Slug}}" class="peer sr-only" {{if or (eq $e.Partner.Slug $.Partner) (and (not $.Partner) (eq $i 0))}}checked{{end}}>
+                <span class="flex items-center justify-between gap-3 rounded-2xl bg-white ring-1 ring-gray-200 p-4 peer-checked:ring-2 peer-checked:ring-emerald-600">
+                    <span class="min-w-0"><span class="block font-semibold text-gray-900">{{$e.Partner.Name}}</span><span class="block text-xs text-gray-500">{{$e.Partner.Note}} · ±{{$e.UjrahPct}}% · admin Rp {{rp $e.Admin}}</span></span>
+                    <span class="text-right shrink-0"><span class="block font-bold text-gray-900">Rp {{rp $e.Monthly}}</span><span class="block text-[11px] text-gray-500">/bulan × {{$e.Tenor}}</span></span>
+                </span></label>
+            {{else}}<p class="text-sm text-gray-500">Tenor ini belum tersedia. Pilih tenor lain.</p>{{end}}
+        </div>
+        <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 grid gap-3 sm:grid-cols-2 text-sm">
+            <input name="nama" value="{{.Name}}" required placeholder="Nama lengkap sesuai KTP" class="rounded-xl border border-gray-300 px-3 py-2.5">
+            <input name="hp" required value="0812-3456-7890" placeholder="No. WhatsApp" class="rounded-xl border border-gray-300 px-3 py-2.5">
+            <input name="pekerjaan" value="Karyawan swasta" placeholder="Pekerjaan" class="rounded-xl border border-gray-300 px-3 py-2.5">
+            <input name="penghasilan" value="9000000" inputmode="numeric" placeholder="Penghasilan per bulan" class="rounded-xl border border-gray-300 px-3 py-2.5">
+            <input name="kota" value="Bandung" placeholder="Kota" class="rounded-xl border border-gray-300 px-3 py-2.5 sm:col-span-2">
+        </section>
+        <label class="flex items-start gap-3 rounded-2xl bg-sky-50 ring-1 ring-sky-200 p-4 text-sm text-sky-900">
+            <input type="checkbox" name="setuju_data" value="1" required class="mt-1 rounded border-gray-300 text-emerald-600">
+            <span><b>Persetujuan berbagi data (UU PDP).</b> Saya setuju umrohku meneruskan nama, kontak, pekerjaan, penghasilan, kota, dan paket pilihan saya <b>hanya ke mitra yang saya pilih</b> untuk memproses pengajuan ini. Persetujuan bisa dicabut di akun selama pengajuan belum diputuskan.</span>
+        </label>
+        <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">Kirim pengajuan</button>
+        <p class="text-[11px] text-gray-400 text-center">Lebih suka tanpa utang? <a class="underline" href="/tabungan">Cicil sebelum berangkat lewat Tabungan umroh</a>.</p>
+    </form>
+</main>

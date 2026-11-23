@@ -1,0 +1,21 @@
+{{/* Ringkasan biaya booking: halaman penuh (htmx) memakai template bernama di bawah. */}}
+{{template "booking_summary_inner" .}}
+{{define "booking_summary_inner"}}
+<div id="bookSummary" class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+    <p class="text-xs font-bold tracking-wider text-gray-400">RINCIAN</p>
+    <dl class="mt-3 space-y-2 text-sm">
+        <div class="flex justify-between gap-3"><dt class="text-gray-600">Harga paket (resmi travel)<span class="block text-[11px] text-gray-400">Rp {{rp .Q.PricePerPerson}} × {{.Q.People}} orang</span></dt><dd class="font-semibold text-gray-900 tabular-nums whitespace-nowrap">Rp {{rp .Q.Total}}</dd></div>
+        {{if .Q.Cashback}}<div class="flex justify-between gap-3"><dt class="text-gray-600">Cashback pelunasan (dijanjikan)<span class="block text-[11px] text-gray-400">{{.Q.CBRule.Title}}</span></dt><dd class="font-semibold text-emerald-700 tabular-nums whitespace-nowrap">− Rp {{rp .Q.Cashback}}</dd></div>{{end}}
+        <div class="border-t border-dashed border-gray-200 pt-2 flex justify-between gap-3"><dt class="text-gray-600">DP yang dicatat travel</dt><dd class="font-semibold text-gray-900 tabular-nums whitespace-nowrap">Rp {{rp .Q.DPCredit}}</dd></div>
+        {{if .Q.DPDiscount}}<div class="flex justify-between gap-3"><dt class="text-gray-600">Diskon DP umrohku<span class="block text-[11px] text-gray-400">{{.Q.DPRule.Title}}</span></dt><dd class="font-semibold text-emerald-700 tabular-nums whitespace-nowrap">− Rp {{rp .Q.DPDiscount}}</dd></div>{{end}}
+    </dl>
+    <div class="mt-3 rounded-xl bg-emerald-600 text-white p-4 flex items-end justify-between gap-3">
+        <div><p class="text-xs text-emerald-100">Bayar DP sekarang</p><p class="text-2xl font-bold tabular-nums">Rp {{rp .Q.DPPay}}</p></div>
+        {{if gt .Q.DPNormal .Q.DPMin}}<p class="text-right text-[11px] text-emerald-100 leading-tight">DP langsung ke travel:<br><span class="line-through">Rp {{rp .Q.DPNormal}}</span></p>{{end}}
+    </div>
+    {{if or .Q.DPDiscount .Q.Cashback}}<p class="mt-2 text-[11px] text-emerald-700 font-medium">Potongan ditanggung umrohku, harga travel tidak berubah.</p>{{end}}
+    <p class="mt-3 text-sm text-gray-600">Sisa pelunasan <b class="text-gray-900">Rp {{rp .Q.Pelunasan}}</b> paling lambat <b>{{tgl .Q.PelunasanDue}}</b> (H-{{.Q.Opt.Terms.PelunasanHMinus}}).</p>
+    {{if .Q.CodeErr}}<p class="mt-2 rounded-lg bg-rose-50 text-rose-700 text-xs px-3 py-2">{{.Q.CodeErr}}</p>{{end}}
+    {{with demoDraw}}<p class="mt-3 text-xs text-violet-700 bg-violet-50 rounded-lg px-3 py-2">🎁 Setelah DP lunas, setiap jamaah otomatis dapat 1 kode <a href="/undian/{{.ID}}" class="underline">{{.Title}}</a>. Gratis.</p>{{end}}
+</div>
+{{end}}

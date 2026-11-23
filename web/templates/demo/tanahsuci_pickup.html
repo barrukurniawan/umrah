@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "pickup")}}
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Pickup di toko Makkah/Madinah</h1>
+            <p class="text-sm text-gray-500 mt-1">Pesan dari sekarang, toko menyiapkan barangnya, kamu tinggal ambil sepulang dari masjid. Bayar di toko: tunai atau voucher prabayar.</p>
+        </div>
+        {{template "ts_proto_notice"}}
+
+        {{if .Error}}<p class="rounded-xl bg-rose-50 ring-1 ring-rose-200 px-3 py-2 text-sm text-rose-700">{{.Error}}</p>{{end}}
+
+        <form method="POST" action="/tanah-suci/pickup" class="space-y-6">
+            <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">1. Pilih toko mitra</h2>
+                <div class="mt-3 grid sm:grid-cols-2 gap-2">
+                    {{range $i, $m := .Merchants}}
+                    <label class="cursor-pointer min-w-0">
+                        <input type="radio" name="store" value="{{$m.Slug}}" class="peer sr-only" required {{if eq $.Store $m.Slug}}checked{{else if and (eq $.Store "") (eq $i 0)}}checked{{end}}>
+                        <span class="block h-full rounded-xl ring-1 ring-gray-200 peer-checked:ring-2 peer-checked:ring-emerald-500 peer-checked:bg-emerald-50 p-3">
+                            <span class="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase {{if eq $m.City "Makkah"}}text-emerald-700{{else}}text-teal-700{{end}}">📍 {{$m.City}}</span>
+                            <span class="block font-medium text-gray-900 text-sm mt-0.5">{{$m.Name}}</span>
+                            <span class="block text-xs text-gray-500">{{$m.Landmark}}</span>
+                            <span class="block text-xs text-gray-400">{{$m.Walk}} · buka {{$m.Hours}}</span>
+                        </span>
+                    </label>
+                    {{end}}
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">2. Pilih barang</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Harga dalam riyal (contoh). 1 SAR ≈ Rp {{rp .Rate}}.</p>
+                <ul class="mt-3 divide-y divide-gray-100">
+                    {{range .Items}}
+                    <li class="py-2.5 flex items-center gap-3 text-sm">
+                        <span class="w-9 h-9 shrink-0 rounded-xl bg-emerald-50 flex items-center justify-center">{{.Emoji}}</span>
+                        <span class="min-w-0 flex-1"><span class="block font-medium text-gray-800">{{.Name}}</span><span class="block text-xs text-gray-500">{{.Desc}} · {{.Price}} SAR / {{.Unit}}</span></span>
+                        <input type="number" name="q_{{.Key}}" min="0" max="20" value="{{index $.Qty .Key}}" class="w-16 shrink-0 rounded-lg border border-gray-300 px-2 py-1.5 text-sm" aria-label="Jumlah {{.Name}}">
+                    </li>
+                    {{end}}
+                </ul>
+            </section>
+
+            <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+                <h2 class="font-semibold text-gray-900">3. Jadwal ambil</h2>
+                <select name="slot" required class="mt-3 w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm bg-white">
+                    {{range .Slots}}<option value="{{.Value}}" {{if eq $.Slot .Value}}selected{{end}}>{{.Label}}</option>{{end}}
+                </select>
+                <p class="text-xs text-gray-400 mt-2">Waktu setempat. Toko menyimpan barang sampai 1 hari setelah jadwal.</p>
+                <button class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-3">Jadwalkan pickup</button>
+            </section>
+        </form>
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Pickup saya</h2>
+            {{if .Pickups}}
+            <ul class="mt-2 divide-y divide-gray-100 text-sm">
+                {{range .Pickups}}
+                <li><a href="/tanah-suci/pickup/{{.Code}}" class="py-3 flex items-center justify-between gap-3 hover:text-emerald-700">
+                    <span class="min-w-0"><span class="block font-medium text-gray-800 truncate">{{with .Merchant}}{{.Name}}{{end}}</span><span class="block text-xs text-gray-500"><span class="font-mono">{{.Code}}</span> · {{.SlotLabel}} · {{.TotalSAR}} SAR</span></span>
+                    {{template "pill" (dict "S" .Status)}}</a></li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p class="text-sm text-gray-500 mt-2">Belum ada pickup.</p>
+            {{end}}
+        </section>
+        <p class="text-sm"><a href="/tanah-suci/voucher" class="font-semibold text-emerald-700 hover:underline">Siapkan voucher prabayar untuk bayar di toko →</a></p>
+    </main>
+</body>
+</html>

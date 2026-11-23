@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "voucher")}}
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Voucher prabayar Tanah Suci</h1>
+            <p class="text-sm text-gray-500 mt-1">Bayar dalam rupiah sekarang, belanja dalam riyal di toko mitra Makkah/Madinah. Tidak perlu bawa banyak uang tunai.</p>
+        </div>
+        {{template "ts_proto_notice"}}
+
+        {{if .Error}}<p class="rounded-xl bg-rose-50 ring-1 ring-rose-200 px-3 py-2 text-sm text-rose-700">{{.Error}}</p>{{end}}
+
+        <form method="POST" action="/tanah-suci/voucher" class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Pilih nominal</h2>
+            <p class="text-xs text-gray-500 mt-0.5">Kurs contoh: <b>1 SAR = Rp {{rp .Rate}}</b>, dikunci saat beli. Nilai SAR dibulatkan ke bawah; sisa pembulatan tidak ditagih.</p>
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {{range $i, $p := .Presets}}
+                <label class="cursor-pointer">
+                    <input type="radio" name="amount" value="{{$p.IDR}}" class="peer sr-only" {{if eq $i 1}}checked{{end}}>
+                    <span class="block rounded-xl ring-1 ring-gray-200 peer-checked:ring-2 peer-checked:ring-emerald-500 peer-checked:bg-emerald-50 px-3 py-3 text-center">
+                        <span class="block font-bold text-gray-900">Rp {{rpShort $p.IDR}}</span>
+                        <span class="block text-xs text-emerald-700">{{$p.SAR}} SAR</span>
+                    </span>
+                </label>
+                {{end}}
+            </div>
+            <label class="block mt-4 text-sm"><span class="font-medium text-gray-800">Atau nominal lain (Rp {{rpShort .Min}} – Rp {{rpShort .Max}})</span>
+                <input name="custom" inputmode="numeric" maxlength="14" placeholder="mis. 1.500.000" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5"></label>
+            <button class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl px-5 py-3">Beli voucher &amp; bayar dengan QRIS</button>
+            <p class="text-[11px] text-gray-400 mt-3">Di produk nyata, voucher diterbitkan bersama mitra penerbit berizin ({{.Holder}} di demo ini). Umrohku tidak menyimpan saldo jamaah.</p>
+        </form>
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Voucher saya</h2>
+            {{if .Vouchers}}
+            <ul class="mt-3 grid grid-cols-1 [&>*]:min-w-0 gap-2">
+                {{range .Vouchers}}
+                <li><a href="/tanah-suci/voucher/{{.Code}}" class="block rounded-xl ring-1 ring-gray-200 hover:ring-emerald-300 px-4 py-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="font-mono text-sm text-gray-900">{{.Code}}</span>
+                        {{template "pill" (dict "S" .Status)}}
+                    </div>
+                    <div class="mt-2 h-2 rounded-full bg-gray-100 overflow-hidden"><div class="h-full bg-emerald-500" style="width: {{.UsedPct}}%"></div></div>
+                    <p class="mt-1.5 text-xs text-gray-500">Sisa <b class="text-gray-800">{{.BalanceSAR}} SAR</b> dari {{.ValueSAR}} SAR · dibeli Rp {{rp .AmountIDR}}</p>
+                </a></li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p class="text-sm text-gray-500 mt-2">Belum ada voucher.</p>
+            {{end}}
+        </section>
+
+        <p class="text-sm"><a href="/tanah-suci/pickup" class="font-semibold text-emerald-700 hover:underline">Pakai voucher untuk pickup di toko →</a></p>
+    </main>
+</body>
+</html>

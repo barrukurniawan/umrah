@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "mandiri")}}
+        <section class="rounded-3xl bg-gradient-to-br from-amber-500 to-orange-500 text-white px-6 py-7">
+            <p class="text-xs font-bold tracking-wider text-amber-100 uppercase">Fase 3 · prototipe</p>
+            <h1 class="text-2xl font-bold mt-1">Umrah mandiri</h1>
+            <p class="text-amber-50 mt-1 text-sm">Panduan langkah demi langkah untuk berangkat tanpa travel: visa lewat Nusuk, tiket, hotel, transport, sampai muthawwif.</p>
+            <div class="mt-4">
+                <div class="flex justify-between text-xs text-amber-50"><span>Kesiapan</span><span>{{.DoneN}}/{{.TotalN}} langkah</span></div>
+                <div class="mt-1 h-2.5 rounded-full bg-white/25 overflow-hidden"><div class="h-full bg-white" style="width: {{.Pct}}%"></div></div>
+            </div>
+        </section>
+
+        {{template "ts_mandiri_notice"}}
+
+        <form id="checklist" method="POST" action="/mandiri/checklist" class="space-y-4 scroll-mt-20">
+            {{if .Saved}}<p class="rounded-xl bg-emerald-50 ring-1 ring-emerald-200 px-3 py-2 text-sm text-emerald-800">✓ Checklist tersimpan di akunmu.</p>{{end}}
+            {{range $i, $s := .Steps}}
+            <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+                <div class="flex items-start gap-3">
+                    <span class="w-10 h-10 shrink-0 rounded-xl bg-amber-50 flex items-center justify-center text-xl">{{$s.Icon}}</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[11px] font-bold tracking-wider text-amber-700 uppercase">Langkah {{inc $i}}</p>
+                        <h2 class="font-semibold text-gray-900">{{$s.Title}}</h2>
+                        <p class="text-sm text-gray-500 mt-0.5">{{$s.Desc}}</p>
+                    </div>
+                </div>
+                <ul class="mt-3 space-y-1.5">
+                    {{range $s.Items}}
+                    <li><label class="flex items-start gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 cursor-pointer text-sm">
+                        <input type="checkbox" name="done" value="{{.Key}}" {{if index $.Done .Key}}checked{{end}} class="mt-0.5 w-4 h-4 accent-emerald-600 shrink-0" onchange="this.form.requestSubmit()">
+                        <span class="{{if index $.Done .Key}}text-gray-400 line-through{{else}}text-gray-700{{end}}">{{.Label}}</span>
+                    </label></li>
+                    {{end}}
+                </ul>
+                {{if $s.Kind}}<a href="/mandiri/katalog?jenis={{$s.Kind}}" class="mt-3 inline-block text-sm font-semibold text-emerald-700 hover:underline">Lihat contoh {{$s.Title}} di katalog prototipe →</a>{{end}}
+            </section>
+            {{end}}
+            <noscript><button class="w-full bg-emerald-600 text-white font-semibold rounded-xl px-5 py-3">Simpan checklist</button></noscript>
+        </form>
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <div class="flex items-center justify-between gap-3">
+                <h2 class="font-semibold text-gray-900">Pemesanan (prototipe)</h2>
+                <a href="/mandiri/keranjang" class="text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-1">Keranjang {{.CartN}}</a>
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Katalog hotel, transport, dan muthawwif contoh yang bisa diklik sampai checkout simulasi.</p>
+            <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+                <a href="/mandiri/katalog?jenis=hotel" class="rounded-xl bg-gray-50 hover:bg-emerald-50 px-2 py-3"><span class="block text-xl">🏨</span>Hotel</a>
+                <a href="/mandiri/katalog?jenis=transport" class="rounded-xl bg-gray-50 hover:bg-emerald-50 px-2 py-3"><span class="block text-xl">🚐</span>Transport</a>
+                <a href="/mandiri/katalog?jenis=muthawwif" class="rounded-xl bg-gray-50 hover:bg-emerald-50 px-2 py-3"><span class="block text-xl">🧭</span>Muthawwif</a>
+            </div>
+            {{with .Orders}}
+            <ul class="mt-4 divide-y divide-gray-100 text-sm">
+                {{range .}}
+                <li><a href="/mandiri/pesanan/{{.Code}}" class="py-2.5 flex items-center justify-between gap-3 hover:text-emerald-700">
+                    <span class="min-w-0 truncate"><span class="font-mono text-xs text-gray-500">{{.Code}}</span> · Rp {{rp .Total}}</span>
+                    {{template "pill" (dict "S" .Status)}}</a></li>
+                {{end}}
+            </ul>
+            {{end}}
+        </section>
+
+        <section class="rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-5">
+            <h2 class="font-semibold text-gray-900">Sudah di Tanah Suci?</h2>
+            <p class="text-sm text-gray-600 mt-1">Kirim oleh-oleh ke rumah, siapkan voucher belanja dalam riyal, atau pesan barang untuk diambil di toko dekat masjid.</p>
+            <a href="/tanah-suci" class="mt-3 inline-block text-sm font-semibold text-emerald-700 hover:underline">Buka layanan Tanah Suci →</a>
+        </section>
+        <p class="text-xs text-gray-400 text-center">Lebih suka berangkat bersama travel berizin? <a href="/" class="underline">Bandingkan paket umrah</a>.</p>
+    </main>
+</body>
+</html>

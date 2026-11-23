@@ -1,0 +1,42 @@
+{{if .Err}}<p class="rounded-xl bg-rose-50 text-rose-700 text-sm px-4 py-2.5 mb-4">{{.Err}}</p>{{end}}
+{{if .Msg}}<p class="rounded-xl bg-emerald-50 text-emerald-800 text-sm px-4 py-2.5 mb-4">{{.Msg}}</p>{{end}}
+<p class="text-sm text-gray-600">Alur: <b>Draf → Buka → Tutup</b> (hash daftar kode terbit) <b>→ Undi</b> dengan seed yang dibacakan saksi. Siapa pun bisa menghitung ulang hasilnya dari halaman publik.</p>
+<div class="mt-4 grid grid-cols-1 [&>*]:min-w-0 gap-4">
+    {{range .Draws}}
+    <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0"><h2 class="font-bold text-gray-900">{{.Title}}</h2><p class="text-xs text-gray-500">🎁 {{.PrizeDesc}} · {{.Winners}} pemenang · {{tgl .StartsAt}} – {{tgl .EndsAt}} · undi {{tgl .DrawAt}}</p></div>
+            {{template "pill" (dict "S" .Status)}}
+        </div>
+        <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+            <span class="rounded-lg bg-gray-50 px-3 py-1.5">{{.ActiveCount}} kode aktif</span>
+            <a href="/undian/{{.ID}}" target="_blank" class="text-emerald-700 hover:underline">Halaman publik ↗</a>
+            {{if or (eq .Status "ditutup") (eq .Status "diundi")}}<a href="/admin/bisnis/undian/{{.ID}}/berita-acara.csv" class="text-emerald-700 hover:underline">Berita acara (CSV)</a>{{end}}
+            {{if eq .Status "draft"}}<form method="POST" action="/admin/bisnis/undian/{{.ID}}/status"><input type="hidden" name="status" value="terbuka"><button class="rounded-lg bg-emerald-600 text-white text-xs font-semibold px-3 py-1.5">Buka undian</button></form>{{end}}
+            {{if eq .Status "terbuka"}}<form method="POST" action="/admin/bisnis/undian/{{.ID}}/status" onsubmit="return confirm('Tutup undian? Daftar kode dikunci dan hash-nya diumumkan.')"><input type="hidden" name="status" value="ditutup"><button class="rounded-lg bg-amber-500 text-white text-xs font-semibold px-3 py-1.5">Tutup & umumkan hash</button></form>{{end}}
+        </div>
+        {{if .EntriesHash}}<p class="mt-2 text-[11px] text-gray-500 break-all">Hash daftar kode: <span class="font-mono">{{.EntriesHash}}</span></p>{{end}}
+        {{if eq .Status "ditutup"}}
+        <form method="POST" action="/admin/bisnis/undian/{{.ID}}/undi" class="mt-3 rounded-xl bg-violet-50 p-4 grid gap-2 sm:grid-cols-3 text-sm">
+            <input name="seed" required placeholder="Seed dari saksi (mis. 48 13 72)" class="rounded-lg border border-gray-300 px-3 py-2">
+            <input name="saksi" placeholder="Nama saksi / notaris" class="rounded-lg border border-gray-300 px-3 py-2">
+            <button class="rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2">Undi sekarang</button>
+        </form>
+        {{end}}
+        {{if eq .Status "diundi"}}<div class="mt-3 flex flex-wrap gap-2">{{range .WinnersList}}<span class="rounded-lg bg-amber-100 text-amber-900 text-sm px-2.5 py-1">#{{.Winner}} <span class="font-mono font-bold">{{.Code}}</span> · {{maskName .Name}}</span>{{end}}</div>{{end}}
+    </section>
+    {{end}}
+</div>
+<details class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+    <summary class="cursor-pointer font-semibold text-emerald-700">+ Buat undian baru</summary>
+    <form method="POST" action="/admin/bisnis/undian" class="mt-3 grid gap-2 sm:grid-cols-3 text-sm">
+        <input name="judul" placeholder="Judul (mis. Undian Umroh Gratis Feb–Apr 2027)" class="sm:col-span-2 rounded-lg border border-gray-300 px-3 py-2">
+        <input name="pemenang" type="number" value="1" min="1" class="rounded-lg border border-gray-300 px-3 py-2">
+        <input name="hadiah" placeholder="Hadiah (dibiayai anggaran promosi umrohku)" class="sm:col-span-3 rounded-lg border border-gray-300 px-3 py-2">
+        <label class="text-xs text-gray-500">Mulai<input type="date" name="mulai" value="{{.DefStart}}" class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1.5"></label>
+        <label class="text-xs text-gray-500">Selesai<input type="date" name="selesai" value="{{.DefEnd}}" class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1.5"></label>
+        <label class="text-xs text-gray-500">Pengundian<input type="date" name="undi" value="{{.DefDraw}}" class="mt-0.5 w-full rounded-lg border border-gray-300 px-2 py-1.5"></label>
+        <button class="sm:col-span-3 rounded-lg bg-emerald-600 text-white font-semibold py-2">Simpan sebagai draf</button>
+        <p class="sm:col-span-3 text-[11px] text-gray-400">Tidak ada pilihan menjual kupon: entri hanya dari booking yang DP-nya lunas. Izin Kemensos “dalam proses”.</p>
+    </form>
+</details>

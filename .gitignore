@@ -32,3 +32,12 @@ vendor/
 data/analytics.*
 data/*.mmdb
 data/users.db*
+
+# Mode demo startup (lokal)
+data/demo.db*
+data/analytics.secret
+
+# vendor/ di atas untuk Go; aset JS & skrip ikon tetap dilacak
+!web/static/js/vendor/
+!scripts/vendor/
+data/umrah.db-*

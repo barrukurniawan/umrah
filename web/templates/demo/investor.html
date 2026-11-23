@@ -1,0 +1,65 @@
+<main class="max-w-5xl mx-auto px-4 py-8">
+    <p class="text-xs font-bold tracking-widest text-emerald-700">ROADMAP & DEMO</p>
+    <h1 class="mt-2 text-2xl sm:text-3xl font-bold text-gray-900">Dari pembanding paket menjadi tempat pesan umroh yang aman</h1>
+    <p class="mt-2 text-gray-600 max-w-3xl">Setiap fitur di roadmap sudah bisa dicoba di demo ini. Klik “Coba” untuk langsung masuk ke alurnya.</p>
+
+    <div class="mt-6 grid gap-3 grid-cols-2 lg:grid-cols-4">
+        {{template "stat" (dict "Label" "Paket dibandingkan (data asli)" "Value" .Import.Packages "Note" "dari crawl harian umrohku.web.id")}}
+        {{template "stat" (dict "Label" "Travel terdaftar" "Value" (len .Import.Travels) "Note" (printf "%d travel mitra (contoh)" .Travels))}}
+        {{template "stat" (dict "Label" (printf "Pendapatan contoh %s" .Prev.Label) "Value" (printf "Rp %s" (rpShort .Prev.Total)) "Note" "lead + komisi + langganan + rujukan" "Tone" "amber")}}
+        {{template "stat" (dict "Label" (printf "Nilai booking %s" .Prev.Label) "Value" (printf "Rp %s" (rpShort .Prev.GMV)) "Note" (printf "%d booking DP lunas (contoh)" .Prev.Bookings) "Tone" "sky")}}
+    </div>
+
+    {{define "phase"}}
+    <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 sm:p-6">
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="font-bold text-gray-900">{{.T}}</h2>
+            <span class="text-xs font-semibold rounded-full px-2.5 py-1 {{.C}}">{{.W}}</span>
+        </div>
+        <ul class="mt-3 divide-y divide-gray-100">
+            {{range .Items}}{{$p := splitPipe .}}
+            <li class="py-2.5 flex items-center justify-between gap-3 text-sm">
+                <span class="min-w-0"><span class="font-medium text-gray-800">{{index $p 0}}</span> <span class="text-gray-500">· {{index $p 1}}</span></span>
+                <a href="{{index $p 2}}" class="shrink-0 text-xs font-semibold text-emerald-700 hover:underline">Coba →</a>
+            </li>
+            {{end}}
+        </ul>
+    </section>
+    {{end}}
+
+    <div class="mt-8 grid grid-cols-1 [&>*]:min-w-0 gap-4">
+        {{template "phase" (dict "T" "Fase 1 · Pembanding terverifikasi" "W" "0–6 bulan" "C" "bg-emerald-100 text-emerald-800" "Items" (list
+            "Badge PPIU Terverifikasi|nomor izin dicek ke data resmi Kemenhaj|/admin/bisnis/mitra"
+            "Portal travel|login per travel, kelola paket & sisa seat, laporan klik & lead|/portal"
+            "Lead terverifikasi + biaya per lead|klik/WA/form jadi tagihan, duplikat tidak ditagih|/portal/lead"
+            "Promo Spesial berbayar|diatur dari admin, bukan ditulis di kode|/admin/bisnis/promo"
+            "Langganan portal|Gratis · Pro · Premium|/portal/langganan"
+            "Data langsung dari travel|menggantikan scraping|/portal/paket"
+            "Tombol “Mau cicil?”|ukur minat cicilan sejak awal|/admin/bisnis/cicil"))}}
+        {{template "phase" (dict "T" "Fase 2 · Booking, DP, dan cicilan syariah" "W" "6–12 bulan" "C" "bg-sky-100 text-sky-800" "Items" (list
+            "Booking + DP|VA/QRIS langsung ke rekening penampungan travel|/"
+            "Konfirmasi otomatis|kuitansi & status ke jamaah dan travel|/inbox"
+            "Voucher & cashback umrohku|dibiayai dari komisi, harga travel tetap|/keuntungan"
+            "Komisi booking|tercatat terpisah dari DP, dipotong promo|/portal/tagihan"
+            "Cicil sebelum berangkat|tabungan umroh di bank syariah mitra|/tabungan"
+            "Rujukan pembiayaan syariah|persetujuan UU PDP, status di akun, fee rujukan|/akun/pembiayaan"
+            "Undian umroh gratis|bebas maysir, pengundian bisa diaudit|/undian"
+            "Ulasan jamaah yang benar-benar berangkat|hanya dari booking berstatus pulang|/travel/amanah-demo#ulasan"))}}
+        {{template "phase" (dict "T" "Fase 3 · Umrah mandiri" "W" "setelah aturan turunan UU 14/2025" "C" "bg-amber-100 text-amber-800" "Items" (list
+            "Panduan & pemesanan mandiri|Nusuk, hotel, transport, muthawwif (prototipe)|/mandiri"))}}
+        {{template "phase" (dict "T" "Fase 4 · Layanan di Tanah Suci" "W" "setelah ada mitra di Saudi" "C" "bg-violet-100 text-violet-800" "Items" (list
+            "Oleh-oleh dikirim ke rumah|pemasok Indonesia, bayar QRIS|/tanah-suci"
+            "Voucher prabayar Tanah Suci|beli dalam rupiah, tukar di toko mitra|/tanah-suci"
+            "Pickup di toko Makkah & Madinah|ambil di toko mitra|/tanah-suci"))}}
+    </div>
+
+    <section class="mt-8 rounded-2xl bg-gray-900 text-white p-6">
+        <h2 class="font-bold">Model pendapatan (angka contoh di demo)</h2>
+        <div class="mt-4 grid gap-3 sm:grid-cols-5 text-sm">
+            {{range (list "Biaya per lead|Rp 25 rb / lead valid" "Komisi booking|3–3,5% nilai paket" "Langganan portal|Rp 0 · 499 rb · 1,49 jt / bln" "Promo Spesial|Rp 75 rb / hari" "Fee rujukan|1–1,5% pembiayaan cair")}}{{$p := splitPipe .}}
+            <div class="rounded-xl bg-white/5 ring-1 ring-white/10 p-3"><p class="text-amber-300 font-semibold">{{index $p 0}}</p><p class="text-gray-300 text-xs mt-1">{{index $p 1}}</p></div>
+            {{end}}
+        </div>
+        <p class="mt-4 text-xs text-gray-400">Hadiah haji khusus menyusul setelah skala bisnis memungkinkan.</p>
+    </section>
+</main>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "mandiri")}}
+        {{with .O}}
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+                <a href="/mandiri" class="text-sm text-emerald-700 hover:underline">← Panduan umrah mandiri</a>
+                <h1 class="text-2xl font-bold text-gray-900 mt-2 font-mono">{{.Code}}</h1>
+                <p class="text-sm text-gray-500">Berangkat {{tgl .DepartDate}} · {{.Contact}}</p>
+            </div>
+            {{template "pill" (dict "S" .Status)}}
+        </div>
+        {{template "ts_mandiri_notice"}}
+
+        {{if eq .Status "menunggu_bayar"}}
+        {{template "ts_qris" (dict "Payload" .QRPayload "Amount" .Total "Holder" "Penyedia layanan contoh" "Action" (printf "/mandiri/pesanan/%s/bayar" .Code) "Code" .Code "Label" "Total pesanan prototipe")}}
+        {{else}}
+        <section class="rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-5">
+            <p class="font-semibold text-emerald-900">✓ Simulasi pembayaran berhasil · {{tglJam .PaidAt}}</p>
+            <p class="text-sm text-emerald-800 mt-1">Di produk nyata, voucher hotel, jadwal jemputan, dan kontak muthawwif akan muncul di sini. Konfirmasi simulasi dikirim ke <a href="/inbox" class="underline">Kotak masuk</a>.</p>
+        </section>
+        {{end}}
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Rincian</h2>
+            {{template "ts_lines" (dict "Lines" .Lines "Cur" "rp")}}
+            <div class="mt-2 pt-3 border-t border-gray-100 flex justify-between font-bold text-gray-900"><span>Total</span><span class="tabular-nums">Rp {{rp .Total}}</span></div>
+        </section>
+        {{end}}
+        <div class="flex flex-wrap gap-3 text-sm">
+            <a href="/mandiri#checklist" class="font-semibold text-emerald-700 hover:underline">Lanjutkan checklist →</a>
+            <a href="/tanah-suci" class="text-gray-500 hover:underline">Layanan di Tanah Suci</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -12,6 +12,7 @@ import (
 
 	"umrah/app/accounts"
 	"umrah/app/analytics"
+	"umrah/app/demo"
 	"umrah/app/handlers"
 	"umrah/app/repositories"
 	"umrah/app/services"
@@ -200,6 +201,10 @@ func main() {
 		}
 	}
 	engine.AddFunc("assetV", func(f string) string { return assetVs[f] })
+	// Mode demo startup (DEMO_MODE=1): fungsi selalu terdaftar, tapi kosong di produksi.
+	for name, fn := range demo.TemplateFuncs() {
+		engine.AddFunc(name, fn)
+	}
 	engine.AddFunc("dpPromo", repositories.DPPromoNote)
 	engine.AddFunc("dayShort", services.DayShort)
 	engine.AddFunc("travelName", services.TravelDisplayName)
@@ -313,8 +318,27 @@ func main() {
 	}
 	accounts.Init(usersPath)
 
+	// Mode demo: data/demo.db + paket travel fiktif (ditulis ke output/, lalu data paket dimuat ulang).
+	if demo.FlagSet() {
+		demoPath := os.Getenv("DEMO_DB_PATH")
+		if demoPath == "" {
+			demoPath = "data/demo.db"
+		}
+		demo.Init(demoPath)
+		if demo.Enabled() {
+			services.SetFeaturedSource(demo.FeaturedRange) // Promo Spesial dari tabel, bukan kode
+		}
+		if demo.Enabled() && repositories.Reload() == nil {
+			services.ResetCalendarCache()
+		}
+	}
+
 	app.Use(analytics.ViewMiddleware)
 	app.Use(accounts.Middleware)
+	if demo.Enabled() {
+		app.Use(demo.Middleware)
+		handlers.RegisterDemo(app)
+	}
 	app.Get("/", handlers.HomePage)
 	app.Post("/recommendations", handlers.GetRecommendations)
 	app.Get("/kalender", handlers.CalendarMonth)

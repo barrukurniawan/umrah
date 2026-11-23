@@ -1,0 +1,12 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-gray-900">Kode undian saya</h1>
+    <p class="text-sm text-gray-500 mt-1">Didapat otomatis dari booking yang DP-nya lunas. Gratis.</p>
+    <div class="mt-6 grid grid-cols-1 [&>*]:min-w-0 gap-3">
+        {{range .Entries}}{{$d := index $.Draws .DrawID}}
+        <div class="rounded-2xl bg-white ring-1 ring-gray-200 p-4 flex items-center justify-between gap-3">
+            <div class="min-w-0"><p class="font-mono text-lg font-bold {{if .Void}}text-gray-400 line-through{{else}}text-violet-800{{end}}">{{.Code}}</p><p class="text-xs text-gray-500 truncate">{{.Name}} · {{with $d}}<a class="underline" href="/undian/{{.ID}}">{{.Title}}</a>{{end}}</p></div>
+            {{if .Winner}}<span class="rounded-full bg-amber-300 text-gray-900 text-xs font-bold px-2.5 py-1">🏆 Pemenang</span>{{else if .Void}}<span class="text-xs text-gray-400">Batal</span>{{else}}{{with $d}}{{template "pill" (dict "S" .Status)}}{{end}}{{end}}
+        </div>
+        {{else}}<div class="rounded-2xl border border-dashed border-gray-300 p-10 text-center text-sm text-gray-500">Belum ada kode. Pesan paket travel mitra dan lunasi DP untuk ikut undian.</div>{{end}}
+    </div>
+</main>

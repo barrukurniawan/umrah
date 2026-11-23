@@ -1,0 +1,43 @@
+<main class="max-w-3xl mx-auto px-4 py-8">
+    <a href="/undian" class="text-sm text-emerald-700 hover:underline">← Semua undian</a>
+    <section class="mt-3 rounded-3xl bg-gradient-to-br from-violet-600 to-violet-900 text-white p-6">
+        <div class="flex items-start justify-between gap-3"><p class="text-xs font-bold tracking-widest text-violet-200">UNDIAN UMROH GRATIS</p><span class="rounded-full bg-white/15 text-xs font-semibold px-2.5 py-1">{{statusLabel .D.Status}}</span></div>
+        <h1 class="mt-2 text-2xl font-bold">{{.D.Title}}</h1>
+        <p class="mt-1 text-violet-100">🎁 {{.D.PrizeDesc}} · {{.D.Winners}} pemenang</p>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+            <div class="rounded-xl bg-white/10 p-2"><p class="text-violet-200">Kode aktif</p><p class="text-lg font-bold">{{.Active}}</p></div>
+            <div class="rounded-xl bg-white/10 p-2"><p class="text-violet-200">Batal</p><p class="text-lg font-bold">{{.Void}}</p></div>
+            <div class="rounded-xl bg-white/10 p-2"><p class="text-violet-200">Diundi</p><p class="text-sm font-bold">{{tgl .D.DrawAt}}</p></div>
+        </div>
+    </section>
+
+    <div class="mt-4 rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-4 text-sm text-emerald-900"><b>Gratis. Tidak perlu membeli kupon.</b> Setiap jamaah dalam booking yang DP-nya lunas di periode {{tgl .D.StartsAt}} – {{tgl .D.EndsAt}} otomatis mendapat 1 kode. Tidak ada cara lain mendapat kode.</div>
+
+    {{if .Mine}}<div class="mt-4 rounded-2xl bg-white ring-1 ring-violet-200 p-4"><p class="text-sm font-semibold text-gray-900">Kode Anda</p><div class="mt-2 flex flex-wrap gap-2">{{range .Mine}}<span class="font-mono font-bold rounded-lg px-2.5 py-1 {{if .Winner}}bg-amber-300 text-gray-900{{else if .Void}}bg-gray-100 text-gray-400 line-through{{else}}bg-violet-100 text-violet-800{{end}}">{{.Code}}{{if .Winner}} 🏆{{end}}</span>{{end}}</div></div>{{end}}
+
+    {{if eq .D.Status "diundi"}}
+    <section id="hasil" class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+        <h2 class="font-bold text-gray-900">Hasil pengundian · {{tglJam .D.DrawnAt}}</h2>
+        <ol class="mt-3 space-y-2">{{range .Winners}}<li class="flex items-center gap-3 rounded-xl bg-amber-50 px-3 py-2"><span class="w-7 h-7 rounded-full bg-amber-400 text-gray-900 font-bold flex items-center justify-center text-sm">{{.Winner}}</span><span class="font-mono font-bold">{{.Code}}</span><span class="text-sm text-gray-600">{{maskName .Name}}, {{.City}}</span></li>{{end}}</ol>
+        <p class="mt-2 text-xs text-gray-500">Saksi: {{.D.Witness}}</p>
+    </section>
+    {{end}}
+
+    {{if or (eq .D.Status "ditutup") (eq .D.Status "diundi")}}
+    <section class="mt-6 rounded-2xl bg-gray-900 text-gray-100 p-5 text-sm">
+        <h2 class="font-bold text-white">Cara memeriksa hasil (bisa dihitung ulang siapa pun)</h2>
+        <ol class="mt-3 list-decimal pl-5 space-y-1.5 text-gray-300">
+            <li>Urutkan semua kode aktif (A→Z), gabungkan dengan baris baru, hitung sha256 → <span class="font-mono text-amber-300 break-all">{{.D.EntriesHash}}</span> (diumumkan saat ditutup{{if .D.ClosedAt}} {{tglJam .D.ClosedAt}}{{end}}).</li>
+            {{if .D.Seed}}<li>Seed = sha256(hash di atas + seed saksi “<span class="font-mono text-amber-300">{{.D.WitnessSeed}}</span>”) → <span class="font-mono text-amber-300 break-all">{{.D.Seed}}</span></li>
+            <li>Skor setiap kode = sha256(seed + kode). Urutkan skor naik; {{.D.Winners}} teratas adalah pemenang.</li>{{else}}<li>Saat pengundian, saksi membacakan seed; seed akhir = sha256(hash + seed saksi).</li>{{end}}
+        </ol>
+        {{if .Codes}}<details class="mt-3"><summary class="cursor-pointer text-amber-300">Daftar kode aktif</summary><p class="mt-2 font-mono text-xs text-gray-400 break-all leading-relaxed">{{.Codes}}</p></details>{{end}}
+    </section>
+    {{end}}
+
+    <section class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+        <h2 class="font-bold text-gray-900">Syarat & ketentuan</h2>
+        <p class="mt-2 text-sm text-gray-700 whitespace-pre-line leading-relaxed">{{.D.Terms}}</p>
+        <p class="mt-3 text-xs text-gray-500">Nomor izin undian Kemensos: {{.D.PermitNo}}</p>
+    </section>
+</main>

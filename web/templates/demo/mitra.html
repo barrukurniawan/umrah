@@ -1,0 +1,39 @@
+<main class="max-w-4xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 [&>*]:min-w-0 gap-8 lg:grid-cols-5">
+        <div class="lg:col-span-2">
+            <p class="text-xs font-bold tracking-widest text-emerald-700">UNTUK TRAVEL PPIU</p>
+            <h1 class="mt-2 text-2xl font-bold text-gray-900">Jadi travel mitra umrohku</h1>
+            <p class="mt-2 text-sm text-gray-600">Kelola paket & sisa seat sendiri, terima lead terverifikasi, dan terima booking + DP yang langsung masuk ke rekening penampungan Anda.</p>
+            <ul class="mt-4 space-y-2 text-sm text-gray-700">
+                <li>✓ Badge <b>PPIU Terverifikasi</b> setelah nomor izin dicek</li>
+                <li>✓ Bayar per lead valid, duplikat tidak ditagih</li>
+                <li>✓ Komisi hanya untuk booking yang DP-nya lunas</li>
+                <li>✓ Promo jamaah dibiayai umrohku, harga Anda tetap</li>
+            </ul>
+            <div class="mt-5 grid grid-cols-1 [&>*]:min-w-0 gap-2">
+                {{range .Plans}}
+                <div class="rounded-xl bg-white ring-1 ring-gray-200 px-4 py-3 flex items-center justify-between"><span class="font-semibold text-gray-800">{{.Name}}</span><span class="text-sm text-gray-600">{{if .Price}}Rp {{rp .Price}}/bln{{else}}Gratis{{end}}</span></div>
+                {{end}}
+            </div>
+        </div>
+        <div class="lg:col-span-3">
+            {{if .Sent}}
+            <div class="rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 p-6">
+                <p class="font-bold text-emerald-900">Terima kasih, pendaftaran terkirim.</p>
+                <p class="text-sm text-emerald-800 mt-1">Tim umrohku akan mencocokkan nomor izin PPIU ke data resmi Kemenhaj, lalu menghubungi PIC lewat WhatsApp. (Di demo, pendaftaran muncul di Konsol admin → Mitra & PPIU.)</p>
+            </div>
+            {{else}}
+            <form method="POST" action="/mitra" class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 sm:p-6 grid gap-4 sm:grid-cols-2">
+                {{if .Error}}<p class="sm:col-span-2 rounded-lg bg-rose-50 text-rose-700 text-sm px-3 py-2">{{.Error}}</p>{{end}}
+                {{range (list "company|Nama PT penyelenggara*|PT ..." "brand|Nama brand travel|" "ppiu|Nomor izin PPIU|akan dicek ke data resmi" "city|Kota kantor pusat|" "pic|Nama PIC*|" "phone|WhatsApp PIC*|08..." "email|Email|")}}{{$p := splitPipe .}}
+                <label class="block text-sm"><span class="font-medium text-gray-700">{{index $p 1}}</span>
+                    <input name="{{index $p 0}}" placeholder="{{index $p 2}}" class="mt-1 w-full rounded-xl border-gray-300 border px-3 py-2.5 focus:border-emerald-500 focus:ring-emerald-500"></label>
+                {{end}}
+                <label class="block text-sm sm:col-span-2"><span class="font-medium text-gray-700">Catatan</span>
+                    <textarea name="note" rows="3" class="mt-1 w-full rounded-xl border-gray-300 border px-3 py-2.5" placeholder="Jumlah keberangkatan per bulan, paket andalan, dll."></textarea></label>
+                <button class="sm:col-span-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">Kirim pendaftaran</button>
+            </form>
+            {{end}}
+        </div>
+    </div>
+</main>

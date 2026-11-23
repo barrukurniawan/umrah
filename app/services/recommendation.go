@@ -26,10 +26,28 @@ type FilterInput struct {
 // Travel partner/promo: selalu di urutan teratas, tapi hanya pada budget tertentu
 // (dipilih pemilik situs). Di luar rentang ini paketnya tidak ditampilkan, kecuali
 // pengunjung memilih travel itu di filter.
-type featuredRange struct{ MinBudget, MaxBudget int }
+type featuredRange struct {
+	MinBudget, MaxBudget int
+	ShowOutside          bool // false (default): di luar rentang paketnya disembunyikan (perilaku Alviandra)
+}
 
 var featuredTravels = map[string]featuredRange{
 	"Alviandra Travel": {MinBudget: 28000000, MaxBudget: 29000000},
+}
+
+// featuredFor: sumber posisi unggulan. Mode demo menggantinya dengan tabel Placement
+// (diatur dari admin/portal) lewat SetFeaturedSource.
+var featuredFor = func(travel string) (featuredRange, bool) {
+	fr, ok := featuredTravels[travel]
+	return fr, ok
+}
+
+// SetFeaturedSource mengganti map featuredTravels dengan sumber lain (mode demo).
+func SetFeaturedSource(f func(travel string) (minBudget, maxBudget int, showOutside, ok bool)) {
+	featuredFor = func(travel string) (featuredRange, bool) {
+		mn, mx, show, ok := f(travel)
+		return featuredRange{MinBudget: mn, MaxBudget: mx, ShowOutside: show}, ok
+	}
 }
 
 // Paket promo boleh sedikit di atas budget (mis. Rp28,5 jt sudah tampil di budget Rp28 jt).
@@ -122,7 +140,7 @@ func GetRecommendations(input FilterInput) ([]ScoredPackage, int) {
 
 		budget := input.Budget + budgetJutaan
 		featured, pinned := false, false
-		if fr, ok := featuredTravels[pkg.Travel.Name]; ok {
+		if fr, ok := featuredFor(pkg.Travel.Name); ok && (!fr.ShowOutside || input.Budget >= fr.MinBudget && input.Budget <= fr.MaxBudget) {
 			inRange := input.Budget >= fr.MinBudget && input.Budget <= fr.MaxBudget
 			// Di luar rentang promo paketnya disembunyikan, kecuali pengunjung sengaja memilih
 			// travel ini di filter: maka tampil seperti travel biasa (tanpa disematkan di atas).

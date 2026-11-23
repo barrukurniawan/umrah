@@ -1,0 +1,149 @@
+{{/* Partial mode demo (startup.umrohku.web.id). Semua dipanggil di dalam {{if demoOn}}, jadi tidak
+     pernah tampil di produksi. Data peran datang dari .Demo (diisi handlers.viewer). */}}
+
+{{define "demo_ribbon"}}
+<div class="bg-amber-400 text-amber-950 text-[11px] sm:text-xs font-semibold relative z-50">
+    <div class="max-w-5xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
+        <span class="inline-flex items-center gap-1.5 min-w-0"><span class="shrink-0 rounded bg-amber-950 text-amber-300 px-1.5 py-px tracking-wider">DEMO</span><span class="truncate">Data contoh, tidak ada transaksi sungguhan</span></span>
+        <span class="flex items-center gap-3 shrink-0">
+            <a href="/demo" class="underline underline-offset-2 hover:no-underline">Tur demo</a>
+            <a href="/keuntungan" class="hidden sm:inline underline underline-offset-2 hover:no-underline">Keuntungan</a>
+            <a href="/investor" class="hidden min-[420px]:inline underline underline-offset-2 hover:no-underline">Roadmap</a>
+        </span>
+    </div>
+</div>
+{{template "demo_switcher" .}}
+<div id="demoSheet" class="hidden fixed inset-0 z-[70]" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/40" onclick="ukSheet.close()"></div>
+    <div class="absolute inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:w-[440px] max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white shadow-2xl">
+        <div id="demoSheetBody"><p class="p-8 text-center text-sm text-gray-400">Memuat…</p></div>
+    </div>
+</div>
+<script>
+window.ukSheet = {
+    open: function () { document.getElementById('demoSheet').classList.remove('hidden'); document.body.style.overflow = 'hidden'; },
+    close: function () { document.getElementById('demoSheet').classList.add('hidden'); document.body.style.overflow = ''; document.getElementById('demoSheetBody').innerHTML = '<p class="p-8 text-center text-sm text-gray-400">Memuat…</p>'; }
+};
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSheet.close(); });
+</script>
+{{end}}
+
+{{define "demo_switcher"}}
+{{$r := ""}}{{$label := "Tamu"}}{{$unread := 0}}{{$path := "/"}}
+{{with .Demo}}{{$r = .Role}}{{$label = .Label}}{{$unread = .Unread}}{{$path = .Path}}{{end}}
+<details id="demoSwitch" class="fixed z-[60] bottom-3 left-3 sm:bottom-5 sm:left-5 group">
+    <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none flex items-center gap-2 rounded-full bg-gray-900 text-white shadow-xl pl-2 pr-3.5 py-2 text-xs font-semibold ring-2 ring-amber-400 hover:bg-gray-800">
+        <span class="w-6 h-6 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+        </span>
+        <span class="max-w-[150px] truncate">{{$label}}</span>
+        {{if gt $unread 0}}<span class="rounded-full bg-rose-500 text-white text-[10px] leading-none px-1.5 py-1">{{$unread}}</span>{{end}}
+    </summary>
+    <div class="absolute bottom-full left-0 mb-2 w-[min(92vw,330px)] rounded-2xl bg-white text-gray-800 shadow-2xl ring-1 ring-gray-200 overflow-hidden">
+        <div class="px-4 pt-3 pb-2 bg-gray-50 border-b border-gray-100">
+            <p class="text-[11px] font-bold tracking-wider text-gray-400">MASUK SEBAGAI</p>
+            <p class="text-[11px] text-gray-500">Satu klik, tanpa password. Khusus demo.</p>
+        </div>
+        <div class="p-2 grid gap-1">
+            {{range demoRoles}}
+            <form method="POST" action="/demo/peran">
+                <input type="hidden" name="peran" value="{{.Value}}"><input type="hidden" name="next" value="{{$path}}">
+                <button class="w-full text-left flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-emerald-50 {{if eq .Value $r}}bg-emerald-50 ring-1 ring-emerald-200{{end}}">
+                    <span class="w-8 h-8 shrink-0 rounded-lg {{.Color}} flex items-center justify-center text-sm">{{.Icon}}</span>
+                    <span class="min-w-0"><span class="block text-sm font-semibold truncate">{{.Label}}</span><span class="block text-[11px] text-gray-500 truncate">{{.Hint}}</span></span>
+                    {{if eq .Value $r}}<span class="ml-auto text-[10px] font-bold text-emerald-700">AKTIF</span>{{end}}
+                </button>
+            </form>
+            {{end}}
+        </div>
+        <div class="border-t border-gray-100 p-2 grid grid-cols-2 gap-1 text-xs font-semibold">
+            <a href="/inbox" class="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 bg-gray-50 hover:bg-gray-100">Kotak masuk{{if gt $unread 0}} <span class="rounded-full bg-rose-500 text-white text-[10px] px-1.5">{{$unread}}</span>{{end}}</a>
+            <a href="/demo" class="flex items-center justify-center rounded-xl px-2 py-2 bg-gray-50 hover:bg-gray-100">Tur demo</a>
+        </div>
+    </div>
+</details>
+{{end}}
+
+{{/* Kepala halaman bisnis (portal travel, konsol admin, mitra pembiayaan, toko).
+     dict: Title, Sub, Tabs ([]demo.Tab), Badge */}}
+{{define "biz_header"}}
+<div class="bg-white border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 pt-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+                {{if .Badge}}<p class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase">{{.Badge}}</p>{{end}}
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 truncate">{{.Title}}</h1>
+                {{if .Sub}}<p class="text-sm text-gray-500 mt-0.5">{{.Sub}}</p>{{end}}
+            </div>
+        </div>
+        <nav class="mt-4 -mb-px flex gap-1 overflow-x-auto text-sm font-medium [scrollbar-width:none]">
+            {{range .Tabs}}
+            <a href="{{.Href}}" class="whitespace-nowrap px-3 py-2.5 border-b-2 {{if .Active}}border-emerald-600 text-emerald-700{{else}}border-transparent text-gray-500 hover:text-gray-800{{end}}">{{.Label}}{{if .Count}} <span class="ml-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] px-1.5 py-px">{{.Count}}</span>{{end}}</a>
+            {{end}}
+        </nav>
+    </div>
+</div>
+{{end}}
+
+{{/* Kartu angka. dict: Label, Value, Note, Tone ("emerald"|"amber"|"sky"|"rose"|"gray") */}}
+{{define "stat"}}
+<div class="rounded-2xl bg-white ring-1 ring-gray-200 p-4 min-w-0">
+    <p class="text-xs text-gray-500 truncate">{{.Label}}</p>
+    <p class="mt-1 text-xl sm:text-2xl font-bold tabular-nums {{if eq .Tone "amber"}}text-amber-600{{else if eq .Tone "sky"}}text-sky-700{{else if eq .Tone "rose"}}text-rose-600{{else if eq .Tone "gray"}}text-gray-700{{else}}text-emerald-700{{end}}">{{.Value}}</p>
+    {{if .Note}}<p class="text-[11px] text-gray-400 mt-0.5 truncate">{{.Note}}</p>{{end}}
+</div>
+{{end}}
+
+{{/* Status pill. dict: S (status) */}}
+{{define "pill"}}{{$s := .S}}<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap {{statusTone $s}}">{{statusLabel $s}}</span>{{end}}
+
+{{/* Kotak "aturan dana": dipakai di setiap halaman bayar. dict: Holder, Bank, Account */}}
+{{define "escrow_note"}}
+<div class="rounded-xl bg-emerald-50 ring-1 ring-emerald-200 p-3 text-xs text-emerald-900 flex gap-2.5">
+    <svg class="w-5 h-5 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+    <p>Dana masuk langsung ke <b>{{.Holder}}</b> ({{.Bank}}{{if .Account}} · {{.Account}}{{end}}), atas nama jamaah. <b>Bukan ke rekening umrohku.</b> Umrohku hanya perantara pemesanan.</p>
+</div>
+{{end}}
+
+{{/* Bungkus halaman demo standar: <head> + nav. dict root = data halaman */}}
+{{define "demo_head"}}
+    {{template "page_head" .}}
+    <meta name="robots" content="noindex, nofollow">
+    <script src="/static/js/vendor/htmx-1.9.12.min.js?v={{assetV "js/vendor/htmx-1.9.12.min.js"}}" defer></script>
+{{end}}
+
+{{define "demo_footer"}}
+<footer class="mt-16 border-t border-emerald-100 bg-white/60">
+    <div class="max-w-5xl mx-auto px-4 py-8 pb-24 grid gap-6 sm:grid-cols-3 text-sm">
+        <div>
+            <p class="font-bold text-emerald-800">umrohku</p>
+            <p class="text-xs text-gray-500 mt-1 leading-relaxed">Pembanding & pemesanan paket umroh dari travel PPIU. Umrohku perantara; ibadah & perjalanan dijalankan travel. Dana jamaah selalu ke rekening penampungan travel.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+            <a href="/keuntungan" class="text-gray-600 hover:text-emerald-700">Keuntungan</a>
+            <a href="/undian" class="text-gray-600 hover:text-emerald-700">Undian umroh</a>
+            <a href="/mitra" class="text-gray-600 hover:text-emerald-700">Jadi travel mitra</a>
+            <a href="/tanah-suci" class="text-gray-600 hover:text-emerald-700">Layanan Tanah Suci</a>
+            <a href="/mandiri" class="text-gray-600 hover:text-emerald-700">Umrah mandiri</a>
+            <a href="/investor" class="text-gray-600 hover:text-emerald-700">Roadmap</a>
+            <a href="/syarat-ketentuan" class="text-gray-600 hover:text-emerald-700">Syarat & Ketentuan</a>
+            <a href="/privasi" class="text-gray-600 hover:text-emerald-700">Privasi</a>
+            <a href="/tentang" class="text-gray-600 hover:text-emerald-700">Tentang</a>
+        </div>
+        <div class="text-xs text-gray-500 leading-relaxed">
+            <p>PT umrohku <span class="text-gray-400">[dalam proses pendirian]</span></p>
+            <p>Terdaftar PSE Komdigi: <span class="text-gray-400">[dalam proses]</span></p>
+            <p class="mt-2 inline-block rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 font-semibold">Situs demo · data contoh</p>
+        </div>
+    </div>
+</footer>
+{{end}}
+
+{{define "need_login"}}
+<div class="rounded-2xl bg-white ring-1 ring-gray-200 p-6 text-center">
+    <p class="font-semibold text-gray-900">Masuk sebagai jamaah dulu</p>
+    <p class="text-sm text-gray-500 mt-1">Di demo cukup satu klik, tanpa password.</p>
+    <form method="POST" action="/demo/peran" class="mt-4"><input type="hidden" name="peran" value="jamaah"><input type="hidden" name="goto" value="{{.Path}}">
+        <button class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5">Masuk sebagai Siti (jamaah demo)</button></form>
+</div>
+{{end}}

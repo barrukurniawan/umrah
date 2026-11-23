@@ -128,3 +128,30 @@ Booking/DP, rekening penampungan, pembiayaan, dan voucher Tanah Suci **tetap dem
 ## 6. Urutan kerja yang disarankan
 Tahap 0 → #7 → #1 → #2/#6 → #3 → #4 → #5 → Tahap 5 (S&K, mitra, investor) → Tahap 2 → Tahap 3–4.
 Setelah Tahap 0 + Tahap 1 + Tahap 5 (±2 minggu), demo sudah cukup untuk pengajuan **Gelombang 1 (batas 25 Nov 2026)**. Fase 2–4 menyusul sebelum pengumuman.
+
+---
+
+## 7. Status (23 Nov 2026) · branch `startup-demo`
+
+Semua tahap di atas sudah bisa diklik di mode demo (`DEMO_MODE=1`). Cara deploy subdomain ada di [docs/DEPLOY_STARTUP_DEMO.md](docs/DEPLOY_STARTUP_DEMO.md).
+
+| Bagian | Route utama | Kode |
+|---|---|---|
+| Fondasi: pita demo, pengalih peran, Kotak masuk, reset 03.00 WIB, noindex | `/demo`, `/inbox` | `app/demo/{demo,roles,inbox,seed}.go` |
+| #1 PPIU, #6 data dari travel | kartu paket, `/travel/:slug`, `/admin/bisnis/mitra` | `app/demo/travels.go` |
+| #2 portal, #3 lead + tagihan, #5 langganan | `/portal/*` | `app/handlers/demo_portal.go`, `app/demo/{leads,billing}.go` |
+| #4 Promo Spesial dari tabel | `/admin/bisnis/promo` | `services.SetFeaturedSource` |
+| #7 Mau cicil? + simulasi | lembar di kartu paket, `/admin/bisnis/cicil` | `app/handlers/demo_jamaah.go` |
+| #8–#11 booking, DP, konfirmasi, promo, komisi | `/booking/*` | `app/demo/{booking,promo}.go`, `app/payments` |
+| #12 tabungan ke bank syariah mitra | `/tabungan/:id` | `SavingsLink` |
+| #13 rujukan pembiayaan + UU PDP | `/pembiayaan/ajukan`, `/akun/pembiayaan`, `/mitra-pembiayaan` | `app/demo/financing.go` |
+| Undian yang bisa diaudit | `/undian`, `/admin/bisnis/undian` | `app/draws` (+ tes), `app/demo/draw.go` |
+| Ulasan terverifikasi | `/booking/:id/ulasan`, `/travel/:slug#ulasan` | `Review` |
+| Fase 3 mandiri, Fase 4 Tanah Suci, toko mitra | `/mandiri`, `/tanah-suci`, `/toko` | `app/demo/shop.go`, `app/handlers/demo_tanahsuci.go` |
+| S&K, tentang, daftar mitra, roadmap | `/syarat-ketentuan`, `/tentang`, `/mitra`, `/investor` | `app/handlers/demo_public.go` |
+
+Produksi tetap sama (sudah diuji tanpa `DEMO_MODE`):
+- semua route demo 404,
+- tidak ada pita demo,
+- `output/all_zz_demo_portal.json` diabaikan,
+- Promo Spesial Alviandra tetap jalan dari map lama.

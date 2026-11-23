@@ -1,0 +1,31 @@
+<div class="flex flex-wrap items-center justify-between gap-3">
+    <select onchange="location.search='?bulan='+this.value" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">{{range .Periods}}<option value="{{.}}" {{if eq . $.Period}}selected{{end}}>{{periodLabel .}}</option>{{end}}</select>
+    <a href="/portal/tagihan?bulan={{.Period}}&cetak=1" target="_blank" class="rounded-lg ring-1 ring-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50">Cetak invoice</a>
+</div>
+<section class="mt-4 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div><p class="text-xs text-gray-500 font-mono">{{.Inv.Number}}</p><h2 class="text-lg font-bold text-gray-900">Tagihan {{.Inv.Label}}</h2>{{if not .Final}}<p class="text-xs text-amber-700">Periode berjalan · angka masih bertambah</p>{{end}}</div>
+        {{if .Inv.Paid}}<span class="rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1">Lunas {{tgl .Inv.Paid}}</span>{{else if .Final}}<span class="rounded-full bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1">Jatuh tempo {{tgl .Inv.DueDate}}</span>{{end}}
+    </div>
+    <table class="mt-4 w-full text-sm">
+        <tbody>
+        {{range .Inv.Lines}}
+        <tr class="border-b border-gray-100"><td class="py-2.5 pr-3"><span class="font-medium text-gray-800">{{.Label}}</span><span class="block text-xs text-gray-500">{{.Detail}}{{if .Unit}} · {{.Qty}} × Rp {{rp .Unit}}{{end}}</span></td>
+            <td class="py-2.5 text-right tabular-nums whitespace-nowrap {{if .Minus}}text-emerald-700{{end}}">{{if .Minus}}− {{end}}Rp {{rp .Amount}}</td></tr>
+        {{end}}
+        <tr><td class="pt-3 font-bold text-gray-900">Total tagihan</td><td class="pt-3 text-right text-xl font-bold tabular-nums">Rp {{rp .Inv.Total}}</td></tr>
+        </tbody>
+    </table>
+    {{if and .Final (not .Inv.Paid)}}<form method="POST" action="/portal/tagihan/bayar" class="mt-4"><input type="hidden" name="bulan" value="{{.Period}}"><button class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5">Bayar tagihan (simulasi)</button></form>{{end}}
+</section>
+
+{{if .Inv.Commissions}}
+<section class="mt-4 rounded-2xl bg-white ring-1 ring-gray-200 p-5 overflow-x-auto">
+    <h2 class="font-bold text-gray-900">Rincian komisi booking</h2>
+    <p class="text-xs text-gray-500">Komisi kotor − promo yang ditanggung umrohku = komisi bersih. Bila promo lebih besar dari komisi, selisihnya biaya promosi umrohku (tidak ditagih ke Anda).</p>
+    <table class="mt-3 w-full text-sm min-w-[640px]">
+        <thead><tr class="text-left text-xs text-gray-400 border-b"><th class="py-2 font-medium">Booking</th><th class="py-2 font-medium text-right">Nilai paket</th><th class="py-2 font-medium text-right">Komisi kotor</th><th class="py-2 font-medium text-right">Promo umrohku</th><th class="py-2 font-medium text-right">Komisi bersih</th></tr></thead>
+        <tbody>{{range .Inv.Commissions}}<tr class="border-b border-gray-50"><td class="py-2"><span class="font-mono text-xs">{{.Booking.Code}}</span> <span class="text-gray-500">{{.Booking.ContactName}}</span></td><td class="py-2 text-right tabular-nums">Rp {{rpShort .Booking.Total}}</td><td class="py-2 text-right tabular-nums">Rp {{rp .Gross}}</td><td class="py-2 text-right tabular-nums text-emerald-700">− Rp {{rp .Promo}}</td><td class="py-2 text-right tabular-nums font-semibold">Rp {{rp .Net}}{{if .PromoExtra}}<span class="block text-[10px] font-normal text-gray-400">+Rp {{rp .PromoExtra}} ditanggung umrohku</span>{{end}}</td></tr>{{end}}</tbody>
+    </table>
+</section>
+{{end}}

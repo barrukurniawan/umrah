@@ -1,0 +1,20 @@
+<div class="grid grid-cols-1 [&>*]:min-w-0 gap-4 md:grid-cols-3">
+    <section class="md:col-span-2 rounded-2xl bg-white ring-1 ring-gray-200 p-5">
+        <h2 class="font-bold text-gray-900">Posisi unggulan “Promo Spesial”</h2>
+        <p class="mt-1 text-sm text-gray-600">Paket Anda disematkan paling atas dengan label <span class="rounded-full bg-rose-100 text-rose-700 text-[11px] font-semibold px-2 py-0.5">🔥 Promo Spesial</span> untuk rentang budget tertentu. Dikelola admin umrohku sesuai pesanan Anda; tidak lagi ditulis di kode.</p>
+        {{with .Active}}<div class="mt-4 rounded-xl bg-rose-50 p-4 text-sm text-rose-900">Aktif untuk budget <b>Rp {{rpShort (i64 .MinBudget)}} – {{rpShort (i64 .MaxBudget)}}</b>, {{tgl .StartsAt}} s.d. {{tgl .EndsAt}} · Rp {{rp .PricePerDay}}/hari.</div>{{else}}<p class="mt-4 text-sm text-gray-500">Belum ada posisi aktif.</p>{{end}}
+        <ul class="mt-4 divide-y divide-gray-100 text-sm">{{range .Placements}}<li class="py-2 flex justify-between gap-2"><span>Rp {{rpShort (i64 .MinBudget)}}–{{rpShort (i64 .MaxBudget)}} · {{tgl .StartsAt}} – {{tgl .EndsAt}}</span><span class="tabular-nums">Rp {{rp .PricePerDay}}/hari</span></li>{{end}}</ul>
+    </section>
+    <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-5 text-sm">
+        <p class="text-xs text-gray-500">Biaya bulan ini</p>
+        <p class="text-2xl font-bold text-gray-900">Rp {{rp .Cost}}</p>
+        <p class="text-xs text-gray-500">{{.Days}} hari tayang</p>
+        {{if .Discount}}<p class="mt-3 text-xs text-emerald-700">Paket Premium: diskon 20% posisi unggulan.</p>{{end}}
+        <a href="/inbox" class="mt-4 block text-center rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5">Ajukan posisi baru</a>
+        <p class="mt-2 text-[11px] text-gray-400">Pengajuan diteruskan ke admin umrohku.</p>
+    </section>
+</div>
+<section class="mt-4 rounded-2xl bg-white ring-1 ring-gray-200 p-5 text-sm text-gray-600">
+    <h2 class="font-bold text-gray-900">Promo untuk jamaah (dibiayai umrohku)</h2>
+    <p class="mt-1">Diskon DP dan cashback pelunasan untuk jamaah Anda dibiayai umrohku dari komisinya. Harga paket Anda tidak berubah, dan potongannya terlihat di rincian komisi pada tagihan.</p>
+</section>

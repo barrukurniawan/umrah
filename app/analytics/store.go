@@ -141,3 +141,21 @@ func VisitorID(ip, ua string) string {
 	m.Write([]byte(day + "|" + ip + "|" + ua))
 	return hex.EncodeToString(m.Sum(nil))[:16]
 }
+
+// ImpressionsByPackage: jumlah tayangan kartu ("impr") per paket satu travel sejak waktu tertentu.
+func ImpressionsByPackage(travel string, since time.Time) map[string]int {
+	out := map[string]int{}
+	if DB == nil {
+		return out
+	}
+	type row struct {
+		Package string
+		N       int
+	}
+	var rows []row
+	DB.Model(&Event{}).Select("package, count(*) as n").Where("type = ? AND travel = ? AND ts >= ?", "impr", travel, since.Unix()).Group("package").Scan(&rows)
+	for _, r := range rows {
+		out[r.Package] = r.N
+	}
+	return out
+}

@@ -1,0 +1,12 @@
+<main class="max-w-md mx-auto px-4 py-12">
+    <div class="rounded-2xl bg-white ring-1 ring-gray-200 shadow-sm p-6 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl">🧕</div>
+        <h1 class="mt-3 text-xl font-bold text-gray-900">Masuk</h1>
+        <p class="text-sm text-gray-500 mt-1">Di umrohku.web.id jamaah masuk dengan Google. Di demo ini cukup satu klik sebagai jamaah contoh.</p>
+        <form method="POST" action="/demo/peran" class="mt-5">
+            <input type="hidden" name="peran" value="jamaah"><input type="hidden" name="goto" value="{{.Next}}">
+            <button class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">Masuk sebagai Siti Rahmawati (demo)</button>
+        </form>
+        <a href="/demo" class="inline-block mt-3 text-sm text-emerald-700 hover:underline">Lihat semua peran demo</a>
+    </div>
+</main>

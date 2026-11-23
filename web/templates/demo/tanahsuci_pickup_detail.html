@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {{template "ts_links" (dict "A" "pickup")}}
+        {{with .P}}
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+                <a href="/tanah-suci/pickup" class="text-sm text-emerald-700 hover:underline">← Pickup saya</a>
+                <h1 class="text-2xl font-bold text-gray-900 mt-2 font-mono">{{.Code}}</h1>
+                <p class="text-sm text-gray-500">{{.SlotLabel}}</p>
+            </div>
+            {{template "pill" (dict "S" .Status)}}
+        </div>
+
+        {{$s := .Status}}
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <ol class="grid grid-cols-3 gap-2 text-center text-xs">
+                <li class="rounded-xl px-2 py-3 {{if eq $s "dijadwalkan"}}bg-sky-600 text-white{{else}}bg-emerald-50 text-emerald-800{{end}}"><span class="block text-lg">🗓️</span>Dijadwalkan<span class="block text-[10px] opacity-80">{{tglJam .CreatedAt}}</span></li>
+                <li class="rounded-xl px-2 py-3 {{if eq $s "siap"}}bg-emerald-600 text-white{{else if eq $s "diambil"}}bg-emerald-50 text-emerald-800{{else}}bg-gray-50 text-gray-400{{end}}"><span class="block text-lg">📦</span>Siap diambil{{if .ReadyAt}}<span class="block text-[10px] opacity-80">{{tglJam .ReadyAt}}</span>{{end}}</li>
+                <li class="rounded-xl px-2 py-3 {{if eq $s "diambil"}}bg-emerald-600 text-white{{else}}bg-gray-50 text-gray-400{{end}}"><span class="block text-lg">✅</span>Sudah diambil{{if .TakenAt}}<span class="block text-[10px] opacity-80">{{tglJam .TakenAt}}</span>{{end}}</li>
+            </ol>
+            {{if eq $s "dijadwalkan"}}<p class="mt-4 text-sm text-gray-600">Toko sedang menyiapkan pesananmu. Kami kabari lewat WA saat barang siap diambil.</p>
+            {{else if eq $s "siap"}}<p class="mt-4 text-sm text-emerald-800 font-medium">Barang sudah siap! Tunjukkan kode <span class="font-mono">{{.Code}}</span> ke kasir.</p>
+            {{else}}<p class="mt-4 text-sm text-gray-600">Pesanan sudah diambil. Terima kasih.</p>{{end}}
+            <div class="mt-4 flex justify-center"><div class="rounded-2xl ring-1 ring-gray-200 p-2 bg-white">{{fakeQR .Code 140}}</div></div>
+            <p class="text-[11px] text-gray-400 text-center mt-1">QR ilustrasi, tidak bisa dipindai.</p>
+            <p class="text-[11px] text-gray-400 text-center mt-3">Status diubah oleh toko. Untuk mencoba, ganti peran ke toko ini lalu buka <a href="/toko/pickup" class="underline">Portal toko → Pickup</a>.</p>
+        </section>
+
+        {{with $.M}}
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5 text-sm">
+            <h2 class="font-semibold text-gray-900">Lokasi toko</h2>
+            <div class="mt-3 flex gap-3">
+                <span class="w-10 h-10 shrink-0 rounded-xl bg-rose-50 flex items-center justify-center text-lg">📍</span>
+                <div class="min-w-0">
+                    <p class="font-medium text-gray-900">{{.Name}}</p>
+                    <p class="text-gray-600">{{.Landmark}}, {{.City}}</p>
+                    <p class="text-xs text-gray-500">{{.Walk}} · buka {{.Hours}}</p>
+                </div>
+            </div>
+        </section>
+        {{end}}
+
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900">Barang</h2>
+            {{template "ts_lines" (dict "Lines" .Lines "Cur" "sar")}}
+            <div class="mt-2 pt-3 border-t border-gray-100 flex justify-between text-sm font-bold text-gray-900"><span>Total dibayar di toko</span><span class="tabular-nums">{{.TotalSAR}} SAR</span></div>
+            <p class="text-xs text-gray-500 mt-2">Bayar tunai atau potong dari <a href="/tanah-suci/voucher" class="text-emerald-700 underline">voucher prabayar</a>.</p>
+        </section>
+        {{end}}
+    </main>
+</body>
+</html>
