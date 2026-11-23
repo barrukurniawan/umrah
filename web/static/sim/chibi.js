@@ -8,6 +8,7 @@ const T = THREE;
 export const WALK_SPEED = 3.8;     // kecepatan jalan "alami" dalam satuan lokal rig
 export const RIG_SCALE = 0.78;     // tinggi rig dinormalkan supaya setinggi chibi lama (±2,45 satuan)
 const ARM_SPLAY = 0.2;            // lengan sedikit terbuka supaya tangan tidak menembus izar/gamis
+const smooth = (x) => { x = T.MathUtils.clamp(x, 0, 1); return x * x * (3 - 2 * x); };
 
 const DETAIL = {
   full: { sph: [24, 16], head: [48, 32], tube: [20, 6], lathe: 32, oval: 40, cap: [64, 22], hood: [24, 64], ridaRows: 18, locks: true, fine: true, lite: false },
@@ -26,21 +27,30 @@ function towel() {
   return towelTex;
 }
 
+// Preset tampilan (opts.look): 'beard' = pria rambut ikal bervolume, jenggot pendek + kumis, alis tebal, senyum
+// tertutup, kulit sawo matang, sabuk putih di pinggang izar. Opsi eksplisit menimpa preset.
+export const LOOKS = {
+  beard: { hairStyle: 'wavy', hairColor: '#1f1c20', beard: '#362c28', brows: 'thick', smile: 'closed', belt: '#f3efe6', skin: '#d8a173', freckles: false },
+};
+
 // gender 'm' | 'f'
 // opts: skin, shoulderBare (idhtiba'), outfit ('ihram' | 'casual'), cloth (warna gamis/baju), veil (warna khimar),
-//       detail ('full' | 'crowd'), bald, lambert (material ringan)
+//       detail ('full' | 'crowd'), bald, lambert (material ringan), look (preset di atas), hairStyle, beard, brows,
+//       smile, belt
 export function buildRig(gender, opts = {}) {
   const D = DETAIL[opts.detail || 'full'];
+  const look = { ...(LOOKS[opts.look] || {}), ...opts };
+  if (!look.skin) look.skin = LOOKS[opts.look] ? LOOKS[opts.look].skin : null;
   const isM = gender === 'm', ihram = isM && (opts.outfit || 'ihram') === 'ihram';
   const root = new T.Group(); root.name = 'Umrohku chibi';
   const body = new T.Group(); body.name = 'Body'; root.add(body);
   const Mat = opts.lambert ? T.MeshLambertMaterial : T.MeshStandardMaterial;
   const material = (color, roughness = 0.82, extra = {}) => new Mat(opts.lambert ? { color, ...extra } : { color, roughness, ...extra });
-  const skinHex = opts.skin || '#e8ad7e';
+  const skinHex = look.skin || '#e8ad7e';
   const skin = material(skinHex); skin.userData.skin = 1;
   const innerEar = material(new T.Color(skinHex).multiplyScalar(0.84)); innerEar.userData.skin = 0.84;
   const noseWarm = material(new T.Color(skinHex).multiplyScalar(0.95)); noseWarm.userData.skin = 0.95;
-  const hair = material('#24232a', 0.84);
+  const hair = material(look.hairColor || '#24232a', 0.84);
   const cream = material('#fff9eb'), iris = material('#392b27'), ink = material('#24202a'), mouth = material('#6b302c');
   const sphere = new T.SphereGeometry(1, D.sph[0], D.sph[1]);
 
@@ -68,12 +78,24 @@ export function buildRig(gender, opts = {}) {
   const leather = material('#7a5235', 0.7), sole = material('#4a3324', 0.8);
 
   // ---------- Badan ----------
+  let skirt = null; // izar / gamis: dideformasi mengikuti kaki saat berjalan (createChibi.drape), tidak digabung batchRigid
+  // Rapatkan baris profil lathe (y0..y1, tiap `step`) supaya kain bisa mengikuti dengkul/kaki di antara baris asli.
+  const densify = (prof, step, y0, y1) => {
+    if (D.lite) return prof;
+    const out = [prof[0]];
+    for (let i = 1; i < prof.length; i++) {
+      const a = prof[i - 1], b = prof[i];
+      if (b[1] > a[1] + step && a[1] >= y0 - 1e-6 && b[1] <= y1 + 1e-6) { const n = Math.ceil((b[1] - a[1]) / step); for (let k = 1; k < n; k++) { const t = k / n; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); } }
+      out.push(b);
+    }
+    return out;
+  };
   const torsoProfile = [[0, 0.78], [0.33, 0.78], [0.40, 0.80], [0.425, 0.88], [0.415, 1.10], [0.395, 1.38], [0.355, 1.51], [0.24, 1.60], [0.145, 1.63], [0, 1.63]];
   ell(body, 'Neck', skin, 0, 1.66, 0, 0.15, 0.20, 0.14);
   if (isM) {
     if (ihram) {
       // Izar: kain bawah dari pinggang sampai bawah lutut, sedikit mengembang supaya langkah tetap di dalam.
-      folds(lathe(body, 'Izar', [[0, 0.40], [0.47, 0.40], [0.485, 0.43], [0.475, 0.60], [0.445, 0.82], [0.425, 0.98], [0.41, 1.04], [0, 1.04]], cloth, 0.94), 11, 0.025, 0.95);
+      skirt = folds(lathe(body, 'Izar', densify([[0, 0.40], [0.47, 0.40], [0.485, 0.43], [0.475, 0.60], [0.445, 0.82], [0.425, 0.98], [0.41, 1.04], [0, 1.04]], 0.06, 0.43, 0.98), cloth, 0.94), 11, 0.025, 0.95);
       line(body, 'Izar front overlap', [[0.16, 1.02, 0.37], [0.175, 0.80, 0.39], [0.19, 0.43, 0.405]], 0.014, hem);
       if (!D.lite) lathe(body, 'Izar hem', [[0.465, 0.40], [0.49, 0.405], [0.49, 0.43], [0.48, 0.435]], hem, 0.94);
       // Rida: kain atas. Saat idhtiba' kain lewat di bawah ketiak kanan dan dilempar ke bahu kiri.
@@ -114,7 +136,13 @@ export function buildRig(gender, opts = {}) {
         // pita tepi kain mengikuti garis potong (depan, bahu kiri, belakang)
         const pts = edge.filter((_, i) => i % 2 === 0).map((p) => [p[0] * 1.015, p[1] - 0.004, p[2] * 1.015]);
         line(body, 'Rida folded edge', pts, 0.022, hem, true);
-      } else if (!bare) {
+      }
+      if (look.belt) { // sabuk di pinggang izar (menahan izar), gesper kecil di depan
+        const b = mesh(body, 'Belt', new T.TorusGeometry(0.478, 0.042, D.lite ? 6 : 10, D.lite ? 16 : 44), material(look.belt, 0.8));
+        b.rotation.x = Math.PI / 2; b.position.y = 0.975; b.scale.y = 0.94;
+        if (!D.lite) { const k = mesh(body, 'Buckle', new T.BoxGeometry(0.115, 0.095, 0.03), material('#e3ded3', 0.5)); k.position.set(0, 0.975, 0.478 * 0.94 + 0.03); }
+      }
+      if (!bare) {
         // ujung rida dililit: selempang lebar dari bahu kanan ke pinggang kiri + lipatan bahu
         line(body, 'Rida wrapped fold', [[-0.33, 1.52, 0.17], [-0.16, 1.40, 0.36], [0.06, 1.20, 0.37], [0.27, 1.02, 0.32], [0.40, 0.95, 0.12]], 0.03, hem);
         if (!D.lite) line(body, 'Rida soft fold', [[-0.12, 1.58, 0.24], [0.02, 1.44, 0.355], [0.20, 1.27, 0.355]], 0.012, hem);
@@ -128,7 +156,7 @@ export function buildRig(gender, opts = {}) {
     }
   } else {
     // Gamis panjang sampai mata kaki, longgar dan berlipat lembut.
-    folds(lathe(body, 'Gamis', [[0, 0.10], [0.52, 0.10], [0.545, 0.13], [0.54, 0.30], [0.49, 0.66], [0.44, 0.95], [0.42, 1.20], [0.40, 1.40], [0.34, 1.54], [0.22, 1.62], [0, 1.64]], cloth, 0.9), 13, 0.024, 1.0);
+    skirt = folds(lathe(body, 'Gamis', densify([[0, 0.10], [0.52, 0.10], [0.545, 0.13], [0.54, 0.30], [0.49, 0.66], [0.44, 0.95], [0.42, 1.20], [0.40, 1.40], [0.34, 1.54], [0.22, 1.62], [0, 1.64]], 0.07, 0.13, 0.95), cloth, 0.9), 13, 0.024, 1.0);
     if (!D.lite) lathe(body, 'Gamis hem', [[0.51, 0.10], [0.55, 0.105], [0.55, 0.135], [0.54, 0.14]], hem, 0.9);
   }
 
@@ -154,12 +182,12 @@ export function buildRig(gender, opts = {}) {
     for (let i = 0; i < p.count; i++) p.setZ(i, faceZ(p.getX(i), p.getY(i)) + offset);
     geo.computeVertexNormals(); return mesh(head, name, geo, mat);
   }
-  const eyes = [];
+  const eyes = [], browM = look.brows === 'thick' ? material('#1f1b19', 0.85) : hair;
   const cheekMats = D.fine ? [0.06, 0.07, 0.09].map((o) => material('#e79181', 0.82, { transparent: true, opacity: o, depthWrite: false })) : [];
   const freckle = D.fine ? material('#ba7466', 0.82, { transparent: true, opacity: 0.32, depthWrite: false }) : null;
   for (const s of [-1, 1]) {
     cheekMats.forEach((m, i) => faceOval(head, 'Cheek tint', m, s * 0.462, -0.207, 0.161 - i * 0.039, 0.109 - i * 0.025, 0.010 + i * 0.002));
-    if (freckle && opts.freckles !== false) for (const [x, y, r] of [[0.398, -0.181, 0.009], [0.437, -0.167, 0.007], [0.478, -0.191, 0.008], [0.447, -0.223, 0.008]]) faceOval(head, 'Freckle', freckle, s * x, y, r, r * 1.2, 0.018);
+    if (freckle && look.freckles !== false) for (const [x, y, r] of [[0.398, -0.181, 0.009], [0.437, -0.167, 0.007], [0.478, -0.191, 0.008], [0.447, -0.223, 0.008]]) faceOval(head, 'Freckle', freckle, s * x, y, r, r * 1.2, 0.018);
     const eye = new T.Group(); eye.name = 'Eye'; head.add(eye); eyes.push(eye);
     faceOval(eye, 'Eye white', cream, s * 0.282, -0.017, 0.140, 0.175, 0.010);
     faceOval(eye, 'Iris', iris, s * 0.270, -0.030, 0.098, 0.139, 0.014);
@@ -167,13 +195,18 @@ export function buildRig(gender, opts = {}) {
     faceOval(eye, 'Eye glint', cream, s * 0.267 - 0.027, 0.039, 0.028, 0.031, 0.023);
     if (D.fine) faceOval(eye, 'Small glint', cream, s * 0.267 + 0.033, -0.077, 0.010, 0.012, 0.024);
     eye.children.forEach((o) => o.geometry.translate(-s * 0.282, 0.017, 0)); eye.position.set(s * 0.282, -0.017, 0);
-    line(head, 'Brow', [[s * 0.398, 0.223, faceZ(s * 0.398, 0.223) + 0.013], [s * 0.302, 0.251, faceZ(s * 0.302, 0.251) + 0.013], [s * 0.201, 0.226, faceZ(s * 0.201, 0.226) + 0.013]], 0.022, hair);
+    if (look.brows === 'thick') line(head, 'Brow', [[s * 0.43, 0.205, faceZ(s * 0.43, 0.205) + 0.014], [s * 0.30, 0.248, faceZ(s * 0.30, 0.248) + 0.014], [s * 0.17, 0.218, faceZ(s * 0.17, 0.218) + 0.014]], 0.034, browM);
+    else line(head, 'Brow', [[s * 0.398, 0.223, faceZ(s * 0.398, 0.223) + 0.013], [s * 0.302, 0.251, faceZ(s * 0.302, 0.251) + 0.013], [s * 0.201, 0.226, faceZ(s * 0.201, 0.226) + 0.013]], 0.022, hair);
   }
   ell(head, 'Nose', skin, 0, -0.139, faceZ(0, -0.139) + 0.022, 0.063, 0.043, 0.045);
   if (!D.lite) ell(head, 'Nose tip', noseWarm, 0, -0.146, faceZ(0, -0.146) + 0.056, 0.038, 0.025, 0.020);
   const ms = new T.Shape(); ms.moveTo(-0.209, -0.284); ms.quadraticCurveTo(0, -0.325, 0.209, -0.284); ms.bezierCurveTo(0.196, -0.394, 0.111, -0.452, 0, -0.453); ms.bezierCurveTo(-0.114, -0.45, -0.195, -0.393, -0.209, -0.284);
-  faceShape('Smile', ms, mouth, 0.010);
-  if (D.fine) {
+  const closedSmile = look.smile === 'closed';
+  if (closedSmile) { // senyum tertutup: garis bibir melengkung
+    const z = (x, y) => faceZ(x, y) + 0.012;
+    line(head, 'Smile line', [[-0.205, -0.292, z(-0.205, -0.292)], [-0.10, -0.338, z(-0.10, -0.338)], [0, -0.352, z(0, -0.352)], [0.10, -0.338, z(0.10, -0.338)], [0.205, -0.292, z(0.205, -0.292)]], 0.017, mouth);
+  } else faceShape('Smile', ms, mouth, 0.010);
+  if (D.fine && !closedSmile) {
     const teeth = new T.Shape(); teeth.moveTo(-0.171, -0.302); teeth.quadraticCurveTo(0, -0.334, 0.172, -0.302); teeth.lineTo(0.149, -0.333); teeth.quadraticCurveTo(0, -0.361, -0.149, -0.333); teeth.closePath();
     faceShape('Teeth', teeth, cream, 0.014);
     const tongue = new T.Shape(); tongue.moveTo(-0.096, -0.422); tongue.quadraticCurveTo(-0.090, -0.385, 0.007, -0.389); tongue.quadraticCurveTo(0.086, -0.388, 0.109, -0.421); tongue.quadraticCurveTo(0.009, -0.467, -0.096, -0.422);
@@ -185,25 +218,78 @@ export function buildRig(gender, opts = {}) {
       ell(head, 'Ear', skin, s * 0.755, -0.12, 0.005, 0.178, 0.204, 0.120);
       if (!D.lite) ell(head, 'Ear inset', innerEar, s * 0.801, -0.116, 0.099, 0.094, 0.126, 0.029);
     }
-    if (!opts.bald) addHair();
-    else ell(head, 'Shaved scalp shade', material(new T.Color(skinHex).lerp(new T.Color('#3a3330'), 0.18)), 0, 0.12, -0.02, 0.79, 0.74, 0.73);
+    if (look.beard) addBeard(look.beard);
+    if (opts.bald) ell(head, 'Shaved scalp shade', material(new T.Color(skinHex).lerp(new T.Color('#3a3330'), 0.18)), 0, 0.12, -0.02, 0.79, 0.74, 0.73);
+    else if (look.hairStyle === 'wavy') addWavyHair();
+    else addHair();
   } else addHijab();
 
-  // Rambut pendek (rig asli): lapisan dasar + helai membulat (hanya detail penuh).
-  function addHair() {
+  // Jenggot pendek penuh + kumis: kulit tebal mengikuti permukaan kepala (rahang, dagu, cambang sampai depan telinga),
+  // menyatu ke kulit di tepi atasnya; tepi atas di bawah mulut lalu naik ke cambang.
+  function addBeard(color) {
+    const bm = material(color, 0.9), P = headPower, Hh = headHeight, Dd = headDepth;
+    const rAt = (y, a) => { const sn = Math.abs(Math.sin(a)), cs = Math.abs(Math.cos(a)), fw = faceWidth(y), num = Math.max(0, 1 - Math.abs(y / Hh) ** P); return (num / ((sn / fw) ** P + (cs / Dd) ** P)) ** (1 / P); };
+    // tepi atas: di bawah mulut, naik miring dari sudut mulut ke pipi, cambang sampai atas telinga, lalu turun di belakang telinga
+    const topAt = (a) => -0.465 + 0.30 * smooth((Math.abs(a) - 0.32) / 0.6) + 0.12 * smooth((Math.abs(a) - 1.12) / 0.25) - 0.45 * smooth((Math.abs(a) - 1.45) / 0.28);
+    const NA = D.fine ? 44 : 14, NV = D.fine ? 9 : 4, pos = [], idx = [], n = new T.Vector3();
+    for (let i = 0; i <= NA; i++) {
+      const a = -1.78 + 3.56 * i / NA, yt = topAt(a), yb = -0.695, chin = Math.exp(-((a / 0.7) ** 2));
+      for (let j = 0; j <= NV; j++) {
+        const v = j / NV, y = yb + (yt - yb) * v, r = rAt(y, a), x = r * Math.sin(a), z = r * Math.cos(a), fw = faceWidth(y);
+        // normal permukaan superelipsoid (gradien implisit)
+        n.set(Math.sign(x) * Math.abs(x / fw) ** (P - 1) / fw, Math.sign(y) * Math.abs(y / Hh) ** (P - 1) / Hh, Math.sign(z) * Math.abs(z / Dd) ** (P - 1) / Dd).normalize();
+        const t = (0.03 + 0.025 * chin * (1 - v)) * smooth((1 - v) / 0.3); // tebal: 0 di tepi atas, menebal ke dagu
+        pos.push(x + n.x * t, y + n.y * t, z + n.z * t);
+        if (i < NA && j < NV) { const A = i * (NV + 1) + j, B = A + NV + 1; idx.push(A, B, A + 1, A + 1, B, B + 1); }
+      }
+    }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); mesh(head, 'Beard', g, bm);
+    if (!look.mustache) return;
+    // kumis (opsional, look.mustache): bentuk melengkung di atas bibir, menebal ke tengah
+    const mu = new T.Shape(); mu.moveTo(-0.265, -0.252); mu.quadraticCurveTo(-0.13, -0.192, 0, -0.212); mu.quadraticCurveTo(0.13, -0.192, 0.265, -0.252); mu.quadraticCurveTo(0.16, -0.286, 0, -0.274); mu.quadraticCurveTo(-0.16, -0.286, -0.265, -0.252);
+    faceShape('Mustache', mu, bm, 0.02);
+  }
+
+  // Lapisan dasar rambut: topi mengikuti kepala sampai batas sudut `limitFn(front, back)` (radian dari ubun-ubun).
+  function capLayer(k, limitFn, y0) {
     const positions = [], uvs = [], indices = [], around = D.cap[0], rows = D.cap[1];
     for (let row = 0; row <= rows; row++) for (let col = 0; col <= around; col++) {
       const phi = (col / around) * Math.PI * 2, front = Math.max(0, Math.cos(phi)), back = Math.max(0, -Math.cos(phi));
-      const limit = 1.82 + 0.25 * back ** 2 - 0.68 * front ** 3, theta = 0.001 + (limit - 0.001) * row / rows;
-      const k = D.locks ? 1 : 1.04; // tanpa helai: lapisan dasar sedikit lebih tebal
-      positions.push(0.81 * k * sp(Math.sin(theta) * Math.sin(phi), 0.82), 0.065 + 0.785 * k * sp(Math.cos(theta), 0.82), 0.76 * k * sp(Math.sin(theta) * Math.cos(phi), 0.82));
+      const limit = limitFn(front, back), theta = 0.001 + (limit - 0.001) * row / rows;
+      positions.push(0.81 * k * sp(Math.sin(theta) * Math.sin(phi), 0.82), y0 + 0.785 * k * sp(Math.cos(theta), 0.82), 0.76 * k * sp(Math.sin(theta) * Math.cos(phi), 0.82));
       uvs.push(col / around, 1 - row / rows);
       if (row < rows && col < around) { const a = row * (around + 1) + col, b = a + around + 1; indices.push(a, b, a + 1, a + 1, b, b + 1); }
     }
     const hg = new T.BufferGeometry(); hg.setAttribute('position', new T.Float32BufferAttribute(positions, 3)); hg.setAttribute('uv', new T.Float32BufferAttribute(uvs, 2)); hg.setIndex(indices); hg.computeVertexNormals();
     mesh(head, 'Hair underlayer', hg, hair);
+  }
+  // Rambut ikal bervolume (preset 'beard'): lapisan dasar lebih tebal & turun menutup atas telinga, helai berkelok (S)
+  // mengelilingi kepala, jambul terangkat di ubun-ubun, poni menyapu ke samping.
+  function addWavyHair() {
+    capLayer(1.03, (front, back) => 1.9 + 0.2 * back ** 2 - 0.78 * front ** 3, 0.075); // dahi terbuka, sisi menutup setengah telinga
     if (!D.locks) return;
-    function hairLock(points, width, depth) {
+    const R = (theta, a, k = 1) => [0.83 * k * sp(Math.sin(theta) * Math.sin(a), 0.82), 0.075 + 0.81 * k * sp(Math.cos(theta), 0.82), 0.785 * k * sp(Math.sin(theta) * Math.cos(a), 0.82)];
+    for (let i = 0; i < 13; i++) {
+      const phi = 0.62 + i * (Math.PI * 2 - 1.24) / 12, back = Math.max(0, -Math.cos(phi)), front = Math.max(0, Math.cos(phi));
+      const end = 1.9 + 0.25 * back - 0.7 * front, w = (i % 2 ? 1 : -1) * 0.12;
+      const th = [0.2, 0.6, 1.0, 1.4, end], da = [-0.05, w * 0.5, -w * 0.5, w * 0.55, w * 0.15], kk = [1.0, 1.05, 1.02, 1.04, 1.07];
+      hairLock(th.map((t, k) => R(t, phi + da[k], kk[k])), 0.165, 0.105);
+    }
+    for (const [phi, lift] of [[-0.55, 1.15], [-0.1, 1.18], [0.35, 1.15], [0.8, 1.12], [-0.95, 1.1], [2.4, 1.1], [3.9, 1.1]]) {
+      hairLock([R(0.12, phi - 0.2, 1.0), R(0.42, phi + 0.15, lift), R(0.78, phi + 0.05, lift - 0.05), R(1.08, phi + 0.3, 1.01)], 0.16, 0.11);
+    }
+    hairLock([R(0.35, 0.45, 1.02), R(0.68, 0.25, 1.07), R(1.0, -0.05, 1.05), R(1.28, -0.35, 1.0)], 0.17, 0.11);
+    hairLock([R(0.4, 0.8, 1.02), R(0.72, 0.6, 1.07), R(1.02, 0.3, 1.05), R(1.3, 0.0, 1.0)], 0.16, 0.11);
+    hairLock([R(0.4, -0.3, 1.02), R(0.75, -0.5, 1.07), R(1.05, -0.75, 1.04), R(1.28, -0.95, 1.0)], 0.155, 0.105);
+  }
+
+  // Rambut pendek (rig asli): lapisan dasar + helai membulat (hanya detail penuh).
+  function addHair() {
+    capLayer(D.locks ? 1 : 1.04, (front, back) => 1.82 + 0.25 * back ** 2 - 0.68 * front ** 3, 0.065); // tanpa helai: lapisan dasar sedikit lebih tebal
+    if (!D.locks) return;
+    locks();
+  }
+  function hairLock(points, width, depth) {
       const curve = new T.CatmullRomCurve3(points.map((p) => new T.Vector3(...p))), pos = [], uv = [], idx = [];
       const steps = 20, sides = 10;
       for (let i = 0; i <= steps; i++) {
@@ -219,7 +305,8 @@ export function buildRig(gender, opts = {}) {
         }
       }
       const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals(); mesh(head, 'Hair lock', g, hair);
-    }
+  }
+  function locks() {
     for (let i = 0; i < 10; i++) {
       const phi = 1.03 + i * (Math.PI * 2 - 2.06) / 9, back = Math.max(0, -Math.cos(phi)), end = 1.86 + 0.20 * back;
       hairLock([0.25, 0.78, 1.30, end].map((theta, k) => { const a = phi - 0.18 + k * 0.06; return [0.83 * sp(Math.sin(theta) * Math.sin(a), 0.82), 0.070 + 0.81 * sp(Math.cos(theta), 0.82), 0.785 * sp(Math.sin(theta) * Math.cos(a), 0.82)]; }), 0.151, 0.084);
@@ -340,7 +427,8 @@ export function buildRig(gender, opts = {}) {
       ell(foot, 'Shoe sole', material('#5c524c', 0.8), 0, -0.105, 0.10, 0.176, 0.035, 0.278);
     }
   }
-  return { root, body, head, arms, legs, elbows, wrists, knees, feet, eyes, material, skin };
+  if (skirt) skirt.userData.keep = true;
+  return { root, body, head, arms, legs, elbows, wrists, knees, feet, eyes, material, skin, skirt };
 }
 
 // Gabungkan mesh per material di tiap pivot kaku (lebih sedikit draw call), seperti batchRigid wedding-summer.
@@ -367,7 +455,7 @@ function mergeGeos(parts) {
 function batchRigid(group) {
   group.children.filter((o) => o.isGroup).forEach(batchRigid);
   const byMat = new Map();
-  for (const o of [...group.children]) if (o.isMesh) { const a = byMat.get(o.material) || []; a.push(o); byMat.set(o.material, a); }
+  for (const o of [...group.children]) if (o.isMesh && !o.userData.keep) { const a = byMat.get(o.material) || []; a.push(o); byMat.set(o.material, a); }
   for (const [m, objs] of byMat) {
     if (objs.length < 2) continue;
     const parts = objs.map((o) => { o.updateMatrix(); const g = o.geometry.clone(); g.applyMatrix4(o.matrix); return { geometry: g }; });
@@ -376,9 +464,8 @@ function batchRigid(group) {
   }
 }
 
-const smooth = (x) => { x = T.MathUtils.clamp(x, 0, 1); return x * x * (3 - 2 * x); };
-
 // Karakter pemain: rig lengkap + animasi jalan/lari (IK kaki menapak) + isyarat tangan.
+export const CUP_POSE = { ax: -0.45, az: -1.0, ay: 0.45, ex: -1.1, wx: 0.0, wz: 0.3 }; // pose 'cup' (bisa ditimpa lewat api.cupPose)
 export function createChibi(gender, opts = {}) {
   const rig = buildRig(gender, opts);
   const { root, body, head, arms, legs, elbows, wrists, knees, feet, eyes } = rig;
@@ -387,6 +474,42 @@ export function createChibi(gender, opts = {}) {
   const invBody = new T.Matrix4(), target = new T.Vector3(), delta = new T.Vector3();
   const chain = new T.Quaternion(), footQ = new T.Quaternion(), axisX = new T.Vector3(1, 0, 0);
   const thigh = 0.345, shinL = 0.335;
+  // Kain (izar / gamis) mengikuti kaki: titik kain di bawah pinggang yang terlalu dekat dengan sumbu paha / betis /
+  // kaki didorong menjauh, jadi dengkul dan kaki tidak menembus kain saat melangkah (kain menggembung ke depan/belakang).
+  const skirt = rig.skirt, sk = skirt && { pos: skirt.geometry.attributes.position, base: skirt.geometry.attributes.position.array.slice(), n: skirt.geometry.attributes.position.count };
+  const legPts = [0, 1].map(() => [new T.Vector3(), new T.Vector3(), new T.Vector3()]), _lq = new T.Quaternion(), _ft = new T.Vector3(), _fa = new T.Vector3();
+  const female = gender === 'f';
+  function drape() {
+    if (!sk) return;
+    if (!api.drapeOn) { sk.pos.array.set(sk.base); sk.pos.needsUpdate = true; return; } // uji A/B: kain diam
+    for (let i = 0; i < 2; i++) {
+      const [H, K, F] = legPts[i];
+      H.copy(legs[i].position);
+      K.set(0, -thigh, 0).applyQuaternion(legs[i].quaternion).add(H);
+      _lq.copy(legs[i].quaternion).multiply(knees[i].quaternion);
+      F.set(0, -shinL, 0).applyQuaternion(_lq).add(K);
+    }
+    const b = sk.base, p = sk.pos, sz = skirt.scale.z || 1; // geometri lathe dipipihkan lewat skala mesh: hitung di ruang badan
+    for (let v = 0; v < sk.n; v++) {
+      let x = b[v * 3], z = b[v * 3 + 2] * sz; const y = b[v * 3 + 1];
+      const w = smooth((1.02 - y) / 0.08); // sampai pinggang (dengkul bisa naik setinggi pinggul saat lari); memudar di atasnya
+      if (w > 0) for (let i = 0; i < 2; i++) for (const ys of [y - 0.04, y, y + 0.04]) { // juga ketinggian di antara baris kain
+        const [H, K, F] = legPts[i];
+        // kaki = kapsul paha (H-K) + bola dengkul (K) + kapsul betis (K-F) + kapsul telapak (dari pergelangan ke depan)
+        cap(H, K, 0.135); cap(K, K, 0.13); cap(K, F, female ? 0.165 : 0.14);
+        _ft.set(F.x, F.y - 0.04, F.z + 0.3); _fa.set(F.x, F.y - 0.04, F.z - 0.03); cap(_fa, _ft, female ? 0.17 : 0.15);
+        function cap(A, B, rl) { // irisan mendatar kapsul A-B pada ketinggian ys: lingkaran pusat P, jari-jari mengecil di ujung (tutup bola)
+          const dy = B.y - A.y, t = Math.abs(dy) > 1e-3 ? T.MathUtils.clamp((ys - A.y) / dy, 0, 1) : 0.5;
+          const px = A.x + (B.x - A.x) * t, py = A.y + dy * t, pz = A.z + (B.z - A.z) * t, off = ys - py;
+          const re2 = rl * rl - off * off; if (re2 <= 0) return;
+          const need = Math.sqrt(re2) + 0.035, r = Math.hypot(x, z) || 1e-6, ux = x / r, uz = z / r, pp = ux * px + uz * pz, perp2 = px * px + pz * pz - pp * pp;
+          if (perp2 < need * need) { const tt = pp + Math.sqrt(need * need - perp2); if (tt > r) { const k = (tt - r) * w; x += ux * k; z += uz * k; } } // dorong keluar saja
+        }
+      }
+      p.setXYZ(v, x, y, z / sz);
+    }
+    p.needsUpdate = true; skirt.geometry.computeVertexNormals();
+  }
   function poseLeg(i, z, lift, pitch) {
     const c = Math.cos(pitch), s = Math.sin(pitch);
     const support = 0.114 * c + 0.101 * s + Math.hypot(0.041 * c, 0.288 * s);
@@ -401,7 +524,7 @@ export function createChibi(gender, opts = {}) {
     chain.copy(body.quaternion).multiply(legs[i].quaternion).multiply(knees[i].quaternion).invert();
     footQ.setFromAxisAngle(axisX, pitch); feet[i].quaternion.copy(chain).multiply(footQ);
   }
-  // m: { dt, speed, distance | cadence, turn, run, gesture: null | 'right' | 'doa' }  (semua dalam satuan lokal rig)
+  // m: { dt, speed, distance | cadence, turn, run, gesture: null | 'right' | 'doa' | 'cup' }  (semua dalam satuan lokal rig)
   function animate(m) {
     const dt = T.MathUtils.clamp(m.dt || 0, 0, 0.05); time += dt;
     const speed = Math.max(0, m.speed || 0), dist = Math.max(0, m.distance ?? speed * dt);
@@ -437,11 +560,15 @@ export function createChibi(gender, opts = {}) {
       wrists[i].rotation.x = 0.04 * Math.sin(ang - sign * 0.4) * blend;
       wrists[i].rotation.z = sign * 0.035 * Math.sin(ang - 0.45) * blend;
     }
+    drape();
     // Isyarat: 'right' = tangan kanan terangkat ke arah Hajar Aswad; 'doa' = kedua telapak terangkat di depan dada.
     if (gestW > 0.001) {
       const w = gestW, L = (o, prop, v) => (o.rotation[prop] += (v - o.rotation[prop]) * w);
       if (gestKind === 'doa') {
         for (let i = 0; i < 2; i++) { const s = i === 0 ? -1 : 1; L(arms[i], 'x', -1.2); L(arms[i], 'z', s * 0.32); L(arms[i], 'y', 0); L(elbows[i], 'x', -1.2); L(wrists[i], 'x', 0.7); L(wrists[i], 'z', -s * 0.5); }
+      } else if (gestKind === 'cup') { // 'cup': tumbler di tangan kanan diangkat di samping dada (di luar bayangan kepala), menghadap kamera
+        const c = api.cupPose || CUP_POSE;
+        L(arms[0], 'x', c.ax); L(arms[0], 'z', c.az); L(arms[0], 'y', c.ay); L(elbows[0], 'x', c.ex); L(wrists[0], 'x', c.wx); L(wrists[0], 'z', c.wz);
       } else {
         L(arms[0], 'x', -2.35); L(arms[0], 'z', -0.22); L(arms[0], 'y', 0); L(elbows[0], 'x', -0.25); L(wrists[0], 'x', 0.5);
       }
@@ -451,8 +578,9 @@ export function createChibi(gender, opts = {}) {
     const lid = Math.max(0.045, 1 - Math.max(pulse(3.65, 0.10), pulse(3.94, 0.08)));
     eyes.forEach((e) => (e.scale.y = lid));
   }
+  const api = { ...rig, animate, drapeOn: true };
   animate({ dt: 0 });
-  return { ...rig, animate };
+  return api;
 }
 
 // ---------- Kerumunan jamaah: chibi ringan, di-instance per jenis pakaian ----------
@@ -487,8 +615,9 @@ function crowdMaterial() {
 }
 export const SKIN_TONES = ['#f1c7a1', '#e8ad7e', '#d39a6e', '#b07a52', '#8a5a3a'];
 
-// kinds: [{ gender, opts, count }]; return { add(person), update(list, dt) }
-// Tiap person: { kind, x, z, yaw, scale, phase, speed(world/s), skin }
+// kinds: [{ gender, opts, count }]; return { add(person), update(dt, cull?), people, thin }
+// Tiap person: { kind, x, z, yaw, scale, phase, speed(world/s), skin, y? (tinggi lantai), pose? ('sit' = duduk selonjor) }
+// cull(person) -> false: tidak digambar (open world: jauh / di belakang kamera). Tanpa cull: semua digambar (tawaf, sa'i).
 export function createCrowd(scene, kinds) {
   const shadowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,.32)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); const t = new T.CanvasTexture(c); return t; })();
   const shadowGeo = new T.PlaneGeometry(1, 1); shadowGeo.rotateX(-Math.PI / 2);
@@ -506,7 +635,7 @@ export function createCrowd(scene, kinds) {
     const bodyGeo = bakeGroup(rig.body, pivots);
     const armGeo = rig.arms.map((a) => bakeGroup(a)), legGeo = rig.legs.map((l) => bakeGroup(l));
     const meshes = { body: mk(bodyGeo), arms: armGeo.map(mk), legs: legGeo.map(mk) };
-    return { ...k, meshes, armPos: rig.arms.map((a) => a.position.clone()), armRotZ: rig.arms.map((a) => a.rotation.z), legPos: rig.legs.map((l) => l.position.clone()), n: 0 };
+    return { ...k, meshes, armPos: rig.arms.map((a) => a.position.clone()), armRotZ: rig.arms.map((a) => a.rotation.z), legPos: rig.legs.map((l) => l.position.clone()), n: 0, used: 0, slotSkin: [] };
   });
   let keep = 1; // bagian jamaah yang digambar (mode ringan: 0.5)
   const people = [], _m = new T.Matrix4(), _r = new T.Matrix4(), _q = new T.Quaternion(), _p = new T.Vector3(), _s = new T.Vector3(), _e = new T.Euler(), col = new T.Color();
@@ -518,28 +647,34 @@ export function createCrowd(scene, kinds) {
     return person;
   }
   const shown = (k) => Math.ceil(k.n * keep);
-  function update(dt) {
+  function update(dt, cull) {
     let vis = 0;
+    if (cull) for (const k of K) k.used = 0;
     for (const p of people) {
       const k = K[p.kind], sc = p.scale * RIG_SCALE;
       if (p.slot >= shown(k)) continue;
       const moving = p.speed > 0.05, rate = moving ? 1.25 + p.speed * 0.32 : 0; // langkah per detik (siklus)
       p.phase += dt * rate * Math.PI * 2;
+      if (cull && !cull(p)) continue;
+      // Dengan cull, slot diisi rapat tiap frame (hanya yang terlihat dikirim ke GPU); warna kulit ikut slotnya.
+      const slot = cull ? k.used++ : p.slot;
+      if (cull && k.slotSkin[slot] !== p.skin) { k.slotSkin[slot] = p.skin; col.set(p.skin || SKIN_TONES[0]); for (const m of [k.meshes.body, ...k.meshes.arms, ...k.meshes.legs]) { m.setColorAt(slot, col); m.instanceColor.needsUpdate = true; } }
+      const sit = p.pose === 'sit', y0 = p.y || 0;
       const sw = moving ? Math.sin(p.phase) : 0, bob = moving ? Math.abs(Math.cos(p.phase)) * 0.035 : 0;
       _q.setFromAxisAngle(_s.set(0, 1, 0), p.yaw);
-      _m.compose(_p.set(p.x, bob * sc, p.z), _q, _s.set(sc, sc, sc));
-      k.meshes.body.setMatrixAt(p.slot, _m);
+      _m.compose(_p.set(p.x, y0 + (sit ? -0.675 : bob) * sc, p.z), _q, _s.set(sc, sc, sc));
+      k.meshes.body.setMatrixAt(slot, _m);
       const ampL = k.gender === 'f' ? 0.32 : 0.5, ampA = 0.32;
       for (let i = 0; i < 2; i++) {
         const sgn = i === 0 ? 1 : -1;
-        _r.makeRotationFromEuler(_e.set(-sgn * sw * ampL, 0, 0)); _r.setPosition(k.legPos[i]);
-        k.meshes.legs[i].setMatrixAt(p.slot, _r.premultiply(_m));
-        _r.makeRotationFromEuler(_e.set(sgn * sw * ampA, 0, k.armRotZ[i])); _r.setPosition(k.armPos[i]);
-        k.meshes.arms[i].setMatrixAt(p.slot, _r.premultiply(_m));
+        _r.makeRotationFromEuler(_e.set(sit ? -1.5 : -sgn * sw * ampL, 0, sit ? sgn * 0.08 : 0)); _r.setPosition(k.legPos[i]);
+        k.meshes.legs[i].setMatrixAt(slot, _r.premultiply(_m));
+        _r.makeRotationFromEuler(_e.set(sit ? -0.7 : sgn * sw * ampA, 0, k.armRotZ[i])); _r.setPosition(k.armPos[i]);
+        k.meshes.arms[i].setMatrixAt(slot, _r.premultiply(_m));
       }
-      _m.compose(_p.set(p.x, 0.02, p.z), _q.identity(), _s.set(1.5 * sc, 1, 1.5 * sc)); shadow.setMatrixAt(vis++, _m);
+      _m.compose(_p.set(p.x, y0 + 0.02, p.z), _q.identity(), _s.set(1.5 * sc, 1, 1.5 * sc)); shadow.setMatrixAt(vis++, _m);
     }
-    for (const k of K) for (const m of [k.meshes.body, ...k.meshes.arms, ...k.meshes.legs]) { m.count = shown(k); m.instanceMatrix.needsUpdate = true; }
+    for (const k of K) for (const m of [k.meshes.body, ...k.meshes.arms, ...k.meshes.legs]) { m.count = cull ? k.used : shown(k); m.visible = m.count > 0; m.instanceMatrix.needsUpdate = true; }
     shadow.count = vis; shadow.instanceMatrix.needsUpdate = true;
   }
   // Mode ringan: hanya sebagian jamaah yang digambar (urutan masuk acak, jadi sebarannya tetap merata).

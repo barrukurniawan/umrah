@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#ebf1ec"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(110 40) rotate(-4 90 110)">
+<!-- halaman -->
+<rect x="14" y="10" width="176" height="226" rx="6" fill="#efeadb"/>
+<path d="M20 236 H188 M22 240 H188" stroke="#dcd5c2" stroke-width="2"/>
+<!-- sampul -->
+<rect x="0" y="0" width="176" height="226" rx="8" fill="#1d6a46"/>
+<rect x="0" y="0" width="176" height="226" rx="8" fill="url(#gl)"/>
+<rect x="0" y="0" width="14" height="226" rx="4" fill="#15502f"/>
+<!-- bingkai emas -->
+<rect x="26" y="18" width="134" height="190" rx="6" fill="none" stroke="#d9b35a" stroke-width="2.5"/>
+<rect x="33" y="25" width="120" height="176" rx="4" fill="none" stroke="#d9b35a" stroke-width="1" opacity=".7"/>
+<!-- ornamen bintang -->
+<path d="M93 60 l5 10 11 1.5 -8 7.5 2 11 -10 -5.5 -10 5.5 2 -11 -8 -7.5 11 -1.5z" fill="#d9b35a"/>
+<path d="M78 56 a16 16 0 1 0 30 0 a13 13 0 1 1 -30 0" fill="#d9b35a" opacity=".9"/>
+<text x="84" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#f3e6bf">Doa &amp; Dzikir</text>
+<text x="84" y="140" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#f3e6bf">Umrah</text>
+<path d="M58 152 H128" stroke="#d9b35a" stroke-width="1.5"/>
+<text x="84" y="172" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="8.5" fill="#cfe3d6" letter-spacing="1">LENGKAP &amp; PRAKTIS</text>
+<!-- pembatas pita -->
+<path d="M158 0 V240 L151 231 L144 240 V0 Z" fill="#c23b4a"/>
+</g>
+
+</svg>

@@ -24,6 +24,13 @@ type PrepItem struct {
 	Desc    template.HTML   `json:"desc"`
 	Tips    []template.HTML `json:"tips"`
 	Link    *PrepLink       `json:"link"`
+	Images  []PrepImage     `json:"images"`
+}
+
+// PrepImage: ilustrasi contoh (berkas di web/static/persiapan/), tampil sebagai galeri.
+type PrepImage struct {
+	Src     string `json:"src"`
+	Caption string `json:"caption"`
 }
 
 type PrepSection struct {

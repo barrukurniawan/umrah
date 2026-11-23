@@ -10,10 +10,18 @@
     <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.min.js"}}</script>
     <!-- Setelah importmap: unduh three.js & modul simulasi paralel, siapkan bagian lainnya -->
     <link rel="modulepreload" href="https://unpkg.com/three@0.160.0/build/three.module.min.js" crossorigin>
-    <link rel="modulepreload" href="/static/sim/common.js?v=30">
-    <link rel="modulepreload" href="/static/sim/chibi.js?v=30">
-    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=30">
-    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=30">
+    <link rel="modulepreload" href="/static/sim/common.js?v=49">
+    <link rel="modulepreload" href="/static/sim/chibi.js?v=49">
+    {{if ne .Part "sai"}}<link rel="modulepreload" href="/static/sim/kaaba.js?v=31">{{end}}
+    {{if eq .Part "haram"}}<link rel="modulepreload" href="/static/sim/nav.js?v=49">
+    <link rel="modulepreload" href="/static/sim/haram-geom.js?v=49">
+    <link rel="modulepreload" href="/static/sim/haram-kit.js?v=49">
+    <link rel="modulepreload" href="/static/sim/haram-world.js?v=49">
+    <link rel="modulepreload" href="/static/sim/haram-crowd.js?v=49">
+    <link rel="modulepreload" href="/static/sim/doa.js?v=49">
+    <link rel="preload" href="/static/sim/data/haram.json?v=49" as="fetch" crossorigin>{{end}}
+    <link rel="modulepreload" href="/static/sim/{{.Part}}.js?v=49">
+    <link rel="prefetch" href="/static/sim/{{if eq .Part "sai"}}tawaf{{else}}sai{{end}}.js?v=49">
     <style>
         .ar { font-family: 'Amiri', serif; }
         .sim-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); white-space: nowrap; pointer-events: none; }
@@ -35,6 +43,20 @@
         .tab-pill.text-gray-600:hover { color: #047857; }
         .card-in { animation: cardin .25s ease-out; }
         @keyframes cardin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        /* Jelajah: joystick, mini-peta, pilihan lompat */
+        .joy { width: 112px; height: 112px; border-radius: 999px; background: rgba(255,255,255,.55); box-shadow: 0 2px 10px rgba(0,0,0,.15), inset 0 0 0 2px rgba(4,120,87,.25); touch-action: none; position: relative; -webkit-user-select: none; user-select: none; }
+        .joy-knob { position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 999px; background: #047857; box-shadow: 0 2px 6px rgba(0,0,0,.3); pointer-events: none; transition: transform .05s; }
+        .hmap { position: absolute; z-index: 35; left: 12px; top: 52px; width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.18); background: #efebe2; cursor: pointer; touch-action: manipulation; overflow: hidden; }
+        .hmap canvas { display: block; width: 100%; height: 100%; }
+        .hmap.big { position: fixed; z-index: 80; left: 50%; top: 50%; width: min(92vw, 86vh); height: min(92vw, 86vh); transform: translate(-50%, -50%); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+        .hmap.big canvas { cursor: crosshair; }
+        .hmap-close { position: absolute; z-index: 2; right: 10px; top: 10px; display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: #047857; color: #fff; font-size: 13px; font-weight: 700; padding: 7px 14px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+        .hmap-close[hidden], .hmap-hint[hidden] { display: none; }
+        .hmap-hint { position: absolute; z-index: 2; left: 50%; bottom: 10px; transform: translateX(-50%); white-space: nowrap; border-radius: 999px; background: rgba(17,24,39,.78); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 12px; pointer-events: none; }
+        .hjump { appearance: none; -webkit-appearance: none; border-radius: 999px; background: rgba(255,255,255,.92); box-shadow: 0 1px 4px rgba(0,0,0,.15); padding: 8px 30px 8px 14px; font-size: 12px; font-weight: 600; color: #374151; max-width: 46vw;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23047857' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 14px; }
+        .osm-attr { font-size: 9px; line-height: 1.3; white-space: nowrap; color: rgba(55,65,81,.85); background: rgba(255,255,255,.6); border-radius: 6px; padding: 1px 5px; pointer-events: auto; } /* atas, di sebelah tombol suara */
+        .osm-attr a { color: inherit; text-decoration: underline; }
     </style>
 </head>
 
@@ -42,9 +64,9 @@
     <!-- Header hanya di desktop; di HP diganti chip "← Umrohku" supaya layar 3D lebih lega -->
     <div class="hidden lg:block">{{template "nav" .}}</div>
 
-    <main class="relative flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[1fr_400px]">
+    <main class="relative flex-1 min-h-0 flex flex-col {{if eq .Part "haram"}}lg:block{{else}}lg:grid lg:grid-cols-[1fr_400px]{{end}}">
         <!-- Panggung 3D -->
-        <section id="simStage" class="relative flex-none h-[58%] lg:h-full overflow-hidden bg-[#e7ede6] select-none">
+        <section id="simStage" class="relative flex-none {{if eq .Part "haram"}}h-[83%]{{else}}h-[58%]{{end}} lg:h-full overflow-hidden bg-[#e7ede6] select-none">
             <canvas id="simCanvas" class="block w-full h-full touch-none"></canvas>
             <div id="simLabels" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
@@ -56,16 +78,21 @@
                     <div class="pointer-events-auto flex items-center gap-2 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-semibold text-gray-700 whitespace-nowrap">
                         <span id="simRound">Belum mulai</span>
                         <!-- Titik progres hanya di layar lebar; di HP angka putaran sudah cukup -->
-                        <span id="simDots" class="hidden sm:flex gap-1"></span>
+                        <span id="simDots" class="hidden {{if ne .Part "haram"}}sm:flex{{end}} gap-1"></span>
                     </div>
                 </div>
                 <!-- Mini-peta sa'i (diisi oleh sai.js) -->
                 <div id="simMap" class="hidden pointer-events-auto w-[min(100%,320px)] min-w-[180px] rounded-full bg-white/90 shadow px-3 py-1.5"></div>
             </div>
 
+            {{if eq .Part "haram"}}<!-- Mini-peta jelajah: di luar wadah kiri atas (z-30) supaya saat diperbesar tampil di atas tombol -->
+            <div id="haramMapWrap" class="hmap"><canvas id="haramMap" aria-label="Mini-peta Masjidil Haram. Ketuk untuk memperbesar, lalu ketuk tempat tujuan."></canvas>
+                <button id="haramMapClose" type="button" class="hmap-close" hidden>✕ Tutup</button>
+                <p id="haramMapHint" class="hmap-hint" hidden>Ketuk tempat tujuan untuk pindah</p></div>{{end}}
             <!-- Tombol atas kanan -->
             <div class="absolute top-3 right-3 z-40 flex flex-row sm:flex-col items-center sm:items-end gap-1.5 sm:gap-2">
                 <div class="flex items-center gap-1.5 sm:gap-2">
+                {{if eq .Part "haram"}}<p class="osm-attr max-sm:absolute max-sm:right-0 max-sm:top-[38px]"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" title="Denah: © kontributor OpenStreetMap (ODbL)"><span class="hidden sm:inline">Denah: </span>© <span class="hidden sm:inline">kontributor </span>OpenStreetMap</a></p>{{end}}
                 <button id="btnAudio" type="button" class="w-8 h-8 rounded-full bg-white/90 shadow text-emerald-700 hover:bg-white flex items-center justify-center" title="Murottal {{if eq .Part "sai"}}Al-Baqarah 157–170{{else}}Al-Baqarah 195–205{{end}} (Syekh Mishary Rashid Alafasy): klik untuk matikan/nyalakan" aria-label="Matikan murottal" aria-pressed="true">
                     <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" fill-opacity=".15"/><g id="audioOn"><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></g><g id="audioOff" style="display:none"><path d="m22 9-6 6M16 9l6 6"/></g></svg></button>
                 <button id="btnReset" type="button" title="Mulai Ulang" aria-label="Mulai Ulang" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/90 shadow w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 text-xs font-semibold text-gray-700 hover:bg-white">
@@ -76,6 +103,14 @@
             </div>
 
             <!-- Kontrol jalan -->
+            {{if eq .Part "haram"}}
+            <div id="simControls" class="hidden absolute bottom-3 inset-x-3 flex items-end justify-between gap-3 pointer-events-none">
+                <div id="joy" class="joy pointer-events-auto" aria-label="Joystick: geser untuk berjalan"><span id="joyKnob" class="joy-knob"></span></div>
+                <select id="haramJump" class="hjump pointer-events-auto" aria-label="Lompat ke tempat"></select>
+                <!-- tombol Jalan tidak dipakai di mode jelajah (tetap ada untuk common.js) -->
+                <input id="chkAuto" type="checkbox" class="hidden"><button id="btnFwd" type="button" class="hidden" aria-hidden="true"><svg id="fwdIcon"></svg><span id="fwdLabel"></span></button>
+            </div>
+            {{else}}
             <div id="simControls" class="hidden absolute bottom-3 inset-x-3 flex items-end justify-between gap-3">
                 <label class="inline-flex items-center gap-2 rounded-full bg-white/90 shadow px-3 py-2 text-xs font-semibold text-gray-700 cursor-pointer">
                     <input id="chkAuto" type="checkbox" class="accent-emerald-600 w-4 h-4"> Jalan otomatis
@@ -86,40 +121,48 @@
                         <span id="fwdLabel" class="flex flex-col items-start leading-none"><span class="text-[10px] font-medium text-emerald-100 mb-0.5">Klik untuk</span><span class="text-base">Jalan</span></span></button>
                 </div>
             </div>
+            {{end}}
 
             <div id="simToast" class="hidden absolute top-14 left-1/2 -translate-x-1/2 max-w-[90%] rounded-xl bg-gray-900/90 text-white text-sm px-4 py-2.5 shadow-lg text-center"></div>
 
         </section>
 
         <!-- Pemandu -->
-        <aside id="guideScroll" class="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-white lg:border-l border-gray-200">
-            <div class="px-3 pt-2.5 pb-6 lg:p-5">
-                <div class="hidden lg:flex items-center justify-between">
-                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Pemandu {{if eq .Part "sai"}}Sa'i{{else}}Tawaf{{end}}</p>
+        <aside id="guideScroll" class="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-white {{if eq .Part "haram"}}lg:absolute lg:right-4 lg:bottom-20 lg:z-30 lg:w-[340px] lg:max-h-[45%] lg:rounded-2xl lg:shadow-xl lg:border{{else}}lg:border-l{{end}} border-gray-200">
+            <div class="{{if eq .Part "haram"}}px-2.5 pt-1.5 pb-3 lg:p-2.5{{else}}px-3 pt-2.5 pb-6 lg:p-5{{end}}">
+                <div class="hidden {{if ne .Part "haram"}}lg:flex{{end}} items-center justify-between">
+                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Pemandu {{if eq .Part "sai"}}Sa'i{{else if eq .Part "haram"}}Jelajah{{else}}Tawaf{{end}}</p>
                     <p id="panelRound" class="text-xs font-semibold text-gray-400"></p>
                 </div>
-                <div id="guide" class="lg:mt-3"></div>
-                <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">{{if eq .Part "sai"}}Audio: Murottal Al-Baqarah ayat 157–170 (ayat tentang Shafa dan Marwah) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{else}}Audio: Murottal Al-Baqarah ayat 195–205 (termasuk doa sapu jagad, ayat 201) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{end}} Kontrol: klik <b>Jalan</b> untuk jalan atau berhenti (bisa juga ditahan, lepas untuk berhenti), atau tombol panah di keyboard.</p>
+                <div id="guide" class="{{if ne .Part "haram"}}lg:mt-3{{end}}"></div>
+                <p class="{{if eq .Part "haram"}}mt-2 text-[10px]{{else}}mt-6 text-[11px]{{end}} text-gray-400 leading-relaxed">{{if eq .Part "haram"}}Denah lantai dasar dari OpenStreetMap (© kontributor OpenStreetMap, ODbL), jarak dipadatkan setengah supaya tidak terlalu jauh berjalan; Ka'bah dan sekitarnya tetap ukuran asli. Audio: Murottal Al-Baqarah ayat 195–205 oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.</p><p class="hidden">{{end}}{{if eq .Part "sai"}}Audio: Murottal Al-Baqarah ayat 157–170 (ayat tentang Shafa dan Marwah) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{else}}Audio: Murottal Al-Baqarah ayat 195–205 (termasuk doa sapu jagad, ayat 201) oleh Syekh Mishary Rashid Alafasy, dari EveryAyah.com.{{end}} Kontrol: klik <b>Jalan</b> untuk jalan atau berhenti (bisa juga ditahan, lepas untuk berhenti), atau tombol panah di keyboard.</p>
             </div>
         </aside>
         <!-- Pilih karakter: di HP menutupi area 3D + panel supaya kartunya muat utuh -->
-        <div id="chooseOverlay" class="absolute inset-0 lg:right-[400px] z-50 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
+        <div id="chooseOverlay" class="absolute inset-0 {{if ne .Part "haram"}}lg:right-[400px]{{end}} z-50 flex items-center justify-center overflow-y-auto bg-emerald-950/30 backdrop-blur-[2px] p-3 sm:p-4">
             <div id="chooseCard" class="w-full max-w-md rounded-2xl bg-white shadow-2xl p-4 sm:p-5 my-auto">
-                <!-- Satu tombol geser: Niat · Tawaf · Sa'i · Tahallul -->
-                <div class="flex justify-center">
+                <!-- Satu tombol geser: Niat · Tawaf · Sa'i · Tahallul (tidak ditampilkan di Jelajah) -->
+                <div class="{{if eq .Part "haram"}}hidden{{else}}flex{{end}} justify-center">
                     <div class="inline-flex rounded-full bg-gray-100 p-1 text-[13px] sm:text-sm font-semibold">
                         <button type="button" data-tab="niat" onclick="ukTab('niat')" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 text-gray-600">Niat</button>
                         <a href="/simulasi?bagian=tawaf" data-tab="tawaf" data-part="tawaf" onclick="return ukTab('tawaf', this)" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 {{if eq .Part "tawaf"}}bg-emerald-700 text-white shadow{{else}}text-gray-600{{end}}">Tawaf</a>
                         <a href="/simulasi?bagian=sai" data-tab="sai" data-part="sai" onclick="return ukTab('sai', this)" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 {{if eq .Part "sai"}}bg-emerald-700 text-white shadow{{else}}text-gray-600{{end}}">Sa'i</a>
                         <button type="button" data-tab="tahallul" onclick="ukTab('tahallul')" class="tab-pill rounded-full px-2.5 sm:px-4 py-1.5 text-gray-600">Tahallul</button>
+                        <!-- Jelajah dipindah ke menu header (partials/nav.html) -->
                     </div>
                 </div>
-                <div data-panel="choose" class="mt-4">
+                <div data-panel="choose" class="{{if ne .Part "haram"}}mt-4{{end}}">
                 <h1 class="text-lg sm:text-xl font-bold text-gray-900">Pilih karaktermu</h1>
-                <p class="text-sm text-gray-500 mt-1">{{if eq .Part "sai"}}Simulasi sa'i 7 lintasan antara bukit Shafa dan Marwah.{{else}}Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.{{end}}</p>
+                <p class="text-sm text-gray-500 mt-1">{{if eq .Part "sai"}}Simulasi sa'i 7 lintasan antara bukit Shafa dan Marwah.{{else if eq .Part "haram"}}Jelajahi Masjidil Haram dengan bebas: pelataran, pintu-pintu, mataf, dan Mas'a.{{else}}Pakaian ihram dan beberapa sunnah tawaf berbeda untuk laki-laki dan perempuan.{{end}}</p>
                 <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mt-3 sm:mt-4">
-                    <button type="button" data-gender="m" class="pick pick-pulse text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                    <!-- Pria tanpa jenggot: disembunyikan (hapus kelas `hidden` untuk menampilkan lagi); ?g=m tetap jalan -->
+                    <button type="button" data-gender="m" class="hidden pick pick-pulse text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
                         <span class="block w-10 h-10 rounded-full bg-[#f1c7a1] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute inset-x-0 top-0 h-3 bg-gray-800"></span></span>
+                        <span class="block font-bold text-gray-900">Laki-laki</span>
+                        <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Ihram 2 lembar kain putih. Bahu kanan terbuka saat tawaf.</span>
+                    </button>
+                    <button type="button" data-gender="m" data-look="beard" class="pick pick-pulse text-left rounded-xl border-2 border-gray-200 hover:border-emerald-500 p-2.5 sm:p-3 transition">
+                        <span class="block w-10 h-10 rounded-full bg-[#d8a173] ring-4 ring-white shadow mb-2 relative overflow-hidden"><span class="absolute -inset-x-1 -top-1 h-5 rounded-b-[40%] bg-gray-900"></span><span class="absolute inset-x-1.5 -bottom-0.5 h-3 rounded-t-full bg-gray-900"></span></span>
                         <span class="block font-bold text-gray-900">Laki-laki</span>
                         <span class="block text-xs text-gray-500 mt-0.5 leading-snug">Ihram 2 lembar kain putih. Bahu kanan terbuka saat tawaf.</span>
                     </button>
@@ -210,9 +253,9 @@
     // Tab Niat/Tahallul: ganti isi kartu. Tab Tawaf/Sa'i: pilih karakter (atau pindah halaman).
     function ukTab(k, a) {
         var cur = '{{.Part}}';
-        if ((k === 'tawaf' || k === 'sai') && k !== cur) {
+        if ((k === 'tawaf' || k === 'sai' || k === 'haram') && k !== cur) {
             document.querySelectorAll('.tab-pill').forEach(function (p) { var on = p.dataset.tab === k; p.classList.toggle('bg-emerald-700', on); p.classList.toggle('text-white', on); p.classList.toggle('shadow', on); p.classList.toggle('text-gray-600', !on); });
-            document.getElementById('simLoadingText').textContent = 'Memuat simulasi ' + (k === 'sai' ? "Sa'i" : 'Tawaf') + '…';
+            document.getElementById('simLoadingText').textContent = k === 'haram' ? 'Memuat Jelajah Masjidil Haram…' : 'Memuat simulasi ' + (k === 'sai' ? "Sa'i" : 'Tawaf') + '…';
             var l = document.getElementById('simLoading'); l.classList.remove('hidden'); l.classList.add('flex');
             requestAnimationFrame(function () { requestAnimationFrame(function () { location.href = a.href; }); });
             return false;
@@ -230,7 +273,7 @@
     addEventListener('pageshow', function () { var l = document.getElementById('simLoading'); l.classList.add('hidden'); l.classList.remove('flex'); });
     </script>
     <audio id="simAudio" preload="none" loop src="{{if eq .Part "sai"}}/static/sim/audio/baqarah-157-170.mp3{{else}}/static/sim/audio/baqarah-195-205.mp3{{end}}"></audio>
-    <script type="module" src="/static/sim/{{.Part}}.js?v=30"></script>
+    <script type="module" src="/static/sim/{{.Part}}.js?v=49"></script>
 </body>
 
 </html>

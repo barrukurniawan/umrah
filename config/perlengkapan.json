@@ -1,0 +1,221 @@
+{
+  "_catatan": "Isi 'url' dengan link affiliate Shopee. Bila kosong, tombol mengarah ke pencarian Shopee dengan kata kunci 'search'. Ubah lalu kirim SIGHUP ke server (atau restart) supaya dimuat ulang.",
+  "items": [
+    {
+      "key": "pouch-hp",
+      "name": "Pouch HP kalung (tali leher)",
+      "reason": "Saat tawaf berdesakan, HP tergantung di leher jadi tidak mudah jatuh atau tertinggal di lantai masjid.",
+      "img": "/static/perlengkapan/pouch-hp.svg",
+      "search": "pouch hp kalung tali leher",
+      "url": "https://s.shopee.co.id/7puiWe0sB0",
+      "featured": true
+    },
+    {
+      "key": "ihram",
+      "name": "Kain ihram",
+      "reason": "Bawa dua set supaya bisa ganti saat satu dicuci; pilih bahan handuk yang menyerap keringat.",
+      "img": "/static/perlengkapan/ihram.svg",
+      "search": "kain ihram handuk",
+      "url": "https://s.shopee.co.id/qkyTdT7gS",
+      "featured": false
+    },
+    {
+      "key": "sabuk-ihram",
+      "name": "Sabuk ihram",
+      "reason": "Menjaga kain ihram tidak melorot saat tawaf dan sa'i, cukup klik gespernya.",
+      "img": "/static/perlengkapan/sabuk-ihram.svg",
+      "search": "sabuk ihram",
+      "url": "https://s.shopee.co.id/5LDNq1EJtH",
+      "featured": false
+    },
+    {
+      "key": "mukena",
+      "name": "Mukena travel",
+      "reason": "Ringan dan muat di tas kecil, jadi bisa salat di mana saja tanpa harus balik ke hotel.",
+      "img": "/static/perlengkapan/mukena.svg",
+      "search": "mukena travel",
+      "url": "https://s.shopee.co.id/8fTpo5yNDE",
+      "featured": false
+    },
+    {
+      "key": "sandal",
+      "name": "Sandal tawaf",
+      "reason": "Tidak menutup mata kaki sesuai aturan ihram, ringan, dan empuk untuk berjalan jauh saat tawaf dan sa'i.",
+      "img": "/static/perlengkapan/sandal.svg",
+      "search": "sandal tawaf ihram",
+      "url": "https://s.shopee.co.id/4fxhULPN2n",
+      "featured": false
+    },
+    {
+      "key": "tasbih",
+      "name": "Tasbih digital",
+      "reason": "Menghitung putaran tawaf dan dzikir tanpa salah hitung, cukup ditekan dengan ibu jari.",
+      "img": "/static/perlengkapan/tasbih.svg",
+      "search": "tasbih digital jari counter",
+      "url": "https://s.shopee.co.id/1BrUIXI93",
+      "featured": false
+    },
+    {
+      "key": "buku-doa",
+      "name": "Buku doa umrah",
+      "reason": "Doa tiap rangkaian umrah dari niat sampai tahallul, tinggal buka saat perlu di lokasi.",
+      "img": "/static/perlengkapan/buku-doa.svg",
+      "search": "buku doa umrah",
+      "url": "https://s.shopee.co.id/6q2BctSOnv",
+      "featured": false
+    },
+    {
+      "key": "powerbank",
+      "name": "Powerbank (maks. 10.000 mAh)",
+      "reason": "Dari hotel ke masjid bisa seharian; HP untuk peta, foto, dan kabar ke keluarga tetap hidup.",
+      "img": "/static/perlengkapan/powerbank.svg",
+      "search": "powerbank 10000 mah",
+      "url": "https://s.shopee.co.id/qkyVAhL2g",
+      "featured": false
+    },
+    {
+      "key": "adapter",
+      "name": "Travel adapter tipe G",
+      "reason": "Colokan Arab Saudi beda dengan Indonesia (tiga pin kotak); tanpa adapter, charger tidak bisa dipakai.",
+      "img": "/static/perlengkapan/adapter.svg",
+      "search": "travel adapter universal tipe g",
+      "url": "https://s.shopee.co.id/4fxh33VQln",
+      "featured": false
+    },
+    {
+      "key": "botol-lipat",
+      "name": "Botol minum lipat",
+      "reason": "Isi air zamzam dari keran di masjid; kalau kosong tinggal dilipat, tidak makan tempat di tas.",
+      "img": "/static/perlengkapan/botol-lipat.svg",
+      "search": "botol minum lipat silikon",
+      "url": "https://s.shopee.co.id/4VeGqmQeRi",
+      "featured": false
+    },
+    {
+      "key": "tas-selempang",
+      "name": "Tas selempang",
+      "reason": "Dompet, HP, dan buku doa ada di depan badan, lebih aman saat berdesakan di Masjidil Haram.",
+      "img": "/static/perlengkapan/tas-selempang.svg",
+      "search": "tas selempang pria wanita",
+      "url": "https://s.shopee.co.id/80E91J3tKR",
+      "featured": false
+    },
+    {
+      "key": "waist-bag",
+      "name": "Waist bag paspor",
+      "reason": "Paspor dan uang tersimpan rapat di pinggang, tidak perlu bongkar tas di bandara atau check-in hotel.",
+      "img": "/static/perlengkapan/waist-bag.svg",
+      "search": "waist bag paspor anti maling",
+      "url": "https://s.shopee.co.id/40i0G27c2F",
+      "featured": false
+    },
+    {
+      "key": "gamis",
+      "name": "Gamis/Kurta",
+      "reason": "Longgar dan adem, nyaman dipakai dari hotel ke masjid saat cuaca Makkah panas.",
+      "img": "/static/perlengkapan/gamis.svg",
+      "search": "gamis kurta pria wanita",
+      "url": "https://s.shopee.co.id/5LDNqY01kI",
+      "featured": false
+    },
+    {
+      "key": "sajadah",
+      "name": "Sajadah travel",
+      "reason": "Tipis dan bisa dilipat masuk saku, berguna saat salat di pelataran atau lantai batu yang panas.",
+      "img": "/static/perlengkapan/sajadah.svg",
+      "search": "sajadah travel lipat",
+      "url": "https://s.shopee.co.id/1gK5TqvNhm",
+      "featured": false
+    },
+    {
+      "key": "gantungan-unta",
+      "name": "Oleh-oleh gantungan kunci unta",
+      "reason": "Siapkan dari rumah supaya tidak repot berburu oleh-oleh di sana dan waktu ibadah tetap utuh.",
+      "img": "/static/perlengkapan/gantungan-unta.svg",
+      "search": "gantungan kunci unta oleh oleh haji umroh",
+      "url": "https://s.shopee.co.id/906gDOc5it",
+      "featured": false
+    },
+    {
+      "key": "ciput",
+      "name": "Ciput (inner kerudung)",
+      "reason": "Menahan kerudung tetap rapi dan rambut tidak keluar meski berjam-jam di masjid.",
+      "img": "/static/perlengkapan/ciput.svg",
+      "search": "ciput ninja inner jilbab",
+      "url": "https://s.shopee.co.id/114Ogii5ep",
+      "featured": false
+    },
+    {
+      "key": "manset",
+      "name": "Manset tangan (handsock)",
+      "reason": "Menutup lengan saat lengan baju tersingkap waktu mengangkat tangan berdoa atau saat tawaf.",
+      "img": "/static/perlengkapan/manset.svg",
+      "search": "manset tangan handsock",
+      "url": "https://s.shopee.co.id/50aXS6g4xB",
+      "featured": false
+    },
+    {
+      "key": "kurma",
+      "name": "Kurma",
+      "reason": "Camilan pengganjal lapar saat menunggu salat; tahan lama tanpa kulkas dan cocok jadi bekal.",
+      "img": "/static/perlengkapan/kurma.svg",
+      "search": "kurma ajwa madinah",
+      "url": "https://s.shopee.co.id/7fbId3D30G",
+      "featured": false
+    },
+    {
+      "key": "tag-koper",
+      "name": "Tag penanda koper dengan nama",
+      "reason": "Koper jamaah satu rombongan sering mirip; tag bernama membuat koper cepat dikenali dan tidak tertukar.",
+      "img": "/static/perlengkapan/tag-koper.svg",
+      "search": "tag koper nama luggage tag",
+      "url": "https://s.shopee.co.id/5LDNpkPWAS",
+      "featured": false
+    },
+    {
+      "key": "payung-uv",
+      "name": "Payung UV lipat",
+      "reason": "Matahari Makkah menyengat di jalan hotel-masjid; payung lipat kecil cukup masuk tas selempang.",
+      "img": "/static/perlengkapan/payung-uv.svg",
+      "search": "payung uv lipat mini",
+      "url": "https://s.shopee.co.id/906gCOMv5Z",
+      "featured": false
+    },
+    {
+      "key": "kipas-mini",
+      "name": "Kipas angin mini portable",
+      "reason": "Saat antre atau duduk di pelataran yang panas, kipas genggam sangat membantu dan bisa di-charge dari powerbank.",
+      "img": "/static/perlengkapan/kipas-mini.svg",
+      "search": "kipas angin mini portable genggam",
+      "url": "https://s.shopee.co.id/6VPLDZc5n6",
+      "featured": false
+    },
+    {
+      "key": "abaya",
+      "name": "Abaya wanita",
+      "reason": "Pakaian harian yang praktis dan syar'i, cocok untuk ke masjid maupun jalan-jalan di Makkah dan Madinah.",
+      "img": "/static/perlengkapan/abaya.svg",
+      "search": "abaya wanita hitam",
+      "url": "https://s.shopee.co.id/2LZmHJmVfh",
+      "featured": false
+    },
+    {
+      "key": "kacamata",
+      "name": "Kacamata hitam",
+      "reason": "Silau pelataran marmer putih bikin mata cepat lelah; kacamata hitam dilepas saja saat masuk masjid.",
+      "img": "/static/perlengkapan/kacamata.svg",
+      "search": "kacamata hitam uv400",
+      "url": "https://s.shopee.co.id/4LKqf2QU5q",
+      "featured": false
+    },
+    {
+      "key": "vitamin-d3",
+      "name": "Vitamin D3",
+      "reason": "Menjaga daya tahan tubuh selama ibadah padat dan sering begadang; cukup satu butir sehari.",
+      "img": "/static/perlengkapan/vitamin-d3.svg",
+      "search": "vitamin d3 4000 iu",
+      "url": "https://s.shopee.co.id/3B8tGyopss",
+      "featured": false
+    }
+  ]
+}

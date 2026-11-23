@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#f1f1f3"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+
+
+
+<rect x="182" y="-10" width="36" height="62" rx="16" fill="#e8c3a0"/>
+<path d="M60 300 L72 150 Q78 92 118 72 L182 50 Q200 60 218 50 L282 72 Q322 92 328 150 L340 300 Z" fill="#c8873a"/>
+<path d="M118 72 Q86 90 80 140 L62 300 L112 300 L118 150 Z" fill="#b3762f" opacity=".35"/>
+<path d="M282 72 Q314 90 320 140 L338 300 L288 300 L282 150 Z" fill="#b3762f" opacity=".35"/>
+<path d="M172 52 Q200 70 228 52" fill="none" stroke="#b3762f" stroke-width="3"/>
+<path d="M150 120 Q140 200 150 290 M250 120 Q260 200 250 290" fill="none" stroke="#b3762f" stroke-width="2.5" opacity=".5"/>
+
+<g transform="translate(0 -16)">
+<!-- tali kalung -->
+<path d="M186 0 L197 150 M214 0 L203 150" fill="none" stroke="#17181c" stroke-width="7" stroke-linecap="round"/>
+<path d="M186 0 L197 150 M214 0 L203 150" fill="none" stroke="#3a3c42" stroke-width="2" stroke-dasharray="2 5"/>
+<!-- kait karabiner -->
+<path d="M200 150 Q214 150 214 164 Q214 178 200 178 Q186 178 186 164 Q186 150 200 150 Z" fill="none" stroke="#17181c" stroke-width="5"/>
+<path d="M196 178 V186" stroke="#17181c" stroke-width="5"/>
+<path d="M192 186 H208" stroke="#17181c" stroke-width="5" stroke-linecap="round"/>
+<!-- pouch -->
+<rect x="146" y="188" width="108" height="124" rx="14" fill="#17181c"/>
+<rect x="146" y="188" width="108" height="124" rx="14" fill="url(#gl)" opacity=".35"/>
+<path d="M156 199 H244" stroke="#3a3c42" stroke-width="3"/>
+<path d="M150 199 H162" stroke="#8d9199" stroke-width="3" stroke-linecap="round"/>
+<circle cx="150" cy="199" r="3" fill="#8d9199"/>
+<!-- jendela bening + HP -->
+<rect x="158" y="206" width="84" height="100" rx="9" fill="#0d1d2e"/>
+<rect x="161" y="209" width="78" height="94" rx="7" fill="#14233a"/>
+<rect x="161" y="209" width="78" height="94" rx="7" fill="url(#gl)" opacity=".25"/>
+<text x="200" y="232" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#fff">07.35</text>
+<text x="200" y="242" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="5.5" fill="#b7c3d6">Sel, 5 Jumadil</text>
+<g fill="#4a5b78"><rect x="170" y="248" width="26" height="8" rx="4"/><rect x="204" y="248" width="26" height="8" rx="4"/></g>
+<g fill="#5f7291"><circle cx="172" cy="268" r="4"/><circle cx="186" cy="268" r="4"/><circle cx="200" cy="268" r="4"/><circle cx="214" cy="268" r="4"/><circle cx="228" cy="268" r="4"/><circle cx="172" cy="282" r="4"/><circle cx="186" cy="282" r="4"/><circle cx="200" cy="282" r="4"/><circle cx="214" cy="282" r="4"/><circle cx="228" cy="282" r="4"/></g>
+<rect x="172" y="294" width="56" height="4" rx="2" fill="#5ea0e6"/>
+<path d="M165 212 L174 211 L166 240 Z" fill="#fff" opacity=".18"/>
+</g>
+
+</svg>

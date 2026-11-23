@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#f4efe6"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 150)">
+<!-- ring kunci -->
+<circle cx="-60" cy="-96" r="22" fill="none" stroke="#9aa4b0" stroke-width="7"/>
+<circle cx="-60" cy="-96" r="22" fill="none" stroke="url(#met)" stroke-width="5"/>
+<!-- rantai -->
+<path d="M-44 -82 L-26 -62" stroke="#9aa4b0" stroke-width="5" stroke-linecap="round"/>
+<circle cx="-36" cy="-72" r="5" fill="none" stroke="#c7ced6" stroke-width="2"/>
+<!-- unta -->
+<g fill="#d9a35b">
+<!-- badan -->
+<path d="M-40 10 Q-44 -26 -10 -34 Q10 -46 36 -34 Q66 -26 60 10 Q58 30 40 36 H-26 Q-42 30 -40 10 Z"/>
+<!-- punuk -->
+<path d="M-14 -34 Q-4 -62 18 -42 Q6 -50 -14 -34 Z"/>
+<!-- leher & kepala -->
+<path d="M44 -24 Q60 -60 74 -70 Q90 -80 98 -68 L104 -58 Q100 -50 88 -52 Q78 -40 70 -16 Z"/>
+<!-- kaki -->
+<rect x="-32" y="30" width="12" height="42" rx="5"/><rect x="-10" y="30" width="12" height="42" rx="5"/>
+<rect x="14" y="30" width="12" height="42" rx="5"/><rect x="36" y="30" width="12" height="42" rx="5"/>
+<!-- ekor -->
+<path d="M-40 0 Q-58 -4 -62 12" fill="none" stroke="#d9a35b" stroke-width="5" stroke-linecap="round"/>
+</g>
+<path d="M-40 10 Q-44 -26 -10 -34 Q10 -46 36 -34 Q66 -26 60 10 Q58 30 40 36 H-26 Q-42 30 -40 10 Z" fill="url(#gl)"/>
+<!-- selimut pelana -->
+<path d="M-22 -12 Q0 -20 24 -12 L28 16 Q0 24 -26 16 Z" fill="#c23b4a"/>
+<path d="M-22 -12 Q0 -20 24 -12 L28 16 Q0 24 -26 16 Z" fill="url(#gl)" opacity=".6"/>
+<path d="M-22 4 Q0 10 26 4" fill="none" stroke="#f3cd5e" stroke-width="2"/>
+<g fill="#f3cd5e"><circle cx="-18" cy="20" r="2.5"/><circle cx="-6" cy="22" r="2.5"/><circle cx="6" cy="22" r="2.5"/><circle cx="18" cy="20" r="2.5"/></g>
+<!-- mata & mulut -->
+<circle cx="92" cy="-64" r="2.5" fill="#3b2a22"/>
+<path d="M100 -56 Q104 -54 102 -50" fill="none" stroke="#b07a3b" stroke-width="2" stroke-linecap="round"/>
+<!-- telinga -->
+<path d="M80 -74 L84 -84 L90 -74 Z" fill="#c48f48"/>
+<!-- kuku -->
+<g fill="#b07a3b"><rect x="-32" y="64" width="12" height="8" rx="3"/><rect x="-10" y="64" width="12" height="8" rx="3"/><rect x="14" y="64" width="12" height="8" rx="3"/><rect x="36" y="64" width="12" height="8" rx="3"/></g>
+<!-- label kecil -->
+<text x="0" y="100" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="700" fill="#8f6a3a" letter-spacing="2">MAKKAH</text>
+</g>
+
+</svg>

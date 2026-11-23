@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#e9f3ee"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 150)">
+<!-- gagang -->
+<rect x="-22" y="40" width="44" height="90" rx="16" fill="#f4f5f7"/>
+<rect x="-22" y="40" width="44" height="90" rx="16" fill="url(#gl)"/>
+<rect x="-22" y="40" width="44" height="90" rx="16" fill="none" stroke="#cfd4da" stroke-width="2.5"/>
+<circle cx="0" cy="104" r="8" fill="#2f6b50"/>
+<rect x="-8" y="124" width="16" height="6" rx="2" fill="#9aa4b0"/>
+<!-- rumah kipas -->
+<circle cx="0" cy="-20" r="84" fill="#2f6b50"/>
+<circle cx="0" cy="-20" r="84" fill="url(#gl)"/>
+<circle cx="0" cy="-20" r="72" fill="#e6e9ed"/>
+<!-- jeruji -->
+<g stroke="#9aa4b0" stroke-width="2" opacity=".9">
+<circle cx="0" cy="-20" r="60" fill="none"/><circle cx="0" cy="-20" r="46" fill="none"/><circle cx="0" cy="-20" r="32" fill="none"/>
+<path d="M0 -92 V52 M-72 -20 H72 M-51 -71 L51 31 M51 -71 L-51 31"/>
+</g>
+<!-- bilah -->
+<g fill="#4fb28a" opacity=".85">
+<path d="M0 -20 Q-10 -70 20 -78 Q40 -60 14 -26 Z"/>
+<path d="M0 -20 Q50 -30 58 2 Q40 22 6 -8 Z"/>
+<path d="M0 -20 Q-10 30 -40 24 Q-56 2 -14 -14 Z"/>
+<path d="M0 -20 Q-56 -36 -46 -64 Q-22 -72 -4 -34 Z"/>
+</g>
+<circle cx="0" cy="-20" r="12" fill="#2f6b50"/>
+<circle cx="0" cy="-20" r="5" fill="#fff"/>
+<!-- angin -->
+<g stroke="#9ed3bb" stroke-width="4" stroke-linecap="round" fill="none"><path d="M100 -50 q14 6 0 14 M104 -24 q16 6 0 14 M98 4 q14 6 0 14"/></g>
+</g>
+
+</svg>

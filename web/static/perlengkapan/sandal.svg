@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#4a9ad4"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+
+
+<rect width="400" height="300" rx="28" fill="#4a9ad4"/>
+<ellipse cx="200" cy="262" rx="130" ry="14" fill="#000" opacity=".12"/>
+
+<g transform="translate(148 150) scale(1 1)">
+<path d="M4 -118 C40 -118 46 -70 42 -28 C40 14 38 62 32 102 C28 122 -28 122 -32 102 C-38 62 -40 14 -42 -28 C-46 -70 -36 -118 4 -118 Z" fill="#f8f8f8" stroke="#d6d8dc" stroke-width="2"/>
+<!-- tekstur sol -->
+<g fill="none" stroke="#e5e7ea" stroke-width="1.5">
+<path d="M-30 -60 q8 -6 16 0 t16 0 M-30 -40 q8 -6 16 0 t16 0 M-30 60 q8 -6 16 0 t16 0 M-28 80 q8 -6 16 0 t16 0"/>
+<circle cx="0" cy="20" r="14"/><circle cx="0" cy="20" r="7"/>
+<path d="M-24 -4 L-14 -16 L-4 -4 M4 -4 L14 -16 L24 -4"/>
+</g>
+<!-- label ukuran -->
+<rect x="-10" y="-104" width="20" height="9" rx="1.5" fill="none" stroke="#c9ccd2" stroke-width="1"/>
+<text x="0" y="-97" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="6" fill="#9a9ea6">40</text>
+<!-- tali silang -->
+<path d="M-2 -72 L-44 -24" stroke="#c4c8cf" stroke-width="18" stroke-linecap="round"/>
+<path d="M-2 -72 L-44 -24" stroke="#fafafa" stroke-width="13" stroke-linecap="round"/>
+<path d="M-2 -72 L44 -24" stroke="#c4c8cf" stroke-width="18" stroke-linecap="round"/>
+<path d="M-2 -72 L44 -24" stroke="#fafafa" stroke-width="13" stroke-linecap="round"/>
+<!-- tali instep -->
+<path d="M-42 -2 Q0 12 42 -2" fill="none" stroke="#c4c8cf" stroke-width="22" stroke-linecap="round"/>
+<path d="M-42 -2 Q0 12 42 -2" fill="none" stroke="#fbfbfb" stroke-width="17" stroke-linecap="round"/>
+<circle cx="-2" cy="-74" r="5" fill="#e9eaee"/>
+<!-- tali tumit -->
+<path d="M-36 70 Q-20 118 0 120 Q20 118 36 70" fill="none" stroke="#c4c8cf" stroke-width="9" stroke-linecap="round"/>
+<path d="M-36 70 Q-20 118 0 120 Q20 118 36 70" fill="none" stroke="#fafafa" stroke-width="5" stroke-linecap="round"/>
+</g>
+
+<g transform="translate(252 150) scale(-1 1)">
+<path d="M4 -118 C40 -118 46 -70 42 -28 C40 14 38 62 32 102 C28 122 -28 122 -32 102 C-38 62 -40 14 -42 -28 C-46 -70 -36 -118 4 -118 Z" fill="#f8f8f8" stroke="#d6d8dc" stroke-width="2"/>
+<!-- tekstur sol -->
+<g fill="none" stroke="#e5e7ea" stroke-width="1.5">
+<path d="M-30 -60 q8 -6 16 0 t16 0 M-30 -40 q8 -6 16 0 t16 0 M-30 60 q8 -6 16 0 t16 0 M-28 80 q8 -6 16 0 t16 0"/>
+<circle cx="0" cy="20" r="14"/><circle cx="0" cy="20" r="7"/>
+<path d="M-24 -4 L-14 -16 L-4 -4 M4 -4 L14 -16 L24 -4"/>
+</g>
+<!-- label ukuran -->
+<rect x="-10" y="-104" width="20" height="9" rx="1.5" fill="none" stroke="#c9ccd2" stroke-width="1"/>
+<text x="0" y="-97" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="6" fill="#9a9ea6">40</text>
+<!-- tali silang -->
+<path d="M-2 -72 L-44 -24" stroke="#c4c8cf" stroke-width="18" stroke-linecap="round"/>
+<path d="M-2 -72 L-44 -24" stroke="#fafafa" stroke-width="13" stroke-linecap="round"/>
+<path d="M-2 -72 L44 -24" stroke="#c4c8cf" stroke-width="18" stroke-linecap="round"/>
+<path d="M-2 -72 L44 -24" stroke="#fafafa" stroke-width="13" stroke-linecap="round"/>
+<!-- tali instep -->
+<path d="M-42 -2 Q0 12 42 -2" fill="none" stroke="#c4c8cf" stroke-width="22" stroke-linecap="round"/>
+<path d="M-42 -2 Q0 12 42 -2" fill="none" stroke="#fbfbfb" stroke-width="17" stroke-linecap="round"/>
+<circle cx="-2" cy="-74" r="5" fill="#e9eaee"/>
+<!-- tali tumit -->
+<path d="M-36 70 Q-20 118 0 120 Q20 118 36 70" fill="none" stroke="#c4c8cf" stroke-width="9" stroke-linecap="round"/>
+<path d="M-36 70 Q-20 118 0 120 Q20 118 36 70" fill="none" stroke="#fafafa" stroke-width="5" stroke-linecap="round"/>
+</g>
+
+</svg>

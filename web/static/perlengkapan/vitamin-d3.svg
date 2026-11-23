@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#eef3ee"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 150)">
+<!-- matahari kecil -->
+<circle cx="-118" cy="-86" r="18" fill="#f3cd5e"/>
+<g stroke="#f3cd5e" stroke-width="3.5" stroke-linecap="round"><path d="M-118 -116 V-126 M-118 -46 V-56 M-148 -86 H-158 M-88 -86 H-78 M-139 -107 L-146 -114 M-97 -65 L-90 -58 M-139 -65 L-146 -58 M-97 -107 L-90 -114"/></g>
+<!-- botol -->
+<rect x="-56" y="-60" width="112" height="170" rx="16" fill="#f4f5f7"/>
+<rect x="-56" y="-60" width="112" height="170" rx="16" fill="url(#gl)"/>
+<rect x="-56" y="-60" width="112" height="170" rx="16" fill="none" stroke="#cfd4da" stroke-width="2.5"/>
+<rect x="-38" y="-106" width="76" height="52" rx="8" fill="#2f6b50"/>
+<rect x="-38" y="-106" width="76" height="52" rx="8" fill="url(#gl)"/>
+<path d="M-30 -96 V-64 M-18 -96 V-64 M-6 -96 V-64 M6 -96 V-64 M18 -96 V-64 M30 -96 V-64" stroke="#1d4d38" stroke-width="2"/>
+<!-- label -->
+<rect x="-46" y="-28" width="92" height="118" rx="8" fill="#fff"/>
+<rect x="-46" y="-28" width="92" height="24" rx="8" fill="#f3cd5e"/>
+<text x="0" y="-11" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="700" fill="#5a3f10" letter-spacing="1">VITAMIN</text>
+<text x="0" y="32" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#2f6b50">D3</text>
+<text x="0" y="50" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" font-weight="700" fill="#6b7682" letter-spacing="1">1000 IU</text>
+<path d="M-30 62 H30" stroke="#e6e9ed" stroke-width="2"/>
+<text x="0" y="78" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="7" fill="#9aa4b0" letter-spacing="1">60 SOFTGEL</text>
+<!-- softgel -->
+<g transform="translate(88 70)">
+<ellipse cx="0" cy="0" rx="26" ry="14" fill="#f3cd5e" transform="rotate(-25)"/>
+<ellipse cx="0" cy="0" rx="26" ry="14" fill="url(#gl)" transform="rotate(-25)"/>
+<ellipse cx="-6" cy="-5" rx="8" ry="3" fill="#fff" opacity=".5" transform="rotate(-25)"/>
+</g>
+<g transform="translate(-92 86)">
+<ellipse cx="0" cy="0" rx="26" ry="14" fill="#f3cd5e" transform="rotate(20)"/>
+<ellipse cx="0" cy="0" rx="26" ry="14" fill="url(#gl)" transform="rotate(20)"/>
+</g>
+</g>
+
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#eef2ee"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 24)">
+<!-- hanger -->
+<path d="M0 0 a8 8 0 1 0 -8 8 L0 14" fill="none" stroke="#9aa4b0" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M0 14 L-70 44 H70 Z" fill="none" stroke="#9aa4b0" stroke-width="3.5" stroke-linejoin="round"/>
+<!-- gamis -->
+<path d="M-40 40 Q-25 36 -12 40 Q0 46 12 40 Q25 36 40 40 L96 70 L80 120 L58 112 L72 240 H-72 L-58 112 L-80 120 L-96 70 Z" fill="#fbfaf7"/>
+<path d="M-40 40 Q-25 36 -12 40 Q0 46 12 40 Q25 36 40 40 L96 70 L80 120 L58 112 L72 240 H-72 L-58 112 L-80 120 L-96 70 Z" fill="url(#gl)"/>
+<path d="M-40 40 Q-25 36 -12 40 Q0 46 12 40 Q25 36 40 40 L96 70 L80 120 L58 112 L72 240 H-72 L-58 112 L-80 120 L-96 70 Z" fill="none" stroke="#d9d6ce" stroke-width="2.5" stroke-linejoin="round"/>
+<!-- kerah -->
+<path d="M-16 40 Q0 58 16 40" fill="#ecebe6"/>
+<!-- lengan lipatan -->
+<path d="M-58 112 L-70 72 M58 112 L70 72" stroke="#ebe9e3" stroke-width="3" stroke-linecap="round"/>
+<path d="M-30 90 L-36 236 M30 90 L36 236 M0 100 V236" stroke="#efede8" stroke-width="3" stroke-linecap="round"/>
+<!-- kancing -->
+<g fill="#d9d6ce"><circle cx="0" cy="64" r="2.5"/><circle cx="0" cy="80" r="2.5"/><circle cx="0" cy="96" r="2.5"/></g>
+<!-- bordir hem -->
+<path d="M-70 226 H70" stroke="#c9dfd3" stroke-width="2" stroke-dasharray="2 4"/>
+<path d="M-60 234 Q-30 226 0 234 Q30 242 60 234" fill="none" stroke="#c9dfd3" stroke-width="1.5"/>
+<!-- manset lengan -->
+<rect x="-86" y="112" width="30" height="10" rx="4" fill="#ecebe6" transform="rotate(-70 -71 117)"/>
+<rect x="56" y="112" width="30" height="10" rx="4" fill="#ecebe6" transform="rotate(70 71 117)"/>
+</g>
+
+</svg>

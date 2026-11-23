@@ -8,8 +8,8 @@
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F54B;</text></svg>">
     <link rel="stylesheet" href="/static/css/app.css?v={{cssV}}">
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="/static/js/vendor/htmx-1.9.12.min.js?v={{assetV "js/vendor/htmx-1.9.12.min.js"}}"></script>
+    <script src="/static/js/vendor/lucide-icons.js?v={{assetV "js/vendor/lucide-icons.js"}}"></script>
     <style>
         input[type=range] {
             -webkit-appearance: none;
@@ -123,12 +123,12 @@
                 <div class="mb-10" id="modeBudget">
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-sm font-semibold text-gray-700">Budget</label>
-                        <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 26.000.000</span>
+                        <span id="budgetDisplay" class="text-2xl font-bold text-emerald-600">Rp 25.000.000</span>
                     </div>
                     <!-- Area sentuh lebih tinggi dari garisnya: ketuk/klik di mana saja pada garis langsung pindah ke harga terdekat. -->
                     <div id="budgetTrack" class="relative py-3 -my-3 cursor-pointer touch-pan-y">
                     <input type="range" name="budget" id="budgetSlider" min="20000000" max="50000000" step="1000000"
-                        value="26000000" class="w-full" oninput="updateBudget(this.value)" />
+                        value="25000000" class="w-full" oninput="updateBudget(this.value)" />
                     </div>
                     <div class="flex justify-between text-xs text-gray-400 mt-1">
                         <span>Rp 20 jt</span>
@@ -664,6 +664,38 @@
             try { localStorage.removeItem('uk_mode'); } catch (e) { }
             return { mode: mode, month: function (m) { month = m; load(); }, day: day, close: close, onFilter: function () { cache = {}; months = {}; prefetched = false; if (on) { clearTimeout(timer); timer = setTimeout(load, 150); } } };
         })();
+    </script>
+    <!-- Pop-up perlengkapan: muncul 2,5 detik setelah halaman terbuka, sekali per pengunjung (localStorage).
+         Di HP tampil sebagai banner kecil di bawah, di desktop kartu kecil di pojok kanan bawah; tidak menutup layar. -->
+    <div id="plPop" class="hidden fixed z-[55] inset-x-0 bottom-0 sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[340px] translate-y-full sm:translate-y-0 sm:opacity-0 transition-all duration-300" role="dialog" aria-label="Perlengkapan umrah">
+        <div class="relative bg-white border-t sm:border border-emerald-200 sm:rounded-2xl shadow-[0_-8px_30px_-12px_rgba(6,78,59,.35)] sm:shadow-xl px-4 py-3 sm:p-4 flex items-center gap-3 pb-[max(12px,env(safe-area-inset-bottom))]">
+            <img src="/static/perlengkapan/pouch-hp.svg" alt="" class="w-16 h-12 sm:w-20 sm:h-[60px] rounded-lg object-cover shrink-0 bg-emerald-50">
+            <div class="min-w-0 flex-1 pr-6">
+                <p class="font-bold text-gray-900 text-sm leading-snug">Barang yang wajib dibawa umrah 🧳</p>
+                <p class="text-xs text-gray-500 mt-0.5 leading-snug">Pouch HP kalung biar HP tak hilang saat tawaf, ihram, adapter tipe G, dan lainnya.</p>
+                <a href="/perlengkapan" class="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-emerald-700 hover:underline">Lihat daftarnya →</a>
+            </div>
+            <button type="button" id="plPopX" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 text-xl leading-none flex items-center justify-center" aria-label="Tutup">×</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+        var KEY = 'uk_pl_pop_v1', el = document.getElementById('plPop');
+        try { if (localStorage.getItem(KEY)) return; } catch (e) { }
+        function hide() {
+            try { localStorage.setItem(KEY, '1'); } catch (e) { }
+            el.classList.add('translate-y-full', 'sm:opacity-0'); el.classList.remove('translate-y-0', 'sm:opacity-100');
+            setTimeout(function () { el.classList.add('hidden'); }, 320);
+        }
+        document.getElementById('plPopX').addEventListener('click', hide);
+        el.querySelector('a').addEventListener('click', function () { try { localStorage.setItem(KEY, '1'); } catch (e) { } });
+        setTimeout(function () {
+            el.classList.remove('hidden');
+            requestAnimationFrame(function () { requestAnimationFrame(function () {
+                el.classList.remove('translate-y-full', 'sm:opacity-0'); el.classList.add('translate-y-0', 'sm:opacity-100');
+            }); });
+        }, 2500);
+    })();
     </script>
     {{template "saved_js" .}}
 </body>

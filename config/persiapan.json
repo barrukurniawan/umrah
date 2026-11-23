@@ -18,14 +18,43 @@
             "Biaya (PP 45/2024): paspor elektronik Rp650 rb (5 th) / Rp950 rb (10 th); paspor biasa Rp350 rb (5 th) / Rp650 rb (10 th). Cek ulang di situs Imigrasi.",
             "Bawa KTP, KK, dan akta lahir/ijazah/buku nikah asli."
           ],
-          "link": {"label": "Info M-Paspor (Imigrasi)", "url": "https://www.imigrasi.go.id/"}
+          "link": {
+            "label": "Info M-Paspor (Imigrasi)",
+            "url": "https://www.imigrasi.go.id/"
+          },
+          "images": [
+            {
+              "src": "/static/persiapan/paspor-sampul.svg",
+              "caption": "Sampul paspor Indonesia (hijau)"
+            },
+            {
+              "src": "/static/persiapan/paspor-data.svg",
+              "caption": "Halaman data: cek tanggal habis berlaku"
+            }
+          ]
         },
         {
           "key": "berkas",
           "title": "Siapkan KTP, KK, dan akta lahir/buku nikah",
           "tag": "wajib",
-          "desc": "Biasanya diminta travel untuk pendaftaran. Perempuan di bawah 45 tahun sebaiknya menanyakan ke travel soal syarat mahram.",
-          "tips": ["Simpan foto/scan semua dokumen di HP dan email, berjaga-jaga bila hilang."]
+          "desc": "Diserahkan ke travel untuk pendaftaran. <b>Visa umrah diurus travel</b>: Anda cukup menyerahkan paspor, pas foto, dan sertifikat vaksin tepat waktu. Perempuan di bawah 45 tahun sebaiknya menanyakan ke travel soal syarat mahram.",
+          "tips": [
+            "Simpan foto/scan semua dokumen di HP dan email, berjaga-jaga bila hilang."
+          ],
+          "images": [
+            {
+              "src": "/static/persiapan/ktp.svg",
+              "caption": "KTP"
+            },
+            {
+              "src": "/static/persiapan/kk.svg",
+              "caption": "Kartu Keluarga"
+            },
+            {
+              "src": "/static/persiapan/nikah-akta.svg",
+              "caption": "Buku nikah & akta kelahiran"
+            }
+          ]
         },
         {
           "key": "foto",
@@ -34,11 +63,25 @@
           "desc": "Ukuran dan jumlahnya ikuti permintaan travel (umumnya 4x6, wajah tampak 80%)."
         },
         {
-          "key": "visa",
-          "title": "Serahkan berkas visa ke travel",
+          "key": "nusuk",
+          "title": "Registrasi akun aplikasi Nusuk",
           "tag": "wajib",
-          "due_days": 30,
-          "desc": "Visa umrah diurus travel. Pastikan paspor, foto, dan sertifikat vaksin sudah diserahkan tepat waktu."
+          "due_days": 14,
+          "desc": "Nusuk adalah aplikasi resmi Pemerintah Arab Saudi untuk ibadah umrah: izin (tasreh) ibadah dan <b>pemesanan jadwal masuk Raudhah</b> di Masjid Nabawi. Daftar memakai data paspor.",
+          "tips": [
+            "Unduh <b>Nusuk</b> di Google Play Store / App Store (pengembang: Kementerian Haji dan Umrah Arab Saudi). Daftar dengan nama, nomor paspor, dan email.",
+            "Kuota Raudhah cepat habis, jadi pesan jadwal sejak sebelum tiba di Madinah. Pembimbing travel biasanya membantu bila kesulitan."
+          ],
+          "link": {
+            "label": "Situs resmi Nusuk",
+            "url": "https://www.nusuk.sa/"
+          },
+          "images": [
+            {
+              "src": "/static/persiapan/nusuk-app.webp",
+              "caption": "Aplikasi Nusuk resmi di App Store/Play Store, pengembang: Ministry of Hajj and Umrah"
+            }
+          ]
         }
       ]
     },
@@ -56,6 +99,16 @@
           "tips": [
             "Tempat: Balai Kekarantinaan Kesehatan (dulu KKP), RSUD, atau klinik/rumah sakit yang terdaftar menerbitkan ICV. Tanyakan harga dan ketersediaan vaksin sebelum datang.",
             "Bawa paspor (nama di ICV harus sama dengan paspor) dan KTP."
+          ],
+          "images": [
+            {
+              "src": "/static/persiapan/icv.svg",
+              "caption": "ICV (buku kuning) dengan stempel vaksin meningitis"
+            },
+            {
+              "src": "/static/persiapan/e-icv.webp",
+              "caption": "Contoh e-ICV yang dikirim lewat email (sumber: BKK Yogyakarta)"
+            }
           ]
         },
         {
@@ -84,16 +137,75 @@
       "title": "Perlengkapan",
       "icon": "bag",
       "items": [
-        {"key": "ihram", "gender": "m", "title": "2 set kain ihram + sabuk ihram", "tag": "wajib", "desc": "Satu dipakai, satu cadangan. Kain putih tanpa jahitan."},
-        {"key": "sandal_pria", "gender": "m", "title": "Sandal yang tidak menutup mata kaki", "tag": "wajib", "desc": "Saat ihram laki-laki tidak boleh memakai alas kaki yang menutup mata kaki."},
-        {"key": "cukur", "gender": "m", "title": "Alat cukur/gunting kecil untuk tahallul", "tag": "opsional"},
-        {"key": "gamis", "gender": "f", "title": "Gamis/mukena putih atau warna lembut", "tag": "wajib", "desc": "Pakaian longgar yang menutup aurat. Saat ihram wajah dan telapak tangan tidak ditutup."},
-        {"key": "kaos_kaki", "gender": "f", "title": "Kaos kaki, kerudung cadangan, bros/peniti", "tag": "opsional"},
-        {"key": "sajadah", "title": "Sajadah lipat & tas kecil untuk sandal", "tag": "opsional"},
-        {"key": "tanpa_wangi", "title": "Sabun & sampo tanpa pewangi", "tag": "cek", "desc": "Memakai wewangian termasuk larangan ihram."},
-        {"key": "semprot", "title": "Botol semprot air & masker", "tag": "opsional", "desc": "Udara di Makkah dan Madinah kering dan panas."},
-        {"key": "elektronik", "title": "Power bank & colokan tipe G", "tag": "opsional", "desc": "Arab Saudi memakai colokan 3 kaki (tipe G)."},
-        {"key": "riyal", "title": "Sedikit uang riyal tunai", "tag": "opsional", "desc": "Untuk jajan atau sedekah; sebagian besar toko juga menerima kartu."}
+        {
+          "key": "ihram",
+          "gender": "m",
+          "title": "2 set kain ihram + sabuk ihram",
+          "tag": "wajib",
+          "desc": "Satu dipakai, satu cadangan. Kain putih tanpa jahitan."
+        },
+        {
+          "key": "sandal_pria",
+          "gender": "m",
+          "title": "Sandal yang tidak menutup mata kaki",
+          "tag": "wajib",
+          "desc": "Saat ihram laki-laki tidak boleh memakai alas kaki yang menutup mata kaki."
+        },
+        {
+          "key": "cukur",
+          "gender": "m",
+          "title": "Alat cukur/gunting kecil untuk tahallul",
+          "tag": "opsional"
+        },
+        {
+          "key": "pakaian_pria",
+          "gender": "m",
+          "title": "Pakaian harian: baju koko/gamis pria & celana panjang longgar (3–5 stel)",
+          "tag": "wajib",
+          "desc": "Dipakai di luar waktu ihram (setelah tahallul, di Madinah, dan saat perjalanan). Pilih bahan adem dan longgar."
+        },
+        {
+          "key": "gamis",
+          "gender": "f",
+          "title": "Gamis/mukena putih atau warna lembut",
+          "tag": "wajib",
+          "desc": "Pakaian longgar yang menutup aurat. Saat ihram wajah dan telapak tangan tidak ditutup."
+        },
+        {
+          "key": "kaos_kaki",
+          "gender": "f",
+          "title": "Kaos kaki, kerudung cadangan, bros/peniti",
+          "tag": "opsional"
+        },
+        {
+          "key": "sajadah",
+          "title": "Sajadah lipat & tas kecil untuk sandal",
+          "tag": "opsional"
+        },
+        {
+          "key": "tanpa_wangi",
+          "title": "Sabun & sampo tanpa pewangi",
+          "tag": "cek",
+          "desc": "Memakai wewangian termasuk larangan ihram."
+        },
+        {
+          "key": "semprot",
+          "title": "Botol semprot air & masker",
+          "tag": "opsional",
+          "desc": "Udara di Makkah dan Madinah kering dan panas."
+        },
+        {
+          "key": "elektronik",
+          "title": "Power bank (maks. 10.000 mAh), kabel charger & colokan tipe G",
+          "tag": "opsional",
+          "desc": "Power bank wajib dibawa di <b>bagasi kabin</b>, tidak boleh di bagasi besar. Kapasitas 10.000 mAh aman untuk semua maskapai. Arab Saudi memakai colokan 3 kaki (tipe G)."
+        },
+        {
+          "key": "riyal",
+          "title": "Sedikit uang riyal tunai",
+          "tag": "opsional",
+          "desc": "Untuk jajan atau sedekah; sebagian besar toko juga menerima kartu."
+        }
       ]
     },
     {
@@ -101,9 +213,31 @@
       "title": "Ibadah & Manasik",
       "icon": "kaaba",
       "items": [
-        {"key": "manasik", "title": "Ikut manasik dari travel", "tag": "wajib"},
-        {"key": "simulasi", "title": "Coba Simulasi Tawaf & Sa'i", "tag": "opsional", "desc": "Belajar urutan tawaf dan sa'i secara interaktif.", "link": {"label": "Buka Simulasi", "url": "/simulasi"}},
-        {"key": "hafalan", "title": "Hafalkan niat, talbiyah, dan doa sapu jagad", "tag": "opsional", "desc": "Labbaika Allāhumma ‘umratan · Labbaika Allāhumma labbaik · Rabbanā ātinā fid-dunyā ḥasanah…", "link": {"label": "Lihat bagian Niat", "url": "/simulasi?tab=niat"}}
+        {
+          "key": "manasik",
+          "title": "Ikut manasik dari travel",
+          "tag": "wajib"
+        },
+        {
+          "key": "simulasi",
+          "title": "Coba Simulasi Tawaf & Sa'i",
+          "tag": "opsional",
+          "desc": "Belajar urutan tawaf dan sa'i secara interaktif.",
+          "link": {
+            "label": "Buka Simulasi",
+            "url": "/simulasi"
+          }
+        },
+        {
+          "key": "hafalan",
+          "title": "Hafalkan niat, talbiyah, dan doa sapu jagad",
+          "tag": "opsional",
+          "desc": "Labbaika Allāhumma ‘umratan · Labbaika Allāhumma labbaik · Rabbanā ātinā fid-dunyā ḥasanah…",
+          "link": {
+            "label": "Lihat Niat & Doa",
+            "url": "/simulasi?tab=niat"
+          }
+        }
       ]
     }
   ]

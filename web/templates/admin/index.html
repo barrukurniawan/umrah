@@ -39,7 +39,7 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-6">
-        {{if and (ne .Tab "live") (ne .Tab "pesan") (ne .Tab "kalender")}}
+        {{if and (ne .Tab "live") (ne .Tab "pesan") (ne .Tab "kalender") (ne .Tab "konten")}}
         <div class="flex items-center justify-between flex-wrap gap-2 mb-5">
             <h1 class="text-lg font-bold">{{.R.Range.Label}}</h1>
             <div class="flex gap-1 bg-white border border-gray-200 rounded-full p-1">
@@ -413,6 +413,8 @@
             </section>
         </div>
         {{end}}
+
+        {{if eq .Tab "konten"}}{{template "konten" .}}{{end}}
 
         {{if eq .Tab "pesan"}}
         <h1 class="text-lg font-bold mb-4">Pesan pengguna</h1>

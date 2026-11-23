@@ -1,8 +1,8 @@
 // Simulasi sa'i Umrohku: lorong Mas'a dari bukit Shafa (x = 0) ke bukit Marwah (x = L).
 // Ka'bah berada di sisi -z (barat). Semua bentuk dibuat dari kode supaya ringan.
-import { createSim, createCrowd, SKIN_TONES, THREE, $ } from './common.js?v=30';
+import { createSim, createCrowd, SKIN_TONES, THREE, $ } from './common.js?v=49';
 
-const sim = createSim({ part: 'sai', bg: '#efebe2', fogNear: 70, fogFar: 230 });
+const sim = createSim({ part: 'sai', bg: '#f3f3f1', fogNear: 70, fogFar: 230 });
 const { scene, camera, S, cam, M, mat, canvasTex, instanced, hooks } = sim;
 
 const L = 150;                       // panjang lorong di simulasi (aslinya ±400 m)
@@ -28,7 +28,7 @@ for (const z of [-9.5, -1.8, 1.8, 9.5]) {
   const ln = new THREE.Mesh(new THREE.PlaneGeometry(L - 6, 0.22), lineMat); ln.rotation.x = -Math.PI / 2; ln.position.set(L / 2, 0.02, z); scene.add(ln);
 }
 // Jalur tengah (kursi roda) dengan pagar rendah
-const mid = new THREE.Mesh(new THREE.PlaneGeometry(L - 6, 3.6), mat('#e9e6dd')); mid.rotation.x = -Math.PI / 2; mid.position.set(L / 2, 0.015, 0); scene.add(mid);
+const mid = new THREE.Mesh(new THREE.PlaneGeometry(L - 6, 3.6), mat('#f2f1f0')); mid.rotation.x = -Math.PI / 2; mid.position.set(L / 2, 0.015, 0); scene.add(mid);
 for (const z of [-1.8, 1.8]) { const rail = new THREE.Mesh(new THREE.BoxGeometry(L - 16, 0.08, 0.08), M.silver); rail.position.set(L / 2, 1, z); scene.add(rail); }
 const railPosts = []; for (let x = 8; x <= L - 8; x += 6) for (const z of [-1.8, 1.8]) railPosts.push({ x, z });
 instanced(new THREE.CylinderGeometry(0.05, 0.05, 1, 6), M.silver, railPosts, (o, p) => o.position.set(p.x, 0.5, p.z));
@@ -37,9 +37,9 @@ instanced(new THREE.CylinderGeometry(0.05, 0.05, 1, 6), M.silver, railPosts, (o,
 const pillars = []; for (let x = -6; x <= L + 6; x += 6) for (const z of [-12, 12]) pillars.push({ x, z });
 instanced(new THREE.BoxGeometry(1.4, CEIL, 1.4), M.pillar, pillars, (o, p) => o.position.set(p.x, CEIL / 2, p.z));
 instanced(new THREE.TorusGeometry(2.9, 0.22, 5, 12, Math.PI), M.arch, pillars.filter((p) => p.x < L + 6), (o, p) => o.position.set(p.x + 3, CEIL - 3.2, p.z));
-for (const z of [-13.6, 13.6]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(L + 30, CEIL, 0.6), mat('#e7dcc6')); wall.position.set(L / 2, CEIL / 2, z); scene.add(wall); }
+for (const z of [-13.6, 13.6]) { const wall = new THREE.Mesh(new THREE.BoxGeometry(L + 30, CEIL, 0.6), mat('#e8e6e1')); wall.position.set(L / 2, CEIL / 2, z); scene.add(wall); }
 const ceilTex = canvasTex(256, 256, (g, s) => {
-  g.fillStyle = '#f3ede0'; g.fillRect(0, 0, s, s); g.strokeStyle = '#d9c79a'; g.lineWidth = 6; g.strokeRect(10, 10, s - 20, s - 20);
+  g.fillStyle = '#f4f3f1'; g.fillRect(0, 0, s, s); g.strokeStyle = '#d9c79a'; g.lineWidth = 6; g.strokeRect(10, 10, s - 20, s - 20);
   g.lineWidth = 2; g.strokeRect(40, 40, s - 80, s - 80);
 });
 ceilTex.wrapS = ceilTex.wrapT = THREE.RepeatWrapping; ceilTex.repeat.set((L + 30) / 6, W / 6);
@@ -71,7 +71,7 @@ function rock(cx, seed) {
   m.scale.set(1.15, 0.62, 1.3); m.position.set(cx, 0, 0); scene.add(m);
   const glass = new THREE.Mesh(new THREE.CylinderGeometry(9.5, 9.5, 1.3, 24, 1, true, 0, Math.PI), new THREE.MeshLambertMaterial({ color: '#cfe7f2', transparent: true, opacity: 0.35, side: THREE.DoubleSide }));
   glass.position.set(cx, 0.65, 0); glass.rotation.y = cx < L / 2 ? 0 : Math.PI; // sisi kaca menghadap lorong scene.add(glass);
-  const plat = new THREE.Mesh(new THREE.CircleGeometry(11, 32), mat('#ebe8e0')); plat.rotation.x = -Math.PI / 2; plat.position.set(cx, 0.01, 0); scene.add(plat);
+  const plat = new THREE.Mesh(new THREE.CircleGeometry(11, 32), mat('#f3f3f1')); plat.rotation.x = -Math.PI / 2; plat.position.set(cx, 0.01, 0); scene.add(plat);
 }
 rock(-8, 1.3); rock(L + 8, 7.1);
 
@@ -90,9 +90,9 @@ const kaabaDir = (atMarwah) => new THREE.Vector3(atMarwah ? -0.35 : 0.35, 0, -1)
 const CROWD = 90;
 const KINDS = [
   { gender: 'm', opts: { shoulderBare: false } },
-  { gender: 'f', opts: { cloth: '#f4efe6', veil: '#ece6dc' } },
+  { gender: 'f', opts: { cloth: '#f4f3f1', veil: '#f3f2f1' } },
   { gender: 'f', opts: { cloth: '#2f2f33', veil: '#26262a', shoe: '#2a2a2a' } },
-  { gender: 'f', opts: { cloth: '#e9e3d6', veil: '#8d9fb5' } },
+  { gender: 'f', opts: { cloth: '#efeeec', veil: '#8d9fb5' } },
 ];
 const pickKind = () => { const r = Math.random(); return r < 0.65 ? 0 : r < 0.79 ? 1 : r < 0.93 ? 2 : 3; };
 const crowdPlan = Array.from({ length: CROWD }, pickKind);
@@ -252,7 +252,9 @@ function finish() {
   }, {
     title: 'Alhamdulillah, umrahmu selesai',
     body: '<p>Rangkaian umrah lengkap: <b>ihram, tawaf, sa\'i, dan tahallul</b>. Semoga Allah menerima ibadahmu dan memudahkan langkahmu ke Tanah Suci.</p>',
-    actions: '<a href="/simulasi?bagian=tawaf" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi Tawaf</a>',
+    actions: '<a href="/simulasi?bagian=tawaf" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Ulangi Tawaf</a>'
+      + (sim.fromHaram ? '<button type="button" id="btnBackHaramEnd" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Kembali ke Jelajah</button>' : ''),
+    onShow: () => { if ($('btnBackHaramEnd')) $('btnBackHaramEnd').onclick = () => sim.backToHaram(true); },
     next: 'Mulai Ulang',
   }], () => sim.reset());
 }

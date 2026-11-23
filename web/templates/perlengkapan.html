@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {{template "page_head" .}}
+    <meta name="description"
+        content="Daftar perlengkapan umrah yang terbukti berguna: pouch HP kalung untuk tawaf, kain ihram, sandal, tasbih digital, adapter tipe G, dan lainnya. Tinggal klik ke Shopee.">
+    <meta property="og:title" content="Perlengkapan Umrah yang Wajib Dibawa - Umrohku">
+    <meta property="og:description"
+        content="Dari pouch HP kalung supaya HP tidak hilang saat tawaf sampai adapter tipe G. Tinggal klik ke Shopee.">
+    <meta property="og:image" content="https://umrohku.web.id/static/perlengkapan/pouch-hp.svg">
+    <style>
+        .pl-card {
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        @media (hover:hover) {
+            .pl-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px -12px rgba(6, 78, 59, .35);
+            }
+        }
+
+        .pl-img {
+            background: #eef4ef;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-emerald-50 to-white min-h-screen text-gray-700">
+    {{template "nav" .}}
+
+    <main class="max-w-5xl mx-auto px-4 py-6 sm:py-8">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-7 h-7 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            Perlengkapan Umrah
+        </h1>
+
+        {{range $i, $p := .Products}}
+        {{if $p.Featured}}
+        <!-- Produk utama (dari video): ditaruh paling atas, kartu lebar -->
+        <section
+            class="pl-card mt-6 bg-white rounded-2xl border-2 border-emerald-200 shadow-sm overflow-hidden sm:flex">
+            <div class="pl-img sm:w-[44%] shrink-0 relative">
+                <img src="{{$p.Img}}" alt="{{$p.Name}}" class="w-full aspect-[4/3] object-cover">
+                <span
+                    class="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-rose-600 text-white text-[11px] font-bold px-2.5 py-1 shadow">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>Seperti di video
+                </span>
+            </div>
+            <div class="p-5 sm:p-6 flex flex-col justify-center">
+                <p class="text-[11px] font-bold text-emerald-700 tracking-wide uppercase">Paling penting saat tawaf</p>
+                <h2 class="mt-1 text-xl sm:text-2xl font-bold text-gray-900">{{$p.Name}}</h2>
+                <p class="mt-2 text-[15px] text-gray-600 leading-relaxed">{{$p.Reason}}</p>
+                <div class="mt-4">
+                    <a href="{{$p.Href}}" target="_blank" rel="noopener sponsored" data-key="{{$p.Key}}"
+                        class="pl-buy inline-flex items-center justify-center gap-2 w-full sm:w-auto rounded-xl bg-[#ee4d2d] hover:bg-[#d8431f] text-white font-bold px-6 py-3 text-[15px] shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                            <path d="M3 6h18" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
+                        </svg>
+                        Beli sekarang
+                    </a>
+                </div>
+            </div>
+        </section>
+        {{end}}
+        {{end}}
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {{range $p := .Products}}{{if not $p.Featured}}
+            <article
+                class="pl-card bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                <div class="pl-img"><img src="{{$p.Img}}" alt="{{$p.Name}}" loading="lazy"
+                        class="w-full aspect-[4/3] object-cover"></div>
+                <div class="p-4 flex flex-col flex-1">
+                    <h2 class="font-bold text-gray-900 leading-snug">{{$p.Name}}</h2>
+                    <p class="mt-1.5 text-[13px] text-gray-600 leading-relaxed flex-1">{{$p.Reason}}</p>
+                    <a href="{{$p.Href}}" target="_blank" rel="noopener sponsored" data-key="{{$p.Key}}"
+                        class="pl-buy mt-3 inline-flex items-center justify-center gap-2 w-full rounded-xl bg-[#ee4d2d] hover:bg-[#d8431f] text-white font-semibold px-4 py-2.5 text-sm">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                            <path d="M3 6h18" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
+                        </svg>
+                        Beli sekarang
+                    </a>
+                </div>
+            </article>
+            {{end}}{{end}}
+        </div>
+
+        <section
+            class="mt-8 rounded-2xl bg-emerald-50 border border-emerald-100 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <p class="font-bold text-gray-900">Sudah punya semua? Centang di checklist persiapan</p>
+                <p class="text-sm text-gray-600 mt-0.5">Dokumen, vaksin, perlengkapan, dan manasik dalam satu daftar
+                    yang bisa dicentang.</p>
+            </div>
+            <a href="/persiapan"
+                class="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2">Buka
+                checklist →</a>
+        </section>
+
+        <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">Gambar adalah ilustrasi, bukan foto produk. Harga,
+            stok, dan spesifikasi mengikuti halaman toko di Shopee.</p>
+    </main>
+
+    <script>
+        // Hitung klik ke Shopee (beacon analitik, tanpa data pribadi).
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('a.pl-buy'); if (!a) return;
+            try { navigator.sendBeacon('/t', new Blob([JSON.stringify({ t: 'click_shopee', pkg: a.dataset.key })], { type: 'application/json' })); } catch (err) { }
+        });
+    </script>
+</body>
+
+</html>

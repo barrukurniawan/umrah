@@ -1,7 +1,8 @@
 // Simulasi tawaf Umrohku. Semua bentuk dibuat dari kode (tanpa model 3D), supaya ringan di HP.
 // Arah: x = timur, -z = utara. Sudut θ diukur berlawanan jarum jam dari timur (dilihat dari atas),
 // jadi tawaf = θ bertambah, dan Ka'bah selalu di sebelah kiri.
-import { createSim, createCrowd, SKIN_TONES, THREE, $, TAU, mod } from './common.js?v=30';
+import { createSim, createCrowd, SKIN_TONES, THREE, $, TAU, mod } from './common.js?v=49';
+import { buildKaaba, KW, KD } from './kaaba.js?v=31';
 
 const angOf = (x, z) => Math.atan2(-z, x);
 const atAngle = (a, r, y = 0) => new THREE.Vector3(Math.cos(a) * r, y, -Math.sin(a) * r);
@@ -69,77 +70,9 @@ instanced(new THREE.BoxGeometry(0.45, 0.25, 0.45), M.white, poles, (o, p) => o.p
 octRing(81, 78.5, 5, M.stone, 12.8);
 octRing(81.2, 78.3, 1.1, M.tile, 16.6);
 
-// ---------- Ka'bah ----------
-const KW = 10, KD = 12, KH = 13.1, KROT = Math.PI / 4;
-const kaaba = new THREE.Group(); kaaba.rotation.y = KROT; scene.add(kaaba);
-const toWorld = (x, y, z) => new THREE.Vector3(x, y, z).applyAxisAngle(new THREE.Vector3(0, 1, 0), KROT);
-const base = new THREE.Mesh(new THREE.BoxGeometry(KW + 0.9, 0.5, KD + 0.9), mat('#dad6cc')); base.position.y = 0.25; kaaba.add(base);
-const body = new THREE.Mesh(new THREE.BoxGeometry(KW, KH, KD), M.black); body.position.y = 0.5 + KH / 2; kaaba.add(body);
-const bandTex = canvasTex(1024, 64, (g, w, h) => {
-  g.fillStyle = '#151515'; g.fillRect(0, 0, w, h);
-  g.strokeStyle = '#d6b04a'; g.lineWidth = 3; g.lineCap = 'round';
-  g.beginPath(); g.moveTo(0, 6); g.lineTo(w, 6); g.moveTo(0, h - 6); g.lineTo(w, h - 6); g.stroke();
-  g.lineWidth = 2.4;
-  for (let x = 14; x < w - 14; x += 9 + Math.random() * 8) {
-    g.beginPath(); const y = 20 + Math.random() * 14;
-    g.moveTo(x, y); g.quadraticCurveTo(x + 4, y - 10 + Math.random() * 20, x + 8 + Math.random() * 6, 22 + Math.random() * 18); g.stroke();
-  }
-});
-bandTex.wrapS = THREE.RepeatWrapping; bandTex.repeat.set(2, 1);
-const band = new THREE.Mesh(new THREE.BoxGeometry(KW + 0.06, 1.1, KD + 0.06), new THREE.MeshLambertMaterial({ map: bandTex }));
-band.position.y = 0.5 + KH * 0.68; kaaba.add(band);
-// Pintu di sisi timur laut (sisi +x lokal), dekat sudut Hajar Aswad
-const door = new THREE.Mesh(new THREE.BoxGeometry(0.15, 3.4, 2), M.gold); door.position.set(KW / 2 + 0.05, 0.5 + 2.2 + 1.7, 3); kaaba.add(door);
-// Sudut-sudut (dunia): Hajar Aswad = timur, Iraqi = utara, Syami = barat, Yamani = selatan
-const C_HA = toWorld(KW / 2, 0, KD / 2), C_YM = toWorld(-KW / 2, 0, KD / 2);
+// ---------- Ka'bah (kaaba.js) ----------
+const { kaaba, body, toWorld, KROT, C_HA, C_YM, HIJR_MID, MQ } = buildKaaba(sim, scene);
 const A_HA = angOf(C_HA.x, C_HA.z), A_YM = angOf(C_YM.x, C_YM.z);
-// Hajar Aswad: bingkai perak di sudut, setinggi ±1,5 m
-const haDir = C_HA.clone().setY(0).normalize();
-const haFrame = new THREE.Group();
-haFrame.position.copy(C_HA.clone().add(haDir.clone().multiplyScalar(0.35))).setY(1.6);
-haFrame.rotation.y = Math.atan2(haDir.x, haDir.z);
-haFrame.add(new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.14, 8, 22), M.silver));
-const haStone = new THREE.Mesh(new THREE.CircleGeometry(0.42, 20), new THREE.MeshStandardMaterial({ color: '#2a1d1d', emissive: '#3a2020', roughness: 0.4 }));
-haFrame.add(haStone); scene.add(haFrame);
-// Rukun Yamani: penanda tipis di sudut
-const ymDir = C_YM.clone().setY(0).normalize();
-const ymMark = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.2, 0.5), mat('#3a3a3a'));
-ymMark.position.copy(C_YM.clone().add(ymDir.clone().multiplyScalar(0.05))).setY(1.6); ymMark.rotation.y = KROT; scene.add(ymMark);
-
-// Hijr Ismail: tembok rendah setengah elips di sisi barat laut (sisi -z lokal)
-const hijrPts = [];
-for (let i = 0; i <= 26; i++) {
-  const t = Math.PI * (i / 26);
-  hijrPts.push({ x: Math.cos(t) * (KW / 2 + 0.6), z: -KD / 2 - 0.4 - Math.sin(t) * 8.4 });
-}
-const hijrSeg = [];
-for (let i = 0; i < hijrPts.length - 1; i++) {
-  const a = hijrPts[i], b = hijrPts[i + 1];
-  if (i === 0 || i === hijrPts.length - 2) continue; // celah masuk di kedua ujung
-  hijrSeg.push({ a, b });
-}
-{
-  const im = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1.3, 1.4), M.marble, hijrSeg.length), o = new THREE.Object3D();
-  hijrSeg.forEach((s, i) => {
-    const dx = s.b.x - s.a.x, dz = s.b.z - s.a.z;
-    o.position.set((s.a.x + s.b.x) / 2, 0.65, (s.a.z + s.b.z) / 2); o.rotation.set(0, -Math.atan2(dz, dx), 0); o.scale.set(Math.hypot(dx, dz) + 0.1, 1, 1);
-    o.updateMatrix(); im.setMatrixAt(i, o.matrix);
-  });
-  kaaba.add(im);
-  const shape = new THREE.Shape(); shape.moveTo(hijrPts[0].x, -hijrPts[0].z); hijrPts.forEach((p) => shape.lineTo(p.x, -p.z)); shape.closePath();
-  const hf = new THREE.Mesh(new THREE.ShapeGeometry(shape), mat('#e4e2dc')); hf.rotation.x = -Math.PI / 2; hf.position.y = 0.03; kaaba.add(hf);
-}
-const HIJR_MID = toWorld(0, 0, -KD / 2 - 6);
-
-// Maqam Ibrahim: kubah kecil keemasan di depan pintu
-const maqam = new THREE.Group();
-const MQ = toWorld(KW / 2 + 9, 0, 2.6); maqam.position.copy(MQ); maqam.rotation.y = KROT;
-const mqBase = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.3, 0.5, 8), mat('#e3dfd6')); mqBase.position.y = 0.25; maqam.add(mqBase);
-const mqCage = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 1.9, 8, 1, true), new THREE.MeshStandardMaterial({ color: '#d4a93a', metalness: 0.5, roughness: 0.4, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
-mqCage.position.y = 1.45; maqam.add(mqCage);
-const mqDome = new THREE.Mesh(new THREE.SphereGeometry(0.9, 12, 8, 0, TAU, 0, Math.PI / 2), M.gold); mqDome.position.y = 2.4; maqam.add(mqDome);
-const mqTop = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.6, 6), M.gold); mqTop.position.y = 3.5; maqam.add(mqTop);
-scene.add(maqam);
 
 // Lampu hijau penanda start (sejajar Hajar Aswad), garis start di lantai
 const LAMP = atAngle(A_HA, COL_AP - 1.6);
@@ -158,9 +91,9 @@ glow.position.copy(LAMP).setY(4.4); glow.scale.set(5, 5, 1); scene.add(glow);
 const CROWD = 110;
 const KINDS = [
   { gender: 'm', opts: { shoulderBare: true } },
-  { gender: 'f', opts: { cloth: '#f4efe6', veil: '#ece6dc' } },
+  { gender: 'f', opts: { cloth: '#f4f3f1', veil: '#f3f2f1' } },
   { gender: 'f', opts: { cloth: '#2f2f33', veil: '#26262a', shoe: '#2a2a2a' } },
-  { gender: 'f', opts: { cloth: '#e9e3d6', veil: '#8d9fb5' } },
+  { gender: 'f', opts: { cloth: '#efeeec', veil: '#8d9fb5' } },
 ];
 const pickKind = () => { const r = Math.random(); return r < 0.65 ? 0 : r < 0.79 ? 1 : r < 0.93 ? 2 : 3; };
 const crowdPlan = Array.from({ length: CROWD }, pickKind);
@@ -296,10 +229,11 @@ function finish() {
   }, {
     title: 'Minum Zamzam, lalu menuju Shafa',
     body: '<p>Setelah shalat, minum air <b>Zamzam</b> dan berdoa. Berikutnya adalah <b>sa\'i</b>: 7 kali perjalanan antara bukit Shafa dan Marwah.</p>',
-    actions: `<button type="button" id="btnRestart" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Mulai Ulang</button>`,
-    onShow: () => { $('btnRestart').onclick = () => sim.reset(); },
+    actions: `<button type="button" id="btnRestart" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Mulai Ulang</button>`
+      + (sim.fromHaram ? `<button type="button" id="btnBackHaramEnd" class="rounded-xl border border-gray-200 px-3.5 lg:px-4 py-1.5 lg:py-2.5 text-[13px] lg:text-sm font-semibold text-gray-600 hover:bg-gray-50">Kembali ke Jelajah</button>` : ''),
+    onShow: () => { $('btnRestart').onclick = () => sim.reset(); if ($('btnBackHaramEnd')) $('btnBackHaramEnd').onclick = () => sim.backToHaram(true); },
     next: "Lanjut ke Sa'i →",
-  }], () => { location.href = '/simulasi?bagian=sai&g=' + S.gender; });
+  }], () => { location.href = '/simulasi?bagian=sai&g=' + S.gq; });
 }
 
 hooks.reset = () => {

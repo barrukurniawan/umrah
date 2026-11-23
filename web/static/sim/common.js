@@ -1,7 +1,7 @@
-// Bagian bersama simulasi Umrohku (tawaf & sa'i): renderer, karakter chibi, kotak pemandu,
+// Bagian bersama simulasi Umrohku (tawaf, sa'i & jelajah): renderer, karakter chibi, kotak pemandu,
 // tombol Jalan, audio murottal, label, dan loop. Tiap adegan mengisi `sim.hooks`.
 import * as THREE from 'three';
-import { createChibi, createCrowd, RIG_SCALE, SKIN_TONES } from './chibi.js?v=30';
+import { createChibi, createCrowd, RIG_SCALE, SKIN_TONES, LOOKS } from './chibi.js?v=49';
 export { THREE, createCrowd, SKIN_TONES };
 
 export const $ = (id) => document.getElementById(id);
@@ -28,10 +28,11 @@ export function chibiKit() {
   // clothColor/veilColor: untuk ilustrasi (mis. tukang cukur berbaju biasa).
   // draped: ihram dengan kedua bahu tertutup (ilustrasi Niat/Tahallul).
   const shadowMat = new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (c, s) => { const gr = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); gr.addColorStop(0, 'rgba(0,0,0,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, s, s); }), transparent: true, depthWrite: false });
-  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null, draped = false, skin = '#eab48a', bald = false } = {}) {
+  // look: preset tampilan (chibi.js LOOKS), mis. 'beard' = pria berjenggot rambut ikal.
+  function makeChibi(gender, { shoulderBare = gender === 'm', scale = 2, clothColor = null, veilColor = null, draped = false, skin = null, bald = false, look = null } = {}) {
     const rig = createChibi(gender, {
       shoulderBare: shoulderBare && !draped, outfit: gender === 'm' && clothColor ? 'casual' : 'ihram',
-      cloth: clothColor, veil: veilColor, skin, bald,
+      cloth: clothColor, veil: veilColor, skin: skin || (look && LOOKS[look] && LOOKS[look].skin) || '#eab48a', bald, look,
     });
     const g = new THREE.Group(); rig.root.scale.setScalar(RIG_SCALE); g.add(rig.root);
     const sh = new THREE.Mesh(new THREE.CircleGeometry(0.75, 20), shadowMat); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.02; g.add(sh);
@@ -59,12 +60,15 @@ export function createSim(opts = {}) {
   scene.background = new THREE.Color(bg);
   scene.fog = new THREE.Fog(bg, opts.fogNear || 130, opts.fogFar || 260);
   const camera = new THREE.PerspectiveCamera(opts.fov || 42, 1, 0.5, opts.far || 420);
-  scene.add(new THREE.HemisphereLight('#ffffff', '#cbbf9f', 1.25));
-  const sun = new THREE.DirectionalLight('#fff4df', 1.5);
+  // Masjidil Haram: batu putih gading (bukan krem kekuningan); pantulan tanah & matahari netral.
+  scene.add(new THREE.HemisphereLight('#ffffff', '#cfcdc8', 1.25));
+  const sun = new THREE.DirectionalLight('#fffbf3', 1.5);
   sun.position.set(-40, 80, 30);
   scene.add(sun);
 
   const { M, mat, canvasTex, makeChibi } = chibiKit();
+  // batu bangunan di simulasi 3D: putih gading, lengkung krem lembut (ilustrasi chibiKit tetap memakai warna asal)
+  for (const [k, c] of [['stone', '#ece9e3'], ['stoneDark', '#cdc9c1'], ['pillar', '#f1efeb'], ['arch', '#d6d0c6'], ['dome', '#ecebe7']]) M[k].color.set(c);
   function instanced(geo, material, items, place, parent = scene) {
     const im = new THREE.InstancedMesh(geo, material, items.length), o = new THREE.Object3D();
     items.forEach((it, i) => { o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1); place(o, it); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
@@ -72,7 +76,7 @@ export function createSim(opts = {}) {
   }
 
   // ---------- Kondisi bersama ----------
-  const S = { phase: 'choose', gender: 'm', block: false, walkT: 0, gesture: 0, gestureKind: 'right' };
+  const S = { phase: 'choose', gender: 'm', look: '', gq: 'm', block: false, walkT: 0, gesture: 0, gestureKind: 'right' }; // gq: kode karakter untuk ?g= (m, f, mb = pria berjenggot)
   const input = { fwd: false, back: false, auto: false };
   const cam = { top: false, zoom: 1, pos: new THREE.Vector3(70, 50, 70), tgt: new THREE.Vector3(), orbit: 0.6 };
   const hooks = {
@@ -123,7 +127,19 @@ export function createSim(opts = {}) {
 
   // ---------- Kotak pemandu ----------
   const guide = $('guide');
+  // Kartu ringkas untuk Jelajah (open world): panel kecil, huruf lebih kecil, tombol di baris judul.
+  function compactHTML(c) {
+    let h = `<div class="fade-in rounded-xl border border-gray-200 bg-white px-2.5 py-1.5 lg:p-3">`;
+    h += `<div class="flex items-start justify-between gap-2"><h2 class="font-bold text-gray-900 text-[13px] lg:text-[15px] leading-snug">${c.title}</h2>${c.button || ''}</div>`;
+    if (c.body) h += `<div class="mt-0.5 text-[12px] lg:text-[13px] text-gray-600 leading-snug space-y-1">${c.body}</div>`;
+    if (c.dua) h += `<div class="mt-1 rounded-lg bg-emerald-50 px-2.5 py-1"><p class="ar text-[17px] lg:text-lg leading-relaxed text-emerald-900 text-right" dir="rtl">${c.dua.ar}</p>`
+      + `<p class="text-[11.5px] italic text-emerald-800 leading-snug">${c.dua.lat}</p><p class="text-[10.5px] text-gray-500 leading-snug">${c.dua.arti}</p></div>`;
+    if (c.after) h += `<div class="mt-1 text-[12px] lg:text-[13px] text-gray-600 leading-snug">${c.after}</div>`;
+    if (c.hint) h += `<p class="hidden lg:block mt-1.5 text-[11px] text-emerald-700 font-medium">${c.hint}</p>`;
+    return h + '</div>';
+  }
   function cardHTML(c) {
+    if (c.compact) return compactHTML(c);
     let h = `<div class="${c.pause ? 'card-in border-amber-200 bg-amber-50 border-l-4 border-l-amber-400 lg:border-l' : 'fade-in border-gray-200 bg-white'} rounded-2xl border p-3 lg:p-4">`;
     if (c.pause) h += `<p class="hidden lg:flex items-center gap-1.5 text-[10px] lg:text-[11px] font-bold uppercase tracking-wide text-amber-700 mb-0.5 lg:mb-2"><svg viewBox="0 0 24 24" class="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Sekilas Info</p>`;
     h += `<h2 class="font-bold text-gray-900 text-[14px] lg:text-lg leading-snug">${c.title}</h2>`;
@@ -200,10 +216,10 @@ export function createSim(opts = {}) {
   syncAudioBtn();
 
   // ---------- Mulai & ulang ----------
-  sim.begin = (gender) => {
-    S.gender = gender;
+  sim.begin = (gender, look = '') => {
+    S.gender = gender; S.look = look || ''; S.gq = gender + (look === 'beard' ? 'b' : '');
     if (sim.chibi) scene.remove(sim.chibi.g);
-    sim.chibi = makeChibi(gender, hooks.chibiOpts(gender)); scene.add(sim.chibi.g);
+    sim.chibi = makeChibi(gender, { ...hooks.chibiOpts(gender), look: S.look || null }); scene.add(sim.chibi.g);
     Object.assign(S, { block: false, gesture: 0, walkT: 0 });
     $('chooseOverlay').classList.add('hidden'); $('simControls').classList.remove('hidden');
     cam.top = false; syncCamBtn();
@@ -221,7 +237,7 @@ export function createSim(opts = {}) {
     sim.setCounter();
   };
   $('btnReset').onclick = () => sim.reset();
-  document.querySelectorAll('.pick').forEach((b) => (b.onclick = () => sim.begin(b.dataset.gender)));
+  document.querySelectorAll('.pick').forEach((b) => (b.onclick = () => sim.begin(b.dataset.gender, b.dataset.look || '')));
   // Di HP tombol kamera hanya ikon: saat mode atas aktif, tombolnya hijau.
   function syncCamBtn() {
     const b = $('btnCam'), t = cam.top ? 'Ikuti karakter' : 'Lihat dari atas';
@@ -288,7 +304,7 @@ export function createSim(opts = {}) {
   // Simulasi dipercepat (±6 m/detik), jadi irama langkah diatur tersendiri supaya tetap wajar.
   sim.animate = (dt, speed, { run = false } = {}) => {
     const c = sim.chibi, ws = c.g.scale.x * RIG_SCALE, moving = speed > 0;
-    const gesture = S.gesture > 0 ? (S.gestureKind === 'doa' ? 'doa' : 'right') : null;
+    const gesture = S.gesture > 0 ? (S.gestureKind === 'doa' || S.gestureKind === 'cup' ? S.gestureKind : 'right') : null;
     if (S.gesture > 0) S.gesture -= dt;
     const turn = c.lastYaw == null ? 0 : (mod(c.g.rotation.y - c.lastYaw + Math.PI, TAU) - Math.PI) / Math.max(dt, 1e-3);
     c.lastYaw = c.g.rotation.y;
@@ -307,7 +323,7 @@ export function createSim(opts = {}) {
   new ResizeObserver(resize).observe(stage); resize();
   function updateCamera(dt) {
     const want = hooks.camera(dt); if (!want) return;
-    const k = 1 - Math.exp(-dt * 2.8);
+    const k = 1 - Math.exp(-dt * (opts.camLerp || 2.8));
     cam.pos.lerp(want.pos, k); cam.tgt.lerp(want.tgt, k);
     camera.position.copy(cam.pos); camera.lookAt(cam.tgt);
   }
@@ -346,15 +362,37 @@ export function createSim(opts = {}) {
     if (sim.chibi) { placeEl(bubble, sim.chibi.g.position.clone().setY(2.7 * sim.chibi.g.scale.y), w, h); if (performance.now() > bubbleUntil) bubble.style.opacity = 0; }
     else bubble.style.opacity = 0;
   }
+  // ---------- Datang dari Jelajah (open world): tombol kembali ----------
+  // ?from=haram dari Jelajah -> tanda di sessionStorage (bertahan Tawaf -> Sa'i) sampai kembali ke Jelajah.
+  const ss = (fn) => { try { return fn(); } catch (e) { return null; } };
+  sim.backToHaram = (done) => {
+    const g = sim.chibi ? '&g=' + S.gq : '';
+    const l = $('simLoading'); if (l) { $('simLoadingText').textContent = 'Memuat Jelajah Masjidil Haram…'; l.classList.remove('hidden'); l.classList.add('flex'); }
+    location.href = `/simulasi?bagian=haram${g}&back=${opts.part}${done ? '-done' : ''}`;
+  };
+  function addBackButton() {
+    // baris kedua kolom kiri atas (di HP baris pertama sudah penuh: Umrohku + status)
+    const row = $('simRound') && $('simRound').parentElement && $('simRound').parentElement.parentElement && $('simRound').parentElement.parentElement.parentElement; if (!row) return;
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'btnBackHaram';
+    b.className = 'pointer-events-auto inline-flex items-center gap-1 rounded-full bg-white/90 shadow px-3 py-1.5 text-xs font-bold text-emerald-700';
+    b.innerHTML = '<svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Jelajah';
+    b.setAttribute('aria-label', 'Kembali ke Jelajah Masjidil Haram'); b.onclick = () => sim.backToHaram(false);
+    row.appendChild(b);
+  }
   sim.start = (initialCam) => {
     if (initialCam) { cam.pos.copy(initialCam.pos); cam.tgt.copy(initialCam.tgt); }
+    sim.query = new URLSearchParams(location.search); // dibaca sebelum URL dirapikan di bawah
+    if (opts.part === 'haram') ss(() => sessionStorage.removeItem('ukFromHaram'));
+    else if (sim.query.get('from') === 'haram') ss(() => sessionStorage.setItem('ukFromHaram', '1'));
+    sim.fromHaram = opts.part !== 'haram' && ss(() => sessionStorage.getItem('ukFromHaram')) === '1';
+    if (sim.fromHaram) addBackButton();
     // Kait pengujian (dipakai skrip uji otomatis; tidak memengaruhi pengguna).
     window.__sim = { S, input, sim, tick(sec) { for (let t = 0; t < sec; t += 0.05) step(0.05); syncFwdBtn(); } };
     if (sim.lite) hooks.lite();
     sim.reset();
     // Dari tombol "Lanjut ke Sa'i": karakter yang sama langsung dimulai.
-    const g = new URLSearchParams(location.search).get('g');
-    if (g === 'm' || g === 'f') { history.replaceState(null, '', location.pathname + '?bagian=' + (opts.part || 'tawaf')); sim.begin(g); }
+    const g = sim.query.get('g');
+    if (/^[mf]b?$/.test(g || '')) { history.replaceState(null, '', location.pathname + '?bagian=' + (opts.part || 'tawaf')); sim.begin(g[0], g[1] === 'b' ? 'beard' : ''); }
     frame();
   };
   return sim;

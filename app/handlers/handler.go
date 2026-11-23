@@ -18,8 +18,11 @@ func HomePage(c *fiber.Ctx) error {
 
 func SimulasiPage(c *fiber.Ctx) error {
 	part, title := "tawaf", "Simulasi Tawaf"
-	if c.Query("bagian") == "sai" {
+	switch c.Query("bagian") {
+	case "sai":
 		part, title = "sai", "Simulasi Sa'i"
+	case "haram":
+		part, title = "haram", "Jelajah Masjidil Haram"
 	}
 	return c.Render("simulasi", viewer(c, fiber.Map{"Title": title, "Part": part, "HideChat": true, "WideNav": true}))
 }
@@ -39,7 +42,7 @@ func PrivacyOptIn(c *fiber.Ctx) error {
 }
 
 func GetRecommendations(c *fiber.Ctx) error {
-	budget, _ := strconv.Atoi(c.FormValue("budget", "26000000"))
+	budget, _ := strconv.Atoi(c.FormValue("budget", "25000000"))
 	priority := c.FormValue("priority", "all")
 	advanced := c.FormValue("advanced", "")
 	page, _ := strconv.Atoi(c.FormValue("page", "1"))

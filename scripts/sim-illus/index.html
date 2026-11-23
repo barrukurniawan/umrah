@@ -45,6 +45,25 @@ function hero(gender, opts = {}, x = 0, z = 0, ry = 0.25) { const c = makeChibi(
 const look = (p, t) => { camera.position.set(...p); camera.lookAt(...t); };
 
 const scenes = {
+  // Pratinjau karakter (bukan ilustrasi situs): pria lama & pria berjenggot berdampingan. ?s=karakter | wajah
+  karakter() {
+    sky('#e8edef', '#f7f8f6'); ground('#efece4');
+    hero('m', { shoulderBare: true, draped: false }, -1.25, 0, 0.12); hero('m', { look: 'beard', shoulderBare: true, draped: false }, 1.25, 0, -0.12);
+    look([0, 1.9, 6.0], [0, 1.35, 0]);
+  },
+  // ?s=jalan: pria & wanita di tengah langkah (uji kain vs kaki). window.__chars untuk skrip uji.
+  jalan() {
+    sky('#e8edef', '#f7f8f6'); ground('#efece4');
+    const cm = hero('m', { look: 'beard', shoulderBare: true, draped: false }, -1.2, 0, 0.9), cf = hero('f', {}, 1.2, 0, 0.9);
+    for (const c of [cm, cf]) for (let i = 0; i < 80; i++) c.rig.animate({ dt: 0.05, speed: 3.8, phase: 0.3 });
+    window.__chars = [cm, cf]; window.__THREE = THREE;
+    look([0.2, 1.6, 5.2], [0, 0.9, 0]);
+  },
+  wajah() {
+    sky('#e8edef', '#f7f8f6'); ground('#efece4');
+    hero('m', { look: 'beard', shoulderBare: true, draped: false }, 0, 0, 0.35);
+    look([0.9, 2.25, 2.3], [0, 1.95, 0]);
+  },
   // 1. Niat di pesawat: kabin, kursi, jendela; jamaah laki-laki sudah berihram (kedua bahu tertutup).
   pesawat() {
     scene.background = new THREE.Color('#eef3f7');

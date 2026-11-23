@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Inter,Arial,sans-serif">
+  <rect width="400" height="300" fill="#f1f5f2"/>
+  <rect x="30" y="30" width="340" height="240" rx="6" fill="#000" opacity=".08" transform="translate(4,5)"/>
+  <rect x="30" y="30" width="340" height="240" rx="6" fill="#fff"/>
+  <text x="200" y="56" text-anchor="middle" fill="#111827" font-size="14" font-weight="800">KARTU KELUARGA</text>
+  <text x="200" y="72" text-anchor="middle" fill="#6b7280" font-size="9">No. 3201000000000000 · CONTOH</text>
+  <g font-size="8" fill="#374151">
+    <rect x="44" y="86" width="312" height="16" fill="#e5e7eb"/>
+    <text x="50" y="97" font-weight="700">No</text>
+    <text x="66" y="97" font-weight="700">Nama Lengkap</text>
+    <text x="170" y="97" font-weight="700">NIK</text>
+    <text x="262" y="97" font-weight="700">JK</text>
+    <text x="312" y="97" font-weight="700">Hubungan</text>
+    <text x="50" y="117">1</text>
+    <text x="66" y="117">CONTOH AYAH</text>
+    <text x="170" y="117">3201…0001</text>
+    <text x="262" y="117">L</text>
+    <text x="312" y="117">KEPALA KK</text>
+    <text x="50" y="135">2</text>
+    <text x="66" y="135">CONTOH IBU</text>
+    <text x="170" y="135">3201…0002</text>
+    <text x="262" y="135">P</text>
+    <text x="312" y="135">ISTRI</text>
+    <text x="50" y="153">3</text>
+    <text x="66" y="153">CONTOH ANAK</text>
+    <text x="170" y="153">3201…0003</text>
+    <text x="262" y="153">P</text>
+    <text x="312" y="153">ANAK</text>
+  </g>
+  <g stroke="#e5e7eb"><path d="M44 104h312M44 122h312M44 140h312M44 158h312"/></g>
+  <rect x="250" y="200" width="100" height="50" rx="4" fill="none" stroke="#9ca3af" stroke-dasharray="3 3"/>
+  <text x="300" y="229" text-anchor="middle" fill="#9ca3af" font-size="9">tanda tangan</text>
+  <text x="50" y="220" fill="#059669" font-size="10" font-weight="700">Membuktikan hubungan keluarga</text>
+  <text x="50" y="236" fill="#059669" font-size="10" font-weight="700">(mis. perempuan dengan mahram)</text>
+</svg>

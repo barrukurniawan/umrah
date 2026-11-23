@@ -289,6 +289,7 @@ func main() {
 		signal.Notify(hup, syscall.SIGHUP)
 		for range hup {
 			services.ReloadPrep()
+			services.ReloadProducts() // link affiliate /perlengkapan ikut dimuat ulang
 			services.ReloadHotelGeo() // koreksi jarak hotel ikut berlaku tanpa restart
 			if repositories.Reload() == nil {
 				services.ResetCalendarCache()
@@ -340,6 +341,7 @@ func main() {
 
 	// Tabungan umroh (perlu login).
 	app.Get("/persiapan", handlers.PrepPage)
+	app.Get("/perlengkapan", handlers.PerlengkapanPage)
 	app.Post("/api/persiapan", handlers.PrepSave)
 	app.Get("/tabungan", handlers.SavingsList)
 	app.Get("/tabungan/baru", handlers.SavingsNew)

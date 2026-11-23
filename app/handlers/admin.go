@@ -39,6 +39,7 @@ var adminTabs = []struct{ Key, Label string }{
 	{"pengguna", "Pengguna"},
 	{"pesan", "Pesan"},
 	{"kalender", "Kalender Paket"},
+	{"konten", "Konten"},
 }
 
 var (
@@ -143,7 +144,12 @@ func AdminDashboard(c *fiber.Ctx) error {
 	if tab == "kalender" {
 		cal = services.AdminCalendar(c.Query("bulan"), c.Query("tanggal"), c.Query("travel"))
 	}
+	var content services.ContentData
+	if tab == "konten" {
+		content = services.AdminContent(repositories.LastImport().At)
+	}
 	return c.Render("admin/index", fiber.Map{
+		"Content": content,
 		"U":       users,
 		"Cal":     cal,
 		"Import":  repositories.LastImport(),

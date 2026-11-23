@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#ecf1ed"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(40 60) skewY(-6)">
+<!-- sajadah terbentang -->
+<rect x="0" y="40" width="220" height="150" rx="6" fill="#2f6b50"/>
+<rect x="0" y="40" width="220" height="150" rx="6" fill="url(#gl)"/>
+<rect x="12" y="52" width="196" height="126" rx="4" fill="none" stroke="#d9b35a" stroke-width="3"/>
+<rect x="22" y="62" width="176" height="106" rx="3" fill="none" stroke="#d9b35a" stroke-width="1" opacity=".7"/>
+<!-- mihrab -->
+<path d="M70 168 V110 Q70 76 110 70 Q150 76 150 110 V168 Z" fill="#1d4d38"/>
+<path d="M78 168 V112 Q78 84 110 78 Q142 84 142 112 V168 Z" fill="none" stroke="#d9b35a" stroke-width="1.5"/>
+<path d="M110 96 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#d9b35a"/>
+<!-- rumbai -->
+<g stroke="#d9b35a" stroke-width="2" opacity=".8"><path d="M6 192 V202 M20 192 V202 M34 192 V202 M48 192 V202 M62 192 V202 M76 192 V202 M90 192 V202 M104 192 V202 M118 192 V202 M132 192 V202 M146 192 V202 M160 192 V202 M174 192 V202 M188 192 V202 M202 192 V202 M214 192 V202"/></g>
+</g>
+<!-- gulungan -->
+<g transform="translate(236 70)">
+<rect x="0" y="40" width="120" height="100" rx="18" fill="#2f6b50"/>
+<rect x="0" y="40" width="120" height="100" rx="18" fill="url(#gl)"/>
+<path d="M0 60 Q60 70 120 60 M0 80 Q60 90 120 80 M0 100 Q60 110 120 100 M0 120 Q60 130 120 120" fill="none" stroke="#1d4d38" stroke-width="3"/>
+<!-- ujung gulungan (lingkaran spiral) -->
+<ellipse cx="120" cy="90" rx="18" ry="50" fill="#1d4d38"/>
+<ellipse cx="120" cy="90" rx="10" ry="30" fill="#2f6b50"/>
+<ellipse cx="120" cy="90" rx="4" ry="12" fill="#1d4d38"/>
+<!-- tali ikat -->
+<rect x="48" y="36" width="24" height="108" rx="6" fill="#d9b35a"/>
+<rect x="48" y="36" width="24" height="108" rx="6" fill="url(#gl)"/>
+<rect x="52" y="82" width="16" height="12" rx="3" fill="#8f6a3a"/>
+<!-- tali jinjing -->
+<path d="M60 36 Q60 -10 100 2" fill="none" stroke="#d9b35a" stroke-width="6" stroke-linecap="round"/>
+</g>
+
+</svg>

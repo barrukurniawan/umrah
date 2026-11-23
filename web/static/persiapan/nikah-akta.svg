@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Inter,Arial,sans-serif">
+  <rect width="400" height="300" fill="#f1f5f2"/>
+  <!-- buku nikah suami (cokelat) & istri (hijau) -->
+  <g transform="translate(40,50) rotate(-6)">
+    <rect width="110" height="150" rx="8" fill="#7a4a24"/>
+    <text x="55" y="40" text-anchor="middle" fill="#f3d79a" font-size="10" font-weight="700">BUKU NIKAH</text>
+    <circle cx="55" cy="80" r="18" fill="none" stroke="#f3d79a" stroke-width="2"/>
+    <text x="55" y="130" text-anchor="middle" fill="#f3d79a" font-size="8">SUAMI</text>
+  </g>
+  <g transform="translate(120,58) rotate(4)">
+    <rect width="110" height="150" rx="8" fill="#1f6b46"/>
+    <text x="55" y="40" text-anchor="middle" fill="#f3d79a" font-size="10" font-weight="700">BUKU NIKAH</text>
+    <circle cx="55" cy="80" r="18" fill="none" stroke="#f3d79a" stroke-width="2"/>
+    <text x="55" y="130" text-anchor="middle" fill="#f3d79a" font-size="8">ISTRI</text>
+  </g>
+  <!-- akta kelahiran -->
+  <g transform="translate(250,46)">
+    <rect width="120" height="168" rx="4" fill="#fff" stroke="#d1d5db"/>
+    <rect x="8" y="8" width="104" height="152" rx="2" fill="none" stroke="#c7a85a" stroke-width="2"/>
+    <text x="60" y="36" text-anchor="middle" fill="#111827" font-size="9" font-weight="800">KUTIPAN AKTA</text>
+    <text x="60" y="48" text-anchor="middle" fill="#111827" font-size="9" font-weight="800">KELAHIRAN</text>
+    <g stroke="#e5e7eb" stroke-width="3"><path d="M20 70h80M20 84h80M20 98h64M20 112h80M20 126h52"/></g>
+  </g>
+  <text x="200" y="250" text-anchor="middle" fill="#059669" font-size="11" font-weight="700">Bawa yang asli + fotokopi, sesuai permintaan travel</text>
+  <rect x="300" y="8" width="86" height="22" rx="11" fill="#fff"/>
+  <text x="343" y="23" text-anchor="middle" fill="#0f5a3d" font-size="10" font-weight="700">CONTOH</text>
+</svg>

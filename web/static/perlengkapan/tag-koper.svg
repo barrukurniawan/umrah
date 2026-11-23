@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#eef2f0"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 150)">
+<!-- gagang koper di belakang -->
+<rect x="-150" y="-110" width="300" height="60" rx="18" fill="#2f6b50"/>
+<rect x="-150" y="-110" width="300" height="60" rx="18" fill="url(#gl)"/>
+<rect x="-70" y="-124" width="140" height="34" rx="12" fill="#1d4d38"/>
+<rect x="-58" y="-116" width="116" height="18" rx="8" fill="#2f6b50"/>
+<!-- tali tag -->
+<path d="M-30 -116 Q-70 -70 -60 -20" fill="none" stroke="#c8ccd2" stroke-width="5" stroke-linecap="round"/>
+<circle cx="-60" cy="-20" r="7" fill="none" stroke="#c8ccd2" stroke-width="4"/>
+<!-- tag -->
+<g transform="translate(-60 -8) rotate(-8)">
+<path d="M-50 0 H50 Q62 0 62 12 V120 Q62 132 50 132 H-50 Q-62 132 -62 120 V12 Q-62 0 -50 0 Z" fill="#e4b43a"/>
+<path d="M-50 0 H50 Q62 0 62 12 V120 Q62 132 50 132 H-50 Q-62 132 -62 120 V12 Q-62 0 -50 0 Z" fill="url(#gl)"/>
+<circle cx="0" cy="14" r="6" fill="#8f6a3a"/>
+<rect x="-48" y="30" width="96" height="90" rx="6" fill="#fffdf5"/>
+<text x="0" y="52" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" font-weight="700" fill="#8f6a3a" letter-spacing="1">NAMA</text>
+<text x="0" y="70" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#1f2a36">Ahmad Fauzi</text>
+<path d="M-38 80 H38 M-38 92 H28 M-38 104 H34" stroke="#cfd4da" stroke-width="2.5" stroke-linecap="round"/>
+<text x="0" y="116" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="7" fill="#8f6a3a" letter-spacing="1">+62 812 · INDONESIA</text>
+</g>
+<!-- koper kanan -->
+<g transform="translate(80 40)">
+<rect x="-50" y="-60" width="100" height="120" rx="14" fill="#3a4555"/>
+<rect x="-50" y="-60" width="100" height="120" rx="14" fill="url(#gl)"/>
+<path d="M-36 -60 V60 M36 -60 V60" stroke="#2b3340" stroke-width="4"/>
+<rect x="-20" y="-70" width="40" height="14" rx="5" fill="#2b3340"/>
+<circle cx="-30" cy="68" r="7" fill="#1f2630"/><circle cx="30" cy="68" r="7" fill="#1f2630"/>
+</g>
+</g>
+
+</svg>

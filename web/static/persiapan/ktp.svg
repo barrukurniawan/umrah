@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" font-family="Inter,Arial,sans-serif">
+  <rect width="400" height="300" fill="#f1f5f2"/>
+  <rect x="40" y="58" width="320" height="200" rx="14" fill="#1e3a8a" opacity=".15" transform="translate(4,5)"/>
+  <rect x="40" y="58" width="320" height="200" rx="14" fill="#cfe3f7"/>
+  <path d="M40 72a14 14 0 0 1 14-14h292a14 14 0 0 1 14 14v18H40z" fill="#9cc3ea"/>
+  <text x="200" y="79" text-anchor="middle" fill="#1e3a8a" font-size="10" font-weight="700">PROVINSI CONTOH · KABUPATEN CONTOH</text>
+  <g font-size="9" fill="#1f2937">
+    <text x="54" y="108" font-weight="700" font-size="11">NIK : 3201 0000 0000 0000</text>
+    <text x="54" y="128">Nama</text><text x="140" y="128">: CONTOH NAMA JAMAAH</text>
+    <text x="54" y="144">Tempat/Tgl Lahir</text><text x="140" y="144">: CONTOH, 01-01-1985</text>
+    <text x="54" y="160">Jenis Kelamin</text><text x="140" y="160">: LAKI-LAKI</text>
+    <text x="54" y="176">Alamat</text><text x="140" y="176">: JL. CONTOH NO. 1</text>
+    <text x="54" y="192">Agama</text><text x="140" y="192">: ISLAM</text>
+    <text x="54" y="208">Status</text><text x="140" y="208">: KAWIN</text>
+    <text x="54" y="224">Berlaku Hingga</text><text x="140" y="224">: SEUMUR HIDUP</text>
+  </g>
+  <rect x="270" y="104" width="74" height="92" rx="6" fill="#e9f1fb"/>
+  <circle cx="307" cy="136" r="17" fill="#9db8d6"/><path d="M280 194c3-22 16-30 27-30s24 8 27 30z" fill="#9db8d6"/>
+  <text x="200" y="40" text-anchor="middle" fill="#1e3a8a" font-size="16" font-weight="800">KTP</text>
+  <rect x="300" y="18" width="86" height="22" rx="11" fill="#fff"/>
+  <text x="343" y="33" text-anchor="middle" fill="#1e3a8a" font-size="10" font-weight="700">CONTOH</text>
+</svg>

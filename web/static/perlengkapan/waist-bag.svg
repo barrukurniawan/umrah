@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#f3f2f0"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<defs><pattern id="rip" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 0 H8 M0 0 V8" stroke="#a88a5c" stroke-width=".8" opacity=".45"/></pattern></defs>
+<!-- kunci -->
+<g transform="translate(82 118) rotate(-20)">
+<circle cx="0" cy="-26" r="9" fill="none" stroke="#6b7079" stroke-width="4"/>
+<rect x="-5" y="-18" width="10" height="34" rx="3" fill="#2b2e33"/>
+<path d="M5 8 H11 M5 0 H9" stroke="#2b2e33" stroke-width="3"/>
+<rect x="-10" y="-20" width="20" height="14" rx="4" fill="#2b2e33"/>
+</g>
+<!-- paspor -->
+<g transform="translate(145 92) rotate(-5)">
+<rect x="-34" y="-44" width="68" height="94" rx="5" fill="#1b1c20"/>
+<rect x="-34" y="-44" width="68" height="94" rx="5" fill="url(#gl)" opacity=".25"/>
+<text x="0" y="-6" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" font-weight="700" fill="#f3f3f3" letter-spacing="1">PASSPORT</text>
+<path d="M-18 -24 H18" stroke="#8d9199" stroke-width="1"/>
+</g>
+<!-- uang -->
+<g transform="translate(192 110) rotate(8)"><rect x="-34" y="-20" width="68" height="36" rx="3" fill="#7d9c6a"/><rect x="-29" y="-15" width="58" height="26" rx="2" fill="none" stroke="#5f7d4f" stroke-width="1.5"/><circle cx="0" cy="-2" r="8" fill="none" stroke="#5f7d4f" stroke-width="1.5"/></g>
+<g transform="translate(184 118) rotate(-6)"><rect x="-34" y="-20" width="68" height="36" rx="3" fill="#8caa78"/><rect x="-29" y="-15" width="58" height="26" rx="2" fill="none" stroke="#6a8a58" stroke-width="1.5"/><circle cx="0" cy="-2" r="8" fill="none" stroke="#6a8a58" stroke-width="1.5"/></g>
+<!-- kartu -->
+<g transform="translate(236 118) rotate(-10)"><rect x="-26" y="-18" width="52" height="34" rx="4" fill="#2a63b8"/><rect x="-18" y="-10" width="12" height="9" rx="2" fill="#e5c25a"/><rect x="-18" y="6" width="30" height="3" rx="1.5" fill="#fff" opacity=".8"/></g>
+<!-- HP -->
+<rect x="246" y="34" width="60" height="110" rx="9" fill="#f4f4f5" stroke="#cfd1d6" stroke-width="2"/>
+<rect x="252" y="46" width="48" height="84" rx="3" fill="#e4e6ea"/>
+<circle cx="276" cy="40" r="2" fill="#9aa0a8"/><rect x="266" y="39" width="4" height="2" fill="#9aa0a8"/>
+<!-- badan tas -->
+<path d="M62 150 Q60 128 84 126 L316 126 Q340 128 338 150 L334 246 Q332 266 310 266 L90 266 Q68 266 66 246 Z" fill="#b89a69"/>
+<path d="M62 150 Q60 128 84 126 L316 126 Q340 128 338 150 L334 246 Q332 266 310 266 L90 266 Q68 266 66 246 Z" fill="url(#rip)"/>
+<path d="M62 150 Q60 128 84 126 L316 126 Q340 128 338 150 L334 246 Q332 266 310 266 L90 266 Q68 266 66 246 Z" fill="url(#gl)" opacity=".35"/>
+<!-- resleting atas -->
+<path d="M84 134 H316" stroke="#6f5a35" stroke-width="4"/>
+<path d="M84 134 H316" stroke="#d9c7a1" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="268" y="129" width="12" height="10" rx="2" fill="#8d9199"/><path d="M280 134 L294 140" stroke="#8d9199" stroke-width="3" stroke-linecap="round"/>
+<!-- saku depan + resleting -->
+<path d="M82 186 H230" stroke="#6f5a35" stroke-width="3.5"/>
+<path d="M82 186 H230" stroke="#d9c7a1" stroke-width="1.2" stroke-dasharray="3 3"/>
+<rect x="196" y="181" width="12" height="10" rx="2" fill="#8d9199"/><path d="M208 186 L222 192" stroke="#8d9199" stroke-width="3" stroke-linecap="round"/>
+<path d="M232 186 Q250 200 236 262" fill="none" stroke="#a88a5c" stroke-width="2"/>
+<!-- label RFID -->
+<rect x="92" y="200" width="28" height="22" rx="3" fill="#6f5a35"/>
+<path d="M106 216 a5 5 0 0 1 0 -10 M106 216 a9 9 0 0 1 0 -18" fill="none" stroke="#f3e9d2" stroke-width="1.5" transform="rotate(45 106 211)"/>
+<text x="300" y="250" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="7" fill="#6f5a35" letter-spacing=".5">RFID Blocking ))</text>
+<!-- tali pinggang + gesper -->
+<rect x="14" y="178" width="52" height="22" rx="4" fill="#a88a5c"/>
+<rect x="18" y="172" width="22" height="34" rx="5" fill="#8a6f44"/>
+<rect x="24" y="178" width="10" height="22" rx="2" fill="#6f5a35"/>
+<rect x="334" y="178" width="52" height="22" rx="4" fill="#a88a5c"/>
+<path d="M366 176 Q392 189 366 202" fill="none" stroke="#8a6f44" stroke-width="5"/>
+
+</svg>

@@ -54,6 +54,11 @@
             {{end}}
         </section>
 
+        <a href="/perlengkapan" class="mt-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-white px-4 py-3 shadow-sm hover:border-emerald-400">
+            <img src="/static/perlengkapan/pouch-hp.svg" alt="" class="w-14 h-[42px] rounded-lg object-cover shrink-0">
+            <span class="min-w-0 flex-1"><span class="block font-semibold text-gray-900 leading-snug">Daftar perlengkapan yang wajib dibawa</span><span class="block text-xs text-gray-500">Pouch HP kalung, ihram, adapter tipe G, dan lainnya. Tinggal klik ke Shopee.</span></span>
+            <span class="text-emerald-700 font-bold shrink-0">→</span>
+        </a>
         {{range $s := .Sections}}
         <section class="prep-sec mt-5 bg-white rounded-2xl border border-gray-200 overflow-hidden" data-sec="{{$s.Key}}">
             <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-gray-100 bg-gray-50/60">
@@ -69,7 +74,7 @@
                             <summary class="cursor-pointer">
                                 <div class="flex items-start justify-between gap-2">
                                     <span class="prep-title text-[15px] font-medium text-gray-900 leading-snug">{{.Title}}</span>
-                                    {{if or .Desc .Tips .Link}}<svg class="chev w-4 h-4 mt-1 shrink-0 text-gray-400 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>{{end}}
+                                    {{if or .Desc .Tips .Images}}<svg class="chev w-4 h-4 mt-1 shrink-0 text-gray-400 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z"/></svg>{{end}}
                                 </div>
                                 <div class="mt-1 flex flex-wrap items-center gap-1.5">
                                     {{if eq .Tag "wajib"}}<span class="rounded-full bg-rose-50 text-rose-700 text-[11px] font-semibold px-2 py-0.5">Wajib</span>
@@ -79,12 +84,14 @@
                                     {{if eq .Gender "f"}}<span class="rounded-full bg-pink-50 text-pink-700 text-[11px] font-semibold px-2 py-0.5">Perempuan</span>{{end}}
                                     <span class="due hidden rounded-full text-[11px] font-semibold px-2 py-0.5"></span>
                                 </div>
+                                {{with .Link}}{{if hasPrefix .URL "/"}}<a href="{{.URL}}" onclick="event.stopPropagation()" class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-1.5">{{.Label}} →</a>{{end}}{{end}}
                             </summary>
-                            {{if or .Desc .Tips .Link}}
+                            {{if or .Desc .Tips .Link .Images}}
                             <div class="mt-2 text-[13px] text-gray-600 leading-relaxed space-y-2">
+                                {{if .Images}}<div class="prep-gal -mx-1 flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1">{{range .Images}}<button type="button" class="prep-img snap-start shrink-0 w-[78%] sm:w-64 text-left" data-src="{{.Src}}" data-cap="{{.Caption}}"><img src="{{.Src}}" alt="{{.Caption}}" loading="lazy" class="w-full aspect-[4/3] rounded-xl border border-gray-200 bg-gray-50 object-contain"><span class="block mt-1 px-1 text-[11px] text-gray-500 leading-snug">{{.Caption}}</span></button>{{end}}</div>{{end}}
                                 {{if .Desc}}<p>{{.Desc}}</p>{{end}}
                                 {{if .Tips}}<ul class="list-disc pl-5 space-y-1">{{range .Tips}}<li>{{.}}</li>{{end}}</ul>{{end}}
-                                {{with .Link}}<a href="{{.URL}}" {{if hasPrefix .URL "http"}}target="_blank" rel="noopener"{{end}} class="inline-flex items-center gap-1 font-semibold text-emerald-700 hover:underline">{{.Label}} →</a>{{end}}
+                                {{with .Link}}{{if hasPrefix .URL "http"}}<a href="{{.URL}}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 font-semibold text-emerald-700 hover:underline">{{.Label}} →</a>{{end}}{{end}}
                             </div>
                             {{end}}
                         </details>
@@ -98,6 +105,34 @@
         <p class="mt-6 text-[11px] text-gray-400 leading-relaxed">Aturan visa dan vaksin dapat berubah. Selalu konfirmasi ke travel dan instansi terkait (Imigrasi, Kemenkes) sebelum berangkat.</p>
     </main>
 
+    <div id="prepLb" class="hidden fixed inset-0 z-[60] bg-black/85 flex flex-col items-center justify-center p-4" role="dialog" aria-modal="true">
+        <button type="button" id="prepLbX" class="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/15 text-white text-2xl leading-none" aria-label="Tutup">×</button>
+        <button type="button" id="prepLbPrev" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/15 text-white text-2xl" aria-label="Sebelumnya">‹</button>
+        <button type="button" id="prepLbNext" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/15 text-white text-2xl" aria-label="Berikutnya">›</button>
+        <img id="prepLbImg" alt="" class="max-w-full max-h-[78vh] rounded-xl bg-white">
+        <p id="prepLbCap" class="mt-3 text-sm text-white/90 text-center"></p>
+        <p class="mt-1 text-[11px] text-white/50">Ilustrasi, data contoh</p>
+    </div>
+    <script>
+    (function () {
+        var lb = document.getElementById('prepLb'), im = document.getElementById('prepLbImg'), cap = document.getElementById('prepLbCap');
+        var list = [], idx = 0, sx = null;
+        function show(i) { idx = (i + list.length) % list.length; im.src = list[idx].dataset.src; cap.textContent = list[idx].dataset.cap; var multi = list.length > 1; document.getElementById('prepLbPrev').style.display = document.getElementById('prepLbNext').style.display = multi ? '' : 'none'; }
+        function close() { lb.classList.add('hidden'); document.body.style.overflow = ''; }
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest('.prep-img'); if (!b) return;
+            e.preventDefault(); list = Array.from(b.parentNode.querySelectorAll('.prep-img'));
+            show(list.indexOf(b)); lb.classList.remove('hidden'); document.body.style.overflow = 'hidden';
+        });
+        document.getElementById('prepLbX').onclick = close;
+        document.getElementById('prepLbPrev').onclick = function (e) { e.stopPropagation(); show(idx - 1); };
+        document.getElementById('prepLbNext').onclick = function (e) { e.stopPropagation(); show(idx + 1); };
+        lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+        document.addEventListener('keydown', function (e) { if (lb.classList.contains('hidden')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+        lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+        lb.addEventListener('touchend', function (e) { if (sx === null || list.length < 2) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1)); });
+    })();
+    </script>
     <script id="prepState" type="application/json">{{if .State}}{{.State}}{{else}}null{{end}}</script>
     <script>
     (function () {

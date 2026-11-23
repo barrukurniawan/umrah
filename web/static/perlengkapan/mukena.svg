@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#e9e0e8"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+
+
+<defs>
+<pattern id="flo" width="44" height="44" patternUnits="userSpaceOnUse">
+<rect width="44" height="44" fill="#8ea3ad"/>
+<g fill="#6f8a8c" opacity=".8"><ellipse cx="8" cy="30" rx="6" ry="3" transform="rotate(-30 8 30)"/><ellipse cx="34" cy="10" rx="6" ry="3" transform="rotate(40 34 10)"/><ellipse cx="26" cy="38" rx="5" ry="2.5" transform="rotate(10 26 38)"/></g>
+<g fill="#e7b4c3"><circle cx="14" cy="12" r="2.6"/><circle cx="19" cy="10" r="2.6"/><circle cx="18" cy="15" r="2.6"/><circle cx="13" cy="17" r="2.6"/><circle cx="10" cy="14" r="2.6"/></g><circle cx="15" cy="14" r="1.6" fill="#fff"/>
+<g fill="#f4f1ee"><circle cx="34" cy="26" r="2.3"/><circle cx="38" cy="29" r="2.3"/><circle cx="36" cy="33" r="2.3"/><circle cx="31" cy="32" r="2.3"/><circle cx="30" cy="28" r="2.3"/></g><circle cx="34" cy="30" r="1.4" fill="#e7b4c3"/>
+<circle cx="4" cy="40" r="1.6" fill="#f4f1ee"/><circle cx="40" cy="42" r="1.4" fill="#e7b4c3"/>
+</pattern>
+</defs>
+<!-- tirai -->
+<g fill="#fff" opacity=".35"><rect x="30" y="0" width="22" height="300"/><rect x="90" y="0" width="30" height="300"/><rect x="300" y="0" width="26" height="300"/><rect x="356" y="0" width="18" height="300"/></g>
+<!-- badan mukena -->
+<path d="M200 118 Q120 150 72 300 L328 300 Q280 150 200 118 Z" fill="url(#flo)"/>
+<path d="M200 118 Q120 150 72 300 L328 300 Q280 150 200 118 Z" fill="url(#gl)" opacity=".5"/>
+<!-- kerudung mukena -->
+<path fill-rule="evenodd" d="M200 28 Q148 28 146 92 Q146 128 170 150 Q200 165 230 150 Q254 128 254 92 Q252 28 200 28 Z M200 52 Q176 52 176 86 Q176 118 200 126 Q224 118 224 86 Q224 52 200 52 Z" fill="url(#flo)"/>
+<path d="M176 86 Q176 118 200 126 Q224 118 224 86 Q224 52 200 52 Q176 52 176 86 Z" fill="#e8c3a0"/>
+<!-- lipatan kain -->
+<g fill="none" stroke="#6f8a8c" stroke-width="2.5" opacity=".55" stroke-linecap="round">
+<path d="M150 150 Q120 210 96 296"/><path d="M250 150 Q280 210 304 296"/><path d="M186 160 Q166 230 160 296"/>
+</g>
+<!-- wajah -->
+<path d="M185 82 Q191 77 197 81 M203 81 Q209 77 215 82" fill="none" stroke="#5a4033" stroke-width="2" stroke-linecap="round"/>
+<circle cx="191" cy="90" r="3" fill="#3b2a22"/><circle cx="209" cy="90" r="3" fill="#3b2a22"/>
+<path d="M197 100 Q200 104 203 100" fill="none" stroke="#d4a883" stroke-width="2" stroke-linecap="round"/>
+<path d="M192 110 Q200 117 208 110" fill="none" stroke="#c94a4a" stroke-width="3" stroke-linecap="round"/>
+<circle cx="184" cy="100" r="4" fill="#f0a8a0" opacity=".45"/><circle cx="216" cy="100" r="4" fill="#f0a8a0" opacity=".45"/>
+<!-- pouch kecil + ring -->
+<g transform="translate(214 222) rotate(-18)">
+<rect x="-18" y="-36" width="36" height="76" rx="12" fill="url(#flo)"/>
+<rect x="-18" y="-36" width="36" height="76" rx="12" fill="url(#gl)" opacity=".5"/>
+<rect x="-18" y="-36" width="36" height="76" rx="12" fill="none" stroke="#6f8a8c" stroke-width="1.5"/>
+<rect x="-8" y="6" width="16" height="22" rx="3" fill="#f4f1ee"/>
+<circle cx="0" cy="-48" r="9" fill="none" stroke="#c9a240" stroke-width="3.5"/>
+<path d="M-4 -40 L-2 -36 M4 -40 L2 -36" stroke="#c9a240" stroke-width="3"/>
+</g>
+<!-- tangan memegang -->
+<ellipse cx="196" cy="206" rx="15" ry="11" fill="#e8c3a0" transform="rotate(-20 196 206)"/>
+<path d="M186 212 Q196 220 208 214" fill="none" stroke="#d4a883" stroke-width="2" stroke-linecap="round"/>
+
+</svg>

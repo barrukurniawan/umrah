@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#e4ecf1"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+
+
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d5e3ee"/><stop offset="1" stop-color="#eef2f4"/></linearGradient></defs>
+<rect width="400" height="300" rx="28" fill="url(#sky)"/>
+<!-- lengkung masjid jauh -->
+<g fill="#e3e6e8" stroke="#cfd4d8" stroke-width="1.5">
+<path d="M0 150 V300 H400 V150 Z" stroke="none"/>
+<path d="M190 200 V165 Q210 140 230 165 V200 Z M240 200 V165 Q260 140 280 165 V200 Z M290 200 V165 Q310 140 330 165 V200 Z M340 200 V165 Q360 140 380 165 V200 Z"/>
+<path d="M0 200 V165 Q20 140 40 165 V200 Z"/>
+</g>
+<rect x="0" y="130" width="400" height="18" fill="#dfe3e6"/>
+<!-- Ka'bah -->
+<rect x="44" y="52" width="122" height="170" fill="#15161a"/>
+<rect x="44" y="92" width="122" height="20" fill="#c9a240"/>
+<path d="M44 102 H166" stroke="#8f6a1e" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="120" y="150" width="30" height="72" fill="#c9a240" opacity=".85"/>
+<path d="M120 160 H150 M120 172 H150" stroke="#8f6a1e" stroke-width="1"/>
+<!-- jamaah jauh -->
+<g fill="#fff" stroke="#c9cdd1" stroke-width=".8"><circle cx="20" cy="212" r="5"/><circle cx="34" cy="214" r="5"/><circle cx="180" cy="212" r="5"/><circle cx="194" cy="214" r="5"/><circle cx="330" cy="212" r="5"/><circle cx="346" cy="214" r="5"/><circle cx="362" cy="212" r="5"/><circle cx="378" cy="215" r="5"/></g>
+<!-- lantai marmer -->
+<rect x="0" y="222" width="400" height="78" fill="#efeee9"/>
+<g stroke="#e2e1db" stroke-width="1.5"><path d="M0 248 H400 M0 276 H400"/></g>
+<!-- PRIA -->
+<g>
+<!-- lengan kanan terbuka (kiri pemirsa) -->
+<path d="M236 136 Q222 150 220 200 L216 268 Q216 282 232 282 Q246 282 246 268 L248 180 Z" fill="#e8c3a0"/>
+<!-- badan kulit (bahu terbuka) -->
+<path d="M232 130 L320 128 L330 300 L222 300 Z" fill="#e8c3a0"/>
+<!-- kain ihram -->
+<path d="M318 118 Q340 126 334 170 L336 300 L222 300 L228 196 Q262 180 318 118 Z" fill="#fafafa"/>
+<path d="M318 118 Q340 126 334 170 L336 300 L222 300 L228 196 Q262 180 318 118 Z" fill="url(#gl)" opacity=".5"/>
+<path d="M232 192 Q270 178 316 124" fill="none" stroke="#e4e4e4" stroke-width="2.5"/>
+<path d="M300 150 L306 296 M258 200 L250 296" fill="none" stroke="#ebebeb" stroke-width="3" stroke-linecap="round"/>
+<!-- leher & kepala -->
+<rect x="264" y="104" width="30" height="36" rx="12" fill="#d4a883"/>
+<ellipse cx="279" cy="86" rx="27" ry="31" fill="#e8c3a0"/>
+<path d="M252 82 Q256 50 282 52 Q306 52 306 82 Q298 70 278 70 Q262 72 252 82 Z" fill="#2b2420"/>
+<path d="M258 98 Q279 122 300 98 Q294 112 279 114 Q264 112 258 98 Z" fill="#3a2e28" opacity=".55"/>
+<path d="M270 104 Q279 108 288 104" fill="none" stroke="#9a5a4a" stroke-width="2" stroke-linecap="round"/>
+<!-- kacamata hitam -->
+<rect x="254" y="80" width="22" height="14" rx="5" fill="#111"/><rect x="282" y="80" width="22" height="14" rx="5" fill="#111"/>
+<path d="M276 86 H282" stroke="#111" stroke-width="3"/><path d="M254 84 L247 80 M304 84 L311 80" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+<path d="M258 83 L266 82 L260 90 Z" fill="#fff" opacity=".25"/><path d="M286 83 L294 82 L288 90 Z" fill="#fff" opacity=".25"/>
+</g>
+<!-- WANITA -->
+<g>
+<path d="M170 150 Q118 170 96 300 L244 300 Q222 170 170 150 Z" fill="#fbfbfa"/>
+<path d="M170 150 Q118 170 96 300 L244 300 Q222 170 170 150 Z" fill="url(#gl)" opacity=".5"/>
+<path fill-rule="evenodd" d="M170 62 Q124 62 124 118 Q122 160 150 186 Q170 196 190 186 Q218 160 216 118 Q216 62 170 62 Z M170 84 Q148 84 148 112 Q148 140 170 150 Q192 140 192 112 Q192 84 170 84 Z" fill="#f6f6f4"/>
+<path d="M170 84 Q148 84 148 112 Q148 140 170 150 Q192 140 192 112 Q192 84 170 84 Z" fill="#e8c3a0"/>
+<g fill="none" stroke="#e6e6e2" stroke-width="2.5" stroke-linecap="round"><path d="M136 190 Q116 240 110 296"/><path d="M204 190 Q224 240 230 296"/><path d="M150 172 Q146 230 148 296"/></g>
+<!-- tangan terlipat -->
+<ellipse cx="166" cy="238" rx="18" ry="11" fill="#e8c3a0"/><ellipse cx="178" cy="234" rx="14" ry="9" fill="#d4a883"/>
+<!-- wajah -->
+<path d="M160 120 Q166 126 172 120" fill="none" stroke="#b3786a" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M164 136 Q170 142 176 136" fill="none" stroke="#c94a4a" stroke-width="2.5" stroke-linecap="round"/>
+<!-- kacamata hitam -->
+<rect x="150" y="104" width="18" height="12" rx="4" fill="#111"/><rect x="172" y="104" width="18" height="12" rx="4" fill="#111"/>
+<path d="M168 109 H172" stroke="#111" stroke-width="2.5"/><path d="M150 108 L145 105 M190 108 L195 105" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M153 107 L160 106 L155 113 Z" fill="#fff" opacity=".25"/><path d="M175 107 L182 106 L177 113 Z" fill="#fff" opacity=".25"/>
+<circle cx="155" cy="124" r="4" fill="#f0a8a0" opacity=".4"/><circle cx="185" cy="124" r="4" fill="#f0a8a0" opacity=".4"/>
+</g>
+
+</svg>

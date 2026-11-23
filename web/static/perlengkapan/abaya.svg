@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="met" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c9ced3"/></linearGradient>
+</defs>
+<rect width="400" height="300" rx="28" fill="#f0eff2"/>
+<circle cx="200" cy="150" r="118" fill="#fff" opacity=".55"/>
+<ellipse cx="200" cy="262" rx="110" ry="12" fill="#000" opacity=".07"/>
+
+<g transform="translate(200 24)">
+<path d="M0 0 a8 8 0 1 0 -8 8 L0 14" fill="none" stroke="#9aa4b0" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M0 14 L-70 44 H70 Z" fill="none" stroke="#9aa4b0" stroke-width="3.5" stroke-linejoin="round"/>
+<!-- abaya hitam -->
+<path d="M-34 40 Q0 50 34 40 L100 72 L86 126 L60 116 L84 244 H-84 L-60 116 L-86 126 L-100 72 Z" fill="#1f2630"/>
+<path d="M-34 40 Q0 50 34 40 L100 72 L86 126 L60 116 L84 244 H-84 L-60 116 L-86 126 L-100 72 Z" fill="url(#gl)" opacity=".7"/>
+<!-- kerudung di kerah -->
+<path d="M-22 40 Q0 60 22 40 Q10 50 0 52 Q-10 50 -22 40 Z" fill="#2b3340"/>
+<!-- bordir lengan & hem -->
+<g fill="none" stroke="#d9b35a" stroke-width="2" stroke-linecap="round">
+<path d="M-66 122 Q-74 100 -82 84 M66 122 Q74 100 82 84"/>
+<path d="M-74 232 Q-40 222 0 232 Q40 242 74 232"/>
+<path d="M-70 224 Q-40 216 0 224 Q40 232 70 224" stroke-dasharray="2 4"/>
+</g>
+<g fill="#d9b35a"><circle cx="-40" cy="236" r="2"/><circle cx="0" cy="238" r="2"/><circle cx="40" cy="236" r="2"/></g>
+<!-- lipatan -->
+<path d="M-30 100 L-40 236 M30 100 L40 236" stroke="#2b3340" stroke-width="3" stroke-linecap="round"/>
+<!-- kancing depan -->
+<path d="M0 60 V236" stroke="#2b3340" stroke-width="3"/>
+<g fill="#d9b35a"><circle cx="0" cy="76" r="2.5"/><circle cx="0" cy="96" r="2.5"/><circle cx="0" cy="116" r="2.5"/><circle cx="0" cy="136" r="2.5"/></g>
+</g>
+
+</svg>
