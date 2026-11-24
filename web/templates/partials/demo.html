@@ -7,12 +7,12 @@
         <span class="inline-flex items-center gap-1.5 min-w-0"><span class="shrink-0 rounded bg-amber-950 text-amber-300 px-1.5 py-px tracking-wider">DEMO</span><span class="truncate">For illustrative purposes only</span></span>
         <span class="flex items-center gap-3 shrink-0">
             <a href="/demo" class="underline underline-offset-2 hover:no-underline">Tur demo</a>
-            <a href="/keuntungan" class="hidden sm:inline underline underline-offset-2 hover:no-underline">Keuntungan</a>
-            <a href="/investor" class="hidden min-[420px]:inline underline underline-offset-2 hover:no-underline">Roadmap</a>
+            <a href="/keuntungan" class="hidden md:inline underline underline-offset-2 hover:no-underline">Keuntungan</a>
+            <a href="/investor" class="hidden md:inline underline underline-offset-2 hover:no-underline">Roadmap</a>
+            {{template "demo_switcher" .}}
         </span>
     </div>
 </div>
-{{template "demo_switcher" .}}
 {{$role := ""}}{{with .Demo}}{{$role = .Role}}{{end}}
 {{if showTabbar .Path $role .HideChat}}{{template "demo_tabbar" .}}{{end}}
 <div id="demoSheet" class="hidden fixed inset-0 z-[70]" role="dialog" aria-modal="true">
@@ -33,15 +33,14 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
 {{define "demo_switcher"}}
 {{$r := ""}}{{$label := "Tamu"}}{{$unread := 0}}{{$path := "/"}}
 {{with .Demo}}{{$r = .Role}}{{$label = .Label}}{{$unread = .Unread}}{{$path = .Path}}{{end}}
-<details id="demoSwitch" class="fixed z-[60] bottom-3 left-3 sm:bottom-5 sm:left-5 group">
-    <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none flex items-center gap-2 rounded-full bg-gray-900 text-white shadow-xl pl-2 pr-3.5 py-2 text-xs font-semibold ring-2 ring-amber-400 hover:bg-gray-800">
-        <span class="w-6 h-6 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-        </span>
-        <span class="max-w-[150px] truncate">{{$label}}</span>
-        {{if gt $unread 0}}<span class="rounded-full bg-rose-500 text-white text-[10px] leading-none px-1.5 py-1">{{$unread}}</span>{{end}}
+<details id="demoSwitch" class="relative group">
+    <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none flex items-center gap-1 rounded-full bg-amber-950 text-amber-100 pl-1.5 pr-2 py-0.5 text-[11px] font-semibold hover:bg-amber-900" title="Ganti peran demo">
+        <svg class="w-3 h-3 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+        <span class="max-w-[84px] sm:max-w-[160px] truncate">{{$label}}</span>
+        {{if gt $unread 0}}<span class="rounded-full bg-rose-500 text-white text-[9px] leading-none px-1 py-0.5">{{$unread}}</span>{{end}}
+        <svg class="w-3 h-3 opacity-70 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </summary>
-    <div class="absolute bottom-full left-0 mb-2 w-[min(92vw,330px)] rounded-2xl bg-white text-gray-800 shadow-2xl ring-1 ring-gray-200 overflow-hidden">
+    <div class="absolute top-full right-0 mt-2 z-[80] w-[min(92vw,330px)] rounded-2xl bg-white text-gray-800 font-normal shadow-2xl ring-1 ring-gray-200 overflow-hidden">
         <div class="px-4 pt-3 pb-2 bg-gray-50 border-b border-gray-100">
             <p class="text-[11px] font-bold tracking-wider text-gray-400">MASUK SEBAGAI</p>
             <p class="text-[11px] text-gray-500">Satu klik, tanpa password. Khusus demo.</p>
@@ -164,13 +163,10 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
 {{$act := tabActive .Path}}
 <style>
     body:has(#demoTabbar) { padding-bottom: 5.75rem; }
-    body:has(#demoTabbar) #demoSwitch { bottom: 6.25rem; }
     body:has(#demoTabbar) #sc { bottom: 6.25rem; }
-    /* Di ponsel: pengalih peran jadi ikon saja, chat dukungan disembunyikan supaya bawah layar lega. */
+    /* Di ponsel: chat dukungan disembunyikan supaya bawah layar lega. */
     @media (max-width: 639px) {
         body:has(#demoTabbar) #sc { display: none; }
-        body:has(#demoTabbar) #demoSwitch summary > span.truncate { display: none; }
-        body:has(#demoTabbar) #demoSwitch summary { padding-right: .5rem; }
     }
 </style>
 <nav id="demoTabbar" aria-label="Navigasi utama" class="fixed inset-x-0 bottom-0 z-[55] pointer-events-none">

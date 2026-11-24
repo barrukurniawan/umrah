@@ -33,7 +33,7 @@ Alasan memilih dua instance, bukan satu proses dengan routing per host:
 
 ### Ciri khas mode demo (wajib)
 1. **Pita "MODE DEMO · data contoh, tidak ada transaksi sungguhan"** di bagian atas setiap halaman.
-2. **Pengalih peran** di pojok kanan bawah: *Jamaah · Travel (Amanah Demo) · Admin umrohku · Bank/Pembiayaan*. Satu klik langsung masuk tanpa Google login dan tanpa password, supaya alur demo lancar di depan juri.
+2. **Pengalih peran** di pita kuning atas, di sebelah "Tur demo": *Jamaah · Travel (Amanah Demo) · Admin umrohku · Bank/Pembiayaan*. Satu klik langsung masuk tanpa Google login dan tanpa password, supaya alur demo lancar di depan juri.
 3. **Tombol "Reset demo"** (di menu admin) dan reset otomatis setiap malam pukul 03.00 WIB dari seed yang deterministik.
 4. Nomor WA, email, dan notifikasi **tidak dikirim keluar**. Semuanya tampil di "Kotak masuk demo" (simulasi WA/email) supaya juri tetap bisa melihat pesannya.
 5. Opsional: Basic Auth atau kode akses `?kode=PUAS2026` kalau demo hanya untuk orang tertentu.
