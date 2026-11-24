@@ -62,7 +62,7 @@ section > .wrap { display: grid; gap: 20px; }
 .problem p { font-size: 15px; color: var(--muted); }
 
 /* screenshots */
-.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 22px 16px; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(44%, 180px), 1fr)); gap: 22px 16px; }
 figure { margin: 0; display: grid; gap: 10px; align-content: start; }
 .phone { border-radius: 26px; border: 6px solid var(--ink); overflow: hidden; background: var(--paper); aspect-ratio: 390 / 844; max-width: 100%; box-shadow: 0 14px 30px -18px rgba(0,0,0,.45); }
 .phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
@@ -113,253 +113,615 @@ td b { font-weight: 700; }
 .sources { font-size: 13.5px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
 footer { padding-block: 40px 56px; border-top: 1px solid var(--line); }
 footer .wrap { display: grid; gap: 6px; }
+/* feature icons (hero): one line-icon family, 32-grid, cream strokes + solid gold accent */
+.feats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
+.feat { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 10px; border-radius: 16px; background: rgba(243,229,171,.06); border: 1px solid rgba(243,229,171,.16); }
+.feat i { flex: none; width: 52px; height: 52px; border-radius: 13px; display: grid; place-items: center; color: #F3E5AB; background: linear-gradient(150deg, rgba(243,229,171,.22), rgba(243,229,171,.05)); border: 1px solid rgba(243,229,171,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+.feat svg { width: 32px; height: 32px; --acc: #E2C068; }
+.feat b { font-size: 14px; line-height: 1.3; font-weight: 700; color: #fff; }
+@media (max-width: 760px) { .feats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .feat { padding: 8px 10px 8px 8px; gap: 10px; } .feat i { width: 46px; height: 46px; } .feat svg { width: 28px; height: 28px; } .feat b { font-size: 13px; } }
+
+/* founder */
+.founder { display: grid; grid-template-columns: 140px 1fr; gap: 28px; align-items: start; }
+.avatar { width: 140px; height: 140px; border-radius: 28px; display: grid; place-items: center; font: 800 46px/1 var(--display); letter-spacing: -.02em; color: var(--hero-ink); background: radial-gradient(120% 120% at 30% 20%, var(--hero-2), var(--hero-1)); box-shadow: 0 18px 36px -22px rgba(0,0,0,.6); }
+.founder .role { font: 600 13px/1.5 var(--mono); color: var(--gold); letter-spacing: .04em; }
+.founder .bio { display: grid; gap: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 13.5px; padding: 5px 11px; border-radius: 999px; background: var(--em-soft); color: var(--em); font-weight: 600; }
+@media (max-width: 640px) { .founder { grid-template-columns: 1fr; gap: 18px; } .avatar { width: 96px; height: 96px; font-size: 32px; border-radius: 22px; } }
+
+/* shared icon system: one 32-grid line family; strokes = currentColor, accent = --acc */
+svg use { overflow: visible; }
+.feat svg, .ico svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico { flex: none; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: var(--em); background: var(--em-soft); }
+.ico svg { width: 26px; height: 26px; --acc: var(--gold); }
+.ico.warn { color: var(--warn); background: var(--warn-soft); }
+.ico.sm { width: 34px; height: 34px; border-radius: 10px; }
+.ico.sm svg { width: 20px; height: 20px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 14px; }
+.shots.four { grid-template-columns: repeat(auto-fill, minmax(min(44%, 230px), 1fr)); }
+.cards.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.card h3 { font-size: 16.5px; }
+.card p { font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+.card.row { display: flex; gap: 14px; align-items: flex-start; }
+.card.row > div { display: grid; gap: 4px; }
+.sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.sum > div { padding: 18px 20px; display: grid; gap: 6px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.sum b { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--em); }
+.sum p { font-size: 15px; }
+.journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 14px; counter-reset: j; }
+.leg { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; counter-increment: j; }
+.leg::after { content: "0" counter(j); position: absolute; top: 18px; right: 18px; font: 600 12px/1 var(--mono); color: var(--muted); opacity: .7; }
+.leg b { font: 800 19px/1.2 var(--display); }
+.pts, .leg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; color: var(--muted); }
+.pts li, .leg li { position: relative; padding-left: 20px; line-height: 1.5; }
+.pts li::before, .leg li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 9px; height: 5px; border-left: 2px solid var(--em); border-bottom: 2px solid var(--em); transform: rotate(-45deg); }
+.grp { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-top: 10px; }
+.src { font-size: 13.5px; color: var(--muted); }
+figcaption .tag { margin-bottom: 4px; }
+/* investor additions */
+.q { border-left: 3px solid var(--gold); padding: 4px 0 4px 16px; font-size: 16px; color: var(--muted); font-style: italic; }
+.q b { font-style: normal; color: var(--ink); }
+.ledger { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.ledger > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 18px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.ledger > div span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.ledger .minus span:last-child { color: var(--warn); }
+.ledger .total { background: var(--em-soft); font-weight: 800; border-bottom: 0; }
+.ledger .total span:last-child { color: var(--em); }
+.ledger small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+table.num th:not(:first-child), table.num td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+tr.hl td { background: var(--em-soft); font-weight: 800; }
+.neg { color: var(--warn); }
+.pos { color: var(--em); }
+.exp { border: 1.5px dashed var(--gold); background: var(--gold-soft); border-radius: 16px; padding: 18px 20px; display: grid; gap: 10px; }
+.exp .when { font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.exp ul { margin: 0; padding-left: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 6px 20px; font-size: 14.5px; }
+.ask { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.big { font: 800 clamp(36px, 6vw, 50px)/1 var(--display); color: var(--em); letter-spacing: -.02em; }
+.alloc { display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px; }
+.alloc i { display: block; height: 100%; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+.legend li { display: flex; align-items: center; gap: 10px; }
+.legend li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: none; }
+.legend li span { margin-left: auto; font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.commit { border: 2px solid var(--em); border-radius: 14px; padding: 14px 18px; display: flex; gap: 14px; align-items: flex-start; background: var(--paper); }
+.commit p { font-size: 15px; }
+.status { font: 600 10.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 7px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.status.go { background: var(--em-soft); color: var(--em); }
+.status.wait { background: var(--gold-soft); color: var(--gold); }
+.status.hold { background: var(--warn-soft); color: var(--warn); }
+
+/* light patterned hero (white to green, geometric pattern) */
+.hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%230B6B4F' stroke-opacity='.10' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(165deg, #FFFFFF 0%, #EEF8F2 45%, #CFEBDC 100%); color: var(--ink); }
+.hero .star { color: var(--em); opacity: .13; }
+.hero h1 { color: #0B4A39; }
+.hero h1 span { color: var(--gold); }
+.hero .motto { color: var(--em); }
+.hero p { color: var(--muted); }
+.feat { background: rgba(255,255,255,.88); border: 1px solid var(--line); box-shadow: 0 8px 20px -16px rgba(11,74,57,.55); }
+.feat i { color: var(--em); background: var(--em-soft); border: 1px solid rgba(11,107,79,.14); box-shadow: none; }
+.feat svg { --acc: var(--gold); }
+.feat b { color: var(--ink); }
+.hero-dark-fix { }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2334C995' stroke-opacity='.08' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), radial-gradient(120% 90% at 50% 10%, #0A3A2D, #03140F); } :root:not([data-theme="light"]) .hero h1 { color: #fff; } :root:not([data-theme="light"]) .feat, :root:not([data-theme="light"]) .lnk, :root:not([data-theme="light"]) .tr { background: rgba(255,255,255,.05); } }
+:root[data-theme="dark"] .hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2334C995' stroke-opacity='.08' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), radial-gradient(120% 90% at 50% 10%, #0A3A2D, #03140F); }
+:root[data-theme="dark"] .hero h1 { color: #fff; }
+:root[data-theme="dark"] .feat, :root[data-theme="dark"] .lnk, :root[data-theme="dark"] .tr { background: rgba(255,255,255,.05); }
+.stat.gold { background: var(--em); border-color: var(--em); }
+.stat.gold b { color: #F3E5AB; } .stat.gold span { color: #E2EFE9; } .stat.gold small { color: #BFE0D2; }
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; }
+.panel h4 { margin: 0; font: 700 15.5px/1.3 var(--display); }
+.panel .cap { font: 500 11.5px/1.4 var(--mono); color: var(--muted); }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; gap: 5px; font-size: 14px; }
+.bar > div { display: flex; justify-content: space-between; gap: 10px; }
+.bar > div span:last-child { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.bar i { display: block; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--em) var(--w), var(--em-soft) var(--w)); }
+.bar.top i { background: linear-gradient(90deg, var(--gold) var(--w), var(--gold-soft) var(--w)); }
+.bar.top > div span:first-child { font-weight: 700; }
+.evi { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #0f0f0f; }
+.evi img { display: block; width: 100%; height: auto; }
+.cols figure { align-content: start; }
+.doc { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: clamp(22px, 5vw, 56px); display: grid; gap: 18px; box-shadow: 0 24px 50px -34px rgba(0,0,0,.45); position: relative; overflow: hidden; }
+.doc::before { content: "DRAF"; position: absolute; top: 26px; right: -44px; transform: rotate(35deg); background: var(--gold-soft); color: var(--gold); font: 700 12px/1 var(--mono); letter-spacing: .3em; padding: 8px 60px; border: 1px dashed var(--gold); }
+.doc header { text-align: center; display: grid; gap: 6px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
+.doc header b { font: 800 clamp(17px, 2.6vw, 21px)/1.3 var(--display); letter-spacing: .04em; }
+.doc header span { font: 500 13px/1.4 var(--mono); color: var(--muted); }
+.doc p, .doc li { font-size: 14.5px; line-height: 1.7; max-width: none; }
+.doc h4 { margin: 6px 0 0; font: 700 14.5px/1.4 var(--display); text-align: center; }
+.doc h4 small { display: block; font: 600 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.doc ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.doc .party { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; font-size: 14.5px; padding: 12px 16px; background: var(--bg); border-radius: 8px; }
+.doc .party dt { color: var(--muted); } .doc .party dd { margin: 0; }
+.blank { display: inline-block; min-width: 150px; border-bottom: 1px dotted var(--muted); height: 1.1em; vertical-align: baseline; }
+.blank.s { min-width: 60px; }
+.bind { font: 600 10.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; background: var(--em-soft); color: var(--em); vertical-align: middle; margin-left: 6px; white-space: nowrap; }
+.bind.no { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.signs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 24px; margin-top: 10px; }
+.sign { display: grid; gap: 4px; font-size: 14.5px; }
+.sign .box { height: 92px; border: 1px dashed var(--line); border-radius: 8px; display: grid; place-items: center; font: 500 11px/1 var(--mono); color: var(--muted); padding: 0; background: none; }
+.sign .box { align-content: center; }
+@media (max-width: 640px) { .doc { padding-top: 58px; } .doc .party { grid-template-columns: 1fr; gap: 0 12px; } .doc .party dd { margin-bottom: 6px; } }
+.kicker { font: 600 11.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 10px; }
+.tr { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.92); border: 1px solid var(--line); }
+.seal { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--em); color: #fff; font: 800 12.5px/1 var(--display); letter-spacing: .02em; box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--gold); text-align: center; }
+.seal.sm { font-size: 10px; }
+.tr span { font-size: 13.5px; line-height: 1.4; color: var(--ink); }
+.tr span b { display: block; font-size: 14.5px; }
+.tr .ico { color: var(--em); }
+.fine, .hero .fine { font-size: 13.5px; color: var(--muted); }
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 185px), 1fr)); gap: 8px; counter-reset: l; }
+.lnk { display: flex; gap: 10px; align-items: center; padding: 9px 12px 9px 9px; border-radius: 13px; background: rgba(255,255,255,.88); border: 1px solid var(--line); text-decoration: none; color: var(--ink); min-width: 0; }
+.lnk i { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--em); color: #fff; }
+.lnk i svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.lnk div { min-width: 0; display: grid; gap: 2px; }
+.lnk small { font: 600 10.5px/1.1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.lnk b { font-size: 13.5px; line-height: 1.25; overflow-wrap: anywhere; }
+.lnk.own i { background: var(--gold); }
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-budget" viewBox="0 0 32 32"><ellipse cx="11" cy="8" rx="6" ry="2.6"/><path d="M5 8v4.5c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V8"/><path d="M5 12.5V17c0 1.4 2.7 2.6 6 2.6"/><path d="M4 25.5h24"/><circle style="fill:var(--acc);stroke:none" cx="21" cy="25.5" r="3.2"/><path style="stroke:var(--acc)" d="M23 9.5l3 3-3 3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 32 32"><rect x="4.5" y="6.5" width="23" height="21" rx="4"/><path d="M4.5 12.5h23M11 4v5M21 4v5M9 17h2M9 21h2"/><path style="fill:var(--acc);stroke:none" d="M17.6 15.6a5.2 5.2 0 1 0 3.2 9.2 4.2 4.2 0 1 1-3.2-9.2z"/></symbol>
+  <symbol id="i-cicil" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path style="fill:var(--acc);stroke:none" d="M16 16V5a11 11 0 0 1 11 11z"/><path d="M16 16l7.8 7.8M16 16H5"/></symbol>
+  <symbol id="i-nabung" viewBox="0 0 32 32"><path d="M7 13.5h18v13H7z"/><path style="fill:var(--acc);stroke:none" d="M7 17h18v2.4H7z"/><path d="M13 13.5h6"/><circle cx="16" cy="6" r="3.2"/><path d="M16 9.6v2.2"/></symbol>
+  <symbol id="i-sim" viewBox="0 0 32 32"><path d="M12 11l4-2 4 2v7l-4 2-4-2z"/><path d="M12 11l4 2 4-2M16 13v7"/><path style="stroke:var(--acc)" d="M12 14.2l4 2 4-2"/><ellipse cx="16" cy="19" rx="12.5" ry="5"/><circle style="fill:var(--acc);stroke:none" cx="27.6" cy="20.6" r="2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 32 32"><path d="M4.5 9.5a2 2 0 0 1 2-2h19a2 2 0 0 1 2 2v3.2a3.3 3.3 0 0 0 0 6.6v3.2a2 2 0 0 1-2 2h-19a2 2 0 0 1-2-2v-3.2a3.3 3.3 0 0 0 0-6.6z"/><path d="M20 8v16" stroke-dasharray="2 2.4"/><path style="stroke:var(--acc)" d="M9 16.3l2.4 2.4 4.4-4.8"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 32 32"><path d="M6.5 6.5h15a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H13l-5 4v-4H6.5a3 3 0 0 1-3-3V9.5a3 3 0 0 1 3-3z"/><path style="fill:var(--acc);stroke:none" d="M14 9.2l1.2 3.1 3.1 1.2-3.1 1.2L14 17.8l-1.2-3.1-3.1-1.2 3.1-1.2zM25.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+  <symbol id="i-qris" viewBox="0 0 32 32"><path d="M5 10V7a2 2 0 0 1 2-2h3M22 5h3a2 2 0 0 1 2 2v3M27 22v3a2 2 0 0 1-2 2h-3M10 27H7a2 2 0 0 1-2-2v-3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="17.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="17.5" width="5" height="5" rx="1"/><path style="fill:var(--acc);stroke:none" d="M17.5 17.5h2.6v2.6h-2.6zM20.4 20.4H23V23h-2.6z"/></symbol>
+  <symbol id="i-compare" viewBox="0 0 32 32"><rect x="4" y="6" width="10" height="15" rx="2.5"/><rect x="18" y="11" width="10" height="15" rx="2.5"/><path d="M7 11h4M7 14.5h4M21 16h4M21 19.5h4"/><path style="stroke:var(--acc)" d="M12 25.5h-6l2-2M20 6.5h6l-2 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M16 10.5v7"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="21.5" r="1.7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M11.5 16l3.2 3.2 6-6.4"/></symbol>
+  <symbol id="i-list" viewBox="0 0 32 32"><rect x="6.5" y="6.5" width="19" height="21" rx="3"/><path d="M12 6.5V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1.5"/><path d="M15 13h6M15 18h6M15 23h4"/><path style="stroke:var(--acc)" d="M10 13l1.2 1.2L13 12M10 18l1.2 1.2L13 17"/></symbol>
+  <symbol id="i-hour" viewBox="0 0 32 32"><path d="M8 4h16M8 28h16"/><path d="M10 4c0 6 6 8 6 12s-6 6-6 12M22 4c0 6-6 8-6 12s6 6 6 12"/><path style="fill:var(--acc);stroke:none" d="M12.6 26h6.8L16 22.2z"/></symbol>
+  <symbol id="i-law" viewBox="0 0 32 32"><path d="M16 6v20M10 27h12M6 9.5h20"/><path d="M6 9.5l-3.2 7.5h6.4zM26 9.5l-3.2 7.5h6.4z"/><path d="M2.8 17a3.2 3.2 0 0 0 6.4 0M22.8 17a3.2 3.2 0 0 0 6.4 0"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="5.5" r="2"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 32 32"><path d="M4 12.5L16 5l12 7.5z"/><path d="M8 15v8M13 15v8M19 15v8M24 15v8M5 26.5h22"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="9.6" r="1.6"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 32 32"><rect x="5" y="11.5" width="22" height="6" rx="1.5"/><path d="M7 17.5v9h18v-9M16 11.5v15"/><path style="stroke:var(--acc)" d="M16 11.5c-1.5-4-6.5-5.5-6.5-2.3 0 1.6 2.5 2.3 6.5 2.3zM16 11.5c1.5-4 6.5-5.5 6.5-2.3 0 1.6-2.5 2.3-6.5 2.3z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 32 32"><path d="M4.5 15.5V6.5a2 2 0 0 1 2-2h9l12 12-11 11z"/><circle style="fill:var(--acc);stroke:none" cx="10.5" cy="10.5" r="2.3"/><path style="stroke:var(--acc)" d="M13.5 21.5l7-7"/></symbol>
+  <symbol id="i-store" viewBox="0 0 32 32"><path d="M5 12.5h22l-2.2-6.5H7.2z"/><path d="M5 12.5a3.7 3.7 0 0 0 7.3 0 3.7 3.7 0 0 0 7.4 0 3.7 3.7 0 0 0 7.3 0"/><path d="M7 15.5V27h18V15.5"/><path style="fill:var(--acc);stroke:none" d="M13.5 20h5v7h-5z"/></symbol>
+  <symbol id="i-case" viewBox="0 0 32 32"><rect x="4" y="9.5" width="24" height="17" rx="3"/><path d="M12 9.5V7a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 20 7v2.5"/><path style="stroke:var(--acc)" d="M4 16.5h24"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16.5" r="2.2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 32 32"><path d="M5 27h22"/><rect x="7" y="16" width="4" height="8" rx="1"/><rect x="14" y="11" width="4" height="13" rx="1"/><rect style="fill:var(--acc);stroke:none" x="21" y="6" width="4" height="18" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 32 32"><rect x="3.5" y="7" width="25" height="18" rx="5"/><path style="fill:var(--acc);stroke:none" d="M13.5 11.8v8.4l7-4.2z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 32 32"><rect x="7" y="14" width="18" height="13" rx="3"/><path d="M11 14v-3.5a5 5 0 0 1 10 0V14"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="20.5" r="2.2"/></symbol>
+  <symbol id="i-kaaba" viewBox="0 0 32 32"><path d="M8 11l8-4 8 4v11l-8 4-8-4z"/><path d="M8 11l8 4 8-4M16 15v11"/><path style="stroke:var(--acc)" d="M8 14.6l8 4 8-4"/></symbol>
+  <symbol id="l-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3.5 9h17M3.5 15h17"/></symbol>
+  <symbol id="l-pitch" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7M7 12.5l3-3 2.5 2 4-4"/></symbol>
+  <symbol id="l-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="l-threads" viewBox="0 0 24 24"><path d="M16.4 11.3c-.4-2.4-2-3.7-4.3-3.7-2.6 0-4.3 1.8-4.3 4.3 0 2.6 1.7 4.4 4.2 4.4 2.3 0 3.9-1.4 3.9-3.5 0-3-4.6-3.3-5.9-1.2"/><path d="M19.6 7.6C18.1 4.9 15.4 3.3 12 3.3 6.9 3.3 3.6 7.1 3.6 12S6.9 20.7 12 20.7c3.6 0 6.2-1.7 7.5-4.4"/></symbol>
+  <symbol id="l-tiktok" viewBox="0 0 24 24"><path d="M14 3.5v11.3a3.9 3.9 0 1 1-3.9-3.9"/><path d="M14 3.5c.4 2.7 2.3 4.5 5 4.7"/></symbol>
+  <symbol id="l-yt" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.6-2.7z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="l-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 32 32"><path d="M27.5 5L4.5 14l8.5 3.5 3.5 9.5z"/><path style="stroke:var(--acc)" d="M13 17.5L27.5 5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 32 32"><rect x="7.5" y="4.5" width="17" height="23" rx="2.5"/><circle cx="16" cy="13" r="4.2"/><path d="M12 22.5h8"/><path style="stroke:var(--acc)" d="M11.8 13h8.4"/></symbol>
+  <symbol id="i-family" viewBox="0 0 32 32"><circle cx="11" cy="10" r="3.6"/><path d="M4.5 26.5V24a6.5 6.5 0 0 1 13 0v2.5"/><circle style="fill:var(--acc);stroke:none" cx="22.5" cy="13" r="3"/><path d="M19 26.5v-2a5 5 0 0 1 9 0v2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 32 32"><path d="M16 4.5l3.4 7 7.6 1.1-5.5 5.3 1.3 7.6L16 21.9l-6.8 3.6 1.3-7.6L5 12.6l7.6-1.1z"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="15.5" r="2.3"/></symbol>
+  <symbol id="i-target" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="6"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16" r="2.4"/></symbol>
+</svg>
+
 <header class="hero">
-  <svg class="star" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#F3E5AB" stroke-width="2"><rect x="40" y="40" width="120" height="120"/><rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="48"/><circle cx="100" cy="100" r="84"/></g></svg>
+  <svg class="star" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="40" y="40" width="120" height="120"/><rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="48"/><circle cx="100" cy="100" r="84"/></g></svg>
   <div class="wrap">
-    <span class="eyebrow" style="color:var(--hero-ink)">Proposal Bisnis · November 2026</span>
+    <span class="eyebrow">Proposal Pendanaan Pre-Seed · November 2026</span>
     <h1>Umroh<span>ku</span></h1>
-    <div class="motto">Ikhtiar menuju Baitullah</div>
-    <p>Satu pintu untuk merencanakan, membayar, dan menyiapkan umroh: membandingkan paket dari travel berizin, membayar DP dengan aman, mencicil secara syariah, sampai belajar manasik lewat simulasi 3D.</p>
-    <div class="meta"><span>umrohku.web.id</span><span>IG · TikTok · Threads @umrohku.web.id</span><span>Disusun oleh <span class="fill">[Nama founder]</span></span></div>
+    <div class="motto">Marketplace umroh dengan pembiayaan syariah dan dana terproteksi</div>
+    <p>Agen umroh digital berskala nasional. Jamaah membandingkan paket travel PPIU, menabung atau mencicil secara syariah, dan dananya tetap di rekening atas nama jamaah sampai 30 hari sebelum berangkat.</p>
+    <span class="kicker">Rancangan alur dana · PKS dalam proses</span>
+    <div class="trust">
+      <div class="tr"><span class="ico"><svg><use href="#i-nabung"/></svg></span><span><b>Tabungan atas nama jamaah</b>Di bank syariah, sampai H-30</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-shield"/></svg></span><span><b>Holdback 10–15%</b>Cair setelah jamaah tiba di Saudi</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-cicil"/></svg></span><span><b>Pembiayaan syariah</b>Lewat lembaga berizin, bukan umrohku</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-list"/></svg></span><span><b>Travel resmi</b>Hanya PPIU berizin</span></div>
+    </div>
+    <p class="fine">Status November 2026: belum ada PKS dengan bank, lembaga pembiayaan, maupun travel. Umrohku tidak menyimpan dana jamaah.</p>
+    <div class="feats" role="list" aria-label="Fitur utama">
+      <div class="feat" role="listitem"><i><svg><use href="#i-budget"/></svg></i><b>Cari umroh by budget</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-cal"/></svg></i><b>Cari umroh by kalender</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-cicil"/></svg></i><b>Cicil syariah</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-nabung"/></svg></i><b>Nabung umroh</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-sim"/></svg></i><b>Simulasi umroh 3D</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-book"/></svg></i><b>Book &amp; DP umroh</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-ai"/></svg></i><b>Konsultasi AI personal</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-shield"/></svg></i><b>Dana terproteksi</b></div>
+    </div>
+    <span class="kicker">Kanal resmi</span>
+    <nav class="links" aria-label="Kanal resmi umrohku">
+      <a class="lnk" href="https://umrohku.web.id"><i><svg><use href="#l-globe"/></svg></i><div><small>Live</small><b>umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://startup.umrohku.web.id"><i><svg><use href="#l-pitch"/></svg></i><div><small>Pitching</small><b>startup.umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.instagram.com/umrohku.web.id"><i><svg><use href="#l-ig"/></svg></i><div><small>Instagram</small><b>@umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.threads.net/@umrohku.web.id"><i><svg><use href="#l-threads"/></svg></i><div><small>Threads</small><b>@umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.tiktok.com/@umrohku.web.id"><i><svg><use href="#l-tiktok"/></svg></i><div><small>TikTok</small><b>@umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.youtube.com/@umrohku.official"><i><svg><use href="#l-yt"/></svg></i><div><small>YouTube</small><b>@umrohku.official</b></div></a>
+      <a class="lnk own" href="https://www.linkedin.com/in/barru-kurniawan/"><i><svg><use href="#l-user"/></svg></i><div><small>Owner</small><b>Barru Kurniawan</b></div></a>
+    </nav>
   </div>
 </header>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Ringkasan</span>
-    <h2>Umroh adalah perjalanan sekali seumur hidup yang masih dibeli dengan cara lama.</h2>
-    <p class="lead">Calon jamaah membandingkan paket lewat brosur dan grup WhatsApp, menyetor puluhan juta dengan rasa was-was, lalu berangkat dengan persiapan seadanya. Umrohku sudah memecahkan sisi informasinya. Langkah berikutnya: menjadi tempat jamaah <b>memesan dan membayar</b>, dengan cicilan syariah, DP ringan, cashback, dan undian umroh sebagai alasan jamaah memilih membayar lewat umrohku.</p>
+    <span class="eyebrow">Profil founder</span>
+    <div class="founder">
+      <div class="avatar" aria-hidden="true">BK</div>
+      <div class="bio">
+        <div><h2>Barru Kurniawan</h2><div class="role">Founder umrohku</div></div>
+        <p class="lead">Software Engineer dengan pengalaman di bidang fintech sejak 2017.</p>
+        <div class="cols">
+          <div class="box"><h3>Pengalaman</h3><ul><li><b>Backend Developer</b> di startup fintech ternama · 2017–sekarang</li><li><b>Founder &amp; CEO</b>, Jago QA (PT Institusi Jago Indonesia) · Mar 2021–sekarang</li><li><b>Founder</b> umrohku.web.id</li></ul></div>
+          <div class="box"><h3>Nilai yang dibawa</h3><ul><li><b>Spesialisasi:</b> kartu kredit &amp; debit, QRIS lokal &amp; cross border, split payment, dan cicilan</li><li><b>Disiplin QA:</b> setiap alur uang diuji sebelum dipakai jamaah</li><li><b>Produksi konten sendiri,</b> sehingga biaya akuisisi rendah</li></ul></div>
+        </div>
+        <div class="commit"><span class="ico"><svg><use href="#i-target"/></svg></span><p><b>Komitmen full-time di umrohku begitu pendanaan Tahap 1 cair.</b> Rencana produk tidak memuat e-wallet, sehingga tidak bersinggungan dengan lini bisnis pemberi kerja saat ini. Co-founder bisnis dari industri umroh sedang dicari.</p></div>
+        <div class="chips"><span class="chip">Golang &amp; Python</span><span class="chip">RESTful API</span><span class="chip">Sistem pembayaran</span><span class="chip">QRIS &amp; cross-border</span><span class="chip">Split payment</span><span class="chip">Software QA</span><span class="chip">Universitas Gadjah Mada</span></div>
+        <p style="font-size:15px"><a href="https://www.linkedin.com/in/barru-kurniawan/">linkedin.com/in/barru-kurniawan</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">01 · Ringkasan</span>
+    <h2>Ekosistem pembiayaan dan transaksi umroh yang terproteksi</h2>
+    <div class="sum">
+      <div><b>Masalah</b><p>Jamaah menyetor puluhan juta ke travel tanpa perlindungan: dananya tidak diawasi OJK dan tidak diasuransikan. Jaminannya hanya kepercayaan pada rekam jejak travel.</p></div>
+      <div><b>Solusi</b><p>Agen digital untuk banyak travel PPIU. Dana tetap di rekening jamaah sampai H-30; 10–15% ditahan sampai jamaah tiba.</p></div>
+      <div><b>Model bisnis</b><p>Komisi agen 4–5% per jamaah lunas, tarif yang sudah dibayar travel ke agen hari ini, plus fee rujukan pembiayaan.</p></div>
+      <div><b>Pendanaan</b><p>Rp1,5 M dalam dua tahap, cair berdasarkan milestone. Tahap 1 hanya Rp300 jt.</p></div>
+    </div>
     <div class="stats">
-      <div class="stat"><b>18</b><span>travel umroh yang paketnya sudah tampil</span></div>
-      <div class="stat"><b>±835</b><span>paket umroh, diperbarui 2× sehari</span></div>
-      <div class="stat"><b>1.158</b><span>jadwal keberangkatan, Nov 2026 – Des 2027</span></div>
-      <div class="stat"><b>82</b><span>hotel Makkah &amp; Madinah dengan jarak ke masjid</span></div>
+      <div class="stat"><b>508</b><span>paket aktif, diperbarui 2× sehari</span></div>
+      <div class="stat"><b>461</b><span>pencarian paket dalam 30 hari</span></div>
+      <div class="stat"><b>78</b><span>klik ke WhatsApp &amp; situs travel</span></div>
+      <div class="stat"><b>±185 rb</b><span>tayangan video di YouTube &amp; TikTok</span></div>
     </div>
-    <p class="muted" style="font-size:14px">Angka di atas dari basis data umrohku per 11 November 2026.</p>
+    <p class="src">Analitik internal umrohku.web.id, 26 Okt–24 Nov 2026; YouTube Studio per 24 Nov 2026.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Masalah</span>
-    <h2>Yang dihadapi calon jamaah hari ini</h2>
-    <div class="problems">
-      <div class="problem"><h3>Travel makin banyak, makin sulit memilih</h3><p>Jumlah jamaah naik setiap tahun dan travel baru terus bermunculan. Harga, maskapai, hotel, dan jarak ke Masjidil Haram tersebar di puluhan situs dan brosur dengan format berbeda.</p></div>
-      <div class="problem"><h3>Takut tertipu</h3><p>Kemenhaj mencatat 244 kasus haji dan umrah dengan kerugian Rp247,65 miliar. Kasus terbaru: 52 jamaah umroh yang membayar Rp25 juta justru diberangkatkan ke Thailand <span class="fill" style="white-space:normal">[sumber berita]</span>. Jamaah kini makin selektif, tapi sulit memastikan travel mana yang berizin dan aman.</p></div>
-      <div class="problem"><h3>Haji makin jauh, umroh jadi tujuan menabung</h3><p>Antrean haji reguler di banyak daerah mencapai puluhan tahun dan biayanya terus naik. Banyak keluarga memilih menabung untuk umroh, sering bertahun-tahun, meski harga umroh juga naik.</p></div>
-      <div class="problem"><h3>Biaya besar sekaligus</h3><p>Paket mulai sekitar Rp23,5 juta per orang. Banyak keluarga butuh cara mencicil yang tidak melanggar prinsip syariah.</p></div>
-      <div class="problem"><h3>Persiapan dan manasik membingungkan</h3><p>Dokumen, perlengkapan, dan tata cara ibadah dipelajari sendiri-sendiri, sering baru di hari keberangkatan.</p></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">Pasar</span>
-    <h2>Pasar besar yang sedang berubah</h2>
-    <div class="stats">
-      <div class="stat"><b>1,6 jt</b><span>jamaah umroh Indonesia di 2025</span><small>Siskopatuh</small></div>
-      <div class="stat"><b>±Rp48 T</b><span>nilai pasar per tahun</span><small>asumsi rata-rata paket Rp30 jt</small></div>
-      <div class="stat"><b>7</b><span>perusahaan pembiayaan yang aktif membiayai umroh</span><small>OJK</small></div>
-      <div class="stat"><b>84%</b><span>jamaah umroh dilayani BSI</span><small>Siskopatuh 2025</small></div>
-    </div>
-    <div class="cols">
-      <div class="box"><h3>Regulasi membuka jalur baru</h3><p class="muted" style="font-size:15px">UU 14/2025 mengakui umrah mandiri di samping PPIU, dan Saudi membuka Nusuk Umrah untuk pemesanan langsung. Jamaah makin butuh panduan dan alat bantu digital.</p></div>
-      <div class="box"><h3>Pembiayaan syariah tumbuh</h3><p class="muted" style="font-size:15px">Piutang pembiayaan syariah multifinance mencapai Rp32,17 triliun per September 2026, dan OJK menilai pemain pembiayaan umroh masih sedikit.</p></div>
-      <div class="box"><h3>Pembayaran di Saudi berbenah</h3><p class="muted" style="font-size:15px">Bank Indonesia mengumumkan rencana QRIS lintas negara ke Arab Saudi untuk jamaah haji dan umroh (Juni 2026). Belum ada tanggal operasionalnya.</p></div>
+    <span class="eyebrow">02 · Masalah</span>
+    <h2>Uang besar, informasi minim, perlindungan nol</h2>
+    <div class="cards">
+      <div class="card"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><h3>Rawan penipuan</h3><p>244 kasus haji dan umrah, kerugian Rp247,65 miliar. Juni 2026: 85 mitra Hanania Group melapor ke Polda Metro Jaya.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-budget"/></svg></span><h3>Dana disetor penuh di depan</h3><p>Paket mulai ±Rp23,5 juta per orang, umumnya lunas berbulan-bulan sebelum berangkat.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-cicil"/></svg></span><h3>Cicilan syariah terbatas</h3><p>Hanya 7 multifinance aktif membiayai umroh; jamaah harus mencari sendiri.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-compare"/></svg></span><h3>Sulit membandingkan</h3><p>Harga, hotel, dan maskapai tersebar di brosur dan WhatsApp dengan format berbeda.</p></div>
     </div>
   </div>
 </section>
 
 <section>
   <div class="wrap wide">
-    <span class="eyebrow">Produk hari ini</span>
-    <h2>Sudah berjalan di umrohku.web.id</h2>
-    <p>Semua tangkapan layar diambil dari situs langsung, tampilan ponsel.</p>
-    <div class="shots">
-      <figure><div class="phone"><img src="img/01-beranda.jpg" alt="Beranda umrohku: pilih budget lalu cari paket"></div><figcaption><span class="tag">Berjalan</span><b>Cari paket berdasarkan budget</b><span>Geser budget, pilih travel, langsung keluar rekomendasi.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/02-rekomendasi.jpg" alt="Kartu rekomendasi paket dengan harga, DP, jarak hotel, dan tombol WhatsApp"></div><figcaption><span class="tag">Berjalan</span><b>Rekomendasi paket</b><span>Harga, DP, maskapai, jarak hotel ke Haram dan Nabawi, kalkulator, simpan.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/03-kalender.jpg" alt="Kalender keberangkatan per bulan dengan jumlah jadwal per hari"></div><figcaption><span class="tag">Berjalan</span><b>Kalender keberangkatan</b><span>Jumlah jadwal per hari, harga termurah, musim libur, Ramadan, dan cuaca.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/04-simulasi-haram.jpg" alt="Simulasi 3D jelajah Masjidil Haram"></div><figcaption><span class="tag">Berjalan</span><b>Jelajah Masjidil Haram 3D</b><span>Denah dari OpenStreetMap: 126 pintu, menara, dan gedung sekitar.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/05-simulasi-tawaf.jpg" alt="Simulasi 3D tawaf mengelilingi Ka'bah"></div><figcaption><span class="tag">Berjalan</span><b>Simulasi tawaf</b><span>Tujuh putaran dari Hajar Aswad, dengan doa dan panduan.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/06-simulasi-sai.jpg" alt="Simulasi 3D sa'i antara Shafa dan Marwah"></div><figcaption><span class="tag">Berjalan</span><b>Simulasi sa'i</b><span>Tujuh lintasan Shafa–Marwah dengan penanda lampu hijau.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/07-perlengkapan.jpg" alt="Halaman perlengkapan umroh dengan tombol beli"></div><figcaption><span class="tag">Berjalan</span><b>Perlengkapan umroh</b><span>24 produk pilihan dengan link afiliasi.</span></figcaption></figure>
-      <figure><div class="phone"><img src="img/08-persiapan.jpg" alt="Checklist persiapan umroh: dokumen, vaksin, perlengkapan"></div><figcaption><span class="tag">Berjalan</span><b>Checklist persiapan</b><span>22 langkah: dokumen, vaksin, Nusuk, manasik. Tersimpan di akun.</span></figcaption></figure>
+    <span class="eyebrow">03 · Solusi &amp; produk</span>
+    <h2>Fokus pada tiga hal: bandingkan, bayar, biayai</h2>
+    <div class="journey">
+      <div class="leg"><span class="ico"><svg><use href="#i-compare"/></svg></span><b>Bandingkan</b><ul><li>Cari by budget &amp; kalender</li><li>Badge PPIU dan skor travel</li><li>Simulasi manasik 3D</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-book"/></svg></span><b>Bayar</b><ul><li>Tabungan di rekening atas nama jamaah</li><li>Dana ke travel pada H-30</li><li>10–15% ditahan sampai jamaah tiba</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-cicil"/></svg></span><b>Biayai</b><ul><li>Nabung atas nama jamaah di bank syariah</li><li>Atau ajukan ke beberapa mitra syariah sekaligus</li><li>Dana pembiayaan cair ke travel</li></ul></div>
     </div>
-    <p class="muted" style="font-size:15px">Juga sudah berjalan: login Google, tabungan umroh (pencatatan target dan setoran), paket tersimpan, insight per jadwal, chat bantuan, dan dashboard admin yang mengukur klik WhatsApp dan website per travel.</p>
+    <p class="note"><b>Travel tidak menunggu uang.</b> Jamaah yang memakai pembiayaan cukup membayar DP sekitar 20%; sisanya dicairkan mitra syariah ke travel, lalu jamaah mengangsur setelah pulang.</p>
+    <div class="shots four">
+      <figure><div class="phone"><img src="img/01-beranda.jpg" alt="Beranda umrohku: pilih budget lalu cari paket"></div><figcaption><span class="tag">Live</span><b>Cari by budget</b><span>Geser budget, rekomendasi langsung muncul.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/05-simulasi-tawaf.jpg" alt="Simulasi tawaf 3D"></div><figcaption><span class="tag">Live</span><b>Simulasi manasik 3D</b><span>Tawaf dan sa'i, lengkap dengan doa.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/10-cicil-mitra.jpg" alt="Perbandingan angsuran mitra pembiayaan syariah" loading="lazy"></div><figcaption><span class="tag next">Demo</span><b>Komparasi cicilan syariah</b><span>Angsuran beberapa mitra OJK, satu layar.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/13-booking-dp.jpg" alt="Booking dengan DP lunas" loading="lazy"></div><figcaption><span class="tag next">Demo</span><b>Booking &amp; DP</b><span>Status bayar dan sisa pelunasan.</span></figcaption></figure>
+    </div>
+    <p class="src">Alur lain (tabungan, pengajuan pembiayaan, portal travel) dapat dicoba di <a href="https://startup.umrohku.web.id/demo">startup.umrohku.web.id</a>.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap wide">
-    <span class="eyebrow">Yang akan dibangun</span>
-    <h2>Dari tempat membandingkan menjadi tempat memesan</h2>
-    <div class="shots">
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Bayar DP di umrohku</strong></div></div><figcaption><span class="tag next">Fase 2</span><b>Booking &amp; DP</b><span>Virtual account atau QRIS yang langsung masuk ke rekening penampungan travel atas nama jamaah.</span></figcaption></figure>
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Cicilan syariah</strong></div></div><figcaption><span class="tag next">Fase 2</span><b>Cicilan syariah</b><span>Cicil sebelum berangkat, atau berangkat dulu lewat perusahaan pembiayaan syariah mitra.</span></figcaption></figure>
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Portal travel</strong></div></div><figcaption><span class="tag next">Fase 1</span><b>Portal travel &amp; badge PPIU</b><span>Travel mengelola paket dan seat, melihat lead, dan tampil dengan nomor izin terverifikasi.</span></figcaption></figure>
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Cashback umrohku</strong></div></div><figcaption><span class="tag next">Fase 2</span><b>DP ringan, cashback &amp; voucher</b><span>DP lebih ringan dari travel mitra, plus cashback dan voucher yang hanya ada bila memesan lewat umrohku.</span></figcaption></figure>
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Undian umroh</strong></div></div><figcaption><span class="tag next">Fase 2</span><b>Undian umroh berhadiah</b><span>Setiap booking lewat umrohku otomatis ikut undian, tanpa biaya tambahan.</span></figcaption></figure>
-      <figure><div class="phone todo"><div><em>Foto menyusul</em><strong>Oleh-oleh</strong></div></div><figcaption><span class="tag next">Fase 4</span><b>Oleh-oleh &amp; voucher Tanah Suci</b><span>Dikirim ke rumah dari Indonesia, atau voucher prabayar yang ditukar di toko dan restoran mitra di Makkah dan Madinah.</span></figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap wide">
-    <span class="eyebrow">Alur pembayaran</span>
-    <h2>Bayar lewat umrohku, uang langsung ke rekening resmi travel</h2>
-    <div class="flow">
-      <div class="step"><b>Pilih paket</b><span>Jamaah memilih paket dari travel PPIU terverifikasi dan memakai voucher umrohku.</span></div>
-      <div class="step"><b>Bayar DP</b><span>Umrohku membuat virtual account atau QRIS untuk jamaah, nominal mulai ratusan ribu.</span></div>
-      <div class="step"><b>Dana masuk ke travel</b><span>Uang langsung masuk ke rekening penampungan travel atas nama jamaah, tidak lewat rekening umrohku.</span></div>
-      <div class="step"><b>Konfirmasi otomatis</b><span>Bukti bayar dan status booking terkirim ke jamaah dan travel, dan tercatat di akun.</span></div>
-      <div class="step"><b>Pelunasan</b><span>Lunas sekaligus, cicil sebelum berangkat, atau lewat pembiayaan syariah mitra.</span></div>
-    </div>
-    <p class="note">Alur ini mengikuti PP 38/2021: jamaah wajib menyetor biaya umroh ke rekening penampungan PPIU atas nama jamaah. Umrohku mengatur alur dan pencatatannya, tanpa menampung dana jamaah. Pendapatan umrohku ditagihkan terpisah dari DP.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">Nilai untuk jamaah</span>
-    <h2>Kenapa bayar lewat umrohku, bukan langsung ke travel</h2>
-    <p>Harga paket sama dengan harga resmi travel. Bedanya, jamaah mendapat empat keuntungan yang tidak ada bila membayar langsung.</p>
-    <div class="cols" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">
-      <div class="box"><span class="tag">Cicilan</span><h3>Bisa dicicil secara syariah</h3><p class="muted" style="font-size:15px">Cicil sebelum berangkat tanpa utang, atau berangkat dulu lewat perusahaan pembiayaan syariah mitra.</p></div>
-      <div class="box"><span class="tag">DP ringan</span><h3>Booking cukup dengan DP lebih kecil</h3><p class="muted" style="font-size:15px">Besaran DP disepakati dalam perjanjian dengan travel mitra: <span class="fill" style="white-space:normal">[mis. Rp500 rb vs Rp3–5 jt]</span>. Seat aman lebih awal, dengan aturan pembatalan yang jelas.</p></div>
-      <div class="box"><span class="tag">Cashback</span><h3>Cashback dan diskon dari umrohku</h3><p class="muted" style="font-size:15px">Dibiayai dari komisi umrohku, bukan dengan memotong harga travel. Travel tidak dirugikan dan harga resminya tetap terjaga.</p></div>
-      <div class="box"><span class="tag">Undian</span><h3>Undian umroh berhadiah</h3><p class="muted" style="font-size:15px">Setiap booking otomatis ikut, tanpa biaya ikut dan tanpa kenaikan harga, sehingga bebas dari unsur maysir. Hadiah dari dana promosi umrohku, dengan izin Kemensos. Hadiah haji khusus menyusul nanti.</p></div>
-    </div>
-    <p class="note">Posisinya seperti tiket.com untuk umroh: umrohku menjadi perantara yang membuat pemesanan lebih mudah dan lebih untung bagi jamaah, sementara layanan ibadah dan perjalanan tetap dijalankan oleh travel PPIU.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">Cicilan syariah</span>
-    <h2>Dua jalur, satu niat</h2>
+    <span class="eyebrow">04 · Proteksi dana</span>
+    <h2>Uang jamaah tidak mengendap di travel</h2>
+    <p class="q"><b>Akar kasus First Travel dan Abu Tours:</b> setoran jamaah diputar travel selama 1–2 tahun sebelum berangkat. Umrohku memutus jeda itu.</p>
     <div class="paths">
       <div class="path primary">
-        <span class="tag">Jalur utama · umroh tanpa utang</span>
-        <h3>Cicil sebelum berangkat</h3>
-        <ul>
-          <li>Jamaah memilih paket lalu menyetor rutin setiap bulan sampai lunas, kemudian berangkat.</li>
-          <li>Tanpa utang dan tanpa margin.</li>
-          <li>Dana disimpan di tabungan umroh atas nama jamaah di bank syariah mitra sampai lunas.</li>
-          <li>Fitur tabungan umrohku yang sudah ada menjadi rekening sungguhan.</li>
+        <span class="tag">Skema utama · Fase 1</span>
+        <h3>Tabungan H-30</h3>
+        <ul class="pts">
+          <li>Setoran 6–24 bulan masuk rekening tabungan <b>atas nama jamaah</b> di bank syariah</li>
+          <li>Dana baru ditransfer ke travel pada H-30, saat visa dan tiket siap</li>
+          <li>Memakai produk tabungan yang sudah ada; tidak perlu produk escrow baru</li>
+          <li>Jika travel bermasalah sebelum H-30, uang masih milik jamaah</li>
         </ul>
       </div>
       <div class="path">
-        <span class="tag next">Jalur kedua</span>
-        <h3>Berangkat dulu, cicil kemudian</h3>
-        <ul>
-          <li>Pembiayaan oleh perusahaan pembiayaan syariah berizin OJK, umumnya dengan akad ijarah multijasa.</li>
-          <li>Dana dicairkan langsung ke travel PPIU.</li>
-          <li>Umrohku menerima fee rujukan per pembiayaan yang dicairkan.</li>
-          <li>Bekerja sama dengan 2–3 mitra agar peluang persetujuan jamaah lebih besar. Calon mitra: <span class="fill" style="white-space:normal">[konfirmasi produk: mis. FIFGROUP Amitra, Adira Finance Syariah, bank syariah digital]</span>.</li>
+        <span class="tag next">Skema pelengkap · Fase 2</span>
+        <h3>Holdback margin 10–15%</h3>
+        <ul class="pts">
+          <li>85–90% cair setelah PNR tiket aktif dan booking hotel terbit</li>
+          <li>10–15% (porsi laba travel) cair setelah jamaah tiba di Saudi</li>
+          <li>Modal kerja travel tidak terganggu, insentif memberangkatkan tetap kuat</li>
         </ul>
       </div>
     </div>
-    <p class="muted" style="font-size:15px">Cicil sebelum berangkat sengaja dijadikan jalur utama, karena sejalan dengan kebiasaan jamaah yang menabung dan menghindari kesan mengajak umroh dengan berutang. Umrohku tidak memberi pinjaman sendiri. Kesesuaian syariah produk pembiayaan berada di bawah Dewan Pengawas Syariah masing-masing mitra.</p>
+    <div class="cards two">
+      <div class="card row"><span class="ico"><svg><use href="#i-plane"/></svg></span><div><h3>Kenapa travel sehat mau ikut</h3><p>Yang ditahan hanya margin, bukan biaya tiket, hotel, dan visa. Travel tidak perlu menombok.</p></div></div>
+      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Yang tidak kami janjikan</h3><p>Belum ada asuransi yang menanggung penggelapan oleh travel. Klaim itu baru dibuat jika ada penawaran resmi penanggung.</p></div></div>
+    </div>
+    <p class="note"><b>Umrohku tidak memegang dana.</b> Peran umrohku: mengatur jadwal transfer, memverifikasi PNR dan visa, dan mencatat kinerja travel. Seluruhnya berjalan di atas kewajiban rekening penampungan PPIU (PP 38/2021).</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Model bisnis</span>
-    <h2>Sumber pendapatan</h2>
+    <span class="eyebrow">05 · Celah pasar</span>
+    <h2>Travel sudah membayar agen. Umrohku menjadi agen terbesarnya.</h2>
+    <div class="cards">
+      <div class="card"><span class="ico"><svg><use href="#i-store"/></svg></span><h3>Program mitra travel</h3><p>Travel rutin beriklan "ayo jadi mitra kami": bawa jamaah, dapat komisi Rp1–1,5 jt per orang.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-family"/></svg></span><h3>Tour leader pengajian</h3><p>Bawa 10 jamaah, berangkat gratis. Setara ±Rp3 jt per jamaah, sekitar 10% harga paket.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-chart"/></svg></span><h3>Umrohku: agen digital</h3><p>Satu kanal untuk ratusan jamaah dari konten dan pencarian, dengan data dan pembiayaan.</p></div>
+    </div>
     <div class="tbl"><table>
-      <thead><tr><th>Sumber</th><th>Dari siapa</th><th>Cara kerja</th><th>Status</th></tr></thead>
+      <thead><tr><th>Kanal penjualan</th><th>Biaya travel per jamaah</th><th>Skala</th></tr></thead>
       <tbody>
-        <tr><td><b>Komisi booking</b></td><td>Travel</td><td>Persentase per booking yang membayar DP lewat umrohku; sebagian dipakai untuk voucher jamaah</td><td>Fase 2</td></tr>
-        <tr><td><b>Fee rujukan pembiayaan</b></td><td>Perusahaan pembiayaan</td><td>Per pembiayaan umroh yang dicairkan</td><td>Fase 2</td></tr>
-        <tr><td><b>Kerja sama bank syariah</b></td><td>Bank</td><td>Pembukaan tabungan umroh atas nama jamaah</td><td>Fase 2</td></tr>
-        <tr><td><b>Lead &amp; posisi unggulan</b></td><td>Travel</td><td>Biaya per lead WhatsApp terverifikasi dan slot "Promo Spesial"</td><td>Fase 1 (pola sudah ada)</td></tr>
-        <tr><td><b>Langganan portal travel</b></td><td>Travel</td><td>Kelola paket dan seat, laporan klik dan lead</td><td>Fase 1</td></tr>
-        <tr><td><b>Afiliasi perlengkapan</b></td><td>Marketplace</td><td>Komisi dari 24 produk perlengkapan</td><td>Berjalan</td></tr>
-        <tr><td><b>Oleh-oleh &amp; voucher Tanah Suci</b></td><td>Jamaah / merchant</td><td>Margin penjualan dan komisi merchant</td><td>Fase 4</td></tr>
+        <tr><td><b>Agen perorangan</b></td><td>Rp1–1,5 jt</td><td>Beberapa jamaah per musim</td></tr>
+        <tr><td><b>Tour leader pengajian</b></td><td>±Rp3 jt (1 kursi gratis per 10 jamaah)</td><td>Satu rombongan</td></tr>
+        <tr><td><b>Umrohku</b></td><td>Rp1,2–1,5 jt (4–5%)</td><td>Ratusan hingga ribuan per tahun, terukur per klik</td></tr>
       </tbody>
     </table></div>
-    <p class="muted" style="font-size:15px">Cashback, voucher, dan hadiah undian dibiayai dari bagian komisi dan anggaran promosi, bukan dengan menaikkan harga paket. Besaran komisi dan fee masih akan dinegosiasikan dengan mitra: <span class="fill">[isi setelah negosiasi]</span>.</p>
+    <p class="note"><b>Bukan biaya baru bagi travel.</b> Komisi 4–5% berasal dari anggaran pemasaran yang sudah ada, dialihkan ke kanal yang lebih besar dan lebih terukur. Karena itu angka ini realistis.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Keunggulan</span>
-    <h2>Kenapa umrohku</h2>
+    <span class="eyebrow">06 · Anti-bypass</span>
+    <h2>Kenapa jamaah membayar di umrohku, bukan langsung ke travel</h2>
+    <div class="cards two">
+      <div class="card"><span class="ico"><svg><use href="#i-bank"/></svg></span><h3>Akses multi-pembiayaan</h3><p>Satu pengajuan ke beberapa mitra syariah. Tidak tersedia jika membayar langsung ke travel.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-shield"/></svg></span><h3>Dana terproteksi</h3><p>Tabungan H-30 dan holdback hanya berlaku untuk transaksi di umrohku.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-tag"/></svg></span><h3>Harga lebih untung</h3><p>Harga travel sama, ditambah potongan langsung dari komisi umrohku.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-star"/></svg></span><h3>Kurasi kinerja travel</h3><p>Skor ketepatan berangkat dan ulasan dari jamaah yang benar-benar berangkat.</p></div>
+    </div>
+    <p class="note"><b>Atribusi lewat kode booking, bukan janji di atas kertas.</b> Potongan harga dan proteksi dana hanya aktif jika jamaah mendaftar dengan kode umrohku, sehingga jamaah sendiri yang berkepentingan menyebutkannya. Komisi ditagih per jamaah lunas berdasarkan manifest.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">07 · Pembiayaan syariah</span>
+    <h2>Berangkat dulu, angsur kemudian, tanpa riba</h2>
+    <div class="cards two">
+      <div class="card"><span class="ico"><svg><use href="#i-case"/></svg></span><h3>Ijarah multijasa</h3><p>Lembaga menyewa jasa travel, lalu menyewakannya ke jamaah dengan ujrah tetap yang disepakati di awal.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-tag"/></svg></span><h3>Murabahah</h3><p>Lembaga membeli paket, lalu menjualnya ke jamaah dengan margin tetap. Angsuran tidak berubah sepanjang tenor.</p></div>
+    </div>
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-cicil"/></svg></span>Simulasi: paket Rp30 jt, DP 20% Rp6 jt, dibiayai Rp24 jt</h3>
+    <div class="tbl"><table class="num">
+      <thead><tr><th>Tenor</th><th>Bank syariah · ±0,75–0,95%/bln</th><th>Multifinance syariah · ±1,5–1,7%/bln</th></tr></thead>
+      <tbody>
+        <tr><td><b>12 bulan</b></td><td>±Rp2,19 jt/bln</td><td>±Rp2,39 jt/bln</td></tr>
+        <tr><td><b>24 bulan</b></td><td>±Rp1,19 jt/bln</td><td>±Rp1,39 jt/bln</td></tr>
+        <tr><td><b>36 bulan</b></td><td>±Rp856 rb/bln</td><td>±Rp1,07 jt/bln</td></tr>
+      </tbody>
+    </table></div>
     <div class="cols">
-      <div class="box"><h3>Data harga lintas travel</h3><p class="muted" style="font-size:15px">Ratusan paket dari 18 travel dalam satu tempat, diperbarui dua kali sehari, lengkap dengan jarak hotel ke masjid.</p></div>
-      <div class="box"><h3>Alasan untuk bertransaksi di umrohku</h3><p class="muted" style="font-size:15px">Jamaah bisa menghubungi travel langsung, tapi cicilan syariah, DP ringan, cashback, dan undian hanya tersedia lewat umrohku.</p></div>
-      <div class="box"><h3>Edukasi yang menarik pengguna</h3><p class="muted" style="font-size:15px">Simulasi 3D dan konten video membawa calon jamaah datang sebelum mereka siap membeli, jadi biaya akuisisi lebih rendah.</p></div>
-      <div class="box"><h3>Kepercayaan sebagai produk</h3><p class="muted" style="font-size:15px">Badge PPIU, dana langsung ke rekening resmi travel, dan ulasan dari jamaah yang benar-benar berangkat.</p></div>
+      <div class="box"><h3>Peran umrohku</h3><ul class="pts"><li>Menampilkan beberapa penawaran berdampingan</li><li>Satu pengajuan, persetujuan data UU PDP</li><li>Dana cair langsung ke travel; risiko kredit di mitra</li></ul></div>
+      <div class="box"><h3>Contoh produk di pasar</h3><ul class="pts"><li>BSI Mitraguna Umroh</li><li>CIMB Niaga Syariah X-Tra Dana iB</li><li>Amitra (FIFGROUP)</li></ul></div>
     </div>
+    <p class="note warn"><b>Risiko yang kami hitung:</b> pengajuan tanpa agunan banyak ditolak di pengecekan SLIK. Proyeksi hanya memakai asumsi 10% jamaah lunas lewat pembiayaan, dan angka itu diuji lebih dulu lewat tes pengajuan ke satu lembaga.</p>
+    <p class="src">Estimasi ilustratif dari skema yang beredar, belum termasuk biaya admin dan asuransi jiwa. Contoh produk bukan mitra; kerja sama belum ada.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Lanskap</span>
-    <h2>Pemain lain di sekitar umroh digital</h2>
-    <div class="tbl"><table>
-      <thead><tr><th>Pemain</th><th>Fokus</th><th>Posisi umrohku</th></tr></thead>
-      <tbody>
-        <tr><td><b>Situs dan WhatsApp travel</b></td><td>Menjual paket travel itu sendiri</td><td>Membandingkan lintas travel, lalu meneruskan pembayaran ke travel</td></tr>
-        <tr><td><b>Marketplace umroh terdahulu</b> (mis. Pergiumroh, Waqara)</td><td>Katalog paket umroh online</td><td>Ditambah cicilan syariah, simulasi manasik, dan perlengkapan</td></tr>
-        <tr><td><b>Nusuk Umrah</b> (Saudi)</td><td>Visa dan layanan langsung dari Saudi</td><td>Panduan berbahasa Indonesia dan jalur lewat PPIU</td></tr>
-        <tr><td><b>Travel dengan cicilan sendiri</b> (mis. Wipatour)</td><td>Cicilan untuk paket travel itu sendiri</td><td>Cicilan untuk paket dari banyak travel, dengan pilihan beberapa mitra pembiayaan</td></tr>
-        <tr><td><b>Fintech umroh</b> (mis. UmrahCash)</td><td>Tabungan, pembiayaan, pembayaran</td><td>Calon mitra atau pesaing di sisi pembayaran</td></tr>
-      </tbody>
-    </table></div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">Roadmap</span>
-    <h2>Tahapan pengembangan</h2>
-    <div class="road">
-      <div class="phase now"><span class="when">Fase 1 · 0–6 bulan</span><h3>Pembanding umroh terverifikasi</h3><ul><li>Badge PPIU dengan nomor izin</li><li>Portal travel: kelola paket, seat, dan laporan lead</li><li>Kerja sama tertulis dengan travel, menggantikan scraping</li><li>Tombol "Mau cicil?" untuk mengukur minat sejak awal</li></ul></div>
-      <div class="phase"><span class="when">Fase 2 · 6–12 bulan</span><h3>Booking, DP, dan cicilan syariah</h3><ul><li>DP lewat virtual account atau QRIS ke rekening penampungan travel</li><li>DP ringan dan cashback bersama travel mitra</li><li>Voucher umrohku</li><li>Undian umroh berhadiah, setelah izin Kemensos keluar</li><li>Tabungan umroh bersama bank syariah</li><li>Rujukan ke 2–3 perusahaan pembiayaan syariah</li></ul></div>
-      <div class="phase"><span class="when">Fase 3</span><h3>Modul umrah mandiri</h3><ul><li>Panduan Nusuk, hotel, transportasi, dan pendamping, setelah aturan turunan dan putusan MK jelas</li></ul></div>
-      <div class="phase"><span class="when">Fase 4</span><h3>Layanan di Tanah Suci</h3><ul><li>Oleh-oleh dikirim ke rumah</li><li>Voucher prabayar untuk toko dan restoran mitra di Makkah dan Madinah</li><li>Pickup di toko, setelah ada mitra di Saudi</li><li>Hadiah undian haji khusus, bila skala bisnis sudah memungkinkan</li></ul></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">Traksi</span>
-    <h2>Angka pertumbuhan</h2>
-    <p>Analytics internal umrohku berjalan sejak awal November 2026. Diisi setelah 6–8 minggu pengukuran.</p>
+    <span class="eyebrow">08 · Pasar &amp; pesaing</span>
+    <h2>Pasar besar, pembiayaan masih kosong</h2>
     <div class="stats">
-      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>pengunjung unik per bulan</span></div>
-      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>klik WhatsApp ke travel per bulan</span></div>
-      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>pengguna login Google</span></div>
-      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>target tabungan aktif</span></div>
-      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>surat minat (LOI) dari travel</span></div>
+      <div class="stat"><b>1,6 jt</b><span>jamaah umroh Indonesia, 2025</span><small>Siskopatuh</small></div>
+      <div class="stat"><b>±Rp48 T</b><span>nilai pasar per tahun</span><small>asumsi paket Rp30 jt</small></div>
+      <div class="stat"><b>Rp32,17 T</b><span>piutang multifinance syariah</span><small>OJK, Sep 2026</small></div>
+      <div class="stat"><b>7</b><span>multifinance aktif membiayai umroh</span><small>OJK</small></div>
+    </div>
+    <div class="cards">
+      <div class="card"><span class="ico"><svg><use href="#i-hour"/></svg></span><h3>Haji makin jauh</h3><p>Antrean haji reguler puluhan tahun; keluarga beralih menabung untuk umroh.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-law"/></svg></span><h3>Regulasi bergerak</h3><p>UU 14/2025 mengakui umrah mandiri; Saudi meluncurkan Nusuk Umrah.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-bank"/></svg></span><h3>Pembiayaan belum tergarap</h3><p>OJK menilai pemain pembiayaan umroh masih sedikit dibanding potensinya.</p></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Pemain</th><th>Fokus</th><th>Pembeda umrohku</th></tr></thead>
+      <tbody>
+        <tr><td><b>Situs &amp; WhatsApp travel</b></td><td>Paket sendiri</td><td>Perbandingan lintas travel dan proteksi dana</td></tr>
+        <tr><td><b>Marketplace umroh</b> (Pergiumroh, Waqara)</td><td>Katalog paket</td><td>Pembiayaan dan proteksi dana yang mengunci transaksi</td></tr>
+        <tr><td><b>Travel dengan cicilan</b> (Wipatour)</td><td>Cicilan paket sendiri</td><td>Banyak travel, banyak mitra pembiayaan</td></tr>
+        <tr><td><b>Fintech umroh</b> (UmrahCash)</td><td>Tabungan &amp; pembiayaan</td><td>Calon mitra di sisi pembiayaan</td></tr>
+        <tr><td><b>Nusuk Umrah</b> (Saudi)</td><td>Visa &amp; layanan langsung</td><td>Panduan berbahasa Indonesia lewat PPIU</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Dua penyakit marketplace umroh: bypass dan repeat rendah.</b> Umrohku menjawab bypass dengan pembiayaan dan proteksi dana yang hanya ada di platform, dan menjawab repeat rendah dengan CAC rendah dari konten.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">09 · Traksi &amp; validasi</span>
+    <h2>Minat sudah terukur. Tahap berikutnya: transaksi pertama.</h2>
+    <div class="stats">
+      <div class="stat gold"><b>461</b><span>pencarian paket dalam 30 hari</span><small>situs berumur 1 bulan</small></div>
+      <div class="stat gold"><b>78</b><span>klik ke travel</span><small>23 WhatsApp · 55 situs</small></div>
+      <div class="stat gold"><b>±185 rb</b><span>tayangan video organik</span><small>YouTube + TikTok</small></div>
+      <div class="stat gold"><b>Rp0</b><span>biaya iklan</span><small>seluruh trafik organik</small></div>
+    </div>
+    <ul class="pts" style="font-size:15.5px;color:var(--ink)">
+      <li><b>Hitungan jujur:</b> klik adalah minat, bukan pembelian. Dengan asumsi 1–2% klik menjadi jamaah lunas, trafik hari ini setara 0–1 jamaah per bulan.</li>
+      <li><b>Jalur ke 25 jamaah per bulan (target Tahun 1):</b> ±1.700 klik per bulan, atau sekitar 20× trafik sekarang.</li>
+      <li><b>Tiga pengungkit:</b> konten (satu video sudah 124 rb tayangan), SEO (Google baru 1% trafik), dan pendampingan concierge untuk menaikkan konversi.</li>
+    </ul>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-chart"/></svg></span>Bukti: dasbor admin umrohku.web.id, 26 Okt–24 Nov 2026</h3>
+    <div class="stats">
+      <div class="stat"><b>847</b><span>pengunjung unik</span></div>
+      <div class="stat"><b>8.791</b><span>halaman dibuka</span></div>
+      <div class="stat"><b>461</b><span>pencarian paket</span></div>
+      <div class="stat"><b>23</b><span>klik WhatsApp travel</span></div>
+      <div class="stat"><b>55</b><span>klik situs travel</span></div>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <h4>Budget yang dicari</h4>
+        <div class="bars">
+          <div class="bar"><div><span>&lt; Rp25 jt</span><span>56 · 12%</span></div><i style="--w:26%"></i></div>
+          <div class="bar top"><div><span>Rp25–29 jt</span><span>217 · 47%</span></div><i style="--w:100%"></i></div>
+          <div class="bar"><div><span>Rp30–34 jt</span><span>59 · 13%</span></div><i style="--w:27%"></i></div>
+          <div class="bar"><div><span>Rp35–39 jt</span><span>54 · 12%</span></div><i style="--w:25%"></i></div>
+          <div class="bar"><div><span>≥ Rp40 jt</span><span>75 · 16%</span></div><i style="--w:35%"></i></div>
+        </div>
+        <span class="cap">Hampir separuh pencarian ada di segmen yang paling butuh cicilan.</span>
+      </div>
+      <div class="panel">
+        <h4>Sumber pengunjung</h4>
+        <div class="bars">
+          <div class="bar top"><div><span>Langsung</span><span>593 · 83%</span></div><i style="--w:100%"></i></div>
+          <div class="bar"><div><span>Threads</span><span>50 · 7%</span></div><i style="--w:8.4%"></i></div>
+          <div class="bar"><div><span>Facebook</span><span>28 · 4%</span></div><i style="--w:4.7%"></i></div>
+          <div class="bar"><div><span>Instagram</span><span>18 · 3%</span></div><i style="--w:3%"></i></div>
+          <div class="bar"><div><span>Google</span><span>7 · 1%</span></div><i style="--w:1.2%"></i></div>
+        </div>
+        <span class="cap">"Langsung" mencakup klik dari aplikasi media sosial yang tidak mengirim referrer; akan dipilah dengan UTM. Google baru 1%.</span>
+      </div>
+    </div>
+    <div class="tbl"><table class="num">
+      <thead><tr><th>Travel (5 teratas, belum bermitra)</th><th>Tampil</th><th>Klik WA</th><th>Klik situs</th><th>CTR</th></tr></thead>
+      <tbody>
+        <tr><td><b>PT Labbaika Cipta Imani</b></td><td>388</td><td>7</td><td>10</td><td>4,4%</td></tr>
+        <tr><td><b>Umrah Bisa</b></td><td>625</td><td>6</td><td>9</td><td>2,4%</td></tr>
+        <tr><td><b>Ventour Travel</b></td><td>597</td><td>3</td><td>4</td><td>1,2%</td></tr>
+        <tr><td><b>Al Hijaz</b></td><td>186</td><td>2</td><td>8</td><td>5,4%</td></tr>
+        <tr><td><b>Rabbani Tour</b></td><td>316</td><td>1</td><td>6</td><td>2,2%</td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">Lima travel ini sudah menerima klik dari umrohku, sehingga menjadi target LOI pertama. 63 pencarian (14%) tanpa hasil menunjukkan permintaan yang belum terlayani.</p>
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-play"/></svg></span>Mesin akuisisi: konten organik</h3>
+    <div class="stats">
+      <div class="stat gold"><b>±185 rb</b><span>total tayangan video</span><small>YouTube + TikTok</small></div>
+      <div class="stat"><b>124 rb</b><span>tayangan Short terbaik</span><small>"Umrah itu berapa lama?"</small></div>
+      <div class="stat"><b>±155 rb</b><span>tayangan 7 YouTube Shorts</span><small>461 subscriber</small></div>
+      <div class="stat"><b>±30 rb</b><span>tayangan 6 video TikTok</span><small>2.390 suka</small></div>
+    </div>
+    <div class="cols">
+      <figure><div class="evi"><img src="img/25-shorts.jpg" alt="Halaman Shorts @umrohku.official: 461 subscriber, tayangan 1,2 rb hingga 124 rb" loading="lazy"></div><figcaption><b>YouTube @umrohku.official</b><span>7 Shorts, satu menembus 124 rb tayangan.</span></figcaption></figure>
+      <figure><div class="evi"><img src="img/26-tiktok.jpg" alt="Profil TikTok @umrohku.web.id: 2.390 suka, video terbaik 20,9 rb tayangan" loading="lazy"></div><figcaption><b>TikTok @umrohku.web.id</b><span>Video terbaik 20,9 rb tayangan.</span></figcaption></figure>
+    </div>
+    <p class="src">Seluruhnya organik, tanpa iklan, diproduksi sendiri oleh founder. Tangkapan layar 24 November 2026.</p>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-shield"/></svg></span>Sudah berjalan di production</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Fitur live</th><th>Yang dikerjakan</th><th>Manfaat bisnis</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pembanding paket</b></td><td>508 paket dari 18 travel, diperbarui 2× sehari</td><td>Sumber klik minat ke travel: 78 per bulan</td></tr>
+        <tr><td><b>Cari by budget &amp; kalender</b></td><td>Rekomendasi sesuai dana dan bulan berangkat</td><td>Data permintaan pasar yang tidak dimiliki travel</td></tr>
+        <tr><td><b>Simulasi manasik 3D</b></td><td>Masjidil Haram, tawaf, dan sa'i</td><td>Menarik jamaah sejak tahap niat; pembeda dari katalog biasa</td></tr>
+        <tr><td><b>Checklist &amp; perlengkapan</b></td><td>22 langkah persiapan, 24 produk afiliasi</td><td>Alasan kembali ke situs; pendapatan afiliasi sudah aktif</td></tr>
+        <tr><td><b>Akun &amp; tabungan</b></td><td>Login Google, paket tersimpan, target tabungan</td><td>Basis pengguna terdaftar untuk booking dan pembiayaan</td></tr>
+        <tr><td><b>Dasbor analitik per travel</b></td><td>Tampil, klik WA, klik situs, dan CTR</td><td>Bukti nilai untuk negosiasi komisi dalam PKS</td></tr>
+      </tbody>
+    </table></div>
+    <div class="shots four">
+      <figure><div class="phone"><img src="img/02-rekomendasi.jpg" alt="Kartu rekomendasi paket" loading="lazy"></div><figcaption><span class="tag">Live</span><b>Rekomendasi paket</b><span>Harga, DP, maskapai, jarak hotel.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/03-kalender.jpg" alt="Kalender keberangkatan" loading="lazy"></div><figcaption><span class="tag">Live</span><b>Kalender keberangkatan</b><span>Jadwal dan harga termurah.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/04-simulasi-haram.jpg" alt="Simulasi 3D Masjidil Haram" loading="lazy"></div><figcaption><span class="tag">Live</span><b>Masjidil Haram 3D</b><span>126 pintu dan menara.</span></figcaption></figure>
+      <figure><div class="phone"><img src="img/08-persiapan.jpg" alt="Checklist persiapan umroh" loading="lazy"></div><figcaption><span class="tag">Live</span><b>Checklist persiapan</b><span>22 langkah, tersimpan di akun.</span></figcaption></figure>
+    </div>
+
+    <div class="box" style="border:2px solid var(--em)">
+      <h3>Prasyarat sebelum dana investor cair · 60 hari, biaya sendiri</h3>
+      <ul class="pts">
+        <li><b>5 LOI atau PKS bertanda tangan</b> dari direktur travel PPIU, dimulai dari lima travel di atas (draf LOI terlampir)</li>
+        <li><b>5–10 transaksi concierge lunas,</b> dengan bukti komisi masuk ke rekening umrohku</li>
+        <li><b>Tes pengajuan pembiayaan</b> ke satu lembaga syariah: berapa yang mendaftar, berapa yang lolos SLIK</li>
+        <li><b>PT berdiri,</b> PSE Komdigi terdaftar, merek dicek di DJKI kelas 35, 36, 39, dan 42</li>
+      </ul>
+    </div>
+    <p class="src">Angka konversi 1–2% adalah asumsi untuk trafik dingin pada produk Rp30 jt, dan akan diganti data nyata dari transaksi concierge.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">10 · Unit economics</span>
+    <h2>Laba kotor ±Rp1 jt per jamaah, dua jamaah per transaksi</h2>
+    <div class="ledger">
+        <div><span>Komisi agen 4–5%<small>dari paket Rp30 jt; setara komisi agen hari ini</small></span><span>+Rp1,2–1,5 jt</span></div>
+        <div><span>Fee rujukan pembiayaan<small>1,5–2% pokok; hanya 10% jamaah</small></span><span>+±Rp40 rb</span></div>
+        <div class="minus"><span>Potongan harga untuk jamaah</span><span>−Rp250 rb</span></div>
+        <div class="minus"><span>Biaya payment gateway</span><span>−±Rp15 rb</span></div>
+        <div class="total"><span>Laba kotor per jamaah</span><span>Rp1,0–1,3 jt</span></div>
+      </div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))">
+        <div class="card row"><span class="ico"><svg><use href="#i-family"/></svg></span><div><h3>Efek keluarga</h3><p>Rata-rata 2 jamaah per transaksi: laba kotor Rp2,0–2,6 jt.</p></div></div>
+        <div class="card row"><span class="ico"><svg><use href="#i-play"/></svg></span><div><h3>CAC lewat konten</h3><p>Target di bawah Rp300 rb per transaksi; dibuktikan di Tahap 1.</p></div></div>
+        <div class="card row"><span class="ico"><svg><use href="#i-chart"/></svg></span><div><h3>≥6× CAC</h3><p>Dari satu transaksi, tanpa bergantung pada pembelian ulang.</p></div></div>
+      </div>
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-store"/></svg></span>Lapisan berikutnya, belum masuk proyeksi</h3>
+    <div class="cards two">
+      <div class="card"><h3>SaaS untuk PPIU · Tahun 2+</h3><p>Booking engine dan CRM berlangganan untuk travel mitra: pendapatan berulang dengan margin tinggi.</p></div>
+      <div class="card"><h3>Rujukan modal kerja travel · Tahun 3+</h3><p>Data kinerja keberangkatan menjadi dasar bank syariah menalangi tiket dan hotel travel bereputasi baik.</p></div>
+    </div>
+    <p class="src">Asumsi internal, divalidasi lewat transaksi concierge. Umroh jarang diulang (1× per 3–5 tahun), sehingga hitungan tidak memakai repeat order. Risiko kredit sepenuhnya di lembaga pembiayaan.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">11 · Proyeksi 3 tahun</span>
+    <h2>Impas di tahun kedua, dari komisi saja</h2>
+    <div class="tbl"><table class="num">
+      <thead><tr><th>Metrik</th><th>Tahun 1 · Validasi</th><th>Tahun 2 · Scaling</th><th>Tahun 3</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jamaah lunas</b></td><td>300 (±25/bln)</td><td>2.000 (±166/bln)</td><td>7.500 (±625/bln)</td></tr>
+        <tr><td><b>Pangsa pasar</b></td><td>0,02%</td><td>0,13%</td><td>0,47%</td></tr>
+        <tr><td><b>GMV</b></td><td>Rp9 M</td><td>Rp60 M</td><td>Rp225 M</td></tr>
+        <tr><td><b>Pendapatan</b> (±Rp1,4 jt/jamaah)</td><td>Rp420 jt</td><td>Rp2,8 M</td><td>Rp10,5 M</td></tr>
+        <tr><td><b>Biaya operasional</b></td><td>Rp900 jt</td><td>Rp2,4 M</td><td>Rp8,0 M</td></tr>
+        <tr class="hl"><td>EBITDA</td><td class="neg">−Rp480 jt</td><td class="pos">+Rp400 jt</td><td class="pos">+Rp2,5 M</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Anggaran 18 bulan = Rp1,5 M, sama dengan dana yang diminta.</b> Biaya Tahun 1 Rp900 jt ditambah paruh pertama Tahun 2 Rp600 jt. Perusahaan tetap hidup 18 bulan meski pendapatan nol; biaya paruh kedua Tahun 2 baru naik jika pendapatan sudah masuk.</p>
+    <p class="src">Proyeksi bottom-up dari target jamaah, hanya dari komisi dan fee rujukan. SaaS dan rujukan modal kerja belum dihitung.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">12 · Roadmap</span>
+    <h2>Buktikan dulu, baru besarkan</h2>
+    <div class="road">
+      <div class="phase now"><span class="when">Fase 0 · 60 hari · biaya sendiri</span><h3>Bukti transaksi</h3><ul><li>5 LOI travel dan 5–10 transaksi concierge lunas</li><li>Tes tingkat persetujuan pembiayaan</li><li>Pendirian PT, PSE, dan cek merek</li></ul></div>
+      <div class="phase"><span class="when">Fase 1 · Bulan 0–6 · Tahap 1</span><h3>Kanal agen digital</h3><ul><li>PKS dengan 15 travel PPIU, kode booking, komisi per jamaah lunas</li><li>Tabungan H-30 memakai rekening tabungan jamaah di bank syariah</li><li>Target 100 jamaah lunas</li></ul></div>
+      <div class="phase"><span class="when">Fase 2 · Bulan 6–18 · Tahap 2</span><h3>Pembiayaan &amp; holdback</h3><ul><li>Kerja sama rujukan dengan 1 bank syariah dan 1 multifinance</li><li>Holdback 10–15% di travel mitra</li><li>30 travel mitra, 600 jamaah lunas kumulatif</li></ul></div>
+      <div class="phase"><span class="when">Fase 3 · Tahun 2–3</span><h3>Lapisan fintech</h3><ul><li>SaaS booking engine untuk PPIU</li><li>Rujukan modal kerja travel ke bank syariah</li><li>Pendaftaran ITSK di OJK (POJK 3/2024) setelah volume memadai</li></ul></div>
+    </div>
+    <div class="exp">
+      <span class="when">Fase ekspansi · Tahun 3+</span>
+      <ul>
+        <li>Wallet &amp; QRIS di Saudi lewat mitra PJP berizin BI</li>
+        <li>Layanan Tanah Suci: voucher riyal dan oleh-oleh</li>
+        <li>Undian umroh, setelah GMV stabil di atas Rp2 M per bulan</li>
+        <li>Panduan umrah mandiri: afiliasi hotel dan tiket, bukan rombongan</li>
+      </ul>
     </div>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Kepatuhan &amp; risiko</span>
-    <h2>Hal yang dijaga sejak awal</h2>
+    <span class="eyebrow">13 · Legal &amp; kepatuhan</span>
+    <h2>Peta izin: umrohku platform, bukan penyelenggara umroh</h2>
     <div class="tbl"><table>
-      <thead><tr><th>Area</th><th>Langkah umrohku</th></tr></thead>
+      <thead><tr><th>Area</th><th>Dasar</th><th>Posisi umrohku</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><b>Dana jamaah</b> (PP 38/2021)</td><td>Pembayaran langsung ke rekening penampungan PPIU atas nama jamaah; umrohku tidak menampung dana</td></tr>
-        <tr><td><b>Pembiayaan</b> (OJK)</td><td>Hanya lewat perusahaan pembiayaan dan bank berizin; umrohku tidak memberi pinjaman</td></tr>
-        <tr><td><b>Data pribadi</b> (UU PDP)</td><td>Persetujuan eksplisit sebelum data dibagikan ke mitra; ekspor dan hapus data sudah tersedia</td></tr>
-        <tr><td><b>Undian berhadiah</b> (Kemensos, syariah)</td><td>Izin undian gratis berhadiah dari Kemensos; peserta tidak membayar untuk ikut dan harga tidak dinaikkan, agar bebas maysir; mekanisme ditinjau dewan syariah atau ustadz pendamping</td></tr>
-        <tr><td><b>Harga dan promo travel</b></td><td>DP ringan, harga, dan cashback diatur dalam perjanjian tertulis dengan setiap travel mitra; cashback dibiayai umrohku</td></tr>
-        <tr><td><b>Legalitas platform</b></td><td>Badan usaha (PT), pendaftaran PSE di Komdigi, Syarat &amp; Ketentuan</td></tr>
-        <tr><td><b>Regulasi umrah mandiri</b></td><td>Menunggu aturan turunan dan putusan uji materi di MK sebelum Fase 3</td></tr>
-        <tr><td><b>Ketergantungan data</b></td><td>Beralih dari scraping ke kerja sama data dengan travel di Fase 1</td></tr>
+        <tr><td><b>Badan usaha</b></td><td>KBLI 63122, PSE Komdigi</td><td>PT biasa (bukan PT Perorangan) agar bisa menerima investor</td><td><span class="status wait">Pra-pendanaan</span></td></tr>
+        <tr><td><b>Penjualan paket</b></td><td>UU 8/2019 jo. UU 14/2025</td><td>PPMSE dan mitra pemasaran; PKS tertulis dengan setiap PPIU; tidak mengorganisir rombongan</td><td><span class="status go">Fase 1</span></td></tr>
+        <tr><td><b>Alur uang</b></td><td>PP 38/2021</td><td>Dana di rekening tabungan atas nama jamaah sampai H-30, lalu ke rekening penampungan PPIU. Umrohku tidak menyimpan dana; komisi ditagih lewat invoice (PPN, PPh 23)</td><td><span class="status go">Fase 1</span></td></tr>
+        <tr><td><b>Pendaftaran OJK</b></td><td>POJK 3/2024 (ITSK)</td><td>Dikaji setelah volume transaksi memadai; prosesnya panjang dan butuh audit keamanan informasi</td><td><span class="status hold">Tahun 2–3</span></td></tr>
+        <tr><td><b>Tabungan &amp; cicilan</b></td><td>OJK; POJK 3/2024 (ITSK)</td><td>Rekening atas nama jamaah; multifinance sebagai rujukan; tidak memberi pinjaman</td><td><span class="status go">Fase 2</span></td></tr>
+        <tr><td><b>Data pribadi</b></td><td>UU 27/2022 (PDP)</td><td>Persetujuan eksplisit sebelum data dikirim ke mitra, dapat dicabut</td><td><span class="status go">Sudah di demo</span></td></tr>
+        <tr><td><b>Wallet &amp; QRIS</b></td><td>PBI 23/6/PBI/2021</td><td>Ditunda. Izin PJP kategori 1 butuh modal Rp15 M; nanti lewat mitra. Cashback diberikan sebagai potongan harga, bukan saldo</td><td><span class="status hold">Tahun 3+</span></td></tr>
+        <tr><td><b>Undian</b></td><td>Permensos 3/2024; PP 132/2000</td><td>Ditunda. PPh final 25% atas nilai hadiah; anggaran dialihkan ke potongan harga pasti</td><td><span class="status hold">Tahun 3+</span></td></tr>
+        <tr><td><b>Merek</b></td><td>DJKI</td><td>Cek dan daftarkan "Umrohku" di kelas 35, 36, 39, 42</td><td><span class="status wait">Pra-pendanaan</span></td></tr>
       </tbody>
     </table></div>
   </div>
@@ -367,12 +729,111 @@ footer .wrap { display: grid; gap: 6px; }
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">Tim &amp; kebutuhan dana</span>
-    <h2>Tim dan penggunaan dana</h2>
-    <div class="cols">
-      <div class="box"><h3>Tim</h3><ul><li><span class="fill">[Nama]</span> · Founder, produk &amp; teknologi</li><li><span class="fill">[Nama]</span> · Kemitraan travel &amp; keuangan</li><li><span class="fill">[Nama]</span> · Konten &amp; komunitas</li></ul></div>
-      <div class="box"><h3>Kebutuhan dana: <span class="fill">[Rp ...]</span></h3><ul><li>Pengembangan booking, pembayaran, dan portal travel</li><li>Legal, perizinan, dan kepatuhan</li><li>Kemitraan travel, bank, dan perusahaan pembiayaan</li><li>Pemasaran konten dan komunitas</li><li>Operasional 12–18 bulan</li></ul></div>
+    <span class="eyebrow">14 · Pendanaan</span>
+    <h2>Rp1,5 M dalam dua tahap, cair hanya jika milestone tercapai</h2>
+    <div class="flow">
+      <div class="step"><b>Fase 0 · Rp0 dari investor</b><span>60 hari biaya sendiri: 5 LOI, 5–10 transaksi lunas, tes pembiayaan.</span></div>
+      <div class="step"><b>Tahap 1 · Rp300 jt</b><span>Cair setelah Fase 0 terbukti. Target 6 bulan: 15 PKS dan 100 jamaah lunas.</span></div>
+      <div class="step"><b>Tahap 2 · Rp1,2 M</b><span>Cair setelah target Tahap 1 tercapai. Target bulan 18: 30 PKS dan 600 jamaah lunas.</span></div>
     </div>
+    <p class="note"><b>Risiko investor dibatasi.</b> Jika Fase 0 gagal, tidak ada dana yang keluar. Jika Tahap 1 gagal, eksposur maksimal Rp300 jt.</p>
+    <div class="ask">
+      <div class="box">
+        <span class="eyebrow" style="color:var(--muted)">Penggunaan dana · 18 bulan</span>
+        <div class="big">Rp1,5 M</div>
+        <p style="font-size:15px">SAFE dengan valuation cap post-money Rp7,5 M (±20%), terbuka untuk dinegosiasikan setelah Fase 0.</p>
+        <div class="alloc" aria-hidden="true"><i style="flex:50;background:var(--em)"></i><i style="flex:20;background:var(--gold)"></i><i style="flex:10;background:#5FA68A"></i><i style="flex:8;background:#C9A64A"></i><i style="flex:12;background:var(--muted)"></i></div>
+        <ul class="legend">
+          <li style="--c:var(--em)">Tim inti 3 orang<span>50% · Rp750 jt</span></li>
+          <li style="--c:var(--gold)">Konten, promo &amp; akuisisi<span>20% · Rp300 jt</span></li>
+          <li style="--c:#5FA68A">Legal, PT, PKS &amp; merek<span>10% · Rp150 jt</span></li>
+          <li style="--c:#C9A64A">Teknologi &amp; infrastruktur<span>8% · Rp120 jt</span></li>
+          <li style="--c:var(--muted)">Cadangan<span>12% · Rp180 jt</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Tim inti: 3 orang, bukan 4</h3>
+        <ul class="pts">
+          <li><b>Barru Kurniawan</b> · CEO, produk &amp; teknologi. Full-time sejak Tahap 1 cair</li>
+          <li><b>Co-founder bisnis</b> · kemitraan travel dan bank syariah. Sedang dicari dari industri umroh; ekuitas dan komisi, bukan sekadar gaji</li>
+          <li><b>Konten &amp; operasional</b> · produksi video dan concierge jamaah</li>
+        </ul>
+        <p class="src">Anggaran tim ±Rp41,7 jt per bulan, sudah termasuk THR dan BPJS. Engineering dikerjakan founder.</p>
+      </div>
+    </div>
+    <div class="cards two">
+      <div class="card row"><span class="ico"><svg><use href="#i-chart"/></svg></span><div><h3>Imbal hasil, dihitung apa adanya</h3><p>Bisnis komisi dinilai 6–8× EBITDA: ±Rp15–20 M di Tahun 3, atau 2–2,7× dari cap. Kelipatan lebih tinggi bergantung pada SaaS dan rujukan modal kerja.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-case"/></svg></span><div><h3>Calon pengakuisisi strategis</h3><p>Bank syariah, OTA nasional, dan grup multifinance syariah yang butuh kanal akuisisi jamaah.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="lampiran-loi">
+  <div class="wrap">
+    <span class="eyebrow">Lampiran · Draf LOI travel</span>
+    <h2>Dokumen yang akan ditandatangani travel</h2>
+    <p>Satu halaman, berbahasa Indonesia, dengan pemisahan tegas antara ketentuan yang mengikat dan yang tidak. Belum ada travel yang menandatangani.</p>
+    <div class="doc">
+      <header>
+        <b>SURAT MINAT KERJA SAMA<br>(LETTER OF INTENT)</b>
+        <span>Nomor: <i class="blank s"></i>/LOI/UMROHKU/<i class="blank s"></i>/2026</span>
+      </header>
+      <p>Pada hari ini, <i class="blank"></i>, tanggal <i class="blank"></i>, bertempat di <i class="blank"></i>, yang bertanda tangan di bawah ini:</p>
+      <dl class="party">
+        <dt>Pihak Pertama</dt><dd><b>Umrohku</b> (umrohku.web.id), badan hukum perseroan terbatas dalam proses pendirian</dd>
+        <dt>Diwakili oleh</dt><dd>Barru Kurniawan, selaku Pendiri</dd>
+        <dt>Alamat</dt><dd><i class="blank"></i></dd>
+      </dl>
+      <dl class="party">
+        <dt>Pihak Kedua</dt><dd><b>PT <i class="blank"></i></b>, Penyelenggara Perjalanan Ibadah Umrah (PPIU)</dd>
+        <dt>Nomor izin PPIU</dt><dd><i class="blank"></i></dd>
+        <dt>Diwakili oleh</dt><dd><i class="blank"></i>, selaku <i class="blank"></i></dd>
+        <dt>Alamat</dt><dd><i class="blank"></i></dd>
+      </dl>
+      <p>Pihak Pertama dan Pihak Kedua, bersama-sama disebut "Para Pihak", dengan ini menyatakan minat untuk menjajaki kerja sama dengan pokok-pokok sebagai berikut.</p>
+
+      <h4><small>Pasal 1</small>Maksud dan Tujuan <span class="bind no">Tidak mengikat</span></h4>
+      <p>Surat ini mencatat kesepahaman awal Para Pihak untuk bekerja sama memasarkan paket umrah Pihak Kedua melalui platform digital Pihak Pertama, sebagai dasar penyusunan Perjanjian Kerja Sama ("PKS").</p>
+
+      <h4><small>Pasal 2</small>Pokok-Pokok Rencana Kerja Sama <span class="bind no">Tidak mengikat</span></h4>
+      <ol>
+        <li>Pihak Pertama menampilkan dan memasarkan paket umrah Pihak Kedua kepada calon jamaah.</li>
+        <li>Setiap jamaah dari Pihak Pertama dicatat dengan kode booking unik yang disepakati Para Pihak.</li>
+        <li>Pihak Kedua membayar imbal jasa pemasaran sebesar <i class="blank s"></i>% (rencana 4–5%) dari harga paket untuk setiap jamaah yang lunas, berdasarkan tagihan Pihak Pertama.</li>
+        <li>Pembayaran jamaah diterima langsung di rekening penampungan Pihak Kedua. Pihak Pertama tidak menerima, menyimpan, maupun mengelola dana jamaah.</li>
+        <li>Para Pihak akan membahas skema perlindungan jamaah dalam PKS, antara lain pelunasan pada H-30 dari rekening tabungan atas nama jamaah.</li>
+        <li>Pihak Kedua tetap menjadi penyelenggara perjalanan dan bertanggung jawab penuh atas keberangkatan, visa, dan layanan jamaah sesuai peraturan perundang-undangan.</li>
+      </ol>
+
+      <h4><small>Pasal 3</small>Masa Uji Coba <span class="bind no">Tidak mengikat</span></h4>
+      <p>Sebelum PKS ditandatangani, Para Pihak dapat menjalankan uji coba selama 60 (enam puluh) hari. Imbal jasa atas jamaah yang lunas selama uji coba mengikuti Pasal 2 angka 3, kecuali disepakati lain secara tertulis.</p>
+
+      <h4><small>Pasal 4</small>Penggunaan Data dan Merek <span class="bind">Mengikat</span></h4>
+      <p>Selama surat ini berlaku, Pihak Kedua mengizinkan Pihak Pertama menampilkan nama, logo, serta informasi paket dan harga Pihak Kedua di platform Pihak Pertama. Pihak Pertama wajib menampilkannya secara akurat dan menghapusnya paling lambat 7 (tujuh) hari kerja setelah diminta secara tertulis.</p>
+
+      <h4><small>Pasal 5</small>Kerahasiaan <span class="bind">Mengikat</span></h4>
+      <p>Para Pihak wajib menjaga kerahasiaan informasi bisnis yang diterima dari pihak lainnya, termasuk data jamaah, harga khusus, dan besaran imbal jasa, selama surat ini berlaku dan 12 (dua belas) bulan setelahnya. Data pribadi jamaah diproses sesuai Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.</p>
+
+      <h4><small>Pasal 6</small>Sifat Surat <span class="bind">Mengikat</span></h4>
+      <ol>
+        <li>Kecuali Pasal 4 sampai dengan Pasal 8, surat ini merupakan pernyataan minat dan tidak menimbulkan kewajiban hukum bagi Para Pihak untuk menandatangani PKS.</li>
+        <li>Kerja sama ini tidak eksklusif. Masing-masing pihak bebas bekerja sama dengan pihak lain.</li>
+        <li>Masing-masing pihak menanggung biayanya sendiri sehubungan dengan surat ini.</li>
+      </ol>
+
+      <h4><small>Pasal 7</small>Jangka Waktu <span class="bind">Mengikat</span></h4>
+      <p>Surat ini berlaku selama 6 (enam) bulan sejak ditandatangani dan berakhir lebih awal apabila PKS ditandatangani atau salah satu pihak mengakhirinya dengan pemberitahuan tertulis 14 (empat belas) hari sebelumnya.</p>
+
+      <h4><small>Pasal 8</small>Hukum yang Berlaku dan Penyelesaian Perselisihan <span class="bind">Mengikat</span></h4>
+      <p>Surat ini tunduk pada hukum Republik Indonesia dan dilaksanakan dengan itikad baik. Perselisihan diselesaikan secara musyawarah untuk mufakat dalam 30 (tiga puluh) hari; apabila tidak tercapai, melalui Pengadilan Negeri <i class="blank"></i>.</p>
+
+      <p>Demikian surat ini dibuat dalam rangkap 2 (dua), masing-masing bermeterai cukup dan mempunyai kekuatan yang sama.</p>
+      <div class="signs">
+        <div class="sign"><b>Pihak Pertama</b><span>Umrohku</span><div class="box">meterai &amp; tanda tangan</div><b>Barru Kurniawan</b><span>Pendiri</span></div>
+        <div class="sign"><b>Pihak Kedua</b><span>PT <i class="blank"></i></span><div class="box">meterai, tanda tangan &amp; cap</div><b><i class="blank"></i></b><span>Direktur</span></div>
+      </div>
+    </div>
+    <p class="src">Draf disusun mengikuti praktik dokumen prakontrak di Indonesia: ketentuan komersial dinyatakan tidak mengikat, sedangkan kerahasiaan, jangka waktu, dan pilihan hukum dinyatakan mengikat (Pasal 1320 dan 1338 KUHPerdata). Perlu ditinjau konsultan hukum sebelum digunakan.</p>
   </div>
 </section>
 
@@ -380,15 +841,21 @@ footer .wrap { display: grid; gap: 6px; }
   <div class="wrap">
     <span class="eyebrow">Sumber data</span>
     <ul class="sources">
-      <li>Data produk: basis data umrohku.web.id per 11 November 2026</li>
-      <li><a href="https://infobanknews.com/bsi-genggam-pangsa-83-persen-jemaah-haji-indonesia">Infobank: 1,6 juta jamaah umrah 2025, 84% via BSI</a></li>
+      <li>Data produk &amp; traksi: analitik internal umrohku.web.id 26 Okt–24 Nov 2026; YouTube Studio @umrohku.official per 24 November 2026. Unit economics dan proyeksi: asumsi internal.</li>
+      <li><a href="https://infobanknews.com/bsi-genggam-pangsa-83-persen-jemaah-haji-indonesia">Infobank: 1,6 juta jamaah umrah 2025</a></li>
       <li><a href="https://www.rctiplus.com/news/detail/sindonews/5502797/kemenhaj-catat-244-kasus-haji-dan-umrah--kerugian-mencapai-rp247-65-miliar">Sindonews: 244 kasus haji dan umrah, kerugian Rp247,65 miliar</a></li>
+      <li><a href="https://news.republika.co.id/berita/tfzoa2370/85-mitra-hanania-group-laporkan-dugaan-penipuan-umrah-ke-polda-metro-jaya">Republika: 85 mitra Hanania Group laporkan dugaan penipuan umrah (Juni 2026)</a></li>
       <li><a href="https://cahaya.kompas.com/aktual/25K02135332790/umrah-mandiri-diperbolehkan-menhaj-tegaskan-peran-ppiu-tak-tergantikan">Kompas: umrah mandiri diperbolehkan (UU 14/2025)</a></li>
       <li><a href="https://haj.gov.sa/en/Media-Center/Ministry-News/Ministry-of-Hajj-and-Umrah-launches-Nusuk-Umrah-service-to-enable-pilgrims-from-outside-the-Kingdom">Kemenhaj Saudi: peluncuran Nusuk Umrah</a></li>
-      <li><a href="https://keuangan.kontan.co.id/news/peningkatan-pelaksanaan-ibadah-umrah-bisa-jadi-potensi-bagi-multifinance-syariah">Kontan: 7 perusahaan aktif membiayai umrah, akad ijarah multijasa</a></li>
-      <li><a href="https://keuangan.kontan.co.id/news/tumbuh-791-piutang-pembiayaan-syariah-multifinance-rp-3217-t-per-september-2026">Kontan: piutang multifinance syariah Rp32,17 T per September 2026</a></li>
-      <li><a href="https://english.news.cn/20260610/13e7c2733a8b4ab18cb7fba76bd7ff48/c.html">Xinhua: QRIS lintas negara ke Arab Saudi</a></li>
+      <li><a href="https://keuangan.kontan.co.id/news/peningkatan-pelaksanaan-ibadah-umrah-bisa-jadi-potensi-bagi-multifinance-syariah">Kontan: 7 perusahaan aktif membiayai umrah</a></li>
+      <li><a href="https://keuangan.kontan.co.id/news/tumbuh-791-piutang-pembiayaan-syariah-multifinance-rp-3217-t-per-september-2026">Kontan: piutang multifinance syariah Rp32,17 T</a></li>
+      <li><a href="https://www.umrohkit.co.id/pembiayaan-umroh-amitra/">Umrohkit: simulasi pembiayaan umroh Amitra</a></li>
+      <li><a href="https://sadartravel.com/articles/panduan-pengajuan-pembiayaan-umroh-amitra-syariah-syarat-simulasi-tips">Sadar Travel: syarat dan simulasi pembiayaan umroh syariah</a></li>
+      <li><a href="https://www.hukumonline.com/klinik/a/perbedaan-antara-perjanjian-dengan-mou-lt514689463d4b2/">Hukumonline: perbedaan perjanjian dengan MoU dan kekuatan mengikatnya</a></li>
+      <li><a href="https://resourcehub.bakermckenzie.com/en/resources/global-private-ma-guide-limited/asia-pacific/indonesia/topics/preliminary-documents">Baker McKenzie: dokumen pendahuluan dalam transaksi di Indonesia</a></li>
       <li><a href="https://peraturan.go.id/files/pp38-2021bt.pdf">PP 38/2021: rekening penampungan PPIU</a></li>
+      <li><a href="https://smartlegal.id/perizinan/2021/08/15/ingin-mendirikan-usaha-penyedia-jasa-pembayaran-ketahui-dulu-perizinannya/">SmartLegal: modal PJP kategori izin 1 Rp15 miliar</a></li>
+      <li><a href="https://www.hukumonline.com/klinik/a/pemungutan-pph-atas-hadiah-undian-lt584127d3d0149/">Hukumonline: PPh final 25% atas hadiah undian</a></li>
     </ul>
   </div>
 </footer>
