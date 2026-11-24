@@ -265,7 +265,50 @@ tr.hl td { background: var(--em-soft); font-weight: 800; }
 .gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(46%, 300px), 1fr)); gap: 18px; }
 .gal figure img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
 .gal.app figure img { aspect-ratio: 620 / 900; object-fit: cover; object-position: top; }
+.igs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 12px; }
+.igs img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); background: #0b0f14; }
 .gal.six { grid-template-columns: repeat(auto-fill, minmax(min(46%, 300px), 1fr)); }
+.poster { position: relative; overflow: hidden; border-radius: 24px; padding: 28px 22px 30px; background: radial-gradient(120% 90% at 20% 0%, #13805f, #063d2e 70%); color: #fff; display: grid; gap: 18px; }
+.poster::after { content: ""; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.07'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; }
+.poster > * { position: relative; z-index: 1; }
+.poster .pt { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.poster .pt b { font: 800 clamp(20px, 3vw, 28px)/1.15 var(--display); color: #fff; }
+.poster .pt span { font: 600 13px/1.3 var(--mono); color: #F3E5AB; letter-spacing: .04em; }
+.poster p { color: #d6ece3; font-size: 14.5px; max-width: 70ch; }
+.phones { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.phones figure:nth-child(even) { margin-top: 26px; }
+.pf { border: 7px solid #0b0f0d; border-radius: 30px; overflow: hidden; aspect-ratio: 390 / 844; background: #fff; box-shadow: 0 22px 40px -18px rgba(0,0,0,.6); }
+.pf { display: flex; flex-direction: column; }
+.pf::before { content: ""; flex: none; display: block; padding-top: 10%; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'%3E%3Crect x='0' y='3' width='100' height='24' rx='12' fill='%230b0f0d'/%3E%3C/svg%3E") center 55% / 30% auto no-repeat; }
+.pf img { display: block; width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: top; }
+.phones figcaption b { color: #fff; font-size: 14px; }
+.phones figcaption span { color: #bfe0d2; font-size: 12.5px; }
+.chips2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips2 span { font: 600 11.5px/1 var(--mono); padding: 6px 9px; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; }
+@media (max-width: 760px) { .phones { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phones figure:nth-child(even) { margin-top: 0; } }
+.subhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 6px; }
+.subhead h3 { font-size: 21px; }
+.socials { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.socials figure img { display: block; width: 100%; border-radius: 16px; border: 1px solid var(--line); }
+.socials .big2 { display: block; font: 800 22px/1.1 var(--display); color: var(--em); }
+@media (max-width: 760px) { .socials { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.shot { display: block; width: 100%; border-radius: 14px; border: 1px solid var(--line); }
+
+.cover { position: relative; overflow: hidden; background: radial-gradient(120% 70% at 50% 0%, #ffffff 0%, #eef8f2 45%, #cfe9dc 100%); padding: 56px 16px 40px; text-align: center; }
+.cover .wrap { display: grid; gap: 22px; justify-items: center; }
+.cover .logo { width: 190px; height: 190px; display: block; border-radius: 44px; box-shadow: 0 18px 40px -20px rgba(6,42,32,.7); }
+.cover .tagline { font: 800 clamp(22px, 3.4vw, 32px)/1.2 var(--display); color: #0B4A39; max-width: 26ch; }
+.cover .sub { font-size: 16px; color: var(--muted); max-width: 60ch; }
+.cover .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: 22px; justify-content: center; align-items: end; margin-top: 8px; }
+.cover .trio .pf { border-width: 8px; border-radius: 34px; }
+.pf.nx { aspect-ratio: 1000 / 1366; }
+.cover .trio figure:nth-child(2) { transform: translateY(-26px); }
+.cover .trio figcaption { text-align: center; } .cover .trio figcaption b { font-size: 14px; }
+.cover .foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font: 600 12.5px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+@media (max-width: 640px) { .cover .trio { gap: 10px; } .cover .trio figure:nth-child(2) { transform: translateY(-12px); } .cover .trio .pf { border-width: 5px; border-radius: 22px; } }
+.sumx { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 14px; }
+.sumx .card h3 { font-size: 17px; }
+.sumx .pts { font-size: 14.5px; color: var(--ink); }
 .kicker { font: 600 11.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 10px; }
 .tr { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.92); border: 1px solid var(--line); }
@@ -283,6 +326,45 @@ tr.hl td { background: var(--em-soft); font-weight: 800; }
 .lnk small { font: 600 10.5px/1.1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
 .lnk b { font-size: 13.5px; line-height: 1.25; overflow-wrap: anywhere; }
 .lnk.own i { background: var(--gold); }
+@media print {
+  @page { size: A4; margin: 9mm 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-size: 13px; }
+  section { padding-block: 22px; break-inside: auto; }
+  section > .wrap { gap: 13px; }
+  .hero { padding-block: 30px 24px; } .hero .star { display: none; }
+  .wrap, .wide { max-width: none; padding-inline: 34px; }
+  h2 { font-size: 23px; break-after: avoid; } h3, .grp, .eyebrow, .kicker { break-after: avoid; }
+  .card, .box, figure, .path, .tbl, .ledger, .stat, .leg, .step, .phase, .note, .exp, .commit, tr { break-inside: avoid; }
+  .feat, .phone, .photo, .doc, .pf { box-shadow: none !important; } .pf { border-width: 5px; }
+  .tbl { overflow: visible; } table { min-width: 0 !important; font-size: 12px; } th, td { padding: 8px 9px; overflow-wrap: normal; word-break: normal; }
+  .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } .stat { padding: 12px 13px; } .stat b { font-size: 21px; white-space: nowrap; }
+  .trust { grid-template-columns: 1fr 1fr; } .links { grid-template-columns: repeat(3, 1fr); }
+  .cards.two, .cols, .paths, .igs { grid-template-columns: 1fr 1fr; } .cards { grid-template-columns: repeat(4, 1fr); } .cards.two { grid-template-columns: 1fr 1fr; }
+  .journey { grid-template-columns: repeat(3, 1fr); } .flow { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .gal { grid-template-columns: repeat(3, 1fr); gap: 12px; } .phones { grid-template-columns: repeat(4, 1fr); } .socials { grid-template-columns: repeat(4, 1fr); } .poster, .socials figure, .phones figure { break-inside: avoid; } .gal figure img { max-height: 250px; width: auto; max-width: 100%; margin: 0 auto; }
+  .card { padding: 14px; } .card p, .box ul, .pts, .leg ul { font-size: 12.5px; } .box { padding: 14px; }
+  .evi img { max-height: 240px; width: auto; margin: 0 auto; }
+  footer { padding-block: 18px; break-inside: avoid; } .sources { font-size: 11px; }
+  a { color: inherit; text-decoration: none; }
+  .cards.two.p4 { grid-template-columns: repeat(4, 1fr); gap: 10px; } .p4 .card { padding: 12px; gap: 6px; } .p4 .card h3 { font-size: 13.5px; } .p4 .card p { font-size: 11.5px; } .p4 .ico { width: 34px; height: 34px; }
+  .tight > .wrap { gap: 8px !important; } .tight th, .tight td { padding: 5px 9px; } .tight .ledger > div { padding: 5px 14px; } .tight .stat { padding: 8px 12px; } .tight .note { padding: 9px 14px; font-size: 12.5px; } .tight .src { font-size: 11px; }
+  .facts span { white-space: nowrap; } .founder .facts { flex-wrap: wrap; }
+  .cover { height: 276mm; overflow: hidden; break-after: page; padding: 20mm 0 12mm; display: flex; } .cover .wrap { align-content: space-between; width: 100%; max-width: none; gap: 14px; }
+  .cover .trio { grid-template-columns: repeat(3, 50mm); gap: 8mm; } .cover .logo { width: 42mm; height: 42mm; border-radius: 10mm; box-shadow: none; } .demo-start { break-before: page; break-after: avoid; } .poster .phones { grid-template-columns: repeat(4, 36mm); justify-content: space-between; } .poster { padding: 20px 22px; gap: 12px; } .cover .trio .pf { box-shadow: none !important; }
+  .hero { min-height: 274mm; break-after: page; display: flex; padding-block: 16mm 12mm !important; } .hero .wrap { align-content: space-between; width: 100%; gap: 14px !important; } .hero p { font-size: 15px; } .hero .motto { font-size: 22px; }
+  .feat { padding: 10px 10px; } .feat i { width: 40px; height: 40px; } .tr { padding: 12px 12px; } .lnk { padding: 9px 10px 9px 8px; } .lnk i { width: 32px; height: 32px; }
+  section[lang="en"] { min-height: 274mm; break-after: page; display: flex; } section[lang="en"] > .wrap { align-content: space-between; width: 100%; }
+  .sumx .pts { font-size: 13.5px; gap: 7px; } .sumx .card { padding: 16px 18px; } .sumx .card h3 { font-size: 17px; }
+  .ledger > div { padding: 8px 14px; font-size: 13px; }
+  .hero { padding-block: 20px 16px; } .hero .wrap { gap: 11px; } .hero h1 { font-size: 54px; } .hero .motto { font-size: 19px; } .hero p { font-size: 14px; }
+  .feat { padding: 6px 8px; } .feat i { width: 36px; height: 36px; } .feat svg { width: 22px; height: 22px; } .feat b { font-size: 12px; }
+  .tr { padding: 8px 10px; } .lnk { padding: 6px 9px 6px 6px; } .lnk i { width: 28px; height: 28px; }
+  .sum { break-inside: avoid; } .sum p { font-size: 12.5px; }
+  section { padding-block: 16px; } section > .wrap { gap: 10px; } .photo { width: 96px; height: 96px; } .founder { gap: 16px; }
+  section[lang="en"], section.pb { break-before: page; } .card p { line-height: 1.45; }
+  footer { padding-block: 10px; } footer .wrap { gap: 3px; } .sources { font-size: 10px; gap: 1px; }
+}
 </style>
 <style>body{margin:0}</style>
 </head>
@@ -326,34 +408,49 @@ tr.hl td { background: var(--em-soft); font-weight: 800; }
   <symbol id="i-target" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="6"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16" r="2.4"/></symbol>
 </svg>
 
+<section class="cover" aria-label="Sampul">
+  <div class="wrap">
+    <img class="logo" src="/proposal/img/logo-kaaba.jpg" alt="Logo umrohku: Ka'bah emas">
+    <div class="tagline">Marketplace andalan jamaah Indonesia di Arab Saudi</div>
+    <p class="sub">Pesan oleh-oleh dan kebutuhan jamaah dari toko terverifikasi di Makkah, Madinah &amp; sekitarnya. Harga pasti, bayar dari HP, ambil di toko.</p>
+    <div class="trio">
+      <figure><div class="pf"><img src="/proposal/img/ip-home.jpg" alt="Beranda marketplace: pilih Madinah atau Makkah, kategori, toko terdekat"></div><figcaption><b>Pilih toko terdekat</b></figcaption></figure>
+      <figure><div class="pf"><img src="/proposal/img/ip-cart.jpg" alt="Menu toko dengan dua barang di keranjang, total SAR 45"></div><figcaption><b>Tambah ke keranjang</b></figcaption></figure>
+      <figure><div class="pf"><img src="/proposal/img/ip-qr.jpg" alt="Tagihan QRIS dinamis Rp193.500 untuk pesanan SAR 45"></div><figcaption><b>Bayar dari HP</b></figcaption></figure>
+    </div>
+    <div class="foot"><span>Proposal ide startup</span><span>Indonesia → Arab Saudi</span><span>November 2026</span><span>startup.umrohku.web.id</span></div>
+  </div>
+</section>
+
 <header class="hero">
   <svg class="star" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="40" y="40" width="120" height="120"/><rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="48"/><circle cx="100" cy="100" r="84"/></g></svg>
   <div class="wrap">
     <span class="eyebrow">Proposal ide startup · Indonesia → Arab Saudi · November 2026</span>
-    <h1>Umroh<span>ku</span> KSA</h1>
-    <div class="motto">Marketplace kebutuhan jamaah Indonesia di Makkah dan Madinah</div>
-    <p>Jamaah memesan oleh-oleh, makanan Indonesia, dan kebutuhan harian dari toko lokal Saudi lewat satu aplikasi berbahasa Indonesia: harga pasti, bayar dari HP, ambil di toko, antar ke lobi hotel, atau kirim langsung ke rumah di Indonesia.</p>
+    <h1>Umroh<span>ku</span></h1>
+    <div class="motto">Marketplace andalan jamaah Indonesia di Arab Saudi</div>
+    <p>Marketplace berbahasa Indonesia yang menghubungkan 1,6 juta jamaah Indonesia dengan toko terverifikasi di Makkah, Madinah, dan sekitarnya. Bayar dari HP, ambil barang di toko, atau ikut PO gelombang lewat kargo berizin langsung ke rumah.</p>
     <span class="kicker">Jawaban untuk "siapa pelanggan pertamamu di Saudi?"</span>
     <div class="trust">
-      <div class="tr"><span class="ico"><svg><use href="#i-family"/></svg></span><span><b>1,6 juta jamaah per tahun</b>Jamaah umroh Indonesia, 2025</span></div>
-      <div class="tr"><span class="ico"><svg><use href="#i-play"/></svg></span><span><b>Dijangkau sejak di Indonesia</b>Lewat umrohku.web.id yang sudah live</span></div>
-      <div class="tr"><span class="ico"><svg><use href="#i-store"/></svg></span><span><b>Penjualnya UMKM Saudi</b>Toko kurma, oleh-oleh, dan restoran</span></div>
-      <div class="tr"><span class="ico"><svg><use href="#i-law"/></svg></span><span><b>Wajib perusahaan Saudi</b>Kontrak toko dan pencairan dalam SAR</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-family"/></svg></span><span><b>1,6 juta jamaah per tahun</b>Jamaah umroh Indonesia (Siskopatuh, 2025)</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-alert"/></svg></span><span><b>Pasar sudah hidup, tapi informal</b>Lewat DM dan transfer ke rekening pribadi</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-play"/></svg></span><span><b>Kanal akuisisi sudah berjalan</b>umrohku.web.id, ±208 rb tayangan organik</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-law"/></svg></span><span><b>Wajib perusahaan Saudi</b>Kontrak toko, rekening SAR, gateway berizin SAMA</span></div>
     </div>
     <div class="feats" role="list" aria-label="Layanan utama">
-      <div class="feat" role="listitem"><i><svg><use href="#i-gift"/></svg></i><b>Oleh-oleh &amp; kurma</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-store"/></svg></i><b>Makanan Indonesia</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-case"/></svg></i><b>Ambil di toko</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-hour"/></svg></i><b>Antar ke lobi hotel</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-plane"/></svg></i><b>Kargo ke rumah</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-tag"/></svg></i><b>Voucher riyal</b></div>
-      <div class="feat" role="listitem"><i><svg><use href="#i-qris"/></svg></i><b>Bayar QRIS &amp; kartu</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-shield"/></svg></i><b>Toko Arab terverifikasi</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-store"/></svg></i><b>Bayar di toko</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-gift"/></svg></i><b>Paket oleh-oleh siap bawa</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-hour"/></svg></i><b>Antar lobi hotel terjadwal</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-plane"/></svg></i><b>PO gelombang ke Indonesia</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-family"/></svg></i><b>Group order satu bus</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-lock"/></svg></i><b>Pembayaran berizin SAMA</b></div>
       <div class="feat" role="listitem"><i><svg><use href="#i-ai"/></svg></i><b>Bantuan berbahasa Indonesia</b></div>
     </div>
+    <span class="kicker">Kontak founder</span>
+    <div class="facts" style="font-size:15px;color:var(--ink)"><span>Email: <a href="mailto:barru.kurniawan@gmail.com"><b>barru.kurniawan@gmail.com</b></a></span><span>WhatsApp: <a href="https://wa.me/6282122126254"><b>+62 821-2212-6254</b></a></span></div>
     <span class="kicker">Kanal resmi</span>
     <nav class="links" aria-label="Kanal resmi umrohku">
       <a class="lnk" href="https://umrohku.web.id"><i><svg><use href="#l-globe"/></svg></i><div><small>Live</small><b>umrohku.web.id</b></div></a>
-      <a class="lnk" href="https://startup.umrohku.web.id"><i><svg><use href="#l-pitch"/></svg></i><div><small>Prototipe</small><b>startup.umrohku.web.id</b></div></a>
       <a class="lnk" href="https://www.instagram.com/umrohku.web.id"><i><svg><use href="#l-ig"/></svg></i><div><small>Instagram</small><b>@umrohku.web.id</b></div></a>
       <a class="lnk" href="https://www.tiktok.com/@umrohku.web.id"><i><svg><use href="#l-tiktok"/></svg></i><div><small>TikTok</small><b>@umrohku.web.id</b></div></a>
       <a class="lnk" href="https://www.youtube.com/@umrohku.official"><i><svg><use href="#l-yt"/></svg></i><div><small>YouTube</small><b>@umrohku.official</b></div></a>
@@ -362,228 +459,385 @@ tr.hl td { background: var(--em-soft); font-weight: 800; }
   </div>
 </header>
 
-<section>
+<section lang="en">
+  <div class="wrap">
+    <span class="eyebrow">Summary · English</span>
+    <h2>A marketplace for Indonesian pilgrims shopping in Makkah and Madinah</h2>
+    <div class="sumx">
+      <div class="card"><span class="ico"><svg><use href="#i-family"/></svg></span><h3>The opportunity</h3><ul class="pts">
+        <li>About <b>1.6 million</b> Indonesian Umrah pilgrims a year, one of the largest source markets</li>
+        <li>Madinah souvenir shops already run Indonesian-language Instagram accounts with up to <b>1.3 million followers</b></li>
+        <li>Yet sales stay informal: DMs, WhatsApp, cash, and transfers to personal bank accounts</li>
+        <li>Prices are opaque and luggage runs over the airline limit</li></ul></div>
+      <div class="card"><span class="ico"><svg><use href="#i-store"/></svg></span><h3>The solution</h3><ul class="pts">
+        <li>A Saudi entity running an Indonesian-language marketplace for verified local shops</li>
+        <li><b>In Saudi:</b> order from your phone, fixed prices, pick up at the shop or a pre-packed bundle</li>
+        <li><b>From Indonesia:</b> weekly pre-order batches shipped by licensed cargo consolidators</li>
+        <li>Payments through licensed gateways; umrohku never holds customer funds</li></ul></div>
+      <div class="card"><span class="ico"><svg><use href="#i-play"/></svg></span><h3>Our advantage</h3><ul class="pts">
+        <li>An organic acquisition funnel in Indonesia that already works: <b>umrohku.web.id</b></li>
+        <li><b>508</b> packages indexed, <b>461</b> package searches and <b>847</b> unique visitors in 30 days</li>
+        <li>About <b>208,000</b> organic content views across YouTube, TikTok, Instagram and Threads, at zero ad spend</li>
+        <li>We reach pilgrims months before they land; local Saudi apps cannot</li></ul></div>
+      <div class="card"><span class="ico"><svg><use href="#i-chart"/></svg></span><h3>Model and scale</h3><ul class="pts">
+        <li>Commission from shops, bundle margins, and pre-order cargo margins</li>
+        <li>B2B2C through group leaders (45 pilgrims per bus) and pre-order resellers</li>
+        <li>Assumed SAR 700 spend and 15% take rate: <b>SAR 65</b> contribution per pilgrim</li>
+        <li>Break-even at about <b>5,400 pilgrims a year</b>, roughly 10 buses a month</li></ul></div>
+    </div>
+    <div class="cards two">
+      <div class="card"><h3>What we ask from the program</h3><ul class="pts"><li>Company set-up and licensing in Saudi Arabia</li><li>Startup residency (iqama) for two founders</li><li>Introductions to SAMA-licensed gateways, cargo partners and Madinah–Makkah merchants</li></ul></div>
+      <div class="card"><h3>Status today</h3><ul class="pts"><li>Indonesian funnel live; Saudi marketplace running as a demo at startup.umrohku.web.id</li><li>No partner shops or real transactions yet</li><li>Next 60 days: one real pre-order batch and 3 written letters of intent</li></ul></div>
+    </div>
+    <p class="src">All financial figures are founder assumptions and have not yet been validated with merchants or customers.</p>
+  </div>
+</section>
+
+<section class="pb">
   <div class="wrap">
     <span class="eyebrow">01 · Ringkasan</span>
-    <h2>Jamaah datang dari Indonesia. Uangnya dibelanjakan di toko Saudi.</h2>
-    <div class="sum">
-      <div><b>Masalah</b><p>Jamaah belanja dengan tunai dan tawar-menawar dalam bahasa asing, lalu pulang dengan koper kelebihan bagasi.</p></div>
-      <div><b>Solusi</b><p>Marketplace berbahasa Indonesia untuk toko lokal Saudi: pesan dulu, bayar dari HP, ambil, diantar, atau dikirim ke rumah.</p></div>
-      <div><b>Pelanggan pertama</b><p>Jamaah Indonesia yang sudah memakai umrohku.web.id sejak tahap persiapan di tanah air.</p></div>
-      <div><b>Kenapa Saudi</b><p>Kontrak toko, rekening SAR, dan izin pembayaran hanya bisa lewat perusahaan Saudi.</p></div>
+    <h2>Permintaannya sudah ada. Kami memformalkan belanjanya di Arab Saudi.</h2>
+    <div class="sum" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">
+      <div><b>Masalah</b><p>Jamaah tanpa riyal diminta transfer ke rekening pribadi, harga tidak transparan, dan koper kelebihan bagasi. PO dari Indonesia berjalan lewat DM tanpa jaminan.</p></div>
+      <div><b>Solusi</b><p>Satu platform, dua jalur: bayar dan ambil di toko Makkah–Madinah, serta PO gelombang mingguan lewat kargo berizin ke Indonesia.</p></div>
+      <div><b>Pelanggan pertama</b><p>Jamaah yang sudah memakai umrohku.web.id sejak persiapan, dipercepat lewat muthawwif dan reseller PO.</p></div>
+      <div><b>Kenapa Saudi</b><p>Kontrak toko, pencairan SAR, gateway berizin SAMA, dan faktur pajak hanya bisa lewat perusahaan Saudi.</p></div>
     </div>
     <div class="stats">
       <div class="stat"><b>1,6 jt</b><span>jamaah umroh Indonesia per tahun</span><small>Siskopatuh, 2025</small></div>
       <div class="stat"><b>508</b><span>paket umroh terdata di umrohku.web.id</span></div>
-      <div class="stat"><b>±185 rb</b><span>tayangan video organik</span><small>YouTube + TikTok</small></div>
+      <div class="stat"><b>±208 rb</b><span>tayangan konten organik</span><small>YouTube, TikTok, IG, Threads</small></div>
       <div class="stat"><b>Rp0</b><span>biaya iklan sejauh ini</span></div>
     </div>
-    <p class="src">Analitik internal umrohku.web.id, 26 Okt–24 Nov 2026; YouTube dan TikTok per 24 Nov 2026.</p>
+    <p class="src">Analitik internal umrohku.web.id, 26 Okt–24 Nov 2026; YouTube, TikTok, Instagram, dan Threads per 24 Nov 2026.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <span class="eyebrow">02 · Masalah</span>
-    <h2>Empat kerepotan jamaah Indonesia di Tanah Suci</h2>
-    <div class="cards">
-      <div class="card"><span class="ico warn"><svg><use href="#i-compare"/></svg></span><h3>Harga tidak pasti</h3><p>Belanja oleh-oleh berarti tawar-menawar dalam bahasa Arab, tanpa pembanding harga.</p></div>
-      <div class="card"><span class="ico warn"><svg><use href="#i-budget"/></svg></span><h3>Repot uang tunai</h3><p>Menukar rupiah ke riyal, membawa tunai di keramaian, dan menghitung kurs sendiri.</p></div>
-      <div class="card"><span class="ico warn"><svg><use href="#i-case"/></svg></span><h3>Kelebihan bagasi</h3><p>Kurma dan oleh-oleh untuk keluarga dan tetangga membuat koper melewati batas di bandara.</p></div>
-      <div class="card"><span class="ico warn"><svg><use href="#i-hour"/></svg></span><h3>Waktu ibadah terpakai</h3><p>Berjam-jam mencari toko dan makanan yang cocok, padahal waktu di Tanah Suci hanya 9–12 hari.</p></div>
+    <span class="eyebrow">02 · Masalah &amp; bukti pasar</span>
+    <h2>Permintaan lintas batas sudah ramai, tetapi infrastrukturnya masih informal</h2>
+    <div class="cards two p4">
+      <div class="card"><span class="ico warn"><svg><use href="#i-bank"/></svg></span><h3>Bayar lewat rekening pribadi</h3><p>Jamaah yang kehabisan riyal tunai sering diminta mentransfer rupiah ke rekening bank pribadi milik perantara Indonesia di toko. Kursnya tidak transparan dan rawan penipuan.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-play"/></svg></span><h3>Toko sudah punya audiens, tanpa checkout</h3><p>Toko oleh-oleh di Madinah punya akun Instagram berbahasa Indonesia dengan ratusan ribu hingga jutaan pengikut. Transaksinya tetap berakhir di DM dan WhatsApp.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-case"/></svg></span><h3>PO informal dan kelebihan bagasi</h3><p>Akun titip-beli sajadah, cokelat, dan kurma Saudi bertebaran di Indonesia tanpa jaminan. Jamaah yang belanja sendiri sering terkena biaya kelebihan bagasi.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-hour"/></svg></span><h3>Waktu ibadah terpakai</h3><p>Berjam-jam mencari toko tepercaya dan tawar-menawar, padahal waktu di Tanah Suci hanya 9–12 hari.</p></div>
     </div>
-    <p class="note"><b>Di sisi toko:</b> pedagang lokal bergantung pada jamaah yang kebetulan lewat. Mereka tidak punya kanal untuk menjangkau jamaah Indonesia sebelum berangkat.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap wide">
-    <span class="eyebrow">03 · Solusi</span>
-    <h2>Pesan dari HP, terima dengan tiga cara</h2>
-    <div class="journey">
-      <div class="leg"><span class="ico"><svg><use href="#i-store"/></svg></span><b>Ambil di toko</b><ul><li>Pesan dan bayar di aplikasi</li><li>Harga pasti, tanpa tawar-menawar</li><li>Barang sudah dikemas saat diambil</li></ul></div>
-      <div class="leg"><span class="ico"><svg><use href="#i-hour"/></svg></span><b>Antar ke lobi hotel</b><ul><li>Pengiriman terjadwal 2 kali sehari</li><li>Di luar jam padat salat</li><li>Diserahkan di lobi hotel jamaah</li></ul></div>
-      <div class="leg"><span class="ico"><svg><use href="#i-plane"/></svg></span><b>Kargo ke rumah</b><ul><li>Pilih kurma dan oleh-oleh di Saudi</li><li>Dikirim ke alamat di Indonesia</li><li>Tanpa kelebihan bagasi</li></ul></div>
-    </div>
-    <p class="note"><b>Bukan antar instan 30 menit.</b> Kendaraan dibatasi di sekitar Masjidil Haram dan Masjid Nabawi, terutama di waktu salat. Karena itu modelnya pesan dulu dan kirim terjadwal, bukan kurir motor ke kamar.</p>
-    <div class="cards">
-      <div class="card"><span class="ico"><svg><use href="#i-qris"/></svg></span><h3>Bayar dari HP</h3><p>Kartu dan dompet digital lewat gateway berizin di Saudi; QRIS lintas negara saat tersedia.</p></div>
-      <div class="card"><span class="ico"><svg><use href="#i-tag"/></svg></span><h3>Voucher riyal</h3><p>Dibeli dalam rupiah sebelum berangkat, dibelanjakan di toko mitra tanpa membawa tunai.</p></div>
-      <div class="card"><span class="ico"><svg><use href="#i-ai"/></svg></span><h3>Berbahasa Indonesia</h3><p>Katalog, harga dalam rupiah dan riyal, serta bantuan pesanan dalam bahasa Indonesia.</p></div>
-      <div class="card"><span class="ico"><svg><use href="#i-star"/></svg></span><h3>Toko terkurasi</h3><p>Hanya toko berizin, dengan ulasan dari jamaah yang benar-benar bertransaksi.</p></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap wide">
-    <span class="eyebrow">04 · Prototipe</span>
-    <h2>Sudah bisa dicoba, belum bertransaksi sungguhan</h2>
-    <p>Prototipe aplikasi berjalan di <a href="https://startup.umrohku.web.id"><b>startup.umrohku.web.id</b></a>. Tombol QRIS di tengah menu bawah membaca kode QR sungguhan; pembayaran dan data toko masih simulasi.</p>
-    <div class="gal app">
-      <figure><img src="/proposal/img/k1-beranda.jpg" alt="Beranda aplikasi dengan menu bawah: Beranda, Market, QRIS, Riwayat, Profil"><figcaption><b>Satu aplikasi</b><span>Menu bawah: Beranda, Market, QRIS, Riwayat, Profil.</span></figcaption></figure>
-      <figure><img src="/proposal/img/22-market.jpg" alt="Market: paket umroh, oleh-oleh, voucher Tanah Suci, pickup di toko, perlengkapan"><figcaption><b>Market</b><span>Oleh-oleh dikirim ke rumah, voucher, dan pickup di toko.</span></figcaption></figure>
-      <figure><img src="/proposal/img/20-qris-bayar.jpg" alt="Konfirmasi pembayaran QRIS ke merchant" loading="lazy"><figcaption><b>Scan &amp; bayar</b><span>Membaca QR statis maupun dinamis.</span></figcaption></figure>
-      <figure><img src="/proposal/img/k3-riwayat.jpg" alt="Riwayat: pembayaran QRIS, oleh-oleh dikirim ke Bandung, voucher Tanah Suci 465 SAR" loading="lazy"><figcaption><b>Riwayat terpadu</b><span>Pembayaran, oleh-oleh terkirim, dan voucher 465 SAR.</span></figcaption></figure>
-      <figure><img src="/proposal/img/19-tanah-suci.jpg" alt="Layanan Tanah Suci: oleh-oleh, voucher riyal, pickup" loading="lazy"><figcaption><b>Layanan Tanah Suci</b><span>Oleh-oleh, voucher riyal, dan pickup.</span></figcaption></figure>
-      <figure><img src="/proposal/img/k4-profil.jpg" alt="Profil jamaah dengan sumber dana bank dan ringkasan pesanan" loading="lazy"><figcaption><b>Profil jamaah</b><span>Sumber dana dari rekening bank, bukan saldo di aplikasi.</span></figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">05 · Kenapa Saudi</span>
-    <h2>Bisnis ini tidak bisa dijalankan dari Indonesia</h2>
-    <div class="cards two">
-      <div class="card row"><span class="ico"><svg><use href="#i-store"/></svg></span><div><h3>Kontrak dengan toko lokal</h3><p>Toko kurma, oleh-oleh, dan restoran butuh mitra berbadan hukum Saudi untuk bekerja sama dan menerima tagihan.</p></div></div>
-      <div class="card row"><span class="ico"><svg><use href="#i-bank"/></svg></span><div><h3>Pencairan dalam riyal</h3><p>Pedagang dibayar dalam SAR ke rekening bank Saudi. Itu butuh rekening perusahaan setempat.</p></div></div>
-      <div class="card row"><span class="ico"><svg><use href="#i-lock"/></svg></span><div><h3>Izin pembayaran</h3><p>Dana pembeli dan penjual diproses penyedia jasa pembayaran berizin bank sentral Saudi (SAMA). Umrohku tidak menampung dana.</p></div></div>
-      <div class="card row"><span class="ico"><svg><use href="#i-plane"/></svg></span><div><h3>Operasi di lapangan</h3><p>Pengemasan, pengantaran ke lobi hotel, dan kargo ke Indonesia dijalankan dari Makkah dan Madinah.</p></div></div>
-    </div>
-    <p class="note"><b>Selaras dengan Vision 2030.</b> Saudi menargetkan 30 juta jamaah umrah per tahun pada 2030. Umrohku KSA menambah pendapatan UMKM lokal dari jamaah asal negara pengirim terbesar, tanpa bersaing dengan pedagang setempat.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap wide">
-    <span class="eyebrow">06 · Pelanggan pertama</span>
-    <h2>Kami bertemu jamaah berbulan-bulan sebelum mereka mendarat</h2>
-    <p class="q"><b>Keunggulan yang tidak dimiliki aplikasi lokal Saudi:</b> kanal akuisisi di Indonesia, sejak jamaah baru memilih paket dan menyiapkan dokumen.</p>
-    <div class="flow">
-      <div class="step"><b>Niat</b><span>Menonton video umrohku di YouTube dan TikTok.</span></div>
-      <div class="step"><b>Memilih paket</b><span>Membandingkan 508 paket di umrohku.web.id.</span></div>
-      <div class="step"><b>Persiapan</b><span>Checklist 22 langkah dan simulasi manasik 3D.</span></div>
-      <div class="step"><b>Pesan dari rumah</b><span>Voucher riyal dan pre-order oleh-oleh sebelum berangkat.</span></div>
-      <div class="step"><b>Di Tanah Suci</b><span>Ambil, diantar ke hotel, atau kirim ke rumah.</span></div>
-    </div>
+    <p class="note"><b>Di sisi penjual:</b> toko Saudi sudah berinvestasi membangun audiens pembeli Indonesia. Mereka tidak perlu diajari berjualan. Yang belum mereka punya: katalog berbahasa Indonesia, checkout resmi dalam SAR, dan logistik ekspor yang rapi.</p>
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-chart"/></svg></span>Bukti: toko di Madinah yang sudah membidik jamaah Indonesia</h3>
     <div class="stats">
-      <div class="stat gold"><b>461</b><span>pencarian paket dalam 30 hari</span><small>situs berumur 1 bulan</small></div>
-      <div class="stat gold"><b>±185 rb</b><span>tayangan video organik</span><small>terbaik 124 rb</small></div>
-      <div class="stat gold"><b>78</b><span>klik ke travel per bulan</span></div>
-      <div class="stat gold"><b>Rp0</b><span>biaya iklan</span></div>
+      <div class="stat gold"><b>2,6 jt+</b><span>pengikut Instagram gabungan dari empat toko</span><small>24 Nov 2026</small></div>
+      <div class="stat"><b>4 dari 4</b><span>berkonten bahasa Indonesia atau Melayu</span></div>
+      <div class="stat"><b>0 dari 4</b><span>mencantumkan checkout daring di profilnya</span><small>kontak lewat DM dan WhatsApp</small></div>
     </div>
-    <div class="gal">
-      <figure><img src="/proposal/img/g2-bandingkan.jpg" alt="Bandingkan detail paket umroh di umrohku.web.id" loading="lazy"><figcaption><b>Pembanding paket</b><span>Live di umrohku.web.id.</span></figcaption></figure>
-      <figure><img src="/proposal/img/g7-checklist.jpg" alt="Checklist persiapan umroh 22 langkah" loading="lazy"><figcaption><b>Checklist persiapan</b><span>Titik masuk untuk menawarkan pre-order.</span></figcaption></figure>
-      <figure><img src="/proposal/img/25-shorts.jpg" alt="Halaman Shorts @umrohku.official dengan tayangan hingga 124 rb" loading="lazy"><figcaption><b>Konten organik</b><span>Satu video menembus 124 rb tayangan.</span></figcaption></figure>
-    </div>
-    <p class="src">Angka di atas adalah minat di Indonesia, bukan transaksi di Saudi. Belum ada pesanan maupun toko mitra.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <span class="eyebrow">07 · Model bisnis</span>
-    <h2>Komisi dari toko, bukan dari jamaah</h2>
     <div class="tbl"><table>
-      <thead><tr><th>Sumber pendapatan</th><th>Pembayar</th><th>Mekanisme</th><th>Mulai</th></tr></thead>
+      <thead><tr><th>Akun Instagram</th><th>Pengikut</th><th>Yang terlihat di profil</th></tr></thead>
       <tbody>
-        <tr><td><b>Komisi penjualan</b></td><td>Toko mitra</td><td>Persentase dari setiap pesanan selesai</td><td>Fase 1</td></tr>
-        <tr><td><b>Voucher riyal</b></td><td>Toko mitra</td><td>Komisi saat voucher dibelanjakan</td><td>Fase 1</td></tr>
-        <tr><td><b>Biaya layanan antar</b></td><td>Jamaah</td><td>Tarif tetap per pengantaran ke lobi hotel</td><td>Fase 2</td></tr>
-        <tr><td><b>Kargo ke Indonesia</b></td><td>Jamaah</td><td>Selisih tarif dengan mitra kargo</td><td>Fase 2</td></tr>
-        <tr><td><b>Slot unggulan</b></td><td>Toko mitra</td><td>Biaya tampil di urutan atas</td><td>Fase 3</td></tr>
+        <tr><td><b>@boss_salahuddin.madinah</b></td><td>1,3 juta</td><td>"Toko oleh-oleh termurah Madinah", dekat Gate 339; informasi lewat DM</td></tr>
+        <tr><td><b>@boss_ali_madinah</b></td><td>1 juta</td><td>Dekat pintu 338 Masjid Nabawi; mencantumkan nomor WhatsApp dan sorotan "Indonesia"</td></tr>
+        <tr><td><b>@mostafiz_madinah</b></td><td>271 ribu</td><td>Harga dalam rupiah dan ringgit; "tak perlu tukar ringgit"; menerima uang tunai asing</td></tr>
+        <tr><td><b>@boss_zeyad_madinah</b></td><td>101 ribu</td><td>Pemilik "Toko Sukarno Madinah"; konten bersama jamaah Indonesia</td></tr>
       </tbody>
     </table></div>
-    <div class="ledger">
-      <div><span>Belanja oleh-oleh per jamaah<small>asumsi konservatif</small></span><span>Rp3,0 jt</span></div>
-      <div><span>Komisi toko 12–15%<small>target negosiasi</small></span><span>+Rp360–450 rb</span></div>
-      <div class="minus"><span>Biaya pembayaran &amp; operasional pesanan</span><span>−±Rp110 rb</span></div>
-      <div class="total"><span>Laba kotor per jamaah</span><span>±Rp250–340 rb</span></div>
+    <div class="igs">
+      <figure><img src="/proposal/img/ig-295.jpg" alt="Profil Instagram boss_salahuddin.madinah: 1,3 juta pengikut" loading="lazy"></figure>
+      <figure><img src="/proposal/img/ig-290.jpg" alt="Profil Instagram boss_ali_madinah: 1 juta pengikut" loading="lazy"></figure>
+      <figure><img src="/proposal/img/ig-296.jpg" alt="Profil Instagram mostafiz_madinah: 271 ribu pengikut" loading="lazy"></figure>
+      <figure><img src="/proposal/img/ig-292.jpg" alt="Profil Instagram boss_zeyad_madinah: 101 ribu pengikut" loading="lazy"></figure>
     </div>
+    <h3 class="grp" style="margin-top:6px"><span class="ico sm"><svg><use href="#i-ai"/></svg></span>Dari keterangan postingan mereka sendiri</h3>
+    <div class="igs">
+      <figure><img src="/proposal/img/ig-cap2.jpg" alt="Keterangan postingan @mostafiz_madinah: jamaah Malaysia tak perlu tukar ringgit, langsung bawa ringgit ke kedai" loading="lazy"><figcaption><b>Menerima ringgit tunai</b><span>"Tak perlu payah tukar ringgit", ditujukan ke jamaah Malaysia.</span></figcaption></figure>
+      <figure><img src="/proposal/img/ig-cap1.jpg" alt="Keterangan postingan @mostafiz_madinah: dengan Rp1,5 juta dapat paket belanja, bayar bisa menggunakan uang rupiah" loading="lazy"><figcaption><b>Menerima rupiah tunai</b><span>"Bayar bisa juga menggunakan uang rupiah", ditujukan ke jamaah Indonesia.</span></figcaption></figure>
+    </div>
+    <p class="note"><b>Artinya:</b> toko-toko ini sudah membangun audiens jutaan orang Indonesia dan Malaysia dengan biaya sendiri, tetapi penjualannya masih berhenti di DM, WhatsApp, dan uang tunai. Mereka adalah calon mitra, bukan pesaing.</p>
+    <div class="cols">
+      <div class="box"><h3>Toko besar yang sudah viral</h3><ul class="pts"><li>Tidak butuh dicarikan pengikut</li><li>Yang belum mereka punya: checkout resmi, PO ekspor ke Indonesia yang rapi, dan pesanan rombongan satu bus dari muthawwif</li><li>Umrohku datang sebagai infrastruktur, bukan sebagai kanal iklan</li></ul></div>
+      <div class="box"><h3>Toko menengah dan grosir</h3><ul class="pts"><li>Belum punya audiens Indonesia sendiri</li><li>Bersedia memberi komisi pemasaran 8–12% atau margin grosir 20–25% untuk akses ke pembeli</li><li>Sumber utama pendapatan komisi umrohku</li></ul></div>
+    </div>
+    <p class="src">Tangkapan layar profil publik Instagram, 24 November 2026; hanya bagian nama, jumlah pengikut, dan keterangan yang ditampilkan. Umrohku belum bekerja sama dengan toko mana pun di atas. Praktik transfer ke rekening pribadi adalah pengamatan lapangan founder dan belum diukur lewat survei.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">03 · Solusi</span>
+    <h2>Dua jalur belanja: di Tanah Suci dan dari Indonesia</h2>
+    <div class="paths">
+      <div class="path primary">
+        <span class="tag">Jalur A · jamaah di Makkah &amp; Madinah</span>
+        <h3>Bayar di toko dan paket siap bawa</h3>
+        <ul class="pts">
+          <li><b>Temukan dan bayar di toko.</b> Toko terverifikasi dengan katalog berbahasa Indonesia dan ulasan asli. Jamaah memilih barang di toko, lalu membayar lewat checkout umrohku dengan kartu atau Apple Pay</li>
+          <li><b>Paket oleh-oleh siap bawa.</b> Paket grosir terstandar, misalnya "Oleh-oleh 30 tetangga, SAR 120", dikemas kardus ukuran bagasi. Ambil di toko atau diantar ke lobi hotel 2 kali sehari</li>
+          <li><b>Makanan Indonesia terjadwal.</b> Pesanan perorangan atau satu bus, diantar ke lobi hotel</li>
+        </ul>
+      </div>
+      <div class="path">
+        <span class="tag next">Jalur B · pembeli di Indonesia</span>
+        <h3>PO gelombang mingguan</h3>
+        <ul class="pts">
+          <li><b>Pesan sebelum terbang, tiba di rumah.</b> Kurma Sukkari dan Ajwa, cokelat Saudi, sajadah Madinah, parfum, dan gamis</li>
+          <li><b>Jadwal gelombang</b> dicocokkan dengan kepulangan jamaah, dan terbuka untuk pembeli umum</li>
+          <li><b>Bayar dalam rupiah</b> lewat QRIS dinamis, VA bank, atau kartu (PJP berizin BI)</li>
+          <li><b>Kargo konsolidasi berizin,</b> termasuk kepabeanan, dengan foto bukti pengemasan dari Saudi</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note warn"><b>Yang sengaja tidak kami lakukan.</b> Antar instan 30 menit, karena kendaraan dibatasi di sekitar kedua masjid. Dan pesanan eceran satuan 1–2 riyal dari hotel, karena stoknya tidak bisa dijamin.</p>
+  </div>
+</section>
+
+<section class="pb">
+  <div class="wrap wide">
+    <span class="eyebrow">04 · Produk</span>
+    <h2>Umrohku punya 2 produk: marketplace travel umroh &amp; marketplace Saudi</h2>
+
+    <div class="subhead"><span class="tag">Live</span><h3>umrohku.web.id · Marketplace travel umroh by budget &amp; kalender</h3></div>
+    <p>Sudah dipakai calon jamaah di Indonesia: 508 paket dari 18 travel, diperbarui 2× sehari. Di sinilah jamaah pertama kali bertemu umrohku, berbulan-bulan sebelum terbang.</p>
+    <div class="gal">
+      <figure><img src="/proposal/img/g1-budget.jpg" alt="Cari paket umroh sesuai budget" loading="lazy"><figcaption><b>Cari sesuai budget</b><span>Geser budget, paket langsung muncul.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g2-bandingkan.jpg" alt="Bandingkan detail paket" loading="lazy"><figcaption><b>Bandingkan detail</b><span>Hotel, maskapai, DP, tanggal.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g3-kalender.jpg" alt="Kalender keberangkatan" loading="lazy"><figcaption><b>Kalender keberangkatan</b><span>Cuaca dan libur sekolah.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g4-tanggal.jpg" alt="Semua paket per tanggal" loading="lazy"><figcaption><b>Satu tanggal, semua paket</b><span>Suhu Makkah &amp; Madinah, kalender Hijriah.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g5-tersimpan.jpg" alt="Paket tersimpan" loading="lazy"><figcaption><b>Paket tersimpan</b><span>Login Google, insight bulan berangkat.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g6-tabungan.jpg" alt="Kalkulator target tabungan" loading="lazy"><figcaption><b>Kalkulator target tabungan</b><span>Pelacak target, bukan rekening bank.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g7-checklist.jpg" alt="Checklist persiapan 22 langkah" loading="lazy"><figcaption><b>Checklist persiapan</b><span>22 langkah, tempat menawarkan PO sebelum terbang.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g8-paspor.jpg" alt="Panduan paspor" loading="lazy"><figcaption><b>Panduan paspor</b><span>Contoh halaman data dan M-Paspor.</span></figcaption></figure>
+      <figure><img src="/proposal/img/g9-dokumen.jpg" alt="Dokumen keluarga" loading="lazy"><figcaption><b>Dokumen keluarga</b><span>KTP, KK, buku nikah.</span></figcaption></figure>
+    </div>
+
+    <div class="subhead demo-start" style="margin-top:14px"><span class="tag next">Demo</span><h3>startup.umrohku.web.id · Marketplace di Arab Saudi</h3></div>
+    <div class="poster">
+      <div class="pt"><b>Oleh-oleh &amp; kebutuhan jamaah, dipesan dari HP</b><span>startup.umrohku.web.id</span></div>
+      <p>Pilih kota, temukan toko terdekat dari Masjid Nabawi atau Masjidil Haram, pesan dengan harga pasti, bayar resmi dari HP, lalu ambil di toko. Seperti aplikasi pesan-antar makanan, tetapi untuk jamaah.</p>
+      <div class="phones">
+        <figure><div class="pf"><img src="/proposal/img/ip-market.jpg" alt="Daftar toko terdekat di Madinah, diurutkan dari yang paling dekat" loading="lazy"></div><figcaption><b>1 · Toko terdekat</b><span>Diurutkan dari jarak ke masjid.</span></figcaption></figure>
+        <figure><div class="pf"><img src="/proposal/img/ip-toko.jpg" alt="Halaman toko dengan rating, jarak, jam buka, dan peta" loading="lazy"></div><figcaption><b>2 · Profil toko &amp; peta</b><span>Rating, jarak jalan kaki, petunjuk arah.</span></figcaption></figure>
+        <figure><div class="pf"><img src="/proposal/img/ip-checkout.jpg" alt="Cek pesanan: ambil sendiri di toko, pilih waktu ambil" loading="lazy"></div><figcaption><b>3 · Pilih waktu ambil</b><span>Disesuaikan jadwal salat.</span></figcaption></figure>
+        <figure><div class="pf"><img src="/proposal/img/ip-qr.jpg" alt="Tagihan QRIS dinamis untuk pesanan" loading="lazy"></div><figcaption><b>4 · Bayar dari HP</b><span>Kartu atau Apple Pay di Saudi; QRIS dinamis untuk pembeli dari Indonesia.</span></figcaption></figure>
+      </div>
+      <div class="chips2"><span>Kartu &amp; Apple Pay · Saudi</span><span>QRIS dinamis · dari Indonesia</span><span>DANA</span><span>GoPay</span><span>ShopeePay</span><span>OVO</span><span>LinkAja</span><span>m-banking</span></div>
+    </div>
+    <ul class="pts" style="font-size:15px">
+      <li><b>Umrohku adalah marketplace, bukan dompet digital.</b> Checkout menerbitkan tagihan; jamaah membayar dengan aplikasi yang sudah ia punya. Tidak ada saldo atau top up di umrohku</li>
+      <li><b>Split otomatis:</b> karena tagihan lahir dari checkout umrohku, dana dibagi ke toko dan komisi umrohku tanpa bisa dilewati</li>
+      <li><b>Pembeli di Indonesia:</b> QRIS dinamis, VA bank, atau kartu lewat PJP berizin BI. <b>Di Saudi:</b> kartu atau Apple Pay lewat gateway berizin SAMA</li>
+    </ul>
+    <p class="src">Demo memakai 11 toko contoh dengan koordinat ilustrasi, merchant QR fiktif, dan kurs contoh 1 SAR = Rp4.300. Layar QRIS menggambarkan checkout untuk pembeli dari Indonesia; transaksi di Saudi memakai kartu atau Apple Pay sampai QRIS lintas negara beroperasi. Belum ada toko mitra maupun transaksi sungguhan.</p>
+  </div>
+</section>
+
+<section class="pb">
+  <div class="wrap">
+    <span class="eyebrow">05 · Kenapa Saudi</span>
+    <h2>Bisnis ini tidak bisa diformalkan dari Indonesia</h2>
+    <div class="cards two">
+      <div class="card row"><span class="ico"><svg><use href="#i-store"/></svg></span><div><h3>Kontrak dan pajak toko lokal</h3><p>Kerja sama komisi dan faktur pajak (PPN 15%) dengan toko dan grosir di Makkah–Madinah membutuhkan Commercial Registration Saudi.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-bank"/></svg></span><div><h3>Rekening SAR dan gateway SAMA</h3><p>Pencairan otomatis ke rekening pedagang dalam riyal harus lewat badan usaha Saudi yang terhubung ke penyedia pembayaran berizin SAMA.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-shield"/></svg></span><div><h3>Kontrol mutu dan konsolidasi</h3><p>Pengecekan keaslian barang, pengemasan, pengantaran ke lobi hotel, dan serah-terima ke kargo dijalankan dari Makkah dan Madinah.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-qris"/></svg></span><div><h3>Operasi dan layanan di lapangan</h3><p>Hubungan harian dengan toko, penanganan keluhan jamaah, dan koordinasi dengan muthawwif hanya bisa dijalankan tim yang berada di Saudi.</p></div></div>
+    </div>
+    <p class="note"><b>Selaras dengan Vision 2030.</b> Saudi menargetkan 30 juta jamaah umrah per tahun pada 2030. Umrohku KSA membawa belanja informal jamaah ke dalam sistem pajak dan perbankan resmi, dan menambah omzet UMKM lokal.</p>
+  </div>
+</section>
+
+<section class="pb">
+  <div class="wrap wide">
+    <span class="eyebrow">06 · Pelanggan pertama &amp; distribusi</span>
+    <h2>Trafik organik dari Indonesia, dikalikan lewat satu bus berisi 45 jamaah</h2>
+    <div class="journey">
+      <div class="leg"><span class="ico"><svg><use href="#i-play"/></svg></span><b>Kanal organik</b><ul><li>umrohku.web.id, sudah live</li><li>Menjangkau jamaah 2–4 bulan sebelum terbang</li><li>Titik masuk untuk PO sebelum terbang</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-family"/></svg></span><b>Muthawwif &amp; tour leader</b><ul><li>Portal group order untuk satu bus</li><li>Komisi afiliasi terbuka 3%, ±SAR 20 per jamaah</li><li>10 bus per bulan = 5.400 jamaah per tahun</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-store"/></svg></span><b>Reseller PO</b><ul><li>Akun titip-beli yang sudah punya pembeli</li><li>Mengambil suplai dari toko terverifikasi</li><li>Ikut kuota kargo gelombang mingguan</li></ul></div>
+    </div>
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-chart"/></svg></span>Bukti audiens: dasbor umrohku.web.id, 30 hari terakhir</h3>
     <div class="stats">
-      <div class="stat"><b>2.000</b><span>jamaah bertransaksi, target tahun pertama</span><small>0,13% jamaah Indonesia</small></div>
-      <div class="stat"><b>Rp6 M</b><span>nilai transaksi</span><small>±SAR 1,4 juta</small></div>
-      <div class="stat"><b>±Rp800 jt</b><span>pendapatan komisi</span></div>
+      <div class="stat gold"><b>847</b><span>pengunjung unik</span><small>26 Okt–24 Nov 2026</small></div>
+      <div class="stat gold"><b>8.791</b><span>halaman dibuka</span><small>±10 halaman per pengunjung</small></div>
+      <div class="stat gold"><b>461</b><span>pencarian paket</span><small>47% di budget Rp25–29 jt</small></div>
+      <div class="stat gold"><b>78</b><span>klik ke travel</span><small>23 WhatsApp · 55 situs</small></div>
     </div>
-    <p class="src">Seluruh angka adalah asumsi internal, belum divalidasi dengan toko maupun jamaah. Besaran komisi ditentukan setelah negosiasi dengan toko mitra pertama.</p>
+    <img class="shot" src="/proposal/img/au-ringkasan.jpg" alt="Dasbor admin umrohku.web.id: 847 pengunjung unik, 8.791 halaman, 461 pencarian, grafik pengunjung per hari" loading="lazy">
+    <div class="cols">
+      <figure><img class="shot" src="/proposal/img/au-pencarian.jpg" alt="Dasbor pencarian: budget yang dicari, travel yang dipilih, bulan keberangkatan" loading="lazy"><figcaption><b>Apa yang dicari</b><span>Budget, travel, dan bulan keberangkatan dari 461 pencarian.</span></figcaption></figure>
+      <figure><img class="shot" src="/proposal/img/au-travel.jpg" alt="Dasbor per travel: tampil, klik WhatsApp, klik situs, CTR" loading="lazy"><figcaption><b>Klik ke travel</b><span>Tampil, klik WhatsApp, klik situs, dan CTR per travel.</span></figcaption></figure>
+    </div>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-play"/></svg></span>Bukti audiens: ±208 rb tayangan konten organik, tanpa iklan</h3>
+    <div class="socials">
+      <figure><img src="/proposal/img/25-shorts.jpg" alt="YouTube @umrohku.official: 7 Shorts, terbaik 124 rb tayangan" loading="lazy"><figcaption><span class="big2">±155 rb</span><b>YouTube</b><span>7 Shorts; satu video 124 rb tayangan.</span></figcaption></figure>
+      <figure><img src="/proposal/img/so-308.jpg" alt="TikTok @umrohku.web.id: 3.096 suka, video terbaik 24,2 rb tayangan" loading="lazy"><figcaption><span class="big2">±34 rb</span><b>TikTok</b><span>6 video, 3.096 suka; terbaik 24,2 rb.</span></figcaption></figure>
+      <figure><img src="/proposal/img/so-310.jpg" alt="Dasbor Instagram: 12.842 tayangan dalam 30 hari" loading="lazy"><figcaption><span class="big2">12,8 rb</span><b>Instagram</b><span>Tayangan 30 hari, naik dari nol sebulan lalu.</span></figcaption></figure>
+      <figure><img src="/proposal/img/so-309.jpg" alt="Threads umrohku.web.id: 6.637 recent views" loading="lazy"><figcaption><span class="big2">6,6 rb</span><b>Threads</b><span>Tayangan terbaru; 7% pengunjung situs datang dari Threads.</span></figcaption></figure>
+    </div>
+    <p class="src">Tangkapan layar dasbor admin dan aplikasi, 24 November 2026. Angka pengunjung situs belum disaring dari bot dan kunjungan pengembang. Jumlah pengikut masih kecil (YouTube 461, TikTok 118, Instagram 39); yang dibuktikan di sini adalah jangkauan konten, bukan basis pengikut. Belum ada muthawwif, reseller, maupun toko yang bermitra.</p>
+  </div>
+</section>
+
+<section class="pb">
+  <div class="wrap">
+    <span class="eyebrow">07 · Peta pesaing</span>
+    <h2>Belum ada yang menyatukan kanal jamaah Indonesia dengan pemenuhan resmi di Saudi</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Pemain</th><th>Fokus</th><th>Celah bagi jamaah Indonesia</th><th>Pembeda umrohku KSA</th></tr></thead>
+      <tbody>
+        <tr><td><b>Nusuk</b> (pemerintah Saudi)</td><td>Visa, izin Raudhah, hotel, paket resmi</td><td>Bukan untuk oleh-oleh, makanan Indonesia, atau kargo PO</td><td>Melengkapi di lapisan belanja harian berbahasa Indonesia</td></tr>
+        <tr><td><b>Ritel modern</b> (BinDawood, toko daring lokal)</td><td>Supermarket dan ritel Saudi</td><td>Tidak menjangkau jamaah sejak di Indonesia; tanpa paket khas dan kargo ke rumah</td><td>Akuisisi dari Indonesia, paket grosir, kargo sampai rumah</td></tr>
+        <tr><td><b>Aplikasi pesan-antar</b> (HungerStation, Jahez, Noon)</td><td>Penduduk lokal Saudi</td><td>Bahasa Arab dan Inggris; bukan spesialis jamaah di hotel sekitar masjid</td><td>Bahasa Indonesia, jadwal antar ramah jam salat, group order satu bus</td></tr>
+        <tr><td><b>PO Instagram &amp; titip-beli informal</b></td><td>Belanja titipan, transfer pribadi</td><td>Tanpa perlindungan, kurs tidak jelas, kendala bea cukai</td><td>Pembayaran berizin, toko resmi, bukti pengemasan, kargo berizin</td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">Peta berdasarkan pengamatan founder atas layanan yang tersedia untuk umum, belum riset pasar formal.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
     <span class="eyebrow">08 · Alur dana &amp; kepatuhan</span>
-    <h2>Umrohku tidak menampung uang, di kedua negara</h2>
-    <div class="flow">
-      <div class="step"><b>Jamaah membayar</b><span>Kartu, dompet digital, atau voucher yang dibeli dari Indonesia.</span></div>
-      <div class="step"><b>Diproses gateway berizin</b><span>Penyedia jasa pembayaran berizin SAMA dengan fitur split payment.</span></div>
-      <div class="step"><b>Pesanan selesai</b><span>Diambil, diantar, atau diserahkan ke kargo.</span></div>
-      <div class="step"><b>Split otomatis</b><span>Toko menerima SAR; komisi umrohku terpotong.</span></div>
+    <h2>Tanpa menampung saldo, tanpa transfer lewat rekening pribadi</h2>
+    <div class="paths">
+      <div class="path primary">
+        <span class="tag">Alur 1 · transaksi di Saudi</span>
+        <ul class="pts">
+          <li>Jamaah membayar dengan kartu debit atau kredit internasional, Apple Pay, atau Mada</li>
+          <li>Diproses gateway berizin SAMA dengan fitur split payment</li>
+          <li>85–90% cair dalam SAR ke toko; 10–15% komisi ke umrohku KSA</li>
+        </ul>
+      </div>
+      <div class="path">
+        <span class="tag next">Alur 2 · PO dari Indonesia</span>
+        <ul class="pts">
+          <li>Pembeli membayar rupiah lewat QRIS dinamis, VA bank, atau kartu, diterbitkan penyedia jasa pembayaran berizin Bank Indonesia</li>
+          <li>Pembayaran antar-entitas lewat transfer bank resmi dengan faktur komersial</li>
+          <li>Barang dikirim konsolidator kargo berizin, termasuk kepabeanan</li>
+        </ul>
+      </div>
     </div>
     <div class="tbl"><table>
-      <thead><tr><th>Area</th><th>Posisi umrohku</th><th>Status</th></tr></thead>
+      <thead><tr><th>Area</th><th>Posisi umrohku KSA</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><b>Badan hukum Saudi</b></td><td>Perusahaan dengan Commercial Registration, lewat pendampingan program</td><td><span class="status wait">Belum ada</span></td></tr>
-        <tr><td><b>Pembayaran di Saudi</b></td><td>Lewat gateway berizin SAMA; umrohku tidak memegang dana pembeli maupun penjual</td><td><span class="status wait">Perlu mitra</span></td></tr>
-        <tr><td><b>Pembayaran dari Indonesia</b></td><td>Voucher dijual lewat penyedia jasa pembayaran berizin Bank Indonesia</td><td><span class="status wait">Perlu mitra</span></td></tr>
-        <tr><td><b>Pajak</b></td><td>PPN Saudi 15% pada barang dan jasa; faktur sesuai ketentuan otoritas pajak</td><td><span class="status wait">Fase 1</span></td></tr>
-        <tr><td><b>Kargo &amp; makanan</b></td><td>Lewat mitra kargo berizin; mengikuti aturan impor pangan Indonesia</td><td><span class="status wait">Fase 2</span></td></tr>
-        <tr><td><b>Data pribadi</b></td><td>Mengikuti aturan pelindungan data Saudi dan UU PDP Indonesia</td><td><span class="status go">Dirancang</span></td></tr>
+        <tr><td><b>Entitas Saudi</b></td><td>Commercial Registration dan lisensi investasi, lewat pendampingan program</td><td><span class="status wait">Fase 1</span></td></tr>
+        <tr><td><b>Pembayaran di Saudi</b></td><td>Lewat gateway berizin SAMA; tanpa saldo tersimpan</td><td><span class="status wait">Perlu mitra</span></td></tr>
+        <tr><td><b>Pembayaran lintas negara</b></td><td>Tanpa pertukaran rupiah–riyal manual; antar-entitas lewat bank</td><td><span class="status go">Dirancang</span></td></tr>
+        <tr><td><b>Pajak Saudi</b></td><td>PPN 15% dan faktur elektronik atas komisi dan transaksi</td><td><span class="status wait">Fase 1</span></td></tr>
+        <tr><td><b>Bea cukai &amp; pangan Indonesia</b></td><td>Lewat konsolidator kargo atau PPJK berizin; komoditas terkurasi</td><td><span class="status wait">Fase 0–1</span></td></tr>
+        <tr><td><b>Data pribadi</b></td><td>Mengikuti aturan pelindungan data Saudi dan UU 27/2022 Indonesia</td><td><span class="status go">Dirancang</span></td></tr>
       </tbody>
     </table></div>
-    <p class="src">Peta ini adalah pemahaman awal founder dan perlu dikonfirmasi bersama pendamping hukum di Saudi.</p>
+    <p class="src">Peta ini adalah pemahaman awal founder dan perlu dikonfirmasi bersama pendamping hukum di Saudi dan Indonesia.</p>
   </div>
 </section>
 
-<section>
+<section class="pb tight">
   <div class="wrap">
-    <span class="eyebrow">09 · Rencana 12 bulan</span>
-    <h2>Mulai dari yang paling sederhana: pesan dulu, ambil di toko</h2>
+    <span class="eyebrow">09 · Model bisnis &amp; proyeksi</span>
+    <h2>Impas di 10 bus per bulan</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Sumber pendapatan</th><th>Besaran (asumsi)</th><th>Mulai</th></tr></thead>
+      <tbody>
+        <tr><td><b>Komisi pemasaran toko</b> (bayar di toko)</td><td>8–12% dari nilai belanja</td><td>Fase 1</td></tr>
+        <tr><td><b>Margin paket siap bawa</b></td><td>20–25% dari selisih harga grosir</td><td>Fase 1</td></tr>
+        <tr><td><b>Margin PO gelombang &amp; kargo</b></td><td>15–20% margin produk dan selisih tarif kargo</td><td>Fase 1</td></tr>
+        <tr><td><b>Slot unggulan toko</b></td><td>Biaya tampil teratas</td><td>Tahun 2</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ledger">
+      <div><span>Nilai belanja rata-rata per jamaah</span><span>SAR 700 · ±Rp3,0 jt</span></div>
+      <div><span>Pendapatan, take rate campuran 15%</span><span>+SAR 105</span></div>
+      <div class="minus"><span>Biaya gateway kartu internasional, ±2,8%</span><span>−SAR 20</span></div>
+      <div class="minus"><span>Komisi muthawwif atau reseller, ±3%</span><span>−SAR 20</span></div>
+      <div class="total"><span>Margin kontribusi per jamaah</span><span>SAR 65 · ±Rp280 rb</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>SAR 350 rb</b><span>biaya operasional KSA tahun pertama</span><small>±Rp1,5 M</small></div>
+      <div class="stat gold"><b>5.400</b><span>jamaah per tahun untuk impas</span><small>10 bus per bulan · 0,34% pasar</small></div>
+      <div class="stat"><b>SAR 400–500 rb</b><span>modal kerja yang akan digalang terpisah</span><small>±Rp1,7–2,1 M</small></div>
+    </div>
+    <div class="tbl"><table class="num">
+      <thead><tr><th>Metrik</th><th>Tahun 1 operasi penuh</th><th>Tahun 2 · + Malaysia</th><th>Tahun 3 · regional</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jamaah bertransaksi</b></td><td>5.500 (±10 bus/bln)</td><td>20.000 (±37 bus/bln)</td><td>50.000 (±92 bus/bln)</td></tr>
+        <tr><td><b>Nilai transaksi</b></td><td>SAR 3,85 jt</td><td>SAR 14,0 jt</td><td>SAR 35,0 jt</td></tr>
+        <tr><td><b>Pendapatan</b> (15%)</td><td>SAR 577,5 rb</td><td>SAR 2,10 jt</td><td>SAR 5,25 jt</td></tr>
+        <tr><td><b>Biaya langsung</b> (SAR 40/jamaah)</td><td>SAR 220 rb</td><td>SAR 800 rb</td><td>SAR 2,00 jt</td></tr>
+        <tr><td><b>Margin kontribusi</b></td><td>SAR 357,5 rb</td><td>SAR 1,30 jt</td><td>SAR 3,25 jt</td></tr>
+        <tr><td><b>Biaya operasional KSA</b></td><td>SAR 350 rb</td><td>SAR 850 rb</td><td>SAR 1,75 jt</td></tr>
+        <tr class="hl"><td>EBITDA</td><td>+SAR 7,5 rb (impas)</td><td class="pos">+SAR 450 rb</td><td class="pos">+SAR 1,50 jt</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note warn"><b>Arus kas, apa adanya.</b> Program ini memberi pendampingan pendirian dan izin tinggal, bukan modal kerja. Biaya tetap berjalan sejak bulan pertama, sebelum volume mencapai 10 bus per bulan. Karena itu modal kerja SAR 400–500 rb digalang terpisah setelah Fase 0 terbukti, untuk menutup defisit kas bersih selama masa ramp-up bulan 3–18 sampai laju 10 bus per bulan tercapai.</p>
+    <p class="src">Take rate 15% dihitung setelah biaya kardus dan pengemasan, yang masuk dalam selisih harga grosir; ongkos antar ke lobi hotel ditagihkan ke jamaah sebagai biaya layanan. Nilai belanja SAR 700 dan pendapatan 15% (SAR 105) dihitung di luar PPN Saudi 15%; PPN dipungut terpisah dan disetor ke otoritas pajak. Kurs 1 SAR = Rp4.300. Seluruh angka adalah asumsi founder, belum divalidasi dengan toko, muthawwif, maupun jamaah. "Tahun 1" dihitung sejak laju 10 bus per bulan tercapai (akhir Fase 2), dan mengandaikan jalur group order berjalan sesuai rencana.</p>
+  </div>
+</section>
+
+<section class="pb">
+  <div class="wrap">
+    <span class="eyebrow">10 · Rencana 18 bulan</span>
+    <h2>Uji permintaan dan suplai dari Indonesia dulu, baru beroperasi di Saudi</h2>
     <div class="road">
-      <div class="phase now"><span class="when">Fase 0 · Bulan 0–2 · dari Indonesia</span><h3>Validasi minat</h3><ul><li>Daftar tunggu pre-order oleh-oleh di umrohku.web.id</li><li>Survei belanja kepada jamaah yang baru pulang</li><li>Pendekatan awal ke 5 toko di Makkah dan Madinah</li></ul></div>
-      <div class="phase"><span class="when">Fase 1 · Bulan 3–6</span><h3>Perusahaan berdiri, pickup berjalan</h3><ul><li>Pendirian perusahaan Saudi dan rekening bank</li><li>Integrasi gateway pembayaran berizin</li><li>10 toko mitra, layanan ambil di toko dan voucher riyal</li><li>Target 300 pesanan</li></ul></div>
-      <div class="phase"><span class="when">Fase 2 · Bulan 7–12</span><h3>Antar ke hotel dan kargo</h3><ul><li>Pengantaran terjadwal ke lobi hotel di Makkah</li><li>Kargo oleh-oleh ke Indonesia lewat mitra</li><li>Perluasan ke Madinah, 30 toko mitra</li><li>Target 2.000 jamaah bertransaksi</li></ul></div>
-      <div class="phase"><span class="when">Fase 3 · Tahun 2+</span><h3>Negara pengirim lain</h3><ul><li>Jamaah Malaysia dan negara berbahasa Melayu</li><li>QRIS lintas negara saat sudah tersedia di Saudi</li></ul></div>
+      <div class="phase now"><span class="when">Fase 0 · Des 2026–Jan 2027 · biaya sendiri</span><h3>Validasi dari Indonesia</h3><ul><li>Daftar tunggu PO gelombang di umrohku.web.id, target 100 pendaftar</li><li>Satu gelombang PO uji coba dengan 1 toko dan 1 konsolidator kargo berizin; pendekatan pertama ke empat toko di Bagian 02</li><li>3 LOI tertulis dari toko, grosir, atau kargo</li><li>Wawancara 10 muthawwif dan travel tentang group order</li><li>Menemukan co-founder operasional di Saudi</li></ul></div>
+      <div class="phase"><span class="when">Fase 1 · Bulan 3–8</span><h3>Entitas Saudi dan peluncuran awal</h3><ul><li>Pendirian perusahaan, lalu rekening bank korporat dan persetujuan gateway (keduanya bisa memakan beberapa bulan)</li><li>10–15 toko terkurasi dan 2 grosir paket di Makkah–Madinah</li><li>Target 500–1.000 pesanan kumulatif</li></ul></div>
+      <div class="phase"><span class="when">Fase 2 · Bulan 9–18</span><h3>Skala lewat group order</h3><ul><li>40 toko mitra dan 30 muthawwif atau travel</li><li>Target: laju impas 10 bus per bulan</li></ul></div>
+      <div class="phase"><span class="when">Fase 3 · setelah bulan 18</span><h3>Regional</h3><ul><li>Jamaah berbahasa Melayu: Malaysia, Singapura, Brunei</li><li>Jika QRIS lintas negara Indonesia–Saudi beroperasi: jasa pendaftaran toko bagi penyelenggara berizin (B2B, bukan fitur bayar di aplikasi)</li></ul></div>
     </div>
   </div>
 </section>
 
-<section>
+<section class="pb">
   <div class="wrap">
-    <span class="eyebrow">10 · Risiko</span>
-    <h2>Yang belum kami punya, disampaikan apa adanya</h2>
+    <span class="eyebrow">11 · Risiko &amp; mitigasi</span>
+    <h2>Empat risiko terbesar dan cara kami menghadapinya</h2>
     <div class="cards two">
-      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Belum ada toko mitra</h3><p>Belum ada kesepakatan dengan pedagang di Saudi. Ini pekerjaan pertama setelah program dimulai.</p></div></div>
-      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Belum ada transaksi</h3><p>Prototipe masih simulasi. Traksi yang ada adalah minat di Indonesia.</p></div></div>
-      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Logistik sekitar masjid</h3><p>Pembatasan kendaraan membuat pengantaran harus terjadwal. Karena itu fase pertama hanya ambil di toko.</p></div></div>
-      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Founder tunggal</h3><p>Kuat di teknologi dan pembayaran, belum punya mitra operasional di Saudi. Co-founder sedang dicari.</p></div></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><h3>Belum ada toko mitra dan transaksi</h3><p><b>Mitigasi:</b> satu gelombang PO uji coba dan 3 LOI di Fase 0, sebelum biaya tetap di Saudi berjalan.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-law"/></svg></span><h3>Bea cukai dan aturan pangan Indonesia</h3><p><b>Mitigasi:</b> seluruh PO lewat konsolidator kargo atau PPJK berizin, dengan komoditas terbatas dan terkurasi.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-family"/></svg></span><h3>Penolakan muthawwif dan toko tradisional</h3><p><b>Mitigasi:</b> muthawwif dijadikan mitra dengan komisi terbuka 3%, bukan dilewati. Pesanan eceran kecil tidak dilayani.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-target"/></svg></span><h3>Founder tunggal, berbasis di Jakarta</h3><p><b>Mitigasi:</b> mencari co-founder operasional yang tinggal atau pernah bekerja di Makkah–Madinah dan fasih berbahasa Arab.</p></div>
     </div>
   </div>
 </section>
 
-<section>
+<section class="pb">
   <div class="wrap">
-    <span class="eyebrow">11 · Founder &amp; yang kami butuhkan</span>
-    <h2>Insinyur pembayaran yang sudah membangun produknya</h2>
+    <span class="eyebrow">12 · Founder &amp; harapan dari program</span>
     <div class="founder">
       <img class="photo" src="/proposal/img/founder.jpg" alt="Foto Barru Kurniawan">
       <div class="bio">
-        <div><h3 style="font-size:24px">Barru Kurniawan</h3><div class="role">Founder umrohku · Backend Developer</div></div>
+        <div><h3 style="font-size:24px">Barru Kurniawan</h3><div class="role">CEO · produk &amp; teknologi</div></div>
         <p class="lead">Software Engineer dengan 9+ tahun pengalaman.</p>
         <div class="facts"><span>Jakarta</span><span>Universitas Gadjah Mada</span><span><a href="https://www.linkedin.com/in/barru-kurniawan/">linkedin.com/in/barru-kurniawan</a></span></div>
+        <div class="facts" style="font-size:15px;color:var(--ink)"><span>Email: <a href="mailto:barru.kurniawan@gmail.com"><b>barru.kurniawan@gmail.com</b></a></span><span>WhatsApp: <a href="https://wa.me/6282122126254"><b>+62 821-2212-6254</b></a></span></div>
         <ul class="pts">
-          <li><b>Back End Developer, Financial Technology Startup</b> · Jun 2021–sekarang. Kartu kredit &amp; debit, QRIS lokal &amp; cross border, split payment, dan cicilan</li>
-          <li><b>Software developer</b> di Gigel.id, WE+, dan Blipcom · 2017–2021</li>
-          <li><b>Membangun umrohku seorang diri:</b> data paket, simulasi 3D, prototipe aplikasi, dan konten video</li>
+          <li><b>Back End Developer, Financial Technology Startup</b> · Jun 2021–sekarang. REST API Golang dan Python untuk kartu kredit &amp; debit, split payment, cicilan, dan QRIS lokal &amp; cross border</li>
+          <li><b>Software developer</b> di Gigel.id (marketplace), WE+, dan Blipcom · 2017–2021</li>
+          <li><b>Membangun umrohku.web.id seorang diri:</b> 508 paket terdata, simulasi manasik 3D, dan ±208 rb tayangan konten organik</li>
+          <li><b>Komitmen:</b> full-time saat entitas dan modal kerja siap. Produk tidak memuat dompet digital maupun layanan pembayaran sendiri; seluruh pembayaran diproses gateway pihak ketiga yang berizin</li>
         </ul>
       </div>
+    </div>
+    <div class="box">
+      <h3>Co-founder operasional KSA · sedang dicari</h3>
+      <ul class="pts">
+        <li>WNI yang tinggal atau pernah bekerja di Makkah–Madinah, fasih berbahasa Arab</li>
+        <li>Punya jejaring pedagang grosir, toko, dan kargo umroh</li>
+        <li>Memegang kemitraan toko, kontrol mutu PO, dan operasi harian di Saudi</li>
+      </ul>
     </div>
     <div class="cols">
       <div class="box" style="border:2px solid var(--em)">
         <h3>Yang kami harapkan dari program</h3>
         <ul class="pts">
-          <li>Pendampingan pendirian perusahaan dan perizinan di Saudi</li>
-          <li>Izin tinggal untuk founder dan satu co-founder</li>
-          <li>Perkenalan dengan toko, mitra kargo, dan penyedia pembayaran lokal</li>
+          <li>Pendampingan pendirian perusahaan dan lisensi di Saudi</li>
+          <li>Izin tinggal jalur startup untuk 2 orang</li>
+          <li>Perkenalan dengan gateway berizin SAMA, mitra kargo, dan pedagang Makkah–Madinah</li>
         </ul>
       </div>
       <div class="box">
         <h3>Yang kami bawa</h3>
         <ul class="pts">
-          <li>Produk dan prototipe yang sudah berjalan</li>
-          <li>Kanal ke jamaah Indonesia tanpa biaya iklan</li>
-          <li>Keahlian pembayaran lintas negara</li>
+          <li>Kanal ke jamaah Indonesia yang sudah berjalan tanpa biaya iklan</li>
+          <li>Keahlian teknis pembayaran dan split payment</li>
+          <li>Rencana dengan titik impas yang jelas: 10 bus per bulan</li>
         </ul>
       </div>
     </div>
@@ -594,7 +848,7 @@ tr.hl td { background: var(--em-soft); font-weight: 800; }
   <div class="wrap">
     <span class="eyebrow">Sumber data</span>
     <ul class="sources">
-      <li>Data produk &amp; traksi: analitik internal umrohku.web.id 26 Okt–24 Nov 2026; YouTube dan TikTok per 24 November 2026. Model bisnis dan target: asumsi internal.</li>
+      <li>Data produk &amp; traksi: analitik internal umrohku.web.id 26 Okt–24 Nov 2026; YouTube, TikTok, Instagram, dan Threads per 24 November 2026. Bukti pasar: profil publik Instagram empat toko di Madinah per 24 November 2026, dan pengamatan lapangan founder. Model bisnis dan proyeksi: asumsi founder.</li>
       <li><a href="https://infobanknews.com/bsi-genggam-pangsa-83-persen-jemaah-haji-indonesia">Infobank: 1,6 juta jamaah umrah Indonesia 2025</a></li>
       <li><a href="https://english.news.cn/20260610/13e7c2733a8b4ab18cb7fba76bd7ff48/c.html">Xinhua: rencana QRIS lintas negara ke Arab Saudi</a></li>
       <li>Saudi Vision 2030: target 30 juta jamaah umrah per tahun</li>

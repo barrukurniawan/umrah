@@ -58,6 +58,10 @@ func RegisterDemo(app *fiber.App) {
 	// Proposal bisnis (statis, khusus subdomain demo)
 	app.Get("/proposal", func(c *fiber.Ctx) error { return c.SendFile("./web/proposal/index.html") })
 	app.Get("/proposal/ksa", func(c *fiber.Ctx) error { return c.SendFile("./web/proposal/ksa.html") })
+	app.Get("/proposal/ksa.pdf", func(c *fiber.Ctx) error {
+		c.Set("Content-Disposition", `inline; filename="Umrohku-KSA-Proposal-PUAS-Nov2026.pdf"`)
+		return c.SendFile("./web/proposal/ksa.pdf")
+	})
 	app.Static("/proposal/img", "./web/proposal/img", fiber.Static{MaxAge: 86400})
 	app.Post("/demo/peran", DemoSwitchRole)
 	app.Get("/inbox", DemoInbox)
