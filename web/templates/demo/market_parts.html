@@ -70,3 +70,56 @@
     </span>
 </a>
 {{end}}
+
+{{/* Skrip "Pakai lokasi saya" (beranda & halaman Market). Butuh .CitiesJSON & .City. */}}
+{{define "mkt_geo_js"}}<script>
+(function () {
+    var cities = {{.CitiesJSON}};
+    var cur = {{.City.Key}};
+    var btn = document.getElementById('geoBtn'), note = document.getElementById('geoNote'), title = document.getElementById('geoTitle');
+    function hav(a, b, c, d) {
+        var r = 6371000, p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dp = (c - a) * Math.PI / 180, dl = (d - b) * Math.PI / 180;
+        var x = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+        return 2 * r * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+    }
+    function label(m) {
+        var route = m * 1.3, d = m >= 1000 ? (m / 1000).toFixed(1).replace('.', ',') + ' km' : Math.round(m / 10) * 10 + ' m';
+        return route <= 2000 ? d + ' · ±' + Math.max(1, Math.ceil(route / 75)) + ' mnt jalan' : d + ' · ±' + Math.max(1, Math.ceil(route / 400)) + ' mnt naik mobil';
+    }
+    function apply(lat, lng) {
+        document.querySelectorAll('[data-store]').forEach(function (el) {
+            var m = hav(lat, lng, parseFloat(el.dataset.lat), parseFloat(el.dataset.lng));
+            el.dataset.dist = m;
+            var l = el.querySelector('[data-dist-label]');
+            if (l) l.textContent = label(m);
+        });
+        document.querySelectorAll('[data-sort-list]').forEach(function (list) {
+            Array.prototype.slice.call(list.children).sort(function (a, b) { return a.dataset.dist - b.dataset.dist; }).forEach(function (el) { list.appendChild(el); });
+        });
+        document.querySelectorAll('[data-dist-basis]').forEach(function (el) { el.textContent = 'Jarak dari lokasimu sekarang'; });
+        title.textContent = 'Lokasimu di ' + cities.filter(function (c) { return c.key === cur; })[0].name;
+        note.textContent = ' · jarak diperbarui';
+    }
+    function handle(lat, lng, fromStore) {
+        var best = null;
+        cities.forEach(function (c) { var d = hav(lat, lng, c.lat, c.lng); if (!best || d < best.d) best = { c: c, d: d }; });
+        if (best.d > 60000) { if (!fromStore) note.textContent = ' · kamu belum di Makkah/Madinah, jarak dari masjid'; return; }
+        if (best.c.key !== cur && !fromStore) { location.href = location.pathname + '?kota=' + best.c.key; return; }
+        if (best.c.key === cur) apply(lat, lng);
+    }
+    try {
+        var s = JSON.parse(sessionStorage.getItem('ukGeo') || 'null');
+        if (s && Date.now() - s.t < 10 * 60 * 1000) handle(s.lat, s.lng, true);
+    } catch (e) {}
+    btn.addEventListener('click', function () {
+        if (!navigator.geolocation) { note.textContent = ' · browser tidak mendukung lokasi'; return; }
+        note.textContent = ' · mencari lokasi…';
+        navigator.geolocation.getCurrentPosition(function (p) {
+            var lat = p.coords.latitude, lng = p.coords.longitude;
+            try { sessionStorage.setItem('ukGeo', JSON.stringify({ lat: lat, lng: lng, t: Date.now() })); } catch (e) {}
+            note.textContent = '';
+            handle(lat, lng, false);
+        }, function () { note.textContent = ' · izin lokasi ditolak'; }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    });
+})();
+</script>{{end}}

@@ -1,0 +1,51 @@
+<main class="max-w-3xl mx-auto pb-8">
+    <section class="bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 text-white px-4 pt-5 pb-12 sm:rounded-b-[2rem]">
+        <div class="flex items-center justify-between gap-3">
+            <div class="inline-flex rounded-full bg-white/15 p-1 text-sm font-semibold" role="tablist" aria-label="Pilih kota">
+                {{range .Cities}}<a href="/market?kota={{.Key}}{{if $.Cat}}&kat={{$.Cat}}{{end}}" role="tab" aria-selected="{{if eq .Key $.City.Key}}true{{else}}false{{end}}" class="rounded-full px-3.5 py-1.5 {{if eq .Key $.City.Key}}bg-white text-emerald-800 shadow{{else}}text-emerald-50 hover:bg-white/10{{end}}">{{.Name}}</a>{{end}}
+            </div>
+            <a href="/market/pesanan" class="relative inline-flex items-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 px-3 py-1.5 text-sm font-semibold">
+                {{template "mkt_ic" (dict "N" "bag" "C" "w-4 h-4")}}Pesanan
+                {{with .Active}}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-amber-400 text-gray-900 text-[11px] font-bold flex items-center justify-center px-1">{{len .}}</span>{{end}}
+            </a>
+        </div>
+        <h1 class="mt-4 text-[22px] sm:text-3xl font-bold leading-tight">Toko terdekat di {{.City.Name}}</h1>
+        <p class="mt-1 text-sm text-emerald-100">{{len .Stores}} toko · diurutkan dari yang paling dekat</p>
+        <form method="GET" action="/market" class="mt-4 relative">
+            <input type="hidden" name="kota" value="{{.City.Key}}">
+            {{if .Cat}}<input type="hidden" name="kat" value="{{.Cat}}">{{end}}
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{{template "mkt_ic" (dict "N" "search" "C" "w-5 h-5")}}</span>
+            <input type="search" name="q" value="{{.Q}}" placeholder="Cari toko atau barang…" class="w-full rounded-full bg-white text-gray-900 placeholder:text-gray-400 pl-11 pr-4 py-3 text-[15px] shadow focus:outline-none focus:ring-4 focus:ring-emerald-300/50" aria-label="Cari toko atau barang">
+        </form>
+    </section>
+    <div class="px-4 -mt-8 space-y-5">
+        <section class="rounded-2xl bg-white shadow-lg shadow-emerald-900/10 ring-1 ring-gray-100 p-3.5 flex items-center gap-3">
+            <span class="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">{{template "mkt_ic" (dict "N" "pin" "C" "w-5 h-5")}}</span>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 truncate" id="geoTitle">Dekat {{.City.Mosque}}</p>
+                <p class="text-xs text-gray-500 truncate"><button type="button" id="geoBtn" class="font-semibold text-emerald-700 hover:underline">Pakai lokasi saya</button><span id="geoNote"></span></p>
+            </div>
+            <div class="shrink-0 text-right border-l border-gray-100 pl-3">
+                <p class="text-[11px] text-gray-500">Kurs contoh</p>
+                <p class="text-sm font-bold text-gray-900 tabular-nums whitespace-nowrap">1 SAR ≈ Rp {{rp .Rate}}</p>
+            </div>
+        </section>
+        <nav class="-mx-4 px-4 flex gap-2 overflow-x-auto no-scrollbar" aria-label="Kategori">
+            <a href="/market?kota={{.City.Key}}" class="shrink-0 rounded-full px-4 py-2 text-sm font-semibold ring-1 {{if not .Cat}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white text-gray-700 ring-gray-200 hover:ring-emerald-300{{end}}">Semua</a>
+            {{range .Cats}}<a href="/market?kota={{$.City.Key}}&kat={{.Key}}" class="shrink-0 inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3.5 py-1.5 text-sm font-semibold ring-1 {{if eq .Key $.Cat}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white text-gray-700 ring-gray-200 hover:ring-emerald-300{{end}}">
+                <span class="w-6 h-6 rounded-full {{.Tone}} flex items-center justify-center">{{template "mkt_art" (dict "N" .Key "C" "w-5 h-5")}}</span>{{.Label}}</a>{{end}}
+        </nav>
+        {{if not .Stores}}
+        <div class="rounded-2xl bg-white ring-1 ring-gray-200 p-8 text-center">
+            <p class="font-semibold text-gray-900">Belum ada toko yang cocok</p>
+            <a href="/market?kota={{.City.Key}}" class="mt-2 inline-block text-sm font-semibold text-emerald-700">Lihat semua toko</a>
+        </div>
+        {{else}}
+        <div class="grid gap-2.5 [&>*]:min-w-0" data-sort-list>
+            {{range .Stores}}{{template "mkt_store_row" .}}{{end}}
+        </div>
+        {{end}}
+        <p class="text-[11px] text-gray-400 text-center">Toko, harga, dan lokasi adalah contoh. Jarak garis lurus, waktu tempuh perkiraan.</p>
+    </div>
+</main>
+{{template "mkt_geo_js" .}}

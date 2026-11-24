@@ -24,13 +24,7 @@ func registerDemoMarket(app *fiber.App) {
 	// Di subdomain demo, beranda = market (ala GrabFood, ambil di toko). Pencarian paket pindah ke /paket.
 	app.Get("/", MarketHome)
 	app.Get("/paket", HomePage)
-	app.Get("/market", func(c *fiber.Ctx) error {
-		q := string(c.Request().URI().QueryString())
-		if q != "" {
-			q = "?" + q
-		}
-		return c.Redirect("/"+q, fiber.StatusFound)
-	})
+	app.Get("/market", MarketStoresPage)
 	app.Get("/market/pesanan/:code/qr.png", MarketOrderQRPNG)
 	app.Get("/market/toko/:slug", MarketStorePage)
 	app.Post("/market/toko/:slug/checkout", MarketCheckoutPage)
@@ -56,6 +50,10 @@ func marketCity(c *fiber.Ctx) demo.City {
 }
 
 func MarketHome(c *fiber.Ctx) error {
+	return demoRender(c, "demo/market", viewer(c, marketHomeData(c)))
+}
+
+func marketHomeData(c *fiber.Ctx) fiber.Map {
 	city := marketCity(c)
 	cat := c.Query("kat")
 	if demo.MarketCatByKey(cat) == nil {
@@ -89,7 +87,14 @@ func MarketHome(c *fiber.Ctx) error {
 	if u := accounts.Current(c); u != nil {
 		m["Active"] = demo.ActiveMarketOrders(u.ID)
 	}
-	return demoRender(c, "demo/market", viewer(c, m))
+	return m
+}
+
+// GET /market: tab "Market" = daftar toko terdekat (urut jarak), filter kota/kategori/pencarian.
+func MarketStoresPage(c *fiber.Ctx) error {
+	m := marketHomeData(c)
+	m["Title"] = "Toko terdekat di " + m["City"].(demo.City).Name
+	return demoRender(c, "demo/market_stores", viewer(c, m))
 }
 
 func marketStore(c *fiber.Ctx, slug string) (*demo.StoreView, demo.City) {
