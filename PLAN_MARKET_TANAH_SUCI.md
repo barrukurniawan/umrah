@@ -9,6 +9,14 @@ Tujuan: jamaah yang sedang di Madinah atau Makkah bisa:
 
 Hanya aktif saat `DEMO_MODE=1`. Semua toko, harga, dan lokasi adalah **contoh**.
 
+> **Pembaruan 24 Nov 2026 (malam):**
+> - Beranda subdomain (`/`) kini **langsung market ini**, ala GrabFood versi ambil di toko. Pencarian paket umroh pindah ke `/paket`, dan `/market` diarahkan ke `/`.
+> - **Web tidak memindai QR.**
+>   - Tombol QR di tengah navigasi bawah dan ikon "Bayar di toko" dihapus. `/bayar` diarahkan ke beranda.
+>   - Web hanya **menerbitkan QR tagihan**, seperti marketplace. Jamaah membayar dari aplikasi lain dengan memindai layar atau mengunduh QR (**Unduh QR**, PNG) lalu membukanya dari galeri.
+> - Tidak ada saldo atau Top Up. Kartu "sumber dana/saldo" di Profil juga dihapus.
+> - Navigasi bawah: **Beranda · Paket umroh · Riwayat · Profil**.
+
 ---
 
 ## 1. Prinsip (selaras proposal)

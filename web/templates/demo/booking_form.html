@@ -3,10 +3,10 @@
     <div class="max-w-lg mx-auto rounded-2xl bg-white ring-1 ring-gray-200 p-6 text-center">
         <p class="font-semibold text-gray-900">Paket belum bisa dipesan</p>
         <p class="text-sm text-gray-500 mt-1">{{.Error}}</p>
-        <a href="/" class="inline-block mt-4 text-sm font-semibold text-emerald-700 hover:underline">← Kembali ke pencarian</a>
+        <a href="/paket" class="inline-block mt-4 text-sm font-semibold text-emerald-700 hover:underline">← Kembali ke pencarian</a>
     </div>
     {{else}}
-    <a href="/" class="text-sm text-emerald-700 hover:underline">← Pencarian</a>
+    <a href="/paket" class="text-sm text-emerald-700 hover:underline">← Pencarian</a>
     <h1 class="mt-2 text-2xl font-bold text-gray-900">Pesan & bayar DP</h1>
     <div class="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
         <span class="font-semibold text-gray-800">{{.Q.Opt.Travel.Name}}</span>

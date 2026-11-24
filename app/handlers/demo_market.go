@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"html/template"
+	"time"
 	"strings"
 
 	"umrah/app/accounts"
@@ -11,6 +12,7 @@ import (
 	"umrah/app/qris"
 
 	"github.com/gofiber/fiber/v2"
+	qrcode "github.com/skip2/go-qrcode"
 )
 
 // Market Tanah Suci ala GoFood (demo): toko terdekat di Madinah/Makkah, pesan untuk diambil,
@@ -19,7 +21,17 @@ import (
 const marketCityCookie = "uk_kota"
 
 func registerDemoMarket(app *fiber.App) {
-	app.Get("/market", MarketHome)
+	// Di subdomain demo, beranda = market (ala GrabFood, ambil di toko). Pencarian paket pindah ke /paket.
+	app.Get("/", MarketHome)
+	app.Get("/paket", HomePage)
+	app.Get("/market", func(c *fiber.Ctx) error {
+		q := string(c.Request().URI().QueryString())
+		if q != "" {
+			q = "?" + q
+		}
+		return c.Redirect("/"+q, fiber.StatusFound)
+	})
+	app.Get("/market/pesanan/:code/qr.png", MarketOrderQRPNG)
 	app.Get("/market/toko/:slug", MarketStorePage)
 	app.Post("/market/toko/:slug/checkout", MarketCheckoutPage)
 	app.Post("/market/pesan", MarketPlaceOrder)
@@ -215,6 +227,25 @@ func MarketOrderStatus(c *fiber.Ctx) error {
 	fresh := c.Get("HX-Request") == "true" && o.Paid() && o.Status == "dibayar"
 	c.Set("Cache-Control", "no-store")
 	return c.Render("demo/market_status", marketOrderData(o, fresh))
+}
+
+// GET .../qr.png: unduh QR tagihan untuk dibuka dari galeri di aplikasi pembayaran lain.
+func MarketOrderQRPNG(c *fiber.Ctx) error {
+	_, o, err := marketOrderOf(c)
+	if o == nil {
+		return err
+	}
+	if !o.Waiting() || time.Now().After(o.ExpiresAt) {
+		return c.Redirect("/market/pesanan/"+o.Code, fiber.StatusSeeOther)
+	}
+	png, perr := qrcode.Encode(o.QRPayload, qrcode.Medium, 640)
+	if perr != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	c.Set("Content-Type", "image/png")
+	c.Set("Cache-Control", "no-store")
+	c.Set("Content-Disposition", `attachment; filename="QRIS-`+o.Code+`.png"`)
+	return c.Send(png)
 }
 
 var marketSimApps = map[string]bool{"DANA": true, "ShopeePay": true, "GoPay": true, "OVO": true}

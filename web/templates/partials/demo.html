@@ -161,7 +161,7 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
 {{- else if eq .N "user"}}<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
 {{- end}}</svg>{{end}}
 
-{{/* Navigasi bawah aplikasi (mode demo, sisi jamaah). Tombol QR di tengah = scan & bayar QRIS. */}}
+{{/* Navigasi bawah aplikasi (mode demo, sisi jamaah). Web tidak memindai QR; hanya menerbitkan QR tagihan. */}}
 {{define "demo_tabbar"}}
 {{$act := tabActive .Path}}
 <style>
@@ -174,21 +174,13 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
 </style>
 <nav id="demoTabbar" aria-label="Navigasi utama" class="fixed inset-x-0 bottom-0 z-[55] pointer-events-none">
     <div class="pointer-events-auto mx-auto max-w-lg bg-white/95 backdrop-blur border-t border-gray-200 sm:border sm:rounded-t-3xl shadow-[0_-6px_24px_rgba(6,78,59,0.08)] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-        <div class="grid grid-cols-5 items-end">
-            {{range (list "/|home|Beranda" "/market|market|Market" "/bayar|qr|Bayar" "/riwayat|history|Riwayat" "/profil|user|Profil")}}{{$p := splitPipe .}}
-            {{if eq (index $p 1) "qr"}}
-            <a href="/bayar" class="group flex items-center justify-center -mt-6 pb-2" aria-label="Scan & bayar QRIS" title="Scan & bayar QRIS">
-                <span class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center ring-[5px] ring-white shadow-lg shadow-emerald-900/25 group-active:scale-95 transition-transform">
-                    {{template "tabicon" (dict "N" "qr" "C" "w-8 h-8")}}
-                </span>
-            </a>
-            {{else}}
+        <div class="grid grid-cols-4 items-end">
+            {{range (list "/|home|Beranda" "/paket|paket|Paket umroh" "/riwayat|history|Riwayat" "/profil|user|Profil")}}{{$p := splitPipe .}}
             {{$on := eq $act (index $p 1)}}
             <a href="{{index $p 0}}" class="flex flex-col items-center gap-0.5 pt-2 pb-1.5 {{if $on}}text-emerald-700{{else}}text-gray-500 hover:text-emerald-700{{end}}" {{if $on}}aria-current="page"{{end}}>
-                <span class="flex items-center justify-center w-12 h-8 rounded-full {{if $on}}bg-emerald-100{{end}}">{{template "tabicon" (dict "N" (index $p 1) "C" "w-[22px] h-[22px]")}}</span>
+                <span class="flex items-center justify-center w-12 h-8 rounded-full {{if $on}}bg-emerald-100{{end}}">{{if eq (index $p 1) "paket"}}{{template "ic" (dict "N" "kaaba" "C" "w-[22px] h-[22px]")}}{{else}}{{template "tabicon" (dict "N" (index $p 1) "C" "w-[22px] h-[22px]")}}{{end}}</span>
                 <span class="text-[11px] {{if $on}}font-bold{{else}}font-medium{{end}}">{{index $p 2}}</span>
             </a>
-            {{end}}
             {{end}}
         </div>
     </div>

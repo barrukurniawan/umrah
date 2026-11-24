@@ -2,7 +2,7 @@
     <section class="relative h-44 sm:h-52 {{.S.Tone}} flex items-center justify-center overflow-hidden sm:rounded-b-[2rem]">
         <div class="absolute inset-0 opacity-40" style="background:radial-gradient(circle at 20% 20%,#fff 0,transparent 45%),radial-gradient(circle at 85% 80%,#fff 0,transparent 40%)"></div>
         {{template "mkt_art" (dict "N" .S.MainCat "C" "relative w-28 h-28 sm:w-32 sm:h-32 drop-shadow")}}
-        <a href="/market?kota={{.S.CityKey}}" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white/95 shadow flex items-center justify-center text-gray-800" aria-label="Kembali ke market">{{template "mkt_ic" (dict "N" "back" "C" "w-5 h-5")}}</a>
+        <a href="/?kota={{.S.CityKey}}" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white/95 shadow flex items-center justify-center text-gray-800" aria-label="Kembali ke market">{{template "mkt_ic" (dict "N" "back" "C" "w-5 h-5")}}</a>
         <span class="absolute right-3 top-3 rounded-full bg-white/95 shadow px-2.5 py-1 text-[11px] font-semibold text-gray-600">Toko contoh</span>
     </section>
 

@@ -208,7 +208,7 @@ type HistoryItem struct {
 
 func History(userID uint, kind string, limit int) []HistoryItem {
 	var out []HistoryItem
-	if kind == "" || kind == "qris" {
+	if kind == "qris" { // pemindai QR dimatikan; riwayat QRIS lama hanya lewat ?jenis=qris
 		var ps []QRPayment
 		DB.Where("user_id = ?", userID).Order("created_at DESC").Limit(limit).Find(&ps)
 		for _, p := range ps {

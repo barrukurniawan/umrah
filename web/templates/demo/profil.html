@@ -7,12 +7,6 @@
             <span class="w-14 h-14 rounded-full bg-white text-emerald-700 text-xl font-bold flex items-center justify-center">{{initial .User.Name}}</span>
             <div class="min-w-0"><p class="text-lg font-bold truncate">{{.User.Name}}</p><p class="text-sm text-emerald-100 truncate">{{.User.Email}}</p></div>
         </div>
-        {{with .Fund}}
-        <div class="mt-4 rounded-2xl bg-white/10 ring-1 ring-white/20 p-3.5 flex items-center justify-between gap-3">
-            <div class="min-w-0"><p class="text-xs text-emerald-100">Sumber dana QRIS</p><p class="font-semibold truncate">{{.Bank}} {{.Masked}}</p></div>
-            <p class="shrink-0 text-right"><span class="block text-xs text-emerald-100">Saldo (contoh)</span><span class="font-bold tabular-nums whitespace-nowrap">Rp {{rp .Balance}}</span></p>
-        </div>
-        {{end}}
     </section>
     <div class="mt-4 grid grid-cols-3 gap-2.5 text-center">
         <a href="/akun/booking" class="rounded-2xl bg-white ring-1 ring-gray-200 p-3"><p class="text-xl font-bold text-gray-900">{{.NB}}</p><p class="text-xs text-gray-500">Booking</p></a>

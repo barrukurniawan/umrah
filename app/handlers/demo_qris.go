@@ -15,10 +15,13 @@ import (
 // Scan & decode QR sungguhan; pembayaran disimulasikan (lihat app/demo/qrpay.go).
 
 func registerDemoQRIS(app *fiber.App) {
-	app.Get("/bayar", QRScanPage)
-	app.Post("/bayar/decode", QRDecodePage)
-	app.Post("/bayar/qris", QRPay)
-	app.Post("/api/qris/decode", QRDecodeAPI)
+	// Web ini tidak memindai QR (hanya menerbitkan QR tagihan, seperti marketplace). Pemindai lama
+	// (QRScanPage/QRDecodePage/QRPay/QRDecodeAPI) dimatikan; tautan lama diarahkan ke beranda.
+	gone := func(c *fiber.Ctx) error { return c.Redirect("/", fiber.StatusSeeOther) }
+	app.Get("/bayar", gone)
+	app.Post("/bayar/decode", gone)
+	app.Post("/bayar/qris", gone)
+	app.Post("/api/qris/decode", func(c *fiber.Ctx) error { return c.SendStatus(fiber.StatusGone) })
 	app.Get("/riwayat", HistoryPage)
 	app.Get("/riwayat/qris/:code", QRReceipt)
 	app.Get("/profil", ProfilePage)

@@ -27,9 +27,9 @@
             </div>
         </div>
         <div class="px-5 pb-5 grid gap-2">
-            <form method="POST" action="/bayar/decode"><input type="hidden" name="qr" value="{{$o.QRPayload}}">
-                <button class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">{{template "mkt_ic" (dict "N" "qr" "C" "w-5 h-5")}}Bayar dengan QRIS umrohku</button></form>
-            <p class="text-[11px] text-gray-400 text-center">Atau pindai QR ini dari HP lain lewat tombol QR di tengah menu bawah.</p>
+            <a href="/market/pesanan/{{$o.Code}}/qr.png" download="QRIS-{{$o.Code}}.png" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Unduh QR</a>
+            <p class="text-[11px] text-gray-500 text-center leading-relaxed">Bayar dari HP ini: unduh QR, buka aplikasi pembayaranmu, pilih <b>Scan</b> lalu <b>ambil dari galeri</b>. Atau pindai layar ini dari HP lain.</p>
         </div>
         <div class="mx-5 mb-5 rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-3.5">
             <p class="text-xs font-semibold text-amber-800">Demo: simulasikan dibayar dari aplikasi lain</p>

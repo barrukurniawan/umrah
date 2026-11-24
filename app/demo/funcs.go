@@ -188,12 +188,10 @@ func MaskName(name string) string {
 func TabActive(path string) string {
 	p, _, _ := strings.Cut(path, "?")
 	switch {
-	case p == "/" || p == "":
+	case p == "/" || p == "" || strings.HasPrefix(p, "/market") || strings.HasPrefix(p, "/tanah-suci"):
 		return "home"
-	case strings.HasPrefix(p, "/market") || strings.HasPrefix(p, "/tanah-suci") || strings.HasPrefix(p, "/mandiri") || strings.HasPrefix(p, "/perlengkapan") || strings.HasPrefix(p, "/travel/") || strings.HasPrefix(p, "/booking/baru"):
-		return "market"
-	case strings.HasPrefix(p, "/bayar"):
-		return "qr"
+	case p == "/paket" || strings.HasPrefix(p, "/kalender") || strings.HasPrefix(p, "/mandiri") || strings.HasPrefix(p, "/perlengkapan") || strings.HasPrefix(p, "/travel/") || strings.HasPrefix(p, "/booking/baru") || strings.HasPrefix(p, "/cicil"):
+		return "paket"
 	case strings.HasPrefix(p, "/riwayat") || strings.HasPrefix(p, "/akun/booking") || strings.HasPrefix(p, "/booking/"):
 		return "history"
 	case strings.HasPrefix(p, "/profil") || strings.HasPrefix(p, "/akun") || strings.HasPrefix(p, "/tabungan") || strings.HasPrefix(p, "/tersimpan") || strings.HasPrefix(p, "/persiapan") || strings.HasPrefix(p, "/inbox"):
