@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Proposal Umrohku</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Amiri:wght@700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column (proposal document) with wide bands for screenshots and the payment flow; brand = deep emerald + champagne gold, as in the umrohku videos */
+:root {
+  --bg: #F4F7F5; --paper: #FFFFFF; --ink: #0B231B; --muted: #4E6A60; --line: #D7E3DD;
+  --em: #0B6B4F; --em-soft: #E3F1EB; --gold: #A9801C; --gold-soft: #F7EED2; --warn: #B4471F; --warn-soft: #FBE8DF;
+  --hero-1: #062A20; --hero-2: #0B4A39; --hero-ink: #F3E5AB; --hero-text: #E2EFE9;
+  --display: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --body: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --arabic: "Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #07130F; --paper: #0D1D17; --ink: #E6F0EB; --muted: #9DB6AB; --line: #1F362D;
+  --em: #34C995; --em-soft: #10302A; --gold: #E2C068; --gold-soft: #2E2812; --warn: #FF8A64; --warn-soft: #34190F;
+  --hero-1: #03140F; --hero-2: #0A3A2D; --hero-ink: #F3E5AB; --hero-text: #D6E6DF; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #07130F; --paper: #0D1D17; --ink: #E6F0EB; --muted: #9DB6AB; --line: #1F362D;
+  --em: #34C995; --em-soft: #10302A; --gold: #E2C068; --gold-soft: #2E2812; --warn: #FF8A64; --warn-soft: #34190F;
+  --hero-1: #03140F; --hero-2: #0A3A2D; --hero-ink: #F3E5AB; --hero-text: #D6E6DF; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16.5px; line-height: 1.65; }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wide { max-width: 1120px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: -.01em; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--em); }
+.eyebrow { font: 600 12.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+section > .wrap { display: grid; gap: 20px; }
+.lead { font-size: 18.5px; color: var(--ink); }
+.muted { color: var(--muted); }
+.fill { background: var(--gold-soft); color: var(--gold); border: 1px dashed var(--gold); border-radius: 6px; padding: 0 6px; font-family: var(--mono); font-size: .86em; white-space: nowrap; }
+
+/* hero */
+.hero { background: radial-gradient(120% 90% at 50% 10%, var(--hero-2), var(--hero-1)); color: var(--hero-text); padding-block: 72px 64px; position: relative; overflow: hidden; }
+.hero .wrap { display: grid; gap: 22px; position: relative; }
+.hero .star { position: absolute; right: -60px; top: -40px; width: 360px; height: 360px; opacity: .14; pointer-events: none; }
+.hero .arabic { font-family: var(--arabic); font-size: 26px; color: var(--hero-ink); direction: rtl; }
+.hero h1 { font-size: clamp(44px, 9vw, 84px); font-weight: 800; letter-spacing: -.03em; color: #fff; }
+.hero h1 span { color: var(--hero-ink); }
+.hero .motto { font-size: clamp(20px, 3.4vw, 28px); font-weight: 700; color: var(--hero-ink); }
+.hero p { color: var(--hero-text); font-size: 18px; }
+.meta { display: flex; flex-wrap: wrap; gap: 10px 24px; font: 500 13.5px/1.4 var(--mono); color: var(--hero-text); opacity: .85; }
+
+/* numbers */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; align-content: start; }
+.stat b { font: 700 28px/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--em); }
+.stat span { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.stat small { font: 500 11.5px/1.3 var(--mono); color: var(--muted); }
+
+/* lists */
+.problems { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.problem { border-left: 3px solid var(--warn); padding: 4px 0 4px 16px; display: grid; gap: 6px; }
+.problem h3 { font-size: 17px; }
+.problem p { font-size: 15px; color: var(--muted); }
+
+/* screenshots */
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(44%, 180px), 1fr)); gap: 22px 16px; }
+figure { margin: 0; display: grid; gap: 10px; align-content: start; }
+.phone { border-radius: 26px; border: 6px solid var(--ink); overflow: hidden; background: var(--paper); aspect-ratio: 390 / 844; max-width: 100%; box-shadow: 0 14px 30px -18px rgba(0,0,0,.45); }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+figcaption { display: grid; gap: 2px; }
+figcaption b { font-size: 15px; }
+figcaption span { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.phone.todo { border-style: dashed; border-color: var(--gold); background: var(--gold-soft); display: grid; place-items: center; text-align: center; padding: 18px; }
+.phone.todo div { display: grid; gap: 8px; justify-items: center; }
+.phone.todo strong { font: 700 16px/1.3 var(--display); color: var(--ink); }
+.phone.todo em { font: 600 11.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-style: normal; }
+.tag { display: inline-block; font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; background: var(--em-soft); color: var(--em); justify-self: start; }
+.tag.next { background: var(--gold-soft); color: var(--gold); }
+
+/* flow */
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; counter-reset: s; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.step { padding: 18px; display: grid; gap: 6px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); counter-increment: s; }
+.step::before { content: counter(s); font: 700 13px/1 var(--mono); color: var(--paper); background: var(--em); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.step b { font-size: 15.5px; }
+.step span { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.note { background: var(--em-soft); border-radius: 12px; padding: 14px 18px; font-size: 15px; }
+.note.warn { background: var(--warn-soft); }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; min-width: 600px; font-size: 14.5px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td b { font-weight: 700; }
+
+/* two paths */
+.paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.path { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.path.primary { border: 2px solid var(--em); }
+.path ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+
+/* roadmap */
+.road { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 8px; }
+.phase { position: relative; padding: 0 0 26px 26px; display: grid; gap: 6px; }
+.phase::before { content: ""; position: absolute; left: -9px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 3px solid var(--em); }
+.phase.now::before { background: var(--em); }
+.phase .when { font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.phase ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; color: var(--muted); }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.box { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.box ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 15px; }
+.sources { font-size: 13.5px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
+footer { padding-block: 40px 56px; border-top: 1px solid var(--line); }
+footer .wrap { display: grid; gap: 6px; }
+/* feature icons (hero): one line-icon family, 32-grid, cream strokes + solid gold accent */
+.feats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
+.feat { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 10px; border-radius: 16px; background: rgba(243,229,171,.06); border: 1px solid rgba(243,229,171,.16); }
+.feat i { flex: none; width: 52px; height: 52px; border-radius: 13px; display: grid; place-items: center; color: #F3E5AB; background: linear-gradient(150deg, rgba(243,229,171,.22), rgba(243,229,171,.05)); border: 1px solid rgba(243,229,171,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+.feat svg { width: 32px; height: 32px; --acc: #E2C068; }
+.feat b { font-size: 14px; line-height: 1.3; font-weight: 700; color: #fff; }
+@media (max-width: 760px) { .feats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .feat { padding: 8px 10px 8px 8px; gap: 10px; } .feat i { width: 46px; height: 46px; } .feat svg { width: 28px; height: 28px; } .feat b { font-size: 13px; } }
+
+/* founder */
+.founder { display: grid; grid-template-columns: 140px 1fr; gap: 28px; align-items: start; }
+.avatar { width: 140px; height: 140px; border-radius: 28px; display: grid; place-items: center; font: 800 46px/1 var(--display); letter-spacing: -.02em; color: var(--hero-ink); background: radial-gradient(120% 120% at 30% 20%, var(--hero-2), var(--hero-1)); box-shadow: 0 18px 36px -22px rgba(0,0,0,.6); }
+.founder .role { font: 600 13px/1.5 var(--mono); color: var(--gold); letter-spacing: .04em; }
+.founder .bio { display: grid; gap: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 13.5px; padding: 5px 11px; border-radius: 999px; background: var(--em-soft); color: var(--em); font-weight: 600; }
+@media (max-width: 640px) { .founder { grid-template-columns: 1fr; gap: 18px; } .avatar { width: 96px; height: 96px; font-size: 32px; border-radius: 22px; } }
+
+/* shared icon system: one 32-grid line family; strokes = currentColor, accent = --acc */
+svg use { overflow: visible; }
+.feat svg, .ico svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico { flex: none; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: var(--em); background: var(--em-soft); }
+.ico svg { width: 26px; height: 26px; --acc: var(--gold); }
+.ico.warn { color: var(--warn); background: var(--warn-soft); }
+.ico.sm { width: 34px; height: 34px; border-radius: 10px; }
+.ico.sm svg { width: 20px; height: 20px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 14px; }
+.shots.four { grid-template-columns: repeat(auto-fill, minmax(min(44%, 230px), 1fr)); }
+.cards.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.card h3 { font-size: 16.5px; }
+.card p { font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+.card.row { display: flex; gap: 14px; align-items: flex-start; }
+.card.row > div { display: grid; gap: 4px; }
+.sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.sum > div { padding: 18px 20px; display: grid; gap: 6px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.sum b { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--em); }
+.sum p { font-size: 15px; }
+.journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 14px; counter-reset: j; }
+.leg { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; counter-increment: j; }
+.leg::after { content: "0" counter(j); position: absolute; top: 18px; right: 18px; font: 600 12px/1 var(--mono); color: var(--muted); opacity: .7; }
+.leg b { font: 800 19px/1.2 var(--display); }
+.pts, .leg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; color: var(--muted); }
+.pts li, .leg li { position: relative; padding-left: 20px; line-height: 1.5; }
+.pts li::before, .leg li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 9px; height: 5px; border-left: 2px solid var(--em); border-bottom: 2px solid var(--em); transform: rotate(-45deg); }
+.grp { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-top: 10px; }
+.src { font-size: 13.5px; color: var(--muted); }
+figcaption .tag { margin-bottom: 4px; }
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-budget" viewBox="0 0 32 32"><ellipse cx="11" cy="8" rx="6" ry="2.6"/><path d="M5 8v4.5c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V8"/><path d="M5 12.5V17c0 1.4 2.7 2.6 6 2.6"/><path d="M4 25.5h24"/><circle style="fill:var(--acc);stroke:none" cx="21" cy="25.5" r="3.2"/><path style="stroke:var(--acc)" d="M23 9.5l3 3-3 3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 32 32"><rect x="4.5" y="6.5" width="23" height="21" rx="4"/><path d="M4.5 12.5h23M11 4v5M21 4v5M9 17h2M9 21h2"/><path style="fill:var(--acc);stroke:none" d="M17.6 15.6a5.2 5.2 0 1 0 3.2 9.2 4.2 4.2 0 1 1-3.2-9.2z"/></symbol>
+  <symbol id="i-cicil" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path style="fill:var(--acc);stroke:none" d="M16 16V5a11 11 0 0 1 11 11z"/><path d="M16 16l7.8 7.8M16 16H5"/></symbol>
+  <symbol id="i-nabung" viewBox="0 0 32 32"><path d="M7 13.5h18v13H7z"/><path style="fill:var(--acc);stroke:none" d="M7 17h18v2.4H7z"/><path d="M13 13.5h6"/><circle cx="16" cy="6" r="3.2"/><path d="M16 9.6v2.2"/></symbol>
+  <symbol id="i-sim" viewBox="0 0 32 32"><path d="M12 11l4-2 4 2v7l-4 2-4-2z"/><path d="M12 11l4 2 4-2M16 13v7"/><path style="stroke:var(--acc)" d="M12 14.2l4 2 4-2"/><ellipse cx="16" cy="19" rx="12.5" ry="5"/><circle style="fill:var(--acc);stroke:none" cx="27.6" cy="20.6" r="2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 32 32"><path d="M4.5 9.5a2 2 0 0 1 2-2h19a2 2 0 0 1 2 2v3.2a3.3 3.3 0 0 0 0 6.6v3.2a2 2 0 0 1-2 2h-19a2 2 0 0 1-2-2v-3.2a3.3 3.3 0 0 0 0-6.6z"/><path d="M20 8v16" stroke-dasharray="2 2.4"/><path style="stroke:var(--acc)" d="M9 16.3l2.4 2.4 4.4-4.8"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 32 32"><path d="M6.5 6.5h15a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H13l-5 4v-4H6.5a3 3 0 0 1-3-3V9.5a3 3 0 0 1 3-3z"/><path style="fill:var(--acc);stroke:none" d="M14 9.2l1.2 3.1 3.1 1.2-3.1 1.2L14 17.8l-1.2-3.1-3.1-1.2 3.1-1.2zM25.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+  <symbol id="i-qris" viewBox="0 0 32 32"><path d="M5 10V7a2 2 0 0 1 2-2h3M22 5h3a2 2 0 0 1 2 2v3M27 22v3a2 2 0 0 1-2 2h-3M10 27H7a2 2 0 0 1-2-2v-3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="17.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="17.5" width="5" height="5" rx="1"/><path style="fill:var(--acc);stroke:none" d="M17.5 17.5h2.6v2.6h-2.6zM20.4 20.4H23V23h-2.6z"/></symbol>
+  <symbol id="i-compare" viewBox="0 0 32 32"><rect x="4" y="6" width="10" height="15" rx="2.5"/><rect x="18" y="11" width="10" height="15" rx="2.5"/><path d="M7 11h4M7 14.5h4M21 16h4M21 19.5h4"/><path style="stroke:var(--acc)" d="M12 25.5h-6l2-2M20 6.5h6l-2 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M16 10.5v7"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="21.5" r="1.7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M11.5 16l3.2 3.2 6-6.4"/></symbol>
+  <symbol id="i-list" viewBox="0 0 32 32"><rect x="6.5" y="6.5" width="19" height="21" rx="3"/><path d="M12 6.5V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1.5"/><path d="M15 13h6M15 18h6M15 23h4"/><path style="stroke:var(--acc)" d="M10 13l1.2 1.2L13 12M10 18l1.2 1.2L13 17"/></symbol>
+  <symbol id="i-hour" viewBox="0 0 32 32"><path d="M8 4h16M8 28h16"/><path d="M10 4c0 6 6 8 6 12s-6 6-6 12M22 4c0 6-6 8-6 12s6 6 6 12"/><path style="fill:var(--acc);stroke:none" d="M12.6 26h6.8L16 22.2z"/></symbol>
+  <symbol id="i-law" viewBox="0 0 32 32"><path d="M16 6v20M10 27h12M6 9.5h20"/><path d="M6 9.5l-3.2 7.5h6.4zM26 9.5l-3.2 7.5h6.4z"/><path d="M2.8 17a3.2 3.2 0 0 0 6.4 0M22.8 17a3.2 3.2 0 0 0 6.4 0"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="5.5" r="2"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 32 32"><path d="M4 12.5L16 5l12 7.5z"/><path d="M8 15v8M13 15v8M19 15v8M24 15v8M5 26.5h22"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="9.6" r="1.6"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 32 32"><rect x="5" y="11.5" width="22" height="6" rx="1.5"/><path d="M7 17.5v9h18v-9M16 11.5v15"/><path style="stroke:var(--acc)" d="M16 11.5c-1.5-4-6.5-5.5-6.5-2.3 0 1.6 2.5 2.3 6.5 2.3zM16 11.5c1.5-4 6.5-5.5 6.5-2.3 0 1.6-2.5 2.3-6.5 2.3z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 32 32"><path d="M4.5 15.5V6.5a2 2 0 0 1 2-2h9l12 12-11 11z"/><circle style="fill:var(--acc);stroke:none" cx="10.5" cy="10.5" r="2.3"/><path style="stroke:var(--acc)" d="M13.5 21.5l7-7"/></symbol>
+  <symbol id="i-store" viewBox="0 0 32 32"><path d="M5 12.5h22l-2.2-6.5H7.2z"/><path d="M5 12.5a3.7 3.7 0 0 0 7.3 0 3.7 3.7 0 0 0 7.4 0 3.7 3.7 0 0 0 7.3 0"/><path d="M7 15.5V27h18V15.5"/><path style="fill:var(--acc);stroke:none" d="M13.5 20h5v7h-5z"/></symbol>
+  <symbol id="i-case" viewBox="0 0 32 32"><rect x="4" y="9.5" width="24" height="17" rx="3"/><path d="M12 9.5V7a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 20 7v2.5"/><path style="stroke:var(--acc)" d="M4 16.5h24"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16.5" r="2.2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 32 32"><path d="M5 27h22"/><rect x="7" y="16" width="4" height="8" rx="1"/><rect x="14" y="11" width="4" height="13" rx="1"/><rect style="fill:var(--acc);stroke:none" x="21" y="6" width="4" height="18" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 32 32"><rect x="3.5" y="7" width="25" height="18" rx="5"/><path style="fill:var(--acc);stroke:none" d="M13.5 11.8v8.4l7-4.2z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 32 32"><rect x="7" y="14" width="18" height="13" rx="3"/><path d="M11 14v-3.5a5 5 0 0 1 10 0V14"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="20.5" r="2.2"/></symbol>
+  <symbol id="i-kaaba" viewBox="0 0 32 32"><path d="M8 11l8-4 8 4v11l-8 4-8-4z"/><path d="M8 11l8 4 8-4M16 15v11"/><path style="stroke:var(--acc)" d="M8 14.6l8 4 8-4"/></symbol>
+</svg>
+
+<header class="hero">
+  <svg class="star" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#F3E5AB" stroke-width="2"><rect x="40" y="40" width="120" height="120"/><rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="48"/><circle cx="100" cy="100" r="84"/></g></svg>
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--hero-ink)">Proposal Bisnis · November 2026</span>
+    <h1>Umroh<span>ku</span></h1>
+    <div class="motto">Ikhtiar menuju Baitullah</div>
+    <p>Aplikasi umroh dari niat sampai pulang: bandingkan paket travel berizin, bayar DP dan cicil secara syariah, belajar manasik lewat simulasi 3D, hingga bayar dengan QRIS di Tanah Suci.</p>
+    <div class="feats" role="list" aria-label="Fitur utama">
+      <div class="feat" role="listitem"><i><svg><use href="#i-budget"/></svg></i><b>Cari umroh by budget</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-cal"/></svg></i><b>Cari umroh by kalender</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-cicil"/></svg></i><b>Cicil syariah</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-nabung"/></svg></i><b>Nabung umroh</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-sim"/></svg></i><b>Simulasi umroh 3D</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-book"/></svg></i><b>Book &amp; DP umroh</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-ai"/></svg></i><b>Konsultasi AI personal</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-qris"/></svg></i><b>Wallet &amp; QRIS</b></div>
+    </div>
+    <div class="meta"><span>umrohku.web.id</span><span>Demo: startup.umrohku.web.id</span><span>IG · TikTok · Threads @umrohku.web.id</span><span>Disusun oleh Barru Kurniawan</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Profil founder</span>
+    <div class="founder">
+      <div class="avatar" aria-hidden="true">BK</div>
+      <div class="bio">
+        <div><h2>Barru Kurniawan</h2><div class="role">Founder umrohku · Founder &amp; CEO Jago QA · Backend Developer MotionPay</div></div>
+        <p class="lead">Engineer sistem pembayaran yang membangun umrohku seorang diri, dari data paket dan simulasi 3D hingga alur booking, cicilan, dan QRIS.</p>
+        <div class="cols">
+          <div class="box"><h3>Pengalaman</h3><ul><li><b>Backend Developer</b>, MotionPay · Jun 2021–sekarang</li><li><b>Founder &amp; CEO</b>, Jago QA (Jago Institute) · Mar 2021–sekarang</li><li><b>Founder</b>, umrohku.web.id &amp; @umrohku.official</li></ul></div>
+          <div class="box"><h3>Nilai yang dibawa</h3><ul><li>Pengalaman sistem transaksi bervolume tinggi untuk DP, cicilan, dan QRIS</li><li>Disiplin QA: setiap alur uang diuji sebelum dipakai jamaah</li><li>Memproduksi konten umroh sendiri, sehingga dekat dengan kebutuhan jamaah</li></ul></div>
+        </div>
+        <div class="chips"><span class="chip">Golang &amp; Python</span><span class="chip">RESTful API</span><span class="chip">Sistem pembayaran</span><span class="chip">Software QA</span><span class="chip">Universitas Gadjah Mada</span></div>
+        <p style="font-size:15px"><a href="https://www.linkedin.com/in/barru-kurniawan/">linkedin.com/in/barru-kurniawan</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">01 · Ringkasan</span>
+    <h2>Tiket.com untuk umroh, dengan dana jamaah yang selalu aman.</h2>
+    <div class="sum">
+      <div><b>Masalah</b><p>Calon jamaah memilih travel lewat brosur dan WhatsApp, menyetor puluhan juta dengan rasa was-was, dan sulit mencicil secara syariah.</p></div>
+      <div><b>Solusi</b><p>Satu aplikasi untuk membandingkan paket travel PPIU, membayar DP dan cicilan, belajar manasik, dan bertransaksi di Tanah Suci.</p></div>
+      <div><b>Model bisnis</b><p>Komisi booking, fee rujukan pembiayaan, langganan portal travel, dan transaksi QRIS serta marketplace.</p></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>18</b><span>travel umroh terdata</span></div>
+      <div class="stat"><b>±835</b><span>paket, diperbarui 2× sehari</span></div>
+      <div class="stat"><b>1.158</b><span>jadwal keberangkatan s.d. Des 2027</span></div>
+      <div class="stat"><b>82</b><span>hotel dengan jarak ke masjid</span></div>
+    </div>
+    <p class="src">Basis data umrohku per 11 November 2026.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">02 · Masalah</span>
+    <h2>Empat hambatan calon jamaah</h2>
+    <div class="cards">
+      <div class="card"><span class="ico warn"><svg><use href="#i-compare"/></svg></span><h3>Sulit membandingkan</h3><p>Harga, maskapai, hotel, dan jarak ke Masjidil Haram tersebar di puluhan situs dan brosur dengan format berbeda.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><h3>Rawan penipuan</h3><p>244 kasus haji dan umrah dengan kerugian Rp247,65 miliar. Juni 2026, 85 mitra Hanania Group melaporkan dugaan penipuan umrah ke Polda Metro Jaya.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-budget"/></svg></span><h3>Biaya besar di muka</h3><p>Paket mulai ±Rp23,5 juta per orang. Banyak keluarga butuh cicilan yang sesuai syariah.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-list"/></svg></span><h3>Persiapan serba mendadak</h3><p>Dokumen, perlengkapan, dan manasik dipelajari sendiri, sering menjelang keberangkatan.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">03 · Solusi</span>
+    <h2>Satu aplikasi, dari niat sampai pulang</h2>
+    <div class="journey">
+      <div class="leg"><span class="ico"><svg><use href="#i-compare"/></svg></span><b>Pilih</b><ul><li>Cari by budget &amp; kalender</li><li>Badge PPIU terverifikasi</li><li>Jarak hotel ke masjid</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-book"/></svg></span><b>Pesan</b><ul><li>DP ringan via VA/QRIS</li><li>Dana ke rekening penampungan travel</li><li>Cashback &amp; undian umroh</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-cicil"/></svg></span><b>Cicil</b><ul><li>Tabungan umroh tanpa margin</li><li>Atau pembiayaan syariah mitra OJK</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-sim"/></svg></span><b>Siapkan</b><ul><li>Simulasi tawaf &amp; sa'i 3D</li><li>Checklist 22 langkah</li><li>Konsultasi AI personal</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-kaaba"/></svg></span><b>Di Tanah Suci</b><ul><li>Bayar QRIS</li><li>Voucher riyal &amp; pickup toko</li><li>Oleh-oleh dikirim ke rumah</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">04 · Pasar &amp; momentum</span>
+    <h2>Pasar besar yang sedang bergerak</h2>
+    <div class="stats">
+      <div class="stat"><b>1,6 jt</b><span>jamaah umroh Indonesia, 2025</span><small>Siskopatuh</small></div>
+      <div class="stat"><b>±Rp48 T</b><span>nilai pasar per tahun</span><small>asumsi paket Rp30 jt</small></div>
+      <div class="stat"><b>Rp32,17 T</b><span>piutang multifinance syariah</span><small>OJK, Sep 2026</small></div>
+      <div class="stat"><b>7</b><span>multifinance aktif membiayai umroh</span><small>OJK</small></div>
+    </div>
+    <div class="cards">
+      <div class="card"><span class="ico"><svg><use href="#i-hour"/></svg></span><h3>Haji makin jauh</h3><p>Antrean haji reguler mencapai puluhan tahun. Keluarga beralih menabung untuk umroh.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-law"/></svg></span><h3>Regulasi terbuka</h3><p>UU 14/2025 mengakui umrah mandiri; Saudi meluncurkan Nusuk Umrah untuk pemesanan langsung.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-bank"/></svg></span><h3>Pembiayaan syariah tumbuh</h3><p>OJK menilai pemain pembiayaan umroh masih sedikit dibanding potensinya.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-qris"/></svg></span><h3>QRIS menuju Saudi</h3><p>Bank Indonesia menyiapkan QRIS lintas negara ke Arab Saudi untuk jamaah haji dan umroh.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">05 · Produk live</span>
+    <h2>Sudah berjalan di umrohku.web.id</h2>
+    <div class="shots four">
+      <figure><div class="phone"><img src="/proposal/img/01-beranda.jpg" alt="Beranda umrohku: pilih budget lalu cari paket"></div><figcaption><span class="tag">Live</span><b>Cari by budget</b><span>Geser budget, langsung keluar rekomendasi.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/02-rekomendasi.jpg" alt="Kartu rekomendasi paket"></div><figcaption><span class="tag">Live</span><b>Rekomendasi paket</b><span>Harga, DP, maskapai, dan jarak hotel.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/03-kalender.jpg" alt="Kalender keberangkatan"></div><figcaption><span class="tag">Live</span><b>Kalender keberangkatan</b><span>Jadwal, harga termurah, dan musim.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/04-simulasi-haram.jpg" alt="Simulasi 3D Masjidil Haram"></div><figcaption><span class="tag">Live</span><b>Masjidil Haram 3D</b><span>126 pintu, menara, dan gedung sekitar.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/05-simulasi-tawaf.jpg" alt="Simulasi tawaf"></div><figcaption><span class="tag">Live</span><b>Simulasi tawaf</b><span>Tujuh putaran, lengkap dengan doa.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/06-simulasi-sai.jpg" alt="Simulasi sa'i"></div><figcaption><span class="tag">Live</span><b>Simulasi sa'i</b><span>Shafa–Marwah dengan penanda lampu hijau.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/07-perlengkapan.jpg" alt="Perlengkapan umroh"></div><figcaption><span class="tag">Live</span><b>Perlengkapan</b><span>24 produk pilihan, link afiliasi.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/08-persiapan.jpg" alt="Checklist persiapan umroh"></div><figcaption><span class="tag">Live</span><b>Checklist persiapan</b><span>22 langkah, tersimpan di akun.</span></figcaption></figure>
+    </div>
+    <p class="src">Juga live: login Google, tabungan umroh, paket tersimpan, chat bantuan, dan analitik klik per travel.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">06 · Prototipe</span>
+    <h2>Dari membandingkan menjadi memesan dan membayar</h2>
+    <p>Semua alur di bawah bisa dicoba di <a href="https://startup.umrohku.web.id/demo"><b>startup.umrohku.web.id</b></a>. QR dibaca sungguhan; pembayaran dan data masih simulasi.</p>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-qris"/></svg></span>Wallet &amp; QRIS</h3>
+    <div class="shots">
+      <figure><div class="phone"><img src="/proposal/img/20-qris-bayar.jpg" alt="Konfirmasi pembayaran QRIS ke merchant" loading="lazy"></div><figcaption><b>Scan &amp; bayar QRIS</b><span>Membaca semua QRIS, statis maupun dinamis.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/21-qris-berhasil.jpg" alt="Bukti pembayaran QRIS berhasil" loading="lazy"></div><figcaption><b>Bukti bayar</b><span>NMID, nominal, dan nomor referensi.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/23-riwayat.jpg" alt="Riwayat transaksi QRIS, umroh, dan belanja" loading="lazy"></div><figcaption><b>Riwayat terpadu</b><span>QRIS, DP umroh, dan belanja dalam satu daftar.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/24-profil.jpg" alt="Profil jamaah dengan sumber dana QRIS" loading="lazy"></div><figcaption><b>Sumber dana bank</b><span>Saldo dikelola mitra PJP berizin BI.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/22-market.jpg" alt="Market kebutuhan umroh" loading="lazy"></div><figcaption><b>Market</b><span>Paket, oleh-oleh, voucher, dan perlengkapan.</span></figcaption></figure>
+    </div>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-cicil"/></svg></span>Booking, DP &amp; cicilan</h3>
+    <div class="shots">
+      <figure><div class="phone"><img src="/proposal/img/09-cicil-tabungan.jpg" alt="Cicil sebelum berangkat lewat tabungan" loading="lazy"></div><figcaption><b>Cicil sebelum berangkat</b><span>Setoran bulanan ke tabungan, tanpa margin.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/10-cicil-mitra.jpg" alt="Perbandingan angsuran mitra pembiayaan syariah" loading="lazy"></div><figcaption><b>Berangkat dulu</b><span>Bandingkan angsuran mitra syariah OJK.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/11-ajukan-pembiayaan.jpg" alt="Form pengajuan pembiayaan dengan persetujuan data" loading="lazy"></div><figcaption><b>Pengajuan pembiayaan</b><span>Persetujuan data UU PDP, bisa dicabut.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/13-booking-dp.jpg" alt="Booking dengan DP lunas" loading="lazy"></div><figcaption><b>Booking &amp; DP</b><span>Dana ke rekening penampungan travel.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/14-dp-ringan.jpg" alt="Perbandingan DP di umrohku dan di travel" loading="lazy"></div><figcaption><b>DP ringan &amp; cashback</b><span>Contoh: Rp750 rb di umrohku vs Rp5 jt di travel.</span></figcaption></figure>
+    </div>
+
+    <h3 class="grp"><span class="ico sm"><svg><use href="#i-case"/></svg></span>Undian, mitra &amp; Tanah Suci</h3>
+    <div class="shots">
+      <figure><div class="phone"><img src="/proposal/img/15-undian.jpg" alt="Periode undian umroh gratis" loading="lazy"></div><figcaption><b>Undian umroh gratis</b><span>Satu kode per jamaah, tanpa beli kupon.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/16-kode-undian.jpg" alt="Kode undian jamaah" loading="lazy"></div><figcaption><b>Pengundian terbuka</b><span>Hasil bisa dihitung ulang siapa pun.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/17-portal-travel.jpg" alt="Portal travel mitra" loading="lazy"></div><figcaption><b>Portal travel</b><span>Lead, booking, seat, dan tagihan.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/18-konsol-admin.jpg" alt="Konsol bisnis admin" loading="lazy"></div><figcaption><b>Konsol bisnis</b><span>Pendapatan per sumber dan biaya promo.</span></figcaption></figure>
+      <figure><div class="phone"><img src="/proposal/img/19-tanah-suci.jpg" alt="Layanan Tanah Suci" loading="lazy"></div><figcaption><b>Layanan Tanah Suci</b><span>Oleh-oleh, voucher riyal, dan pickup.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">07 · Alur dana</span>
+    <h2>Uang jamaah langsung ke rekening resmi travel</h2>
+    <div class="flow">
+      <div class="step"><b>Pilih paket</b><span>Dari travel PPIU terverifikasi.</span></div>
+      <div class="step"><b>Bayar DP</b><span>VA atau QRIS dari umrohku.</span></div>
+      <div class="step"><b>Dana ke travel</b><span>Masuk rekening penampungan atas nama jamaah.</span></div>
+      <div class="step"><b>Konfirmasi otomatis</b><span>Status terkirim ke jamaah dan travel.</span></div>
+      <div class="step"><b>Pelunasan</b><span>Tunai, tabungan, atau pembiayaan mitra.</span></div>
+    </div>
+    <p class="note"><b>Sesuai PP 38/2021.</b> Umrohku mengatur alur dan pencatatan tanpa menampung dana jamaah. Pendapatan umrohku ditagihkan terpisah.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">08 · Nilai untuk jamaah</span>
+    <h2>Harga sama, keuntungannya hanya di umrohku</h2>
+    <div class="cards two">
+      <div class="card"><span class="ico"><svg><use href="#i-cicil"/></svg></span><h3>Cicilan syariah</h3><p>Tabungan tanpa utang, atau berangkat dulu lewat mitra pembiayaan syariah.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-book"/></svg></span><h3>DP lebih ringan</h3><p>Besaran DP disepakati dengan travel mitra, misalnya <span class="fill" style="white-space:normal">[Rp500 rb vs Rp3–5 jt]</span>.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-tag"/></svg></span><h3>Cashback &amp; diskon</h3><p>Dibiayai dari komisi umrohku; harga resmi travel tetap terjaga.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-gift"/></svg></span><h3>Undian umroh gratis</h3><p>Otomatis untuk setiap booking. Tanpa biaya ikut dan tanpa kenaikan harga, sehingga bebas maysir.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">09 · Cicilan syariah</span>
+    <h2>Dua jalur, satu niat</h2>
+    <div class="paths">
+      <div class="path primary">
+        <span class="tag">Jalur utama · tanpa utang</span>
+        <h3>Cicil sebelum berangkat</h3>
+        <ul class="pts">
+          <li>Setoran rutin hingga lunas, lalu berangkat</li>
+          <li>Tanpa margin, tanpa utang</li>
+          <li>Tabungan umroh atas nama jamaah di bank syariah mitra</li>
+        </ul>
+      </div>
+      <div class="path">
+        <span class="tag next">Jalur kedua</span>
+        <h3>Berangkat dulu, angsur kemudian</h3>
+        <ul class="pts">
+          <li>Multifinance syariah berizin OJK, akad ijarah multijasa</li>
+          <li>Dana cair langsung ke travel PPIU</li>
+          <li>2–3 mitra agar peluang disetujui lebih besar: <span class="fill" style="white-space:normal">[calon mitra]</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="src">Umrohku tidak memberi pinjaman. Kesesuaian syariah produk berada di bawah Dewan Pengawas Syariah masing-masing mitra.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">10 · Model bisnis</span>
+    <h2>Tujuh sumber pendapatan</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Sumber</th><th>Pembayar</th><th>Mekanisme</th><th>Mulai</th></tr></thead>
+      <tbody>
+        <tr><td><b>Komisi booking</b></td><td>Travel</td><td>% per booking ber-DP lewat umrohku</td><td>Fase 2</td></tr>
+        <tr><td><b>Fee rujukan pembiayaan</b></td><td>Multifinance</td><td>Per pembiayaan yang cair</td><td>Fase 2</td></tr>
+        <tr><td><b>Tabungan umroh</b></td><td>Bank syariah</td><td>Per rekening tabungan dibuka</td><td>Fase 2</td></tr>
+        <tr><td><b>Lead &amp; Promo Spesial</b></td><td>Travel</td><td>Per lead terverifikasi dan slot unggulan</td><td>Fase 1</td></tr>
+        <tr><td><b>Langganan portal</b></td><td>Travel</td><td>Kelola paket, seat, dan laporan</td><td>Fase 1</td></tr>
+        <tr><td><b>QRIS &amp; marketplace</b></td><td>Merchant / jamaah</td><td>Bagi hasil MDR QRIS dari mitra PJP; margin oleh-oleh dan voucher</td><td>Fase 2–4</td></tr>
+        <tr><td><b>Afiliasi perlengkapan</b></td><td>Marketplace</td><td>Komisi per penjualan</td><td>Live</td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">Promo dan hadiah dibiayai dari komisi, bukan kenaikan harga. Besaran komisi: <span class="fill">[setelah negosiasi]</span>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">11 · Keunggulan</span>
+    <h2>Kenapa umrohku menang</h2>
+    <div class="cards two">
+      <div class="card"><span class="ico"><svg><use href="#i-chart"/></svg></span><h3>Data lintas travel</h3><p>Ratusan paket dari 18 travel, diperbarui dua kali sehari.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-gift"/></svg></span><h3>Alasan bertransaksi</h3><p>Cicilan, DP ringan, cashback, dan undian hanya ada di umrohku.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-play"/></svg></span><h3>Akuisisi lewat edukasi</h3><p>Simulasi 3D dan video menarik jamaah sebelum siap membeli, sehingga biaya akuisisi rendah.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-shield"/></svg></span><h3>Kepercayaan sebagai produk</h3><p>Badge PPIU, dana ke rekening resmi travel, dan ulasan jamaah yang benar-benar berangkat.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">12 · Lanskap</span>
+    <h2>Posisi di antara pemain lain</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Pemain</th><th>Fokus</th><th>Pembeda umrohku</th></tr></thead>
+      <tbody>
+        <tr><td><b>Situs &amp; WhatsApp travel</b></td><td>Paket travel sendiri</td><td>Perbandingan lintas travel</td></tr>
+        <tr><td><b>Marketplace umroh</b> (Pergiumroh, Waqara)</td><td>Katalog paket</td><td>Plus cicilan, manasik 3D, dan QRIS</td></tr>
+        <tr><td><b>Nusuk Umrah</b> (Saudi)</td><td>Visa &amp; layanan langsung</td><td>Panduan berbahasa Indonesia via PPIU</td></tr>
+        <tr><td><b>Travel dengan cicilan</b> (Wipatour)</td><td>Cicilan paket sendiri</td><td>Cicilan untuk banyak travel dan mitra</td></tr>
+        <tr><td><b>Fintech umroh</b> (UmrahCash)</td><td>Tabungan &amp; pembiayaan</td><td>Calon mitra di sisi pembayaran</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">13 · Roadmap</span>
+    <h2>Tahapan pengembangan</h2>
+    <div class="road">
+      <div class="phase now"><span class="when">Fase 1 · 0–6 bulan</span><h3>Pembanding terverifikasi</h3><ul><li>Badge PPIU dan portal travel</li><li>Kerja sama data tertulis dengan travel</li><li>Ukur minat cicilan sejak awal</li></ul></div>
+      <div class="phase"><span class="when">Fase 2 · 6–12 bulan</span><h3>Booking, pembayaran &amp; cicilan</h3><ul><li>DP via VA/QRIS ke rekening penampungan travel</li><li>Wallet &amp; QRIS bersama mitra PJP berizin BI</li><li>Tabungan umroh dan 2–3 mitra pembiayaan</li><li>DP ringan, cashback, dan undian (setelah izin Kemensos)</li></ul></div>
+      <div class="phase"><span class="when">Fase 3</span><h3>Umrah mandiri</h3><ul><li>Panduan Nusuk, hotel, dan transportasi, setelah regulasi turunan jelas</li></ul></div>
+      <div class="phase"><span class="when">Fase 4</span><h3>Layanan di Tanah Suci</h3><ul><li>QRIS di Saudi, mengikuti QRIS lintas negara BI</li><li>Voucher riyal, pickup toko, dan oleh-oleh</li><li>Hadiah undian haji khusus</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">14 · Traksi</span>
+    <h2>Angka awal</h2>
+    <div class="stats">
+      <div class="stat"><b>±28 rb</b><span>tayangan 5 Shorts teratas @umrohku.official</span><small>YouTube, 24 Nov 2026</small></div>
+      <div class="stat"><b>8,7 rb</b><span>tayangan Short terbaik</span><small>Kisah nyata HP hilang saat tawaf</small></div>
+      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>pengunjung unik per bulan</span></div>
+      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>klik WhatsApp ke travel per bulan</span></div>
+      <div class="stat"><b class="fill" style="font-size:18px">[isi]</b><span>surat minat (LOI) travel</span></div>
+    </div>
+    <p class="src">Analitik situs berjalan sejak awal November 2026; angka bulanan dilengkapi setelah 6–8 minggu.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">15 · Kepatuhan</span>
+    <h2>Dijaga sejak hari pertama</h2>
+    <div class="cards two">
+      <div class="card row"><span class="ico"><svg><use href="#i-shield"/></svg></span><div><h3>Dana jamaah · PP 38/2021</h3><p>Langsung ke rekening penampungan PPIU. Umrohku tidak menampung dana.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-qris"/></svg></span><div><h3>QRIS &amp; wallet · BI</h3><p>Diproses mitra PJP berizin BI. Umrohku tidak menyimpan saldo.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-bank"/></svg></span><div><h3>Pembiayaan · OJK</h3><p>Hanya lewat bank dan multifinance berizin. Umrohku tidak memberi pinjaman.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-lock"/></svg></span><div><h3>Data pribadi · UU PDP</h3><p>Persetujuan eksplisit sebelum data dibagikan; ekspor dan hapus data tersedia.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-gift"/></svg></span><div><h3>Undian · Kemensos</h3><p>Izin undian gratis berhadiah; mekanisme ditinjau dewan syariah.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-law"/></svg></span><div><h3>Legalitas platform</h3><p>PT, pendaftaran PSE Komdigi, dan perjanjian tertulis dengan setiap travel.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">16 · Tim &amp; pendanaan</span>
+    <h2>Tim dan penggunaan dana</h2>
+    <div class="cols">
+      <div class="box"><h3>Tim</h3><ul><li><b>Barru Kurniawan</b> · Founder, produk &amp; teknologi</li><li><span class="fill">[Nama]</span> · Kemitraan travel &amp; keuangan</li><li><span class="fill">[Nama]</span> · Konten &amp; komunitas</li></ul></div>
+      <div class="box"><h3>Kebutuhan dana: <span class="fill">[Rp ...]</span></h3><ul><li>Booking, pembayaran, dan portal travel</li><li>Legal, perizinan, dan kepatuhan</li><li>Kemitraan travel, bank, dan multifinance</li><li>Pemasaran konten dan komunitas</li><li>Operasional 12–18 bulan</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="eyebrow">Sumber data</span>
+    <ul class="sources">
+      <li>Data produk: basis data umrohku.web.id per 11 November 2026; YouTube Studio @umrohku.official per 24 November 2026</li>
+      <li><a href="https://infobanknews.com/bsi-genggam-pangsa-83-persen-jemaah-haji-indonesia">Infobank: 1,6 juta jamaah umrah 2025</a></li>
+      <li><a href="https://www.rctiplus.com/news/detail/sindonews/5502797/kemenhaj-catat-244-kasus-haji-dan-umrah--kerugian-mencapai-rp247-65-miliar">Sindonews: 244 kasus haji dan umrah, kerugian Rp247,65 miliar</a></li>
+      <li><a href="https://news.republika.co.id/berita/tfzoa2370/85-mitra-hanania-group-laporkan-dugaan-penipuan-umrah-ke-polda-metro-jaya">Republika: 85 mitra Hanania Group laporkan dugaan penipuan umrah (Juni 2026)</a></li>
+      <li><a href="https://cahaya.kompas.com/aktual/25K02135332790/umrah-mandiri-diperbolehkan-menhaj-tegaskan-peran-ppiu-tak-tergantikan">Kompas: umrah mandiri diperbolehkan (UU 14/2025)</a></li>
+      <li><a href="https://haj.gov.sa/en/Media-Center/Ministry-News/Ministry-of-Hajj-and-Umrah-launches-Nusuk-Umrah-service-to-enable-pilgrims-from-outside-the-Kingdom">Kemenhaj Saudi: peluncuran Nusuk Umrah</a></li>
+      <li><a href="https://keuangan.kontan.co.id/news/peningkatan-pelaksanaan-ibadah-umrah-bisa-jadi-potensi-bagi-multifinance-syariah">Kontan: 7 perusahaan aktif membiayai umrah</a></li>
+      <li><a href="https://keuangan.kontan.co.id/news/tumbuh-791-piutang-pembiayaan-syariah-multifinance-rp-3217-t-per-september-2026">Kontan: piutang multifinance syariah Rp32,17 T</a></li>
+      <li><a href="https://english.news.cn/20260610/13e7c2733a8b4ab18cb7fba76bd7ff48/c.html">Xinhua: QRIS lintas negara ke Arab Saudi</a></li>
+      <li><a href="https://peraturan.go.id/files/pp38-2021bt.pdf">PP 38/2021: rekening penampungan PPIU</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

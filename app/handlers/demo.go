@@ -55,6 +55,9 @@ func tabs(active string, items ...string) []Tab {
 func RegisterDemo(app *fiber.App) {
 	app.Get("/robots.txt", func(c *fiber.Ctx) error { return c.SendString("User-agent: *\nDisallow: /\n") })
 	app.Get("/demo", DemoTour)
+	// Proposal bisnis (statis, khusus subdomain demo)
+	app.Get("/proposal", func(c *fiber.Ctx) error { return c.SendFile("./web/proposal/index.html") })
+	app.Static("/proposal/img", "./web/proposal/img", fiber.Static{MaxAge: 86400})
 	app.Post("/demo/peran", DemoSwitchRole)
 	app.Get("/inbox", DemoInbox)
 	app.Post("/admin/demo/reset", DemoReset)
