@@ -62,6 +62,11 @@
                     <button class="w-full text-left rounded-xl ring-1 ring-gray-200 px-3 py-2.5 text-sm hover:bg-gray-50"><b>Kedai Kurma Contoh</b> · QRIS statis <span class="text-gray-400">(isi nominal sendiri)</span></button></form>
                 <form method="POST" action="/bayar/decode"><input type="hidden" name="qr" value="{{.SampleDyn}}">
                     <button class="w-full text-left rounded-xl ring-1 ring-gray-200 px-3 py-2.5 text-sm hover:bg-gray-50"><b>Kedai Kurma Contoh</b> · QRIS dinamis <span class="text-gray-400">(Rp 35.000)</span></button></form>
+                <p class="pt-1 text-[11px] font-semibold text-amber-700">Simulasi lintas negara · rancangan masa depan</p>
+                <form method="POST" action="/bayar/decode"><input type="hidden" name="qr" value="{{.SampleSADyn}}">
+                    <button class="w-full text-left rounded-xl ring-1 ring-amber-200 bg-amber-50/50 px-3 py-2.5 text-sm hover:bg-amber-50"><b>Toko Kurma Contoh, Makkah</b> · QR Saudi dinamis <span class="text-gray-400">(SAR 35,50)</span></button></form>
+                <form method="POST" action="/bayar/decode"><input type="hidden" name="qr" value="{{.SampleSA}}">
+                    <button class="w-full text-left rounded-xl ring-1 ring-amber-200 bg-amber-50/50 px-3 py-2.5 text-sm hover:bg-amber-50"><b>Toko Kurma Contoh, Makkah</b> · QR Saudi statis <span class="text-gray-400">(isi nominal riyal)</span></button></form>
                 <form method="POST" action="/bayar/decode" class="flex gap-2">
                     <input name="qr" required placeholder="Tempel isi QR (000201…)" class="flex-1 min-w-0 rounded-xl border border-gray-300 px-3 py-2 text-sm font-mono">
                     <button class="rounded-xl bg-emerald-600 text-white text-sm font-semibold px-3">Baca</button>

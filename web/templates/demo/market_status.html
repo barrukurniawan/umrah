@@ -1,0 +1,91 @@
+{{/* Bagian dinamis halaman pesanan (diperbarui htmx tiap 3 detik selama belum selesai). */}}
+{{$o := .O}}{{$m := .M}}
+<div id="mkst" {{if or $o.Waiting (eq $o.Status "dibayar") (eq $o.Status "siap")}}hx-get="/market/pesanan/{{$o.Code}}/status" hx-trigger="every 3s" hx-swap="outerHTML"{{end}} data-status="{{$o.Status}}">
+{{if $o.Waiting}}
+    <section class="rounded-3xl bg-white ring-1 ring-gray-200 shadow-xl shadow-emerald-900/5 overflow-hidden">
+        <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white px-5 pt-5 pb-4 text-center">
+            <p class="text-sm text-emerald-100">Total bayar</p>
+            <p class="text-3xl font-bold tabular-nums">Rp {{rp $o.TotalIDR}}</p>
+            <p class="text-sm text-emerald-100 tabular-nums">SAR {{$o.TotalSAR}} · kurs contoh Rp {{rp $o.Rate}}</p>
+        </div>
+        <div class="px-5 pt-5 pb-4 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between text-xs">
+                <span class="font-black tracking-tight text-gray-900 text-base">QRIS</span>
+                <span class="text-gray-500 text-right">{{$m.Short}}<span class="block">NMID {{.NMID}}</span></span>
+            </div>
+            <div class="relative mt-3 p-3 rounded-2xl ring-1 ring-gray-200 bg-white">
+                <div class="w-60 h-60 sm:w-64 sm:h-64 [&>svg]:w-full [&>svg]:h-full" role="img" aria-label="QRIS dinamis pesanan {{$o.Code}}">{{.QRSVG}}</div>
+                <span class="absolute -left-px -top-px w-6 h-6 border-l-4 border-t-4 border-emerald-600 rounded-tl-2xl"></span>
+                <span class="absolute -right-px -top-px w-6 h-6 border-r-4 border-t-4 border-emerald-600 rounded-tr-2xl"></span>
+                <span class="absolute -left-px -bottom-px w-6 h-6 border-l-4 border-b-4 border-emerald-600 rounded-bl-2xl"></span>
+                <span class="absolute -right-px -bottom-px w-6 h-6 border-r-4 border-b-4 border-emerald-600 rounded-br-2xl"></span>
+            </div>
+            <p class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-800 px-3 py-1 text-sm font-semibold">{{template "mkt_ic" (dict "N" "clock" "C" "w-4 h-4")}}Berlaku <span class="tabular-nums" data-exp="{{$o.ExpiresAt.UnixMilli}}">15:00</span></p>
+            <p class="mt-3 text-sm text-gray-600 text-center">Pindai dengan aplikasi pembayaran apa pun yang mendukung QRIS</p>
+            <div class="mt-2 flex flex-wrap justify-center gap-1.5 text-xs font-semibold text-gray-700">
+                {{range (list "DANA" "ShopeePay" "GoPay" "OVO" "LinkAja" "m-banking")}}<span class="rounded-full bg-gray-100 px-2.5 py-1">{{.}}</span>{{end}}
+            </div>
+        </div>
+        <div class="px-5 pb-5 grid gap-2">
+            <form method="POST" action="/bayar/decode"><input type="hidden" name="qr" value="{{$o.QRPayload}}">
+                <button class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3">{{template "mkt_ic" (dict "N" "qr" "C" "w-5 h-5")}}Bayar dengan QRIS umrohku</button></form>
+            <p class="text-[11px] text-gray-400 text-center">Atau pindai QR ini dari HP lain lewat tombol QR di tengah menu bawah.</p>
+        </div>
+        <div class="mx-5 mb-5 rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-3.5">
+            <p class="text-xs font-semibold text-amber-800">Demo: simulasikan dibayar dari aplikasi lain</p>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+                {{range (list "DANA" "ShopeePay" "GoPay" "OVO")}}
+                <form method="POST" action="/market/pesanan/{{$o.Code}}/simulasi"><input type="hidden" name="app" value="{{.}}"><button class="rounded-full bg-white ring-1 ring-amber-300 hover:bg-amber-100 px-3 py-1.5 text-xs font-semibold text-gray-800">{{.}}</button></form>
+                {{end}}
+            </div>
+            <p class="mt-2 text-[11px] text-gray-500">QR ini berformat QRIS asli tetapi merchant dan penyelenggaranya fiktif. Aplikasi sungguhan akan menolaknya, jadi tidak ada uang yang berpindah.</p>
+        </div>
+    </section>
+{{else if eq $o.Status "kedaluwarsa"}}
+    <section class="rounded-3xl bg-white ring-1 ring-gray-200 p-6 text-center">
+        <span class="mx-auto w-14 h-14 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">{{template "mkt_ic" (dict "N" "clock" "C" "w-7 h-7")}}</span>
+        <p class="mt-3 text-lg font-bold text-gray-900">QR sudah kedaluwarsa</p>
+        <p class="mt-1 text-sm text-gray-500">QRIS dinamis hanya berlaku 15 menit. Pesananmu masih tersimpan.</p>
+        <form method="POST" action="/market/pesanan/{{$o.Code}}/qr-baru" class="mt-4"><button class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-3">Buat QR baru · Rp {{rp $o.TotalIDR}}</button></form>
+    </section>
+{{else}}
+    <section class="rounded-3xl bg-white ring-1 ring-gray-200 shadow-xl shadow-emerald-900/5 overflow-hidden">
+        <div class="{{if eq $o.Status "diambil"}}bg-gray-800{{else}}bg-gradient-to-br from-emerald-600 to-emerald-800{{end}} text-white px-5 py-5 text-center">
+            <span class="mx-auto w-14 h-14 rounded-full bg-white text-emerald-600 flex items-center justify-center {{if .Fresh}}animate-[bounce_1s_ease-out_1]{{end}}">{{template "mkt_ic" (dict "N" "check" "C" "w-8 h-8")}}</span>
+            <p class="mt-2 text-lg font-bold">{{$o.StatusText}}</p>
+            <p class="text-sm text-white/80">{{if eq $o.Status "dibayar"}}{{$m.Display}} menyiapkan pesananmu, ±{{$m.Prep}} menit{{else if eq $o.Status "siap"}}Silakan ambil di {{$m.Short}} · {{$o.SlotLabel}}{{else}}Terima kasih, semoga berkah{{end}}</p>
+        </div>
+        {{if ne $o.Status "diambil"}}
+        <div class="px-5 pt-5 text-center">
+            <p class="text-sm text-gray-500">Tunjukkan kode ambil ke kasir</p>
+            <p class="mt-1 text-4xl font-black tracking-[0.25em] text-gray-900 tabular-nums">{{$o.PickupCode}}</p>
+            <div class="mx-auto mt-3 w-36 h-36 [&>svg]:w-full [&>svg]:h-full" role="img" aria-label="QR kode ambil">{{.PickupSVG}}</div>
+        </div>
+        {{end}}
+        <ol class="px-5 py-4 grid gap-0">
+            {{range $i, $s := $o.Steps}}
+            <li class="relative flex gap-3 pb-4 last:pb-0">
+                <span class="relative z-10 w-6 h-6 shrink-0 rounded-full flex items-center justify-center {{if $s.Done}}bg-emerald-600 text-white{{else}}bg-white ring-2 ring-gray-200{{end}}">{{if $s.Done}}{{template "mkt_ic" (dict "N" "check" "C" "w-3.5 h-3.5")}}{{end}}</span>
+                {{if lt $i 3}}<span class="absolute left-[11px] top-6 bottom-0 w-0.5 {{if $s.Done}}bg-emerald-200{{else}}bg-gray-100{{end}}"></span>{{end}}
+                <span class="text-sm"><span class="block font-semibold {{if $s.Done}}text-gray-900{{else}}text-gray-400{{end}}">{{$s.Label}}</span>{{with $s.At}}<span class="block text-xs text-gray-500">{{tglJam .}}</span>{{end}}</span>
+            </li>
+            {{end}}
+        </ol>
+        <dl class="mx-5 mb-4 rounded-xl bg-gray-50 px-3.5 py-3 text-xs space-y-1">
+            <div class="flex justify-between gap-3"><dt class="text-gray-500">Dibayar via</dt><dd class="text-right font-medium text-gray-800">{{$o.PaidVia}}</dd></div>
+            <div class="flex justify-between gap-3"><dt class="text-gray-500">Total</dt><dd class="tabular-nums font-medium text-gray-800">Rp {{rp $o.TotalIDR}} · SAR {{$o.TotalSAR}}</dd></div>
+            {{with $o.QRRef}}<div class="flex justify-between gap-3"><dt class="text-gray-500">Struk QRIS</dt><dd><a href="/riwayat/qris/{{.}}" class="font-mono text-emerald-700 underline">{{.}}</a></dd></div>{{end}}
+        </dl>
+        {{if or (eq $o.Status "dibayar") (eq $o.Status "siap")}}
+        <div class="mx-5 mb-5 rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-3.5">
+            <p class="text-xs font-semibold text-amber-800">Demo: lanjutkan dari sisi toko</p>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+                {{if eq $o.Status "dibayar"}}<form method="POST" action="/market/pesanan/{{$o.Code}}/siap"><button class="rounded-full bg-white ring-1 ring-amber-300 hover:bg-amber-100 px-3 py-1.5 text-xs font-semibold text-gray-800">Tandai siap diambil</button></form>{{end}}
+                <form method="POST" action="/demo/peran"><input type="hidden" name="peran" value="merchant:{{$m.Slug}}"><input type="hidden" name="goto" value="/toko/pesanan">
+                    <button class="rounded-full bg-white ring-1 ring-amber-300 hover:bg-amber-100 px-3 py-1.5 text-xs font-semibold text-gray-800">Buka sebagai kasir toko →</button></form>
+            </div>
+        </div>
+        {{end}}
+    </section>
+{{end}}
+</div>

@@ -1,24 +1,206 @@
-<main class="max-w-3xl mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold text-gray-900">Market</h1>
-    <p class="text-sm text-gray-500 mt-1">Semua kebutuhan umroh, dari paket sampai oleh-oleh.</p>
-    <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {{range (list
-            "/|kaaba|Paket umroh|Bandingkan & pesan DP ringan|bg-emerald-50 text-emerald-700"
-            "/tanah-suci/oleh-oleh|market|Oleh-oleh|Dikirim ke rumah|bg-amber-50 text-amber-700"
-            "/tanah-suci/voucher|wallet|Voucher Tanah Suci|Bayar rupiah, belanja riyal|bg-sky-50 text-sky-700"
-            "/tanah-suci/pickup|market|Pickup di toko|Makkah & Madinah|bg-rose-50 text-rose-700"
-            "/perlengkapan|market|Perlengkapan|Ihram, koper, dll.|bg-violet-50 text-violet-700"
-            "/mandiri|plane|Umrah mandiri|Prototipe|bg-gray-100 text-gray-700")}}{{$p := splitPipe .}}
-        <a href="{{index $p 0}}" class="rounded-3xl bg-white ring-1 ring-gray-200 hover:ring-emerald-300 p-4 flex flex-col gap-3">
-            <span class="w-11 h-11 rounded-2xl flex items-center justify-center {{index $p 4}}">{{if eq (index $p 1) "market"}}{{template "tabicon" (dict "N" "market" "C" "w-6 h-6")}}{{else}}{{template "ic" (dict "N" (index $p 1) "C" "w-6 h-6")}}{{end}}</span>
-            <span><span class="block font-semibold text-gray-900">{{index $p 2}}</span><span class="block text-xs text-gray-500">{{index $p 3}}</span></span>
+<main class="max-w-3xl mx-auto pb-8">
+    {{/* Header hijau ala aplikasi pesan-antar: kota, judul, pencarian. Tanpa saldo / Top Up. */}}
+    <section class="bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 text-white px-4 pt-5 pb-12 sm:rounded-b-[2rem]">
+        <div class="flex items-center justify-between gap-3">
+            <div class="inline-flex rounded-full bg-white/15 p-1 text-sm font-semibold" role="tablist" aria-label="Pilih kota">
+                {{range .Cities}}<a href="/market?kota={{.Key}}" role="tab" aria-selected="{{if eq .Key $.City.Key}}true{{else}}false{{end}}" class="rounded-full px-3.5 py-1.5 {{if eq .Key $.City.Key}}bg-white text-emerald-800 shadow{{else}}text-emerald-50 hover:bg-white/10{{end}}">{{.Name}}</a>{{end}}
+            </div>
+            <a href="/market/pesanan" class="relative inline-flex items-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 px-3 py-1.5 text-sm font-semibold">
+                {{template "mkt_ic" (dict "N" "bag" "C" "w-4 h-4")}}Pesanan
+                {{with .Active}}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-amber-400 text-gray-900 text-[11px] font-bold flex items-center justify-center px-1">{{len .}}</span>{{end}}
+            </a>
+        </div>
+        <h1 class="mt-4 text-[22px] sm:text-3xl font-bold leading-tight">Oleh-oleh &amp; kebutuhan<br class="sm:hidden"> di {{.City.Name}}</h1>
+        <p class="mt-1 text-sm text-emerald-100">Pesan dari HP, bayar QRIS, ambil di toko dekat {{.City.Mosque}}.</p>
+        <form method="GET" action="/market" class="mt-4 relative">
+            <input type="hidden" name="kota" value="{{.City.Key}}">
+            {{if .Cat}}<input type="hidden" name="kat" value="{{.Cat}}">{{end}}
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{{template "mkt_ic" (dict "N" "search" "C" "w-5 h-5")}}</span>
+            <input type="search" name="q" value="{{.Q}}" placeholder="Cari kurma, abaya, sajadah…" class="w-full rounded-full bg-white text-gray-900 placeholder:text-gray-400 pl-11 pr-4 py-3 text-[15px] shadow focus:outline-none focus:ring-4 focus:ring-emerald-300/50" aria-label="Cari barang atau toko">
+        </form>
+    </section>
+
+    <div class="px-4 -mt-8 space-y-6">
+        {{/* Bar lokasi & kurs (pengganti kotak saldo). */}}
+        <section class="rounded-2xl bg-white shadow-lg shadow-emerald-900/10 ring-1 ring-gray-100 p-3.5 flex items-center gap-3">
+            <span class="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">{{template "mkt_ic" (dict "N" "pin" "C" "w-5 h-5")}}</span>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 truncate" id="geoTitle">Dekat {{.City.Mosque}}</p>
+                <p class="text-xs text-gray-500 truncate"><button type="button" id="geoBtn" class="font-semibold text-emerald-700 hover:underline">Pakai lokasi saya</button><span id="geoNote"></span></p>
+            </div>
+            <div class="shrink-0 text-right border-l border-gray-100 pl-3">
+                <p class="text-[11px] text-gray-500">Kurs contoh</p>
+                <p class="text-sm font-bold text-gray-900 tabular-nums whitespace-nowrap">1 SAR ≈ Rp {{rp .Rate}}</p>
+            </div>
+            <a href="#bantuan" class="hidden min-[400px]:flex shrink-0 w-10 h-10 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 items-center justify-center" aria-label="Bantuan">{{template "mkt_ic" (dict "N" "help" "C" "w-5 h-5")}}</a>
+        </section>
+
+        {{range .Active}}{{if .Waiting}}
+        <a href="/market/pesanan/{{.Code}}" class="flex items-center gap-3 rounded-2xl bg-amber-50 ring-1 ring-amber-200 px-4 py-3">
+            <span class="w-9 h-9 shrink-0 rounded-xl bg-amber-400 text-gray-900 flex items-center justify-center">{{template "mkt_ic" (dict "N" "qr" "C" "w-5 h-5")}}</span>
+            <span class="min-w-0 flex-1"><span class="block text-sm font-semibold text-gray-900">Selesaikan pembayaran {{.Code}}</span><span class="block text-xs text-gray-600 truncate">Rp {{rp .TotalIDR}} · {{.Merchant.Display}}</span></span>
+            <span class="text-sm font-semibold text-amber-700">Bayar</span>
         </a>
+        {{else}}
+        <a href="/market/pesanan/{{.Code}}" class="flex items-center gap-3 rounded-2xl bg-emerald-50 ring-1 ring-emerald-200 px-4 py-3">
+            <span class="w-9 h-9 shrink-0 rounded-xl bg-emerald-600 text-white flex items-center justify-center">{{template "mkt_ic" (dict "N" "bag" "C" "w-5 h-5")}}</span>
+            <span class="min-w-0 flex-1"><span class="block text-sm font-semibold text-gray-900">{{.StatusText}} · {{.Code}}</span><span class="block text-xs text-gray-600 truncate">Kode ambil {{.PickupCode}} · {{.Merchant.Display}}</span></span>
+            <span class="text-sm font-semibold text-emerald-700">Lihat</span>
+        </a>
+        {{end}}{{end}}
+
+        {{/* Baris utama: layanan di Tanah Suci. */}}
+        <section aria-label="Layanan di Tanah Suci">
+            <div class="grid grid-cols-4 gap-2 text-center">
+                {{range (list
+                    "/bayar|qr|Bayar di toko|bg-emerald-600 text-white"
+                    "/market?kat=paket|gift|Paket oleh-oleh|bg-sky-100 text-sky-700"
+                    "/tanah-suci/oleh-oleh|ship|PO gelombang|bg-amber-100 text-amber-700"
+                    "/market?kat=kuliner|bowl|Kuliner RI|bg-rose-100 text-rose-700")}}{{$p := splitPipe .}}
+                <a href="{{index $p 0}}" class="group flex flex-col items-center gap-1.5">
+                    <span class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition {{index $p 3}}">{{template "mkt_ic" (dict "N" (index $p 1) "C" "w-7 h-7")}}</span>
+                    <span class="text-xs font-semibold text-gray-800 leading-tight">{{index $p 2}}</span>
+                </a>
+                {{end}}
+            </div>
+            {{/* Baris kedua: persiapan dari Indonesia. */}}
+            <div class="mt-4 rounded-2xl bg-gray-50 ring-1 ring-gray-100 p-2.5">
+                <p class="px-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Persiapan dari Indonesia</p>
+                <div class="mt-1.5 grid grid-cols-4 gap-1.5 text-center">
+                    {{range (list "/|coins|Cari paket" "/kalender|calendar|Kalender" "/simulasi|cube|Manasik 3D" "/persiapan|list|Checklist")}}{{$p := splitPipe .}}
+                    <a href="{{index $p 0}}" class="rounded-xl hover:bg-white px-1 py-2 flex flex-col items-center gap-1 text-gray-600">
+                        {{template "mkt_ic" (dict "N" (index $p 1) "C" "w-5 h-5")}}<span class="text-[11px] font-medium leading-tight">{{index $p 2}}</span>
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+        </section>
+
+        {{/* Chip kategori. */}}
+        <nav class="-mx-4 px-4 flex gap-2 overflow-x-auto no-scrollbar" aria-label="Kategori">
+            <a href="/market?kota={{.City.Key}}{{if .Q}}&q={{.Q}}{{end}}" class="shrink-0 rounded-full px-4 py-2 text-sm font-semibold ring-1 {{if not .Cat}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white text-gray-700 ring-gray-200 hover:ring-emerald-300{{end}}">Semua</a>
+            {{range .Cats}}<a href="/market?kota={{$.City.Key}}&kat={{.Key}}{{if $.Q}}&q={{$.Q}}{{end}}" class="shrink-0 inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3.5 py-1.5 text-sm font-semibold ring-1 {{if eq .Key $.Cat}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-white text-gray-700 ring-gray-200 hover:ring-emerald-300{{end}}">
+                <span class="w-6 h-6 rounded-full {{.Tone}} flex items-center justify-center">{{template "mkt_art" (dict "N" .Key "C" "w-5 h-5")}}</span>{{.Label}}</a>{{end}}
+        </nav>
+
+        {{if or .Q .Cat}}<p class="text-sm text-gray-600 -mt-2">{{len .Stores}} toko{{if .Q}} untuk “<b>{{.Q}}</b>”{{end}}{{with .CatLabel}} · {{.}}{{end}} · <a href="/market?kota={{.City.Key}}" class="font-semibold text-emerald-700">Hapus filter</a></p>{{end}}
+
+        {{if not .Stores}}
+        <div class="rounded-2xl bg-white ring-1 ring-gray-200 p-8 text-center">
+            <p class="font-semibold text-gray-900">Belum ada toko yang cocok</p>
+            <p class="mt-1 text-sm text-gray-500">Coba kata lain atau lihat kota {{range .Cities}}{{if ne .Key $.City.Key}}<a class="font-semibold text-emerald-700" href="/market?kota={{.Key}}">{{.Name}}</a>{{end}}{{end}}.</p>
+        </div>
+        {{else}}
+
+        {{if not (or .Q .Cat)}}
+        <section>
+            <h2 class="text-lg font-bold text-gray-900">Terdekat dari {{.City.Mosque}}</h2>
+            <p class="text-xs text-gray-500" data-dist-basis>Jarak dari pusat masjid · bisa diambil hari ini</p>
+            <div class="mt-3 -mx-4 px-4 flex gap-3 overflow-x-auto no-scrollbar snap-x" data-sort-list>
+                {{range .Near}}
+                <a href="/market/toko/{{.Slug}}" data-store data-lat="{{.Lat}}" data-lng="{{.Lng}}" data-dist="{{.Dist}}" class="snap-start shrink-0 w-56 rounded-2xl bg-white ring-1 ring-gray-200 hover:ring-emerald-300 overflow-hidden">
+                    <span class="relative h-28 {{.Tone}} flex items-center justify-center">
+                        {{template "mkt_art" (dict "N" .MainCat "C" "w-20 h-20 drop-shadow-sm")}}
+                        <span class="absolute left-2 bottom-2 inline-flex items-center gap-0.5 rounded-full bg-white/95 px-2 py-0.5 text-xs font-bold text-gray-800 shadow-sm">{{template "mkt_ic" (dict "N" "star" "C" "w-3.5 h-3.5 text-amber-400")}}{{.RatingLabel}} <span class="font-normal text-gray-500">({{.ReviewsLabel}})</span></span>
+                        {{if not .OpenNow}}<span class="absolute right-2 top-2 rounded-full bg-gray-900/70 text-white px-2 py-0.5 text-[11px] font-semibold">Tutup</span>{{end}}
+                    </span>
+                    <span class="block p-3">
+                        <span class="block font-semibold text-gray-900 truncate">{{.Display}}</span>
+                        <span class="block text-xs text-gray-500 truncate">{{.Tagline}}</span>
+                        <span class="mt-1.5 inline-flex items-center gap-1 text-xs text-emerald-700 font-medium">{{template "mkt_ic" (dict "N" "pin" "C" "w-3.5 h-3.5")}}<span data-dist-label>{{.DistL}}</span></span>
+                    </span>
+                </a>
+                {{end}}
+            </div>
+        </section>
         {{end}}
+
+        {{with .Picks}}
+        <section>
+            <h2 class="text-lg font-bold text-gray-900">{{if or $.Q $.Cat}}Barang{{else}}Paling dicari jamaah{{end}}</h2>
+            <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 [&>*]:min-w-0">
+                {{range .}}
+                <a href="/market/toko/{{.Store.Slug}}#i-{{.Key}}" class="rounded-2xl bg-white ring-1 ring-gray-200 hover:ring-emerald-300 overflow-hidden flex flex-col">
+                    <span class="relative h-24 {{catTone .Cat}} flex items-center justify-center">{{template "mkt_art" (dict "N" .Cat "C" "w-16 h-16")}}
+                        {{with .Badge}}<span class="absolute left-2 top-2 rounded-md bg-amber-400 text-gray-900 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">{{.}}</span>{{end}}</span>
+                    <span class="p-2.5 flex-1 flex flex-col">
+                        <span class="block text-sm font-semibold text-gray-900 leading-snug line-clamp-2">{{.Name}}</span>
+                        <span class="block text-[11px] text-gray-500 truncate">{{.Store.Short}}</span>
+                        <span class="mt-auto pt-1.5 block"><span class="text-sm font-bold text-gray-900 tabular-nums">SAR {{.SAR}}</span> <span class="text-[11px] text-gray-500 tabular-nums whitespace-nowrap">≈ Rp {{rp .IDR}}</span></span>
+                    </span>
+                </a>
+                {{end}}
+            </div>
+        </section>
+        {{end}}
+
+        <section>
+            <h2 class="text-lg font-bold text-gray-900">{{if or .Q .Cat}}Toko{{else}}Semua toko di {{.City.Name}}{{end}}</h2>
+            <div class="mt-3 grid gap-2.5 [&>*]:min-w-0" data-sort-list>
+                {{range .Stores}}{{template "mkt_store_row" .}}{{end}}
+            </div>
+        </section>
+        {{end}}
+
+        <section id="bantuan" class="rounded-2xl bg-white ring-1 ring-gray-200 p-4 scroll-mt-20">
+            <h2 class="font-bold text-gray-900">Cara pesan &amp; ambil</h2>
+            <ol class="mt-3 grid gap-3 text-sm">
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">1</span><span><b class="text-gray-900">Pilih toko &amp; barang.</b> Harga pasti dalam riyal, ada perkiraan rupiahnya. Tidak perlu tawar-menawar.</span></li>
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">2</span><span><b class="text-gray-900">Bayar QRIS dinamis.</b> Pindai dengan DANA, ShopeePay, GoPay, OVO, LinkAja, atau m-banking. Umrohku tidak menyimpan saldo.</span></li>
+                <li class="flex gap-3"><span class="w-7 h-7 shrink-0 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">3</span><span><b class="text-gray-900">Ambil di toko.</b> Ikuti petunjuk arah Google Maps, lalu tunjukkan kode ambil 6 angka ke kasir.</span></li>
+            </ol>
+            <p class="mt-3 text-[11px] text-gray-400">Demo: toko, harga, dan lokasi adalah contoh. QR berformat QRIS tetapi merchant dan penyelenggaranya fiktif, jadi tidak ada uang yang berpindah.</p>
+        </section>
     </div>
-    {{with .Draw}}
-    <a href="/undian/{{.ID}}" class="mt-5 flex items-center gap-3 rounded-3xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white p-5">
-        <span class="text-3xl">🎁</span>
-        <span class="min-w-0"><span class="block font-bold">{{.Title}}</span><span class="block text-sm text-emerald-100">Otomatis ikut setiap booking DP lunas. Gratis.</span></span>
-    </a>
-    {{end}}
 </main>
+<script>
+(function () {
+    var cities = {{.CitiesJSON}};
+    var cur = {{.City.Key}};
+    var btn = document.getElementById('geoBtn'), note = document.getElementById('geoNote'), title = document.getElementById('geoTitle');
+    function hav(a, b, c, d) {
+        var r = 6371000, p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dp = (c - a) * Math.PI / 180, dl = (d - b) * Math.PI / 180;
+        var x = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+        return 2 * r * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+    }
+    function label(m) {
+        var route = m * 1.3, d = m >= 1000 ? (m / 1000).toFixed(1).replace('.', ',') + ' km' : Math.round(m / 10) * 10 + ' m';
+        return route <= 2000 ? d + ' · ±' + Math.max(1, Math.ceil(route / 75)) + ' mnt jalan' : d + ' · ±' + Math.max(1, Math.ceil(route / 400)) + ' mnt naik mobil';
+    }
+    function apply(lat, lng) {
+        document.querySelectorAll('[data-store]').forEach(function (el) {
+            var m = hav(lat, lng, parseFloat(el.dataset.lat), parseFloat(el.dataset.lng));
+            el.dataset.dist = m;
+            var l = el.querySelector('[data-dist-label]');
+            if (l) l.textContent = label(m);
+        });
+        document.querySelectorAll('[data-sort-list]').forEach(function (list) {
+            Array.prototype.slice.call(list.children).sort(function (a, b) { return a.dataset.dist - b.dataset.dist; }).forEach(function (el) { list.appendChild(el); });
+        });
+        document.querySelectorAll('[data-dist-basis]').forEach(function (el) { el.textContent = 'Jarak dari lokasimu sekarang'; });
+        title.textContent = 'Lokasimu di ' + cities.filter(function (c) { return c.key === cur; })[0].name;
+        note.textContent = ' · jarak diperbarui';
+    }
+    function handle(lat, lng, fromStore) {
+        var best = null;
+        cities.forEach(function (c) { var d = hav(lat, lng, c.lat, c.lng); if (!best || d < best.d) best = { c: c, d: d }; });
+        if (best.d > 60000) { if (!fromStore) note.textContent = ' · kamu belum di Makkah/Madinah, jarak dari masjid'; return; }
+        if (best.c.key !== cur && !fromStore) { location.href = '/market?kota=' + best.c.key; return; }
+        if (best.c.key === cur) apply(lat, lng);
+    }
+    try {
+        var s = JSON.parse(sessionStorage.getItem('ukGeo') || 'null');
+        if (s && Date.now() - s.t < 10 * 60 * 1000) handle(s.lat, s.lng, true);
+    } catch (e) {}
+    btn.addEventListener('click', function () {
+        if (!navigator.geolocation) { note.textContent = ' · browser tidak mendukung lokasi'; return; }
+        note.textContent = ' · mencari lokasi…';
+        navigator.geolocation.getCurrentPosition(function (p) {
+            var lat = p.coords.latitude, lng = p.coords.longitude;
+            try { sessionStorage.setItem('ukGeo', JSON.stringify({ lat: lat, lng: lng, t: Date.now() })); } catch (e) {}
+            note.textContent = '';
+            handle(lat, lng, false);
+        }, function () { note.textContent = ' · izin lokasi ditolak'; }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    });
+})();
+</script>

@@ -21,12 +21,11 @@ func registerDemoQRIS(app *fiber.App) {
 	app.Post("/api/qris/decode", QRDecodeAPI)
 	app.Get("/riwayat", HistoryPage)
 	app.Get("/riwayat/qris/:code", QRReceipt)
-	app.Get("/market", MarketPage)
 	app.Get("/profil", ProfilePage)
 }
 
 func QRScanPage(c *fiber.Ctx) error {
-	return c.Render("demo/qris_scan", viewer(c, fiber.Map{"Title": "Scan QRIS", "Sample": demo.SampleQR(false), "SampleDyn": demo.SampleQR(true),
+	return c.Render("demo/qris_scan", viewer(c, fiber.Map{"Title": "Scan QRIS", "Sample": demo.SampleQR(false), "SampleDyn": demo.SampleQR(true), "SampleSA": demo.SampleQRSaudi(false), "SampleSADyn": demo.SampleQRSaudi(true),
 		"Err": c.Query("err")}))
 }
 
@@ -34,11 +33,20 @@ type qrView struct {
 	*qris.QR
 	Acquirer, Criteria, MCCLabel, PAN, NMIDv string
 	Fixed                                    bool // nominal dari QR (dinamis)
+	Cross                                    bool // simulasi lintas negara (SAR)
+	SAR                                      string
+	IDR, Rate                                int64
 }
 
 func viewQR(q *qris.QR) qrView {
-	return qrView{QR: q, Acquirer: q.AcquirerName(), Criteria: qris.CriteriaLabel(q.Criteria()), MCCLabel: qris.MCCLabel(q.MCC),
+	v := qrView{QR: q, Acquirer: q.AcquirerName(), Criteria: qris.CriteriaLabel(q.Criteria()), MCCLabel: qris.MCCLabel(q.MCC),
 		PAN: qris.MaskPAN(q.Acquirer().PAN), NMIDv: q.NMID(), Fixed: q.Dynamic && q.Amount > 0}
+	if q.IsSAR() {
+		v.Cross, v.Rate = true, demo.SARRateDemo
+		v.Fixed = q.Dynamic && q.AmountMinor > 0
+		v.SAR, v.IDR = demo.FormatMinor(q.AmountMinor), demo.SARToIDR(q.AmountMinor)
+	}
+	return v
 }
 
 // POST /bayar/decode (qr): baca QR hasil scan, tampilkan konfirmasi bayar.
@@ -76,11 +84,11 @@ func QRPay(c *fiber.Ctx) error {
 	if derr != nil {
 		return c.Redirect("/bayar?err="+urlq(derr.Error()), fiber.StatusSeeOther)
 	}
-	p, perr := demo.PayQR(demo.PayInput{UserID: u.ID, Holder: u.Name, QR: q, Amount: rupiahInput(c.FormValue("nominal")),
+	p, perr := demo.PayQR(demo.PayInput{UserID: u.ID, Holder: u.Name, QR: q, Amount: rupiahInput(c.FormValue("nominal")), ForeignMinor: sarInput(c.FormValue("nominal_sar")),
 		Fee: rupiahInput(c.FormValue("tip")), PIN: c.FormValue("pin")})
 	if perr != nil {
 		m := fiber.Map{"Title": "Bayar " + q.MerchantName, "Q": viewQR(q), "Raw": q.Payload, "Limit": demo.QRISLimit, "Err": perr.Error(),
-			"Fund": demo.Fund(u.ID, u.Name), "Nominal": c.FormValue("nominal"), "HideChat": true}
+			"Fund": demo.Fund(u.ID, u.Name), "Nominal": c.FormValue("nominal"), "NominalSAR": c.FormValue("nominal_sar"), "HideChat": true}
 		return demoRender(c, "demo/qris_bayar", viewer(c, m))
 	}
 	return c.Redirect("/riwayat/qris/"+p.Code+"?baru=1", fiber.StatusSeeOther)
@@ -113,6 +121,23 @@ func QRDecodeAPI(c *fiber.Ctx) error {
 	}})
 }
 
+// sarInput: "35,50" / "35.50" / "35" -> halalah (3550 / 3550 / 3500). Maksimal dua desimal.
+func sarInput(s string) int64 {
+	s = strings.TrimSpace(strings.Replace(s, ",", ".", 1))
+	whole, frac, _ := strings.Cut(s, ".")
+	if len(frac) > 2 {
+		frac = frac[:2]
+	}
+	for len(frac) < 2 {
+		frac += "0"
+	}
+	n := rupiahInput(whole)*100 + rupiahInput(frac)
+	if n > 100_000_000 {
+		return 0
+	}
+	return n
+}
+
 func QRReceipt(c *fiber.Ctx) error {
 	u, err := jamaahOrLogin(c)
 	if u == nil {
@@ -123,7 +148,7 @@ func QRReceipt(c *fiber.Ctx) error {
 		return c.Redirect("/riwayat")
 	}
 	return demoRender(c, "demo/qris_struk", viewer(c, fiber.Map{"Title": "Pembayaran " + p.MerchantName, "P": p, "New": c.Query("baru") == "1",
-		"MCCLabel": qris.MCCLabel(p.MCC), "Fund": demo.Fund(u.ID, u.Name)}))
+		"MCCLabel": qris.MCCLabel(p.MCC), "Fund": demo.Fund(u.ID, u.Name), "Market": demo.MarketOrderByQRRef(p.Code)}))
 }
 
 func HistoryPage(c *fiber.Ctx) error {
@@ -153,10 +178,6 @@ func HistoryPage(c *fiber.Ctx) error {
 		groups[len(groups)-1].Items = append(groups[len(groups)-1].Items, it)
 	}
 	return demoRender(c, "demo/riwayat", viewer(c, fiber.Map{"Title": "Riwayat", "Groups": groups, "Kind": kind}))
-}
-
-func MarketPage(c *fiber.Ctx) error {
-	return demoRender(c, "demo/market", viewer(c, fiber.Map{"Title": "Market", "Draw": demo.OpenDraw()}))
 }
 
 func ProfilePage(c *fiber.Ctx) error {

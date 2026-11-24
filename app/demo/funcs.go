@@ -224,6 +224,12 @@ func TemplateFuncs() map[string]any {
 		"ago":         Ago,
 		"maskName":    MaskName,
 		"fakeQR":      func(payload string, size int) template.HTML { return template.HTML(payments.FakeQRSVG(payload, size)) },
+		"qrSVG": func(payload string, size int) template.HTML {
+			if !strings.HasPrefix(payload, "0002") {
+				return template.HTML(payments.FakeQRSVG(payload, size))
+			}
+			return template.HTML(payments.QRSVG(payload, size))
+		},
 		"i64":         func(n int) int64 { return int64(n) },
 		"sub64":       func(a, b int64) int64 { return a - b },
 		"add64":       func(a, b int64) int64 { return a + b },
@@ -243,6 +249,7 @@ func TemplateFuncs() map[string]any {
 		},
 		"daysUntil": DaysUntil,
 		"tabActive": TabActive,
+		"catTone": CatTone,
 		"showTabbar": func(path, role string, hide any) bool {
 			if !enabled || hide == true {
 				return false
@@ -252,7 +259,7 @@ func TemplateFuncs() map[string]any {
 					return false
 				}
 			}
-			for _, p := range []string{"/portal", "/admin", "/mitra-pembiayaan", "/toko", "/bayar"} {
+			for _, p := range []string{"/portal", "/admin", "/mitra-pembiayaan", "/toko", "/bayar", "/market/"} {
 				if strings.HasPrefix(path, p) { // halaman bisnis & alur bayar tampil tanpa navigasi bawah
 					return false
 				}

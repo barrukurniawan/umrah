@@ -34,17 +34,18 @@
 {{define "ts_qris"}}
 <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
     <div class="flex items-center justify-between gap-2">
-        <h2 class="font-semibold text-gray-900">Bayar dengan QRIS</h2>
+        <h2 class="font-semibold text-gray-900">Bayar dengan QRIS dinamis</h2>
         <span class="text-[11px] font-bold tracking-wider rounded bg-gray-900 text-white px-1.5 py-0.5">QRIS · DEMO</span>
     </div>
     <div class="mt-4 flex flex-col sm:flex-row items-center gap-5">
-        <div class="rounded-2xl ring-1 ring-gray-200 p-2 bg-white shrink-0">{{fakeQR .Payload 200}}</div>
+        <div class="rounded-2xl ring-1 ring-gray-200 p-3 bg-white shrink-0">{{qrSVG .Payload 200}}</div>
         <div class="text-sm min-w-0 w-full">
             <p class="text-gray-500">{{.Label}}</p>
             <p class="text-2xl font-bold text-gray-900 tabular-nums">Rp {{rp .Amount}}</p>
             <p class="text-xs text-gray-500 mt-2">Penerima: <b class="text-gray-700">{{.Holder}}</b></p>
             <p class="text-xs text-gray-500">Kode: <span class="font-mono">{{.Code}}</span></p>
-            <p class="text-[11px] text-gray-400 mt-2">Kode QR ini ilustrasi dan tidak bisa dipindai. Di demo, pakai tombol di bawah.</p>
+            <p class="text-xs text-gray-600 mt-3">Pindai dengan aplikasi bank atau dompet digital apa pun yang mendukung QRIS: m-banking, GoPay, DANA, ShopeePay, OVO, LinkAja, dan lainnya. Nominal sudah terkunci.</p>
+            <p class="text-[11px] text-gray-400 mt-2">Diterbitkan lewat payment gateway berizin BI; dana dibagi otomatis ke penerima dan komisi umrohku. Di demo, merchant dan NMID fiktif sehingga aplikasi sungguhan akan menolak; pakai tombol di bawah.</p>
         </div>
     </div>
     <form method="POST" action="{{.Action}}" class="mt-5">

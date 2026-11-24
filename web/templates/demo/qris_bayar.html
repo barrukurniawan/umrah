@@ -7,22 +7,33 @@
         {{/* Merchant */}}
         <section class="rounded-3xl bg-white ring-1 ring-gray-200 p-5 text-center">
             <span class="mx-auto w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-700 text-xl font-bold flex items-center justify-center ring-1 ring-emerald-100">{{travelInitials .Q.MerchantName}}</span>
-            <h1 class="mt-3 text-lg font-bold text-gray-900 leading-tight">{{if .Q.MerchantName}}{{.Q.MerchantName}}{{else}}Merchant QRIS{{end}}</h1>
+            <h1 class="mt-3 text-lg font-bold text-gray-900 leading-tight">{{if .Q.MerchantName}}{{.Q.MerchantName}}{{else}}Merchant QR{{end}}</h1>
             <p class="text-sm text-gray-500">{{.Q.MerchantCity}}{{if .Q.MCCLabel}} · {{.Q.MCCLabel}}{{end}}</p>
             <div class="mt-2.5 flex flex-wrap justify-center gap-1.5 text-[11px] font-semibold">
-                <span class="rounded-full bg-gray-900 text-white px-2.5 py-1">QRIS</span>
+                {{if .Q.Cross}}<span class="rounded-full bg-amber-500 text-white px-2.5 py-1">QR Saudi · simulasi</span><span class="rounded-full bg-gray-100 text-gray-700 px-2.5 py-1">Lintas negara</span>{{else}}<span class="rounded-full bg-gray-900 text-white px-2.5 py-1">QRIS</span>{{end}}
                 <span class="rounded-full bg-emerald-50 text-emerald-800 px-2.5 py-1">{{if .Q.Dynamic}}Dinamis{{else}}Statis{{end}}</span>
                 {{if .Q.NMIDv}}<span class="rounded-full bg-gray-100 text-gray-600 px-2.5 py-1 font-mono">NMID {{.Q.NMIDv}}</span>{{end}}
             </div>
         </section>
 
         {{if .Err}}<p class="rounded-2xl bg-rose-50 text-rose-700 text-sm px-4 py-3">{{.Err}}</p>{{end}}
-        {{if not .Q.IsIDR}}<p class="rounded-2xl bg-amber-50 text-amber-800 text-sm px-4 py-3">QR ini bermata uang {{.Q.Currency}} (lintas negara). Demo baru mendukung pembayaran rupiah.</p>{{end}}
+        {{if .Q.Cross}}<p class="rounded-2xl bg-amber-50 text-amber-900 text-sm px-4 py-3"><b>Simulasi QR lintas negara.</b> Rancangan masa depan: pembayaran sungguhan hanya bisa lewat mitra penerbit berizin BI. Kurs contoh 1 SAR = Rp {{rp .Q.Rate}}, bukan kurs resmi.</p>
+        {{else if not .Q.IsIDR}}<p class="rounded-2xl bg-amber-50 text-amber-800 text-sm px-4 py-3">QR ini bermata uang {{.Q.Currency}} (lintas negara). Simulasi baru mendukung rupiah dan riyal Saudi.</p>{{end}}
 
         {{/* Nominal */}}
         <section class="rounded-3xl bg-white ring-1 ring-gray-200 p-5">
             <p class="text-xs font-semibold text-gray-500">Nominal</p>
-            {{if .Q.Fixed}}
+            {{if and .Q.Cross .Q.Fixed}}
+            <p class="mt-1 text-3xl font-bold text-gray-900 tabular-nums">SAR {{.Q.SAR}}</p>
+            <p class="mt-1 text-sm text-gray-600">Didebit <b class="tabular-nums">Rp {{rp .Q.IDR}}</b> dari rekening rupiah</p>
+            {{else if .Q.Cross}}
+            <label class="mt-1 flex items-baseline gap-2 border-b-2 border-amber-500 pb-1">
+                <span class="text-2xl font-bold text-gray-400">SAR</span>
+                <input id="nominalSar" name="nominal_sar" inputmode="decimal" autocomplete="off" required value="{{.NominalSAR}}" placeholder="0" data-rate="{{.Q.Rate}}"
+                    class="w-full min-w-0 bg-transparent text-3xl font-bold text-gray-900 tabular-nums outline-none border-0 p-0 focus:ring-0">
+            </label>
+            <p class="mt-2 text-sm text-gray-600">Didebit <b id="sarIdr" class="tabular-nums">Rp 0</b> dari rekening rupiah</p>
+            {{else if .Q.Fixed}}
             <p class="mt-1 text-3xl font-bold text-gray-900 tabular-nums">Rp {{rp .Q.Amount}}</p>
             <input type="hidden" name="nominal" value="{{.Q.Amount}}">
             {{else}}
@@ -35,12 +46,12 @@
                 {{range (list "10000" "25000" "50000" "100000")}}<button type="button" data-v="{{.}}" class="quick rounded-full bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200 px-3 py-1.5 hover:bg-emerald-100">{{rpShort (atoi64 .)}}</button>{{end}}
             </div>
             {{end}}
-            {{if eq .Q.TipIndicator "01"}}
+            {{if .Q.Cross}}{{else if eq .Q.TipIndicator "01"}}
             <label class="mt-4 block"><span class="text-xs font-semibold text-gray-500">Tip (opsional)</span>
                 <input name="tip" inputmode="numeric" placeholder="0" class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5 tabular-nums"></label>
             {{else if eq .Q.TipIndicator "02"}}<p class="mt-3 text-sm text-gray-600">Biaya layanan merchant <b>Rp {{rp .Q.TipFixed}}</b></p>
             {{else if eq .Q.TipIndicator "03"}}<p class="mt-3 text-sm text-gray-600">Biaya layanan merchant <b>{{.Q.TipPercent}}%</b> dari nominal</p>{{end}}
-            <p class="mt-3 text-[11px] text-gray-400">Batas QRIS Rp {{rp .Limit}} per transaksi.</p>
+            <p class="mt-3 text-[11px] text-gray-400">Batas Rp {{rp .Limit}} per transaksi.</p>
         </section>
 
         {{/* Sumber dana */}}
@@ -52,7 +63,7 @@
                 <div class="min-w-0 flex-1"><p class="font-semibold text-gray-900 truncate">{{.Bank}} {{.Masked}}</p><p class="text-xs text-gray-500">Saldo Rp {{rp .Balance}} <span class="text-gray-400">(contoh)</span></p></div>
                 <svg class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
             </div>
-            <p class="mt-3 text-[11px] text-gray-400">Diproses mitra PJP berizin BI. Umrohku tidak menyimpan saldo.</p>
+            <p class="mt-3 text-[11px] text-gray-400">{{if $.Q.Cross}}Rancangan: diproses mitra penerbit berizin BI lewat switching lintas negara. {{else}}Diproses mitra PJP berizin BI. {{end}}Umrohku tidak menyimpan saldo.</p>
             {{else}}
             <div class="mt-2">{{template "need_login" $}}</div>
             {{end}}
@@ -72,7 +83,7 @@
             </dl>
         </details>
 
-        {{if and .Fund .Q.IsIDR}}
+        {{if and .Fund (or .Q.IsIDR .Q.Cross)}}
         <button type="button" id="payBtn" class="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 shadow-lg shadow-emerald-900/10">Bayar</button>
         {{end}}
         <p class="text-center text-[11px] text-gray-400">Simulasi demo · tidak ada dana yang berpindah ke merchant</p>
@@ -104,12 +115,26 @@
         nom.addEventListener('input', function () { nom.value = fmt(nom.value); });
         document.querySelectorAll('.quick').forEach(function (b) { b.onclick = function () { nom.value = fmt(b.dataset.v); }; });
     }
+    var sar = document.getElementById('nominalSar');
+    function parseSar(v) { return parseFloat((v || '').replace(',', '.')) || 0; }
+    if (sar) {
+        var out = document.getElementById('sarIdr'), rate = Number(sar.dataset.rate);
+        var upd = function () {
+            sar.value = sar.value.replace(/[^0-9.,]/g, '');
+            out.textContent = 'Rp ' + fmt(String(Math.round(parseSar(sar.value) * rate)));
+        };
+        sar.addEventListener('input', upd); upd();
+    }
     var sheet = document.getElementById('pinSheet'), pin = '', btn = document.getElementById('payBtn');
     function draw() { document.querySelectorAll('#dots span').forEach(function (d, i) { d.classList.toggle('bg-emerald-600', i < pin.length); }); }
     function open() {
-        var amt = nom ? nom.value : '{{rp .Q.Amount}}';
+        var amt = nom ? nom.value : '{{rp .Q.Amount}}', label = 'Rp ' + amt;
         if (nom && !amt) { nom.focus(); return; }
-        document.getElementById('pinTotal').textContent = 'Bayar Rp ' + amt + ' ke {{.Q.MerchantName}}';
+        {{if .Q.Cross}}
+        if (sar && !(parseSar(sar.value) > 0)) { sar.focus(); return; }
+        label = 'SAR ' + (sar ? sar.value : '{{.Q.SAR}}');
+        {{end}}
+        document.getElementById('pinTotal').textContent = 'Bayar ' + label + ' ke {{.Q.MerchantName}}';
         pin = ''; draw(); sheet.classList.remove('hidden');
     }
     if (btn) btn.onclick = open;

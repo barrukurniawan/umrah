@@ -49,7 +49,8 @@ type QR struct {
 	Dynamic      bool // tag 01 = "12"
 	Accounts     []Account
 	MCC          string
-	Currency     string // ISO 4217 numerik, "360" = IDR
+	Currency     string // ISO 4217 numerik, "360" = IDR, "682" = SAR
+	AmountMinor  int64  // tag 54 dalam satuan terkecil (x100), untuk mata uang bersen seperti SAR
 	Amount       int64  // tag 54 (rupiah, tanpa desimal); 0 = diisi pembayar (statis)
 	TipIndicator string // tag 55: "" | 01 prompt | 02 fixed | 03 persen
 	TipFixed     int64  // tag 56
@@ -178,6 +179,7 @@ func Decode(raw string) (*QR, error) {
 			q.Currency = t.Value
 		case t.Tag == "54":
 			q.Amount = parseAmount(t.Value)
+			q.AmountMinor = parseMinor(t.Value)
 		case t.Tag == "55":
 			q.TipIndicator = t.Value
 		case t.Tag == "56":
@@ -225,6 +227,15 @@ func parseAmount(v string) int64 {
 	return int64(f + 0.5)
 }
 
+// parseMinor: "35.50" -> 3550, "35" -> 3500 (satuan terkecil, dua desimal).
+func parseMinor(v string) int64 {
+	f, err := strconv.ParseFloat(strings.Replace(v, ",", ".", 1), 64)
+	if err != nil || f < 0 {
+		return 0
+	}
+	return int64(f*100 + 0.5)
+}
+
 // ---- turunan untuk tampilan ----
 
 // Acquirer: akun pertama (tag 26..) adalah penyelenggara (acquirer) QR.
@@ -250,6 +261,23 @@ func (q *QR) Criteria() string {
 }
 
 func (q *QR) IsIDR() bool { return q.Currency == "" || q.Currency == "360" }
+
+// IsSAR: QR bermata uang riyal Saudi (ISO 4217 numerik 682).
+func (q *QR) IsSAR() bool { return q.Currency == "682" }
+
+// IsCrossBorder: QR merchant luar negeri (mata uang bukan rupiah).
+func (q *QR) IsCrossBorder() bool { return !q.IsIDR() }
+
+// CurrencyCode: kode huruf mata uang yang dikenal; selain itu kode numerik apa adanya.
+func (q *QR) CurrencyCode() string {
+	switch {
+	case q.IsIDR():
+		return "IDR"
+	case q.IsSAR():
+		return "SAR"
+	}
+	return q.Currency
+}
 
 func (q *QR) IsQRIS() bool {
 	for _, a := range q.Accounts {
@@ -288,7 +316,7 @@ func (q *QR) AcquirerName() string {
 	// "ID.CO.BANKXYZ.WWW" -> "BANKXYZ"
 	parts := strings.Split(g, ".")
 	for _, p := range parts {
-		if p != "ID" && p != "CO" && p != "COM" && p != "WWW" && p != "" {
+		if p != "ID" && p != "SA" && p != "CO" && p != "COM" && p != "WWW" && p != "" {
 			return p
 		}
 	}
@@ -297,7 +325,7 @@ func (q *QR) AcquirerName() string {
 
 // guidNames: potongan GUID tag 26 yang dikenal (urutan: yang lebih spesifik dulu).
 var guidNames = [][2]string{
-	{"BANKSYARIAHCONTOH", "Bank Syariah Contoh"}, {"GO-JEK", "GoPay"}, {"GOPAY", "GoPay"}, {"DANA", "DANA"}, {"SHOPEE", "ShopeePay"}, {"OVO", "OVO"},
+	{"BANKSYARIAHCONTOH", "Bank Syariah Contoh"}, {"PJPCONTOH", "PJP Contoh (berizin BI)"}, {"GO-JEK", "GoPay"}, {"GOPAY", "GoPay"}, {"DANA", "DANA"}, {"SHOPEE", "ShopeePay"}, {"OVO", "OVO"},
 	{"LINKAJA", "LinkAja"}, {"BANKMANDIRI", "Bank Mandiri"}, {"MANDIRI", "Bank Mandiri"}, {"BCA", "BCA"},
 	{"BRI", "BRI"}, {"BNI", "BNI"}, {"BSI", "Bank Syariah Indonesia"}, {"SYARIAHINDONESIA", "Bank Syariah Indonesia"},
 	{"CIMB", "CIMB Niaga"}, {"PERMATA", "Bank Permata"}, {"DANAMON", "Bank Danamon"}, {"BTN", "BTN"},

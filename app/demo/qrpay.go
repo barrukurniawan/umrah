@@ -20,6 +20,22 @@ import (
 
 const QRISLimit int64 = 10_000_000 // batas per transaksi QRIS (ketentuan umum BI)
 
+// SARRateDemo: kurs contoh 1 SAR = Rp 4.300 untuk SIMULASI QR lintas negara.
+// Bukan kurs resmi. Pembayaran sungguhan butuh mitra penerbit berizin BI yang terhubung ke switching
+// lintas negara; umrohku sendiri tidak bisa (dan tidak boleh) memprosesnya.
+const SARRateDemo int64 = 4300
+
+// SARToIDR mengonversi halalah (1/100 SAR) ke rupiah dengan kurs contoh.
+func SARToIDR(minor int64) int64 { return (minor*SARRateDemo + 50) / 100 }
+
+// FormatMinor: 3500 -> "35", 3550 -> "35,50".
+func FormatMinor(minor int64) string {
+	if minor%100 == 0 {
+		return Rp(minor / 100)
+	}
+	return fmt.Sprintf("%s,%02d", Rp(minor/100), minor%100)
+}
+
 type FundSource struct {
 	ID        uint   `gorm:"primaryKey"`
 	UserID    uint   `gorm:"uniqueIndex"`
@@ -51,14 +67,20 @@ type QRPayment struct {
 	Amount       int64
 	Fee          int64
 	Total        int64
-	Source       string `gorm:"size:80"`
-	Reference    string `gorm:"size:40"`
-	Payload      string `gorm:"type:text"`
-	Status       string `gorm:"size:20"` // berhasil
+	Source       string    `gorm:"size:80"`
+	Reference    string    `gorm:"size:40"`
+	Payload      string    `gorm:"type:text"`
+	Status       string    `gorm:"size:20"` // berhasil
+	Currency     string    `gorm:"size:3"`  // "" = IDR; "SAR" = simulasi lintas negara
+	ForeignMinor int64     // nominal asli dalam satuan terkecil (halalah)
+	Rate         int64     // kurs contoh rupiah per 1 unit mata uang asing
 	CreatedAt    time.Time `gorm:"index"`
 }
 
 func init() { RegisterModels(&FundSource{}, &QRPayment{}) }
+
+func (p QRPayment) Cross() bool     { return p.Currency != "" && p.Currency != "IDR" }
+func (p QRPayment) Foreign() string { return FormatMinor(p.ForeignMinor) }
 
 // Fund: sumber dana jamaah (dibuat otomatis untuk akun demo).
 func Fund(userID uint, holder string) *FundSource {
@@ -76,29 +98,43 @@ func TopUpFund(userID uint, amount int64) {
 }
 
 type PayInput struct {
-	UserID uint
-	Holder string
-	QR     *qris.QR
-	Amount int64 // untuk QR statis; QR dinamis memakai nominal di QR
-	Fee    int64 // tip yang diisi pembayar (indikator 01)
-	PIN    string
+	UserID       uint
+	Holder       string
+	QR           *qris.QR
+	Amount       int64 // untuk QR statis; QR dinamis memakai nominal di QR
+	ForeignMinor int64 // QR lintas negara statis: nominal dalam halalah yang diisi pembayar
+	Fee          int64 // tip yang diisi pembayar (indikator 01)
+	PIN          string
 }
 
 func PayQR(in PayInput) (*QRPayment, error) {
 	q := in.QR
-	if !q.IsIDR() {
-		return nil, errors.New("QR mata uang asing belum didukung di demo")
+	if q.IsCrossBorder() && !q.IsSAR() {
+		return nil, errors.New("simulasi lintas negara baru mendukung QR riyal Saudi (SAR)")
 	}
-	amount := in.Amount
-	if q.Dynamic && q.Amount > 0 {
-		amount = q.Amount
-	}
-	if amount < 1 {
-		return nil, errors.New("isi nominal pembayaran")
-	}
-	fee := q.Fee(amount)
-	if q.TipIndicator == "01" {
-		fee = max(0, min(in.Fee, amount))
+	var amount, fee, foreign int64
+	if q.IsSAR() {
+		// Simulasi lintas negara: nominal riyal dikonversi ke rupiah dengan kurs contoh. Tip tidak didukung.
+		foreign = in.ForeignMinor
+		if q.Dynamic && q.AmountMinor > 0 {
+			foreign = q.AmountMinor
+		}
+		if foreign < 1 {
+			return nil, errors.New("isi nominal pembayaran dalam riyal")
+		}
+		amount = SARToIDR(foreign)
+	} else {
+		amount = in.Amount
+		if q.Dynamic && q.Amount > 0 {
+			amount = q.Amount
+		}
+		if amount < 1 {
+			return nil, errors.New("isi nominal pembayaran")
+		}
+		fee = q.Fee(amount)
+		if q.TipIndicator == "01" {
+			fee = max(0, min(in.Fee, amount))
+		}
 	}
 	total := amount + fee
 	if total > QRISLimit {
@@ -123,14 +159,25 @@ func PayQR(in PayInput) (*QRPayment, error) {
 		if name == "" {
 			name = "Merchant QRIS"
 		}
+		cur, rate := "", int64(0)
+		if q.IsSAR() {
+			cur, rate = "SAR", SARRateDemo
+		}
 		p = &QRPayment{Code: "QR" + time.Now().In(WIB).Format("060102") + randCode(6), UserID: in.UserID, MerchantName: truncate(name, 80),
 			MerchantCity: truncate(q.MerchantCity, 60), NMID: q.NMID(), Acquirer: q.AcquirerName(), MCC: q.MCC, QRType: qrType,
 			Amount: amount, Fee: fee, Total: total, Source: f.Bank + " " + f.Masked(), Reference: truncate(q.Reference, 40),
-			Payload: q.Payload, Status: "berhasil", CreatedAt: time.Now()}
+			Payload: q.Payload, Status: "berhasil", Currency: cur, ForeignMinor: foreign, Rate: rate, CreatedAt: time.Now()}
 		return tx.Create(p).Error
 	})
 	if err != nil {
 		return nil, err
+	}
+	marketPaidByQR(q, p)
+	if p.Cross() {
+		Notify(UserAudience(in.UserID), "wa", in.Holder, "Simulasi bayar QR Saudi berhasil",
+			fmt.Sprintf("SAR %s (Rp %s, kurs contoh Rp %s) ke %s (%s) dari %s. Ref %s. Simulasi demo, tidak ada dana yang berpindah ke merchant.",
+				p.Foreign(), Rp(total), Rp(p.Rate), p.MerchantName, p.MerchantCity, p.Source, p.Code), "/riwayat/qris/"+p.Code)
+		return p, nil
 	}
 	Notify(UserAudience(in.UserID), "wa", in.Holder, "Pembayaran QRIS berhasil",
 		fmt.Sprintf("Rp %s ke %s (%s) berhasil dibayar dari %s. Ref %s. Simulasi demo, tidak ada dana yang berpindah ke merchant.",
@@ -165,7 +212,11 @@ func History(userID uint, kind string, limit int) []HistoryItem {
 		var ps []QRPayment
 		DB.Where("user_id = ?", userID).Order("created_at DESC").Limit(limit).Find(&ps)
 		for _, p := range ps {
-			out = append(out, HistoryItem{At: p.CreatedAt, Kind: "qris", Title: p.MerchantName, Sub: "QRIS · " + p.MerchantCity, Amount: p.Total, Out: true, Status: p.Status, Link: "/riwayat/qris/" + p.Code})
+			sub := "QRIS · " + p.MerchantCity
+			if p.Cross() {
+				sub = fmt.Sprintf("QR Saudi (simulasi) · %s · SAR %s", p.MerchantCity, p.Foreign())
+			}
+			out = append(out, HistoryItem{At: p.CreatedAt, Kind: "qris", Title: p.MerchantName, Sub: sub, Amount: p.Total, Out: true, Status: p.Status, Link: "/riwayat/qris/" + p.Code})
 		}
 	}
 	if kind == "" || kind == "umroh" {
@@ -200,6 +251,15 @@ func History(userID uint, kind string, limit int) []HistoryItem {
 		for _, o := range os {
 			out = append(out, HistoryItem{At: *o.PaidAt, Kind: "belanja", Title: "Oleh-oleh " + o.Code, Sub: "Dikirim ke " + o.City, Amount: o.Total, Out: true, Status: o.Status, Link: "/tanah-suci/oleh-oleh/" + o.Code})
 		}
+		var ms []MarketOrder
+		DB.Where("user_id = ? AND paid_at IS NOT NULL", userID).Find(&ms)
+		for _, o := range ms {
+			name := o.MerchantSlug
+			if m := o.Merchant(); m != nil {
+				name = m.Name
+			}
+			out = append(out, HistoryItem{At: *o.PaidAt, Kind: "belanja", Title: name, Sub: fmt.Sprintf("Ambil di toko · %d barang · SAR %d", o.ItemCount(), o.TotalSAR), Amount: o.TotalIDR, Out: true, Status: o.Status, Link: "/market/pesanan/" + o.Code})
+		}
 		var vs []Voucher
 		DB.Where("user_id = ? AND paid_at IS NOT NULL", userID).Find(&vs)
 		for _, v := range vs {
@@ -223,6 +283,19 @@ func SampleQR(dynamic bool) string {
 		body = t("00", "01") + t("01", "12") + t("26", acq) + t("51", nmid) + t("52", "5812") + t("53", "360") + t("54", "35000")
 	}
 	body += t("58", "ID") + t("59", "Kedai Kurma Contoh") + t("60", "Bandung") + t("61", "40115") + t("62", t("07", "KASIR01"))
+	return qris.WithCRC(body)
+}
+
+// SampleQRSaudi: QR merchant fiktif di Makkah (negara SA, mata uang 682) dalam format EMVCo MPM,
+// untuk mencoba simulasi lintas negara. Bukan QR penyelenggara sungguhan.
+func SampleQRSaudi(dynamic bool) string {
+	t := func(tag, v string) string { return fmt.Sprintf("%s%02d%s", tag, len([]rune(v)), v) }
+	acq := t("00", "SA.COM.PENYELENGGARACONTOH") + t("01", "682099990000054321") + t("02", "MKH000321")
+	body := t("00", "01") + t("01", "11") + t("26", acq) + t("52", "5499") + t("53", "682")
+	if dynamic {
+		body = t("00", "01") + t("01", "12") + t("26", acq) + t("52", "5499") + t("53", "682") + t("54", "35.50")
+	}
+	body += t("58", "SA") + t("59", "Toko Kurma Contoh") + t("60", "Makkah") + t("62", t("07", "KASIR01"))
 	return qris.WithCRC(body)
 }
 

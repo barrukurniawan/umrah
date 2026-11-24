@@ -1,0 +1,29 @@
+<main class="max-w-md mx-auto px-4 py-5 pb-10">
+    <div class="flex items-center gap-3">
+        <a href="/market" class="w-10 h-10 rounded-full bg-white ring-1 ring-gray-200 flex items-center justify-center text-gray-700" aria-label="Kembali ke market">{{template "mkt_ic" (dict "N" "back" "C" "w-5 h-5")}}</a>
+        <h1 class="text-xl font-bold text-gray-900">Pesanan market</h1>
+    </div>
+    {{if not .Orders}}
+    <div class="mt-6 rounded-2xl bg-white ring-1 ring-gray-200 p-8 text-center">
+        <p class="font-semibold text-gray-900">Belum ada pesanan</p>
+        <p class="mt-1 text-sm text-gray-500">Pilih toko terdekat, pesan, lalu ambil.</p>
+        <a href="/market" class="mt-4 inline-block rounded-xl bg-emerald-600 text-white font-semibold px-5 py-2.5">Buka market</a>
+    </div>
+    {{else}}
+    <div class="mt-4 grid gap-2.5 [&>*]:min-w-0">
+        {{range .Orders}}{{$m := .Merchant}}
+        <a href="/market/pesanan/{{.Code}}" class="flex items-center gap-3 rounded-2xl bg-white ring-1 ring-gray-200 hover:ring-emerald-300 p-3">
+            <span class="w-12 h-12 shrink-0 rounded-xl {{$m.Tone}} flex items-center justify-center">{{template "mkt_art" (dict "N" $m.MainCat "C" "w-9 h-9")}}</span>
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold text-gray-900 truncate">{{$m.Display}}</span>
+                <span class="block text-xs text-gray-500">{{.Code}} · {{.ItemCount}} barang · {{tglJam .CreatedAt}}</span>
+            </span>
+            <span class="text-right shrink-0">
+                <span class="block text-sm font-semibold tabular-nums">Rp {{rp .TotalIDR}}</span>
+                <span class="inline-block mt-0.5 rounded-full px-2 py-0.5 text-[11px] font-semibold {{if .Waiting}}bg-amber-100 text-amber-800{{else if eq .Status "kedaluwarsa"}}bg-gray-100 text-gray-500{{else if eq .Status "diambil"}}bg-gray-100 text-gray-700{{else}}bg-emerald-100 text-emerald-800{{end}}">{{.StatusText}}</span>
+            </span>
+        </a>
+        {{end}}
+    </div>
+    {{end}}
+</main>

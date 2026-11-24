@@ -27,14 +27,42 @@ type Merchant struct {
 	Hours                  string // jam buka (contoh)
 	Landmark               string // patokan lokasi
 	Walk                   string // jarak (perkiraan)
+
+	// Market Tanah Suci (lihat market.go). Lokasi = perkiraan/ilustrasi, bukan alamat toko sungguhan.
+	Short    string  // nama pendek untuk QRIS (maks 25 karakter)
+	Lat, Lng float64 // koordinat ilustrasi
+	Rating   float64
+	Reviews  int
+	Cats     string // kategori utama, dipisah koma (kategori pertama = gambar toko)
+	MCC      string // kode kategori merchant untuk QR
+	Tagline  string
+	Prep     int // menit menyiapkan pesanan
 }
 
-// Merchants: Merchants[0] dipakai pengalih peran sebagai "Toko" bawaan.
+// Merchants: Merchants[0] dipakai pengalih peran sebagai "Toko" bawaan. Semua FIKTIF.
 var Merchants = []Merchant{
-	{Slug: "makkah-ajyad", Name: "Toko Kurma Ajyad (contoh)", City: "Makkah", Area: "Ajyad", Hours: "08.00–24.00", Landmark: "Jalan Ajyad, sisi selatan Masjidil Haram", Walk: "±7 menit jalan kaki"},
-	{Slug: "makkah-misfalah", Name: "Toko Oleh-oleh Misfalah (contoh)", City: "Makkah", Area: "Misfalah", Hours: "09.00–23.00", Landmark: "Kawasan Misfalah, dekat deretan hotel jamaah Asia", Walk: "±12 menit jalan kaki"},
-	{Slug: "madinah-markaziyah", Name: "Toko Kurma Markaziyah (contoh)", City: "Madinah", Area: "Markaziyah Utara", Hours: "08.00–23.30", Landmark: "Markaziyah Utara, arah pintu utara Masjid Nabawi", Walk: "±5 menit jalan kaki"},
-	{Slug: "madinah-quba", Name: "Toko Oleh-oleh Quba (contoh)", City: "Madinah", Area: "Quba", Hours: "07.00–22.00", Landmark: "Kawasan Quba, dekat Masjid Quba", Walk: "±15 menit naik mobil dari Nabawi"},
+	{Slug: "makkah-ajyad", Name: "Toko Kurma Ajyad (contoh)", City: "Makkah", Area: "Ajyad", Hours: "08.00–24.00", Landmark: "Jalan Ajyad, sisi selatan Masjidil Haram", Walk: "±7 menit jalan kaki",
+		Short: "Kurma Ajyad", Lat: 21.41905, Lng: 39.82695, Rating: 4.8, Reviews: 1240, Cats: "kurma,cokelat,kacang,paket", MCC: "5441", Tagline: "Kurma Ajwa, Sukari, dan cokelat kurma", Prep: 15},
+	{Slug: "makkah-misfalah", Name: "Toko Oleh-oleh Misfalah (contoh)", City: "Makkah", Area: "Misfalah", Hours: "09.00–23.00", Landmark: "Kawasan Misfalah, dekat deretan hotel jamaah Asia", Walk: "±12 menit jalan kaki",
+		Short: "Oleh-oleh Misfalah", Lat: 21.41520, Lng: 39.82380, Rating: 4.7, Reviews: 860, Cats: "sajadah,tasbih,kurma,paket", MCC: "5947", Tagline: "Sajadah, tasbih, peci, dan paket oleh-oleh", Prep: 20},
+	{Slug: "madinah-markaziyah", Name: "Toko Kurma Markaziyah (contoh)", City: "Madinah", Area: "Markaziyah Utara", Hours: "08.00–23.30", Landmark: "Markaziyah Utara, arah pintu utara Masjid Nabawi", Walk: "±5 menit jalan kaki",
+		Short: "Kurma Markaziyah", Lat: 24.47035, Lng: 39.61205, Rating: 4.9, Reviews: 2130, Cats: "kurma,cokelat,kacang,paket", MCC: "5441", Tagline: "Ajwa Madinah langsung dari kebun mitra", Prep: 15},
+	{Slug: "madinah-quba", Name: "Toko Oleh-oleh Quba (contoh)", City: "Madinah", Area: "Quba", Hours: "07.00–22.00", Landmark: "Kawasan Quba, dekat Masjid Quba", Walk: "±15 menit naik mobil dari Nabawi",
+		Short: "Oleh-oleh Quba", Lat: 24.43960, Lng: 39.61720, Rating: 4.6, Reviews: 540, Cats: "kurma,sajadah,tasbih,paket", MCC: "5947", Tagline: "Mampir setelah salat di Masjid Quba", Prep: 20},
+	{Slug: "madinah-babsalam", Name: "Galeri Sajadah Bab As-Salam (contoh)", City: "Madinah", Area: "Bab As-Salam", Hours: "08.00–24.00", Landmark: "Sisi barat Masjid Nabawi, dekat Bab As-Salam", Walk: "±4 menit jalan kaki",
+		Short: "Galeri Sajadah Salam", Lat: 24.46690, Lng: 39.60905, Rating: 4.8, Reviews: 970, Cats: "sajadah,tasbih,parfum", MCC: "5947", Tagline: "Sajadah tebal, sajadah travel, tasbih, dan peci", Prep: 15},
+	{Slug: "madinah-abaya", Name: "Butik Abaya Thaybah (contoh)", City: "Madinah", Area: "Markaziyah Selatan", Hours: "09.00–23.30", Landmark: "Markaziyah Selatan, arah pelataran selatan Masjid Nabawi", Walk: "±6 menit jalan kaki",
+		Short: "Butik Abaya Thaybah", Lat: 24.46440, Lng: 39.61010, Rating: 4.7, Reviews: 610, Cats: "abaya", MCC: "5621", Tagline: "Abaya, gamis, dan khimar ukuran Indonesia", Prep: 20},
+	{Slug: "madinah-anshar", Name: "Parfum & Bakhoor Al-Anshar (contoh)", City: "Madinah", Area: "Markaziyah Timur", Hours: "09.00–24.00", Landmark: "Sisi timur Masjid Nabawi, dekat pintu Baqi", Walk: "±5 menit jalan kaki",
+		Short: "Parfum Al-Anshar", Lat: 24.46840, Lng: 39.61500, Rating: 4.8, Reviews: 780, Cats: "parfum,cokelat", MCC: "5977", Tagline: "Parfum non-alkohol, oud, dan bakhoor", Prep: 10},
+	{Slug: "madinah-nusantara", Name: "Dapur Nusantara Madinah (contoh)", City: "Madinah", Area: "Markaziyah Utara", Hours: "10.00–23.00", Landmark: "Lantai dasar deretan hotel jamaah Indonesia, utara Masjid Nabawi", Walk: "±7 menit jalan kaki",
+		Short: "Dapur Nusantara MDN", Lat: 24.47160, Lng: 39.60940, Rating: 4.6, Reviews: 1520, Cats: "kuliner", MCC: "5812", Tagline: "Nasi padang, rendang, bakso, dan teh tarik", Prep: 20},
+	{Slug: "makkah-jabalomar", Name: "Butik Abaya Jabal Omar (contoh)", City: "Makkah", Area: "Jabal Omar", Hours: "09.00–24.00", Landmark: "Kawasan Jabal Omar, sisi barat Masjidil Haram", Walk: "±8 menit jalan kaki",
+		Short: "Abaya Jabal Omar", Lat: 21.42030, Lng: 39.82160, Rating: 4.7, Reviews: 430, Cats: "abaya,parfum", MCC: "5621", Tagline: "Abaya hitam klasik dan bordir", Prep: 20},
+	{Slug: "makkah-ibrahim", Name: "Parfum Ibrahim Khalil (contoh)", City: "Makkah", Area: "Ibrahim Khalil", Hours: "08.00–24.00", Landmark: "Jalan Ibrahim Khalil, selatan Masjidil Haram", Walk: "±9 menit jalan kaki",
+		Short: "Parfum Ibrahim Khalil", Lat: 21.41760, Lng: 39.82480, Rating: 4.8, Reviews: 690, Cats: "parfum,tasbih,sajadah", MCC: "5977", Tagline: "Oud, misk, dan minyak wangi non-alkohol", Prep: 10},
+	{Slug: "makkah-syisyah", Name: "Warung Nusantara Syisyah (contoh)", City: "Makkah", Area: "Syisyah", Hours: "10.00–24.00", Landmark: "Kawasan Syisyah, dekat hotel transit jamaah Indonesia", Walk: "±12 menit naik mobil dari Haram",
+		Short: "Warung Nusantara MKH", Lat: 21.43420, Lng: 39.84560, Rating: 4.6, Reviews: 1180, Cats: "kuliner", MCC: "5812", Tagline: "Masakan rumahan Indonesia, bisa dibungkus", Prep: 25},
 }
 
 func MerchantBySlug(s string) *Merchant {

@@ -1,0 +1,54 @@
+<main class="max-w-md mx-auto px-4 py-5 pb-12 space-y-4">
+    <div class="flex items-center gap-3">
+        <a href="/market?kota={{.M.CityKey}}" class="w-10 h-10 rounded-full bg-white ring-1 ring-gray-200 flex items-center justify-center text-gray-700" aria-label="Kembali ke market">{{template "mkt_ic" (dict "N" "back" "C" "w-5 h-5")}}</a>
+        <div class="min-w-0"><h1 class="text-lg font-bold text-gray-900">Pesanan {{.O.Code}}</h1><p class="text-sm text-gray-500 truncate">{{.M.Display}} · toko contoh</p></div>
+    </div>
+
+    {{template "demo/market_status" .}}
+
+    <section class="rounded-2xl bg-white ring-1 ring-gray-200 overflow-hidden">
+        <div class="p-4 flex items-start gap-3">
+            <span class="w-11 h-11 shrink-0 rounded-xl {{.M.Tone}} flex items-center justify-center">{{template "mkt_art" (dict "N" .M.MainCat "C" "w-8 h-8")}}</span>
+            <div class="min-w-0 flex-1">
+                <p class="font-semibold text-gray-900">{{.M.Display}}</p>
+                <p class="text-xs text-gray-500">{{.M.Landmark}}</p>
+                <p class="mt-0.5 text-xs text-emerald-700 font-medium">{{.Dist}} dari {{.City.Mosque}} · buka {{.M.Hours}}</p>
+            </div>
+        </div>
+        <div class="px-4 pb-4 grid grid-cols-2 gap-2">
+            <a href="{{.M.MapsDir}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5">{{template "mkt_ic" (dict "N" "route" "C" "w-4 h-4")}}Petunjuk arah</a>
+            <a href="/market/toko/{{.M.Slug}}" class="inline-flex items-center justify-center rounded-xl bg-emerald-50 ring-1 ring-emerald-200 text-emerald-800 text-sm font-semibold py-2.5">Lihat toko</a>
+        </div>
+    </section>
+
+    <section class="rounded-2xl bg-white ring-1 ring-gray-200 p-4">
+        <div class="flex items-center justify-between"><h2 class="font-bold text-gray-900">Rincian</h2><span class="text-xs text-gray-500">{{tglJam .O.CreatedAt}}</span></div>
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+            {{range .O.Lines}}<li class="py-2 flex justify-between gap-3"><span class="min-w-0"><span class="font-medium text-gray-900">{{.Qty}}×</span> {{.Name}}</span><span class="tabular-nums text-gray-700">SAR {{.Sub}}</span></li>{{end}}
+        </ul>
+        <dl class="mt-2 pt-2 border-t border-gray-100 text-sm space-y-1">
+            <div class="flex justify-between"><dt class="text-gray-500">Pengambil</dt><dd>{{.O.Name}}</dd></div>
+            <div class="flex justify-between"><dt class="text-gray-500">Waktu ambil</dt><dd>{{.O.SlotLabel}}</dd></div>
+            {{with .O.Note}}<div class="flex justify-between gap-3"><dt class="text-gray-500">Catatan</dt><dd class="text-right">{{.}}</dd></div>{{end}}
+            <div class="flex justify-between font-bold text-gray-900"><dt>Total</dt><dd class="tabular-nums">Rp {{rp .O.TotalIDR}}</dd></div>
+        </dl>
+    </section>
+    <p class="text-center text-[11px] text-gray-400">Simulasi demo · toko dan lokasi contoh · tidak ada dana yang berpindah.</p>
+</main>
+<script>
+(function () {
+    function tick() {
+        var el = document.querySelector('[data-exp]');
+        if (!el) return;
+        var s = Math.max(0, Math.round((parseInt(el.dataset.exp, 10) - Date.now()) / 1000));
+        el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        if (s === 0 && !el.dataset.done) { el.dataset.done = '1'; var b = document.getElementById('mkst'); if (b && window.htmx && b.getAttribute('hx-get')) htmx.ajax('GET', b.getAttribute('hx-get'), { target: b, swap: 'outerHTML' }); }
+    }
+    tick(); setInterval(tick, 1000);
+    // Saat status berubah dari menunggu bayar ke dibayar, getarkan HP (bila didukung).
+    document.body.addEventListener('htmx:afterSwap', function (e) {
+        var b = document.getElementById('mkst');
+        if (b && b.dataset.status === 'dibayar' && navigator.vibrate) { try { navigator.vibrate(120); } catch (x) {} }
+    });
+})();
+</script>

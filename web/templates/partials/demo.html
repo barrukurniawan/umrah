@@ -177,11 +177,10 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
         <div class="grid grid-cols-5 items-end">
             {{range (list "/|home|Beranda" "/market|market|Market" "/bayar|qr|Bayar" "/riwayat|history|Riwayat" "/profil|user|Profil")}}{{$p := splitPipe .}}
             {{if eq (index $p 1) "qr"}}
-            <a href="/bayar" class="group flex flex-col items-center -mt-7 pb-1.5" aria-label="Scan & bayar QRIS">
+            <a href="/bayar" class="group flex items-center justify-center -mt-6 pb-2" aria-label="Scan & bayar QRIS" title="Scan & bayar QRIS">
                 <span class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center ring-[5px] ring-white shadow-lg shadow-emerald-900/25 group-active:scale-95 transition-transform">
-                    {{template "tabicon" (dict "N" "qr" "C" "w-7 h-7")}}
+                    {{template "tabicon" (dict "N" "qr" "C" "w-8 h-8")}}
                 </span>
-                <span class="mt-1 text-[11px] font-semibold {{if eq $act "qr"}}text-emerald-700{{else}}text-gray-600{{end}}">QRIS</span>
             </a>
             {{else}}
             {{$on := eq $act (index $p 1)}}

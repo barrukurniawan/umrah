@@ -35,6 +35,44 @@
             {{template "stat" (dict "Label" "Kurs voucher (contoh)" "Value" (printf "Rp %s" (rp .Rate)) "Note" "per 1 SAR" "Tone" "gray")}}
         </div>
 
+        {{if eq .Tab "/toko/pesanan"}}
+        <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">
+            <div class="flex flex-wrap items-end justify-between gap-2">
+                <div><h2 class="font-bold text-gray-900">Pesanan market (ambil di toko)</h2>
+                <p class="text-sm text-gray-500">Pesanan yang sudah dibayar jamaah lewat QRIS dinamis. Siapkan barang, tandai siap, lalu serahkan setelah kode ambil cocok.</p></div>
+                <span class="text-sm text-gray-500">{{.OpenMarket}} belum diambil</span>
+            </div>
+            {{with .MktErr}}<p class="mt-3 rounded-xl bg-rose-50 ring-1 ring-rose-200 text-rose-700 text-sm px-4 py-2.5">{{$.MktKode}}: {{.}}</p>{{end}}
+            {{with .MktOK}}<p class="mt-3 rounded-xl bg-emerald-50 ring-1 ring-emerald-200 text-emerald-800 text-sm px-4 py-2.5">Pesanan {{.}} diperbarui.</p>{{end}}
+            {{if not .Market}}
+            <p class="mt-4 rounded-xl bg-gray-50 text-sm text-gray-500 px-4 py-6 text-center">Belum ada pesanan. Coba pesan dari <a href="/market/toko/{{.M.Slug}}" class="font-semibold text-emerald-700 underline">halaman toko ini</a> sebagai jamaah.</p>
+            {{else}}
+            <div class="mt-4 grid gap-3 md:grid-cols-2 [&>*]:min-w-0">
+                {{range .Market}}
+                <article class="rounded-2xl ring-1 {{if eq .Status "diambil"}}ring-gray-200 bg-gray-50{{else if eq .Status "siap"}}ring-emerald-300 bg-emerald-50/40{{else}}ring-amber-300 bg-amber-50/40{{end}} p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0"><p class="font-mono text-sm font-bold text-gray-900">{{.Code}}</p><p class="text-xs text-gray-500">{{.Name}} · {{.SlotLabel}} · dibayar {{with .PaidAt}}{{tglJam .}}{{end}}</p></div>
+                        <span class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold {{if eq .Status "diambil"}}bg-gray-200 text-gray-700{{else if eq .Status "siap"}}bg-emerald-600 text-white{{else}}bg-amber-400 text-gray-900{{end}}">{{.StatusText}}</span>
+                    </div>
+                    <ul class="mt-2 text-sm text-gray-700">{{range .Lines}}<li class="flex justify-between gap-2"><span>{{.Qty}}× {{.Name}}</span><span class="tabular-nums text-gray-500">SAR {{.Sub}}</span></li>{{end}}</ul>
+                    {{with .Note}}<p class="mt-1 text-xs text-amber-800">Catatan: {{.}}</p>{{end}}
+                    <p class="mt-2 text-sm font-semibold text-gray-900">SAR {{.TotalSAR}} <span class="font-normal text-gray-500">· Rp {{rp .TotalIDR}} · {{.PaidVia}}</span></p>
+                    {{if ne .Status "diambil"}}
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        {{if eq .Status "dibayar"}}<form method="POST" action="/toko/pesanan/{{.Code}}/siap"><button class="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-3 py-2">Tandai siap diambil</button></form>{{end}}
+                        <form method="POST" action="/toko/pesanan/{{.Code}}/diambil" class="flex items-center gap-2">
+                            <input name="kode" inputmode="numeric" maxlength="6" placeholder="Kode ambil" required class="w-28 rounded-lg ring-1 ring-gray-300 border-0 px-2.5 py-2 text-sm font-mono tracking-widest">
+                            <button class="rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold px-3 py-2">Serahkan</button>
+                        </form>
+                    </div>
+                    {{else}}<p class="mt-2 text-xs text-gray-500">Diserahkan {{with .DoneAt}}{{tglJam .}}{{end}}</p>{{end}}
+                </article>
+                {{end}}
+            </div>
+            {{end}}
+        </section>
+        {{end}}
+
         {{if eq .Tab "/toko"}}
         <div class="grid lg:grid-cols-2 gap-6 items-start">
             <section class="bg-white rounded-2xl ring-1 ring-gray-200 p-5">

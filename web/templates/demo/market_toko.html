@@ -1,0 +1,122 @@
+<main class="max-w-3xl mx-auto pb-32">
+    <section class="relative h-44 sm:h-52 {{.S.Tone}} flex items-center justify-center overflow-hidden sm:rounded-b-[2rem]">
+        <div class="absolute inset-0 opacity-40" style="background:radial-gradient(circle at 20% 20%,#fff 0,transparent 45%),radial-gradient(circle at 85% 80%,#fff 0,transparent 40%)"></div>
+        {{template "mkt_art" (dict "N" .S.MainCat "C" "relative w-28 h-28 sm:w-32 sm:h-32 drop-shadow")}}
+        <a href="/market?kota={{.S.CityKey}}" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white/95 shadow flex items-center justify-center text-gray-800" aria-label="Kembali ke market">{{template "mkt_ic" (dict "N" "back" "C" "w-5 h-5")}}</a>
+        <span class="absolute right-3 top-3 rounded-full bg-white/95 shadow px-2.5 py-1 text-[11px] font-semibold text-gray-600">Toko contoh</span>
+    </section>
+
+    <div class="px-4 -mt-6 relative space-y-4">
+        <section class="rounded-2xl bg-white shadow-lg shadow-gray-900/5 ring-1 ring-gray-100 p-4">
+            <h1 class="text-xl font-bold text-gray-900 leading-snug">{{.S.Display}}</h1>
+            <p class="text-sm text-gray-500">{{.S.Tagline}}</p>
+            <div class="mt-3 grid grid-cols-3 divide-x divide-gray-100 text-center">
+                <div class="px-1"><p class="inline-flex items-center gap-1 font-bold text-gray-900">{{template "mkt_ic" (dict "N" "star" "C" "w-4 h-4 text-amber-400")}}{{.S.RatingLabel}}</p><p class="text-[11px] text-gray-500">{{.S.ReviewsLabel}} ulasan</p></div>
+                <div class="px-1"><p class="font-bold text-gray-900">{{.S.DistA}}</p><p class="text-[11px] text-gray-500">{{.S.DistB}} dari {{.City.MosqueShort}}</p></div>
+                <div class="px-1"><p class="font-bold {{if .S.OpenNow}}text-emerald-700{{else}}text-gray-500{{end}}">{{if .S.OpenNow}}Buka{{else}}Tutup{{end}}</p><p class="text-[11px] text-gray-500">{{.S.Hours}} WAS</p></div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5 text-[11px] font-semibold">
+                <span class="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1">Ambil di toko ±{{.S.Prep}} mnt</span>
+                <span class="rounded-full bg-sky-50 text-sky-700 px-2.5 py-1">Bayar QRIS dinamis</span>
+                <span class="rounded-full bg-amber-50 text-amber-700 px-2.5 py-1">Harga pasti</span>
+            </div>
+        </section>
+
+        {{/* Peta + petunjuk arah. */}}
+        <section class="rounded-2xl bg-white ring-1 ring-gray-200 overflow-hidden">
+            <div class="relative h-44 bg-emerald-50">
+                <iframe title="Peta lokasi {{.S.Name}}" src="{{.S.MapsEmbed}}" class="absolute inset-0 w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="p-3.5 flex items-start gap-3">
+                <span class="w-9 h-9 shrink-0 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">{{template "mkt_ic" (dict "N" "pin" "C" "w-5 h-5")}}</span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-gray-900">{{.S.Landmark}}</p>
+                    <p class="text-xs text-gray-500">{{.S.Area}}, {{.S.City}} · lokasi ilustrasi</p>
+                </div>
+            </div>
+            <div class="px-3.5 pb-3.5 grid grid-cols-2 gap-2">
+                <a href="{{.S.MapsDir}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5">{{template "mkt_ic" (dict "N" "route" "C" "w-4 h-4")}}Petunjuk arah</a>
+                <a href="https://www.google.com/maps/search/?api=1&query={{printf "%.5f" .S.Lat}},{{printf "%.5f" .S.Lng}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100 text-emerald-800 text-sm font-semibold py-2.5">Buka di Maps</a>
+            </div>
+        </section>
+
+        {{/* Tab kategori menu. */}}
+        <nav class="sticky top-0 z-20 -mx-4 px-4 py-2 bg-white/95 backdrop-blur border-b border-gray-100 flex gap-2 overflow-x-auto no-scrollbar" aria-label="Kategori menu">
+            {{range .Menu}}<a href="#cat-{{.Cat.Key}}" class="shrink-0 rounded-full bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 px-3.5 py-1.5 text-sm font-semibold text-gray-700">{{.Cat.Label}}</a>{{end}}
+        </nav>
+
+        <form id="cartForm" method="POST" action="/market/toko/{{.S.Slug}}/checkout" class="space-y-6">
+            {{range .Menu}}
+            <section id="cat-{{.Cat.Key}}" class="scroll-mt-16">
+                <h2 class="text-lg font-bold text-gray-900">{{.Cat.Label}}</h2>
+                <div class="mt-2 divide-y divide-gray-100">
+                    {{range .Items}}
+                    <div id="i-{{.Key}}" data-item data-key="{{.Key}}" data-sar="{{.SAR}}" class="py-4 flex gap-3 scroll-mt-16 target:bg-amber-50 rounded-lg">
+                        <div class="min-w-0 flex-1">
+                            {{with .Badge}}<span class="inline-block rounded-md bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide mb-1">{{.}}</span>{{end}}
+                            <p class="font-semibold text-gray-900 leading-snug">{{.Name}}</p>
+                            <p class="text-sm text-gray-500 leading-snug">{{.Desc}}</p>
+                            <p class="mt-1.5"><span class="font-bold text-gray-900 tabular-nums">SAR {{.SAR}}</span> <span class="text-xs text-gray-500 tabular-nums">≈ Rp {{rp .IDR}}</span></p>
+                        </div>
+                        <div class="relative w-24 shrink-0">
+                            <div class="w-24 h-24 rounded-2xl {{catTone .Cat}} flex items-center justify-center">{{template "mkt_art" (dict "N" .Cat "C" "w-16 h-16")}}</div>
+                            <input type="hidden" name="q_{{.Key}}" value="0">
+                            <button type="button" data-add class="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white ring-1 ring-emerald-600 text-emerald-700 font-bold text-sm px-5 py-1.5 shadow hover:bg-emerald-50">Tambah</button>
+                            <div data-step class="hidden absolute -bottom-3 left-1/2 -translate-x-1/2 items-center gap-1 rounded-full bg-emerald-600 text-white shadow px-1 py-1">
+                                <button type="button" data-minus class="w-7 h-7 rounded-full hover:bg-emerald-700 font-bold" aria-label="Kurangi {{.Name}}">−</button>
+                                <span data-qty class="min-w-[1.5rem] text-center text-sm font-bold tabular-nums">0</span>
+                                <button type="button" data-plus class="w-7 h-7 rounded-full hover:bg-emerald-700 font-bold" aria-label="Tambah {{.Name}}">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </section>
+            {{end}}
+            <p class="text-[11px] text-gray-400">Harga dalam riyal (SAR) dari toko contoh. Rupiah dihitung dengan kurs contoh Rp {{rp .Rate}} per SAR.</p>
+
+            <div id="cartBar" class="hidden fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-white via-white/90 to-transparent">
+                <button class="max-w-3xl mx-auto w-full flex items-center gap-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 shadow-xl shadow-emerald-900/25">
+                    <span class="w-9 h-9 shrink-0 rounded-xl bg-white/20 flex items-center justify-center">{{template "mkt_ic" (dict "N" "bag" "C" "w-5 h-5")}}</span>
+                    <span class="min-w-0 flex-1 text-left"><span class="block text-sm font-bold"><span id="cartN">0</span> barang · SAR <span id="cartSAR">0</span></span><span class="block text-xs text-emerald-100 truncate">≈ Rp <span id="cartIDR">0</span> · ambil di {{.S.Short}}</span></span>
+                    <span class="font-bold text-sm whitespace-nowrap">Pesan →</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+<script>
+(function () {
+    var rate = {{.Rate}};
+    var bar = document.getElementById('cartBar');
+    function fmt(n) { return n.toLocaleString('id-ID'); }
+    function total() {
+        var n = 0, sar = 0;
+        document.querySelectorAll('[data-item]').forEach(function (el) {
+            var q = parseInt(el.querySelector('input').value, 10) || 0;
+            n += q; sar += q * parseInt(el.dataset.sar, 10);
+        });
+        document.getElementById('cartN').textContent = n;
+        document.getElementById('cartSAR').textContent = fmt(sar);
+        document.getElementById('cartIDR').textContent = fmt(sar * rate);
+        bar.classList.toggle('hidden', n === 0);
+    }
+    function set(el, q) {
+        q = Math.max(0, Math.min(20, q));
+        el.querySelector('input').value = q;
+        el.querySelector('[data-qty]').textContent = q;
+        el.querySelector('[data-add]').classList.toggle('hidden', q > 0);
+        var st = el.querySelector('[data-step]');
+        st.classList.toggle('hidden', q === 0); st.classList.toggle('flex', q > 0);
+        total();
+    }
+    document.querySelectorAll('[data-item]').forEach(function (el) {
+        var cur = function () { return parseInt(el.querySelector('input').value, 10) || 0; };
+        el.querySelector('[data-add]').addEventListener('click', function () { set(el, 1); });
+        el.querySelector('[data-plus]').addEventListener('click', function () { set(el, cur() + 1); });
+        el.querySelector('[data-minus]').addEventListener('click', function () { set(el, cur() - 1); });
+        if (cur() > 0) set(el, cur()); // kembali dari halaman berikutnya (bfcache)
+    });
+    window.addEventListener('pageshow', total);
+})();
+</script>

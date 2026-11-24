@@ -10,6 +10,10 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"umrah/app/qris"
+
+	qrcode "github.com/skip2/go-qrcode"
 )
 
 type Request struct {
@@ -70,11 +74,58 @@ func (MockGateway) CreateQRIS(r Request) (Invoice, error) {
 	if r.Amount <= 0 {
 		return Invoice{}, fmt.Errorf("nominal tidak valid")
 	}
-	payload := fmt.Sprintf("DEMO-QRIS|%s|%d|%s", r.Ref, r.Amount, r.Holder)
+	payload := DynamicQRIS(r.Ref, r.Amount)
 	return Invoice{Method: "qris", Bank: r.Bank, Holder: r.Holder, QRPayload: payload, ExpiresAt: time.Now().Add(30 * time.Minute)}, nil
 }
 
 var Default Gateway = MockGateway{}
+
+// DemoMerchant: identitas merchant di QR checkout. Model marketplace: QR dinamis diterbitkan atas nama
+// UMROHKU lewat payment gateway berizin BI, lalu dana di-split otomatis ke penerima (travel/toko) dan
+// komisi umrohku. Umrohku bukan penerbit dompet digital dan tidak menampung saldo.
+const (
+	DemoMerchantName = "UMROHKU"
+	DemoMerchantCity = "JAKARTA"
+	DemoNMID         = "ID0000UMROHKU01" // fiktif: transaksi dari aplikasi sungguhan akan ditolak
+)
+
+// DynamicQRIS membuat payload QRIS dinamis (EMVCo MPM, nominal terkunci) untuk satu tagihan checkout.
+// Formatnya standar sehingga bisa dipindai aplikasi bank/dompet digital mana pun; di demo, merchant
+// dan NMID fiktif sehingga tidak ada pembayaran yang benar-benar diproses.
+func DynamicQRIS(ref string, amount int64) string {
+	t := func(tag, v string) string { return fmt.Sprintf("%s%02d%s", tag, len(v), v) }
+	if len(ref) > 25 {
+		ref = ref[:25]
+	}
+	acq := t("00", "ID.CO.GATEWAYCONTOH.WWW") + t("01", "936099990000098765") + t("02", "UMROHKU01") + t("03", "UBE")
+	nmid := t("00", "ID.CO.QRIS.WWW") + t("02", DemoNMID) + t("03", "UBE")
+	body := t("00", "01") + t("01", "12") + t("26", acq) + t("51", nmid) + t("52", "4722") + t("53", "360") +
+		t("54", fmt.Sprintf("%d", amount)) + t("58", "ID") + t("59", DemoMerchantName) + t("60", DemoMerchantCity) +
+		t("62", t("01", ref)+t("07", "CHECKOUT"))
+	return qris.WithCRC(body)
+}
+
+// QRSVG menggambar kode QR sungguhan (bisa dipindai) dari payload. Bila gagal, kembali ke ilustrasi.
+func QRSVG(payload string, size int) string {
+	q, err := qrcode.New(payload, qrcode.Medium)
+	if err != nil {
+		return FakeQRSVG(payload, size)
+	}
+	q.DisableBorder = true
+	bm := q.Bitmap()
+	n := len(bm)
+	var b strings.Builder
+	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 %d %d" width="%d" height="%d" shape-rendering="crispEdges" role="img" aria-label="QRIS dinamis"><rect x="-2" y="-2" width="%d" height="%d" fill="#fff"/><path fill="#111" d="`, n+4, n+4, size, size, n+4, n+4)
+	for y, row := range bm {
+		for x, on := range row {
+			if on {
+				fmt.Fprintf(&b, "M%d %dh1v1h-1z", x, y)
+			}
+		}
+	}
+	b.WriteString(`"/></svg>`)
+	return b.String()
+}
 
 // FakeQRSVG menggambar pola mirip kode QR dari payload (TIDAK bisa dipindai; hanya ilustrasi demo).
 func FakeQRSVG(payload string, size int) string {

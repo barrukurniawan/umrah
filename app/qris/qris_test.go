@@ -72,3 +72,49 @@ func TestRejects(t *testing.T) {
 		t.Fatal("TLV terpotong harus ditolak")
 	}
 }
+
+// Contoh QR merchant Saudi buatan (negara SA, mata uang 682 = SAR), format EMVCo MPM.
+func sampleSaudi(amount string) string {
+	acq := tlv("00", "SA.COM.PENYELENGGARACONTOH") + tlv("01", "682099990000054321") + tlv("02", "MKH000321")
+	body := tlv("00", "01") + tlv("01", "11") + tlv("26", acq) + tlv("52", "5499") + tlv("53", "682")
+	if amount != "" {
+		body = tlv("00", "01") + tlv("01", "12") + tlv("26", acq) + tlv("52", "5499") + tlv("53", "682") + tlv("54", amount)
+	}
+	return WithCRC(body + tlv("58", "SA") + tlv("59", "Toko Kurma Contoh") + tlv("60", "Makkah"))
+}
+
+func TestDecodeSaudiDynamic(t *testing.T) {
+	q, err := Decode(sampleSaudi("35.50"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !q.IsSAR() || !q.IsCrossBorder() || q.IsIDR() || q.IsQRIS() || q.CurrencyCode() != "SAR" || q.Country != "SA" {
+		t.Fatalf("mata uang/negara salah: cur=%s negara=%s", q.Currency, q.Country)
+	}
+	if !q.Dynamic || q.AmountMinor != 3550 {
+		t.Fatalf("nominal halalah = %d, mau 3550", q.AmountMinor)
+	}
+	if q.AcquirerName() != "PENYELENGGARACONTOH" || q.NMID() != "" {
+		t.Fatalf("penyelenggara salah: %q nmid=%q", q.AcquirerName(), q.NMID())
+	}
+}
+
+func TestDecodeSaudiStatic(t *testing.T) {
+	q, err := Decode(sampleSaudi(""))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if q.Dynamic || q.AmountMinor != 0 || !q.IsSAR() {
+		t.Fatalf("hasil salah: %+v", q)
+	}
+}
+
+func TestRupiahTetapBukanLintasNegara(t *testing.T) {
+	q, err := Decode(sampleStatic())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if q.IsCrossBorder() || q.IsSAR() || q.CurrencyCode() != "IDR" {
+		t.Fatalf("QRIS rupiah terbaca lintas negara: %s", q.CurrencyCode())
+	}
+}

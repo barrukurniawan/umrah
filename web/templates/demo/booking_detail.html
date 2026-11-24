@@ -37,8 +37,8 @@
                 <p class="mt-1 text-3xl font-bold text-gray-900 tabular-nums">Rp {{rp .Amount}}</p>
                 {{if eq .Method "qris"}}
                 <div class="mt-4 flex flex-col sm:flex-row items-center gap-4">
-                    <div class="rounded-2xl ring-1 ring-gray-200 p-3 bg-white">{{fakeQR .QRPayload 180}}</div>
-                    <div class="text-sm text-gray-600"><p class="font-semibold text-gray-800">QRIS · {{.Holder}}</p><p class="mt-1">Pindai dari aplikasi e-wallet atau m-banking. <span class="text-amber-700">(Gambar contoh, tidak bisa dipindai.)</span></p></div>
+                    <div class="rounded-2xl ring-1 ring-gray-200 p-3 bg-white">{{qrSVG .QRPayload 180}}</div>
+                    <div class="text-sm text-gray-600"><p class="font-semibold text-gray-800">QRIS · {{.Holder}}</p><p class="mt-1">QRIS dinamis, nominal terkunci. Pindai dari m-banking atau dompet digital apa pun: GoPay, DANA, ShopeePay, OVO, LinkAja.</p><p class="mt-1 text-[11px] text-amber-700">Demo: merchant fiktif, aplikasi sungguhan akan menolak. Pakai tombol simulasi.</p></div>
                 </div>
                 {{else}}
                 <div class="mt-4 rounded-xl bg-gray-50 p-4">

@@ -430,7 +430,7 @@ func tokoRender(c *fiber.Ctx, extra fiber.Map) error {
 	}
 	tab := "/toko"
 	switch c.Path() {
-	case "/toko/pickup", "/toko/riwayat":
+	case "/toko/pickup", "/toko/riwayat", "/toko/pesanan":
 		tab = c.Path()
 	}
 	pickups := demo.MerchantPickups(m.Slug)
@@ -440,12 +440,21 @@ func tokoRender(c *fiber.Ctx, extra fiber.Map) error {
 			open++
 		}
 	}
-	t := tabs(tab, "/toko", "Tukar voucher", "/toko/pickup", "Pickup", "/toko/riwayat", "Riwayat penukaran")
-	t[1].Count = open
+	market := demo.MerchantMarketOrders(m.Slug)
+	openMkt := 0
+	for _, o := range market {
+		if o.Status != "diambil" {
+			openMkt++
+		}
+	}
+	t := tabs(tab, "/toko/pesanan", "Pesanan market", "/toko", "Tukar voucher", "/toko/pickup", "Pickup", "/toko/riwayat", "Riwayat penukaran")
+	t[0].Count = openMkt
+	t[2].Count = open
 	todaySAR, todayN, allSAR, allN := demo.MerchantTotals(m.Slug)
 	data := fiber.Map{"Title": m.Name, "M": m, "Tab": tab, "Tabs": t, "Pickups": pickups, "OpenPickups": open,
 		"History": demo.MerchantRedemptions(m.Slug, 100), "TodaySAR": todaySAR, "TodayN": todayN, "AllSAR": allSAR, "AllN": allN,
-		"Rate": demo.Cfg.SAR, "Max": demo.MaxRedeemSAR, "Samples": demo.ActiveVouchers(6), "Others": demo.Merchants}
+		"Rate": demo.Cfg.SAR, "Max": demo.MaxRedeemSAR, "Market": market, "OpenMarket": openMkt,
+		"MktErr": c.Query("err"), "MktKode": c.Query("kode"), "MktOK": c.Query("ok"), "Samples": demo.ActiveVouchers(6), "Others": demo.Merchants}
 	if k := c.Query("kode"); k != "" && tab == "/toko" {
 		data["Kode"] = k
 		if v := demo.VoucherByCode(k); v != nil {
