@@ -1,5 +1,5 @@
 <!--
-Dokumen: Proposal Pendanaan Pre-Seed Umrohku (versi 13, 24 November 2026)
+Dokumen: Proposal Pendanaan Pre-Seed Umrohku (versi 18 / final, 24 November 2026)
 Sumber: konversi utuh dari halaman HTML https://claude.ai/artifact/6ZcYnkkyj3kiAicwVdJUPB
 Isi: sampul, profil founder, bagian 01–14, lampiran draf LOI, dan sumber data.
 Catatan untuk agent pembaca:
@@ -12,18 +12,18 @@ Catatan untuk agent pembaca:
 
 # Umrohku
 
-**Agen umroh digital: travel terkurasi, pendampingan, dan pembiayaan syariah**
+**Agen umroh digital dengan checkout, cicilan syariah, dan travel terkurasi**
 
-Agen umroh digital berskala nasional. Jamaah membandingkan paket travel PPIU berizin, didampingi sampai paspor dan visa beres, dan dapat membandingkan pembiayaan syariah.
+Agen umroh digital berskala nasional. Jamaah membandingkan paket travel PPIU berizin, membayar lewat checkout umrohku, dan dananya diteruskan ke rekening resmi travel dengan komisi terpotong otomatis.
 
 **Rancangan alur dana (pra-PKS)**
 
-- **Bayar langsung ke travel** — Ke rekening penampungan resmi PPIU
-- **Umrohku tidak memegang dana** — Tidak menerima maupun menyimpan
-- **Pembiayaan syariah** — Lewat lembaga berizin, bukan umrohku
-- **Travel terkurasi** — Hanya PPIU berizin
+- **Checkout di umrohku** — VA bank dulu; pembiayaan di Fase 2
+- **Dana di PJP berizin BI** — Ditahan 1–3 hari kerja, bukan di umrohku
+- **Cair ke rekening PPIU** — Hanya rekening penampungan resmi travel
+- **Komisi terpotong otomatis** — 4–5% lewat split payment
 
-Status November 2026: belum ada PKS dengan bank, lembaga pembiayaan, maupun travel.
+Status November 2026: belum ada PKS dengan penyedia jasa pembayaran, lembaga pembiayaan, maupun travel. Umrohku tidak menyimpan dana jamaah.
 
 - **Cari umroh by budget**
 - **Cari umroh by kalender**
@@ -50,15 +50,71 @@ Status November 2026: belum ada PKS dengan bank, lembaga pembiayaan, maupun trav
 
 ## Barru Kurniawan
 
-*Founder umrohku*
+*Founder umrohku · Backend Developer*
 
-Software Engineer dengan pengalaman di bidang fintech sejak 2017.
+Software Engineer dengan 9+ tahun pengalaman.
 
-### Pengalaman
+Jakarta Universitas Gadjah Mada 939 pengikut LinkedIn
 
-- **Backend Developer** (Fintech & Payment Systems) · 2017–sekarang
-- **Founder**, Jago QA (PT Institusi Jago Indonesia) · 2021–2024. Non-aktif secara operasional; badan usaha aktif dan tertib lapor pajak nihil
-- **Founder** umrohku.web.id
+### Riwayat kerja
+
+Jun 2021 – sekarang
+
+**Back End Developer**
+
+Financial Technology Startup
+
+REST API dengan Golang dan Python untuk kartu kredit & debit, QRIS lokal & cross border, split payment, dan cicilan.
+
+Jan – Jun 2021
+
+**Python Developer**
+
+SigmaTech
+
+Ditempatkan di startup fintech yang sama. REST API dengan Flask dan CherryPy.
+
+Jun 2019 – Jan 2021
+
+**Software Developer**
+
+Gigel.id
+
+Backend marketplace sewa perlengkapan bayi. REST API dengan Flask.
+
+Agt 2018 – Jun 2019
+
+**Software Developer**
+
+WE+ (PT Kita Indonesia Plus)
+
+Backend Django, serta otomasi pengujian web dan Android (Selenium, Robot Framework, Appium).
+
+Sep 2017 – Jul 2018
+
+**Software Engineer**
+
+Blipcom
+
+Fullstack web dengan CherryPy, JavaScript, dan MongoDB.
+
+### Yang dibangun sendiri
+
+2026 – sekarang
+
+**Founder**
+
+umrohku.web.id
+
+Data 508 paket, simulasi manasik 3D, dasbor analitik, dan konten video, dikerjakan seorang diri.
+
+2021 – 2024
+
+**Founder**
+
+Jago QA (PT Institusi Jago Indonesia)
+
+E-learning Software Quality Assurance. Non-aktif secara operasional; badan usaha aktif dan tertib lapor pajak nihil.
 
 ### Nilai yang dibawa
 
@@ -68,9 +124,9 @@ Software Engineer dengan pengalaman di bidang fintech sejak 2017.
 
 **Komitmen full-time di umrohku begitu pendanaan Tahap 1 cair.** Rencana produk tidak memuat e-wallet, sehingga tidak bersinggungan dengan lini bisnis pemberi kerja saat ini. Co-founder bisnis dari industri umroh sedang dicari.
 
-Keahlian: Golang & Python, RESTful API, Sistem pembayaran, QRIS & cross-border, Split payment, Software QA, Universitas Gadjah Mada
+Keahlian: Golang, Python, RESTful API, MongoDB, Sistem pembayaran, QRIS & cross-border, Split payment, Otomasi QA
 
-[linkedin.com/in/barru-kurniawan](https://www.linkedin.com/in/barru-kurniawan/)
+Riwayat lengkap: [linkedin.com/in/barru-kurniawan](https://www.linkedin.com/in/barru-kurniawan/)
 
 ---
 
@@ -79,8 +135,8 @@ Keahlian: Golang & Python, RESTful API, Sistem pembayaran, QRIS & cross-border, 
 ## Agen umroh digital yang membuat jamaah aman memilih travel
 
 - **Masalah** — Jamaah menyetor puluhan juta ke travel tanpa perlindungan: dananya tidak diawasi OJK dan tidak diasuransikan. Jaminannya hanya kepercayaan pada rekam jejak travel.
-- **Solusi** — Agen digital untuk banyak travel PPIU: kurasi izin dan rekam jejak, pendampingan sampai visa beres, dan perbandingan pembiayaan syariah.
-- **Model bisnis** — Komisi agen 4–5% per jamaah lunas, tarif yang sudah dibayar travel ke agen hari ini, plus fee rujukan pembiayaan.
+- **Solusi** — Agen digital untuk banyak travel PPIU: checkout dengan banyak cara bayar, dana diteruskan ke rekening resmi travel, dan travel terkurasi.
+- **Model bisnis** — Komisi agen 4–5% per jamaah lunas, terpotong otomatis saat checkout, plus fee rujukan pembiayaan.
 - **Pendanaan** — Rp1,5 M dalam dua tahap berbasis milestone. Saham biasa dengan dividen, bukan SAFE.
 
 - **508** — paket aktif, diperbarui 2× sehari
@@ -105,38 +161,62 @@ Analitik internal umrohku.web.id, 26 Okt–24 Nov 2026; YouTube Studio per 24 No
 
 **03 · SOLUSI & PRODUK**
 
-## Fokus pada tiga hal: bandingkan, dampingi, biayai
+## Fokus pada tiga hal: bandingkan, bayar, biayai
 
 - **Bandingkan** Cari by budget & kalender Badge PPIU dan skor travel Simulasi manasik 3D
-- **Dampingi** Concierge dari booking sampai visa terbit Jamaah membayar langsung ke rekening PPIU Pengingat dokumen dan jadwal
-- **Biayai** Nabung atas nama jamaah di bank syariah Atau ajukan ke beberapa mitra syariah sekaligus Dana pembiayaan cair ke travel
+- **Bayar** Checkout di umrohku, mulai dari VA bank Dana diteruskan ke rekening resmi PPIU Concierge sampai visa terbit
+- **Biayai** Tabungan di bank syariah atas nama jamaah (Fase 2) Atau ajukan ke beberapa mitra syariah sekaligus Dana pembiayaan cair ke travel
 
 > **Travel tidak menunggu uang.** Jamaah yang memakai pembiayaan cukup membayar DP sekitar 20%; sisanya dicairkan mitra syariah ke travel, lalu jamaah mengangsur setelah pulang.
 
-- [Gambar: Beranda umrohku: pilih budget lalu cari paket](img/01-beranda.jpg) — `Live` **Cari by budget** Geser budget, rekomendasi langsung muncul.
-- [Gambar: Simulasi tawaf 3D](img/05-simulasi-tawaf.jpg) — `Live` **Simulasi manasik 3D** Tawaf dan sa'i, lengkap dengan doa.
-- [Gambar: Perbandingan angsuran mitra pembiayaan syariah](img/10-cicil-mitra.jpg) — `Demo` **Komparasi cicilan syariah** Angsuran beberapa mitra OJK, satu layar.
-- [Gambar: Booking dengan DP lunas](img/13-booking-dp.jpg) — `Demo` **Booking & DP** Status bayar dan sisa pelunasan.
+### Sudah live di umrohku.web.id
 
-Alur lain (tabungan, pengajuan pembiayaan, portal travel) dapat dicoba di [startup.umrohku.web.id](https://startup.umrohku.web.id/demo).
+- [Gambar: Cari sesuai budget: geser budget Rp20–50 jt, paket langsung muncul](img/g1-budget.jpg) — **01 · Cari sesuai budget** Geser budget Rp20–50 jt, pilih satu travel atau semua.
+- [Gambar: Bandingkan detail: jarak hotel, direct atau transit, DP, tanggal berangkat](img/g2-bandingkan.jpg) — **02 · Bandingkan detail** Jarak hotel ke Haram, direct atau transit, DP, dan tanggal.
+- [Gambar: Kalender keberangkatan Desember 2026 dengan penanda cuaca dan libur sekolah](img/g3-kalender.jpg) — **03 · Kalender keberangkatan** Penanda cuaca nyaman atau sejuk, dan libur sekolah.
+- [Gambar: Satu tanggal menampilkan semua paket, suhu Makkah dan Madinah, tanggal Hijriah](img/g4-tanggal.jpg) — **Satu tanggal, semua paket** Suhu Makkah & Madinah, tanggal Hijriah, simpan paket.
+- [Gambar: Paket tersimpan dengan insight cuaca dan keramaian bulan keberangkatan](img/g5-tersimpan.jpg) — **Paket tersimpan** Login Google, insight cuaca, jadikan target tabungan.
+- [Gambar: Tabungan umroh: target Rp91,5 jt untuk 3 orang termasuk uang saku](img/g6-tabungan.jpg) — **Kalkulator target tabungan** Pelacak target, bukan rekening bank. Target dihitung per orang, termasuk uang saku.
+- [Gambar: Checklist persiapan 22 langkah dengan tanggal berangkat](img/g7-checklist.jpg) — **Checklist persiapan** 22 langkah, disesuaikan untuk laki-laki atau perempuan.
+- [Gambar: Panduan paspor: berlaku minimal 6 bulan, contoh halaman data, tips M-Paspor](img/g8-paspor.jpg) — **Panduan paspor** Contoh halaman data dan cara buat lewat M-Paspor.
+- [Gambar: Dokumen keluarga: KTP, KK, akta lahir atau buku nikah, dengan contoh tiap dokumen](img/g9-dokumen.jpg) — **Dokumen keluarga** KTP, KK, dan buku nikah, dengan contoh tiap dokumen.
+Rancangan checkout, pembiayaan, dan portal travel dapat dicoba di [startup.umrohku.web.id](https://startup.umrohku.web.id/demo).
 
 ---
 
-**04 · PERLINDUNGAN JAMAAH**
+**04 · CHECKOUT & ALUR DANA**
 
-## Empat perlindungan yang benar-benar kami kendalikan
+## Menguasai jalur pembayaran, bukan menahan uang
 
-> **Prinsip:** kami hanya menjanjikan hal yang bisa kami jalankan sendiri hari ini, tanpa bergantung pada produk bank yang belum ada.
+> **Pelajaran dari marketplace dan OTA besar:** kekuatannya ada di checkout, verifikasi cepat, dan potongan komisi otomatis. Dana penjual hanya ditahan beberapa hari, bukan berbulan-bulan.
 
-- **Kurasi PPIU berizin** — Hanya travel dengan izin PPIU aktif yang dipasarkan. Nomor izin ditampilkan dan dicek berkala.
-- **Rekam jejak keberangkatan** — Catatan tepat berangkat, penundaan, dan keluhan per travel, dari jamaah yang kami dampingi.
-- **Pendampingan concierge** — Satu kontak dari booking sampai paspor dan visa beres. Jamaah tahu status keberangkatannya setiap saat.
-- **Perbandingan pembiayaan** — Penawaran beberapa lembaga syariah berdampingan, sehingga jamaah tidak terjebak skema tak resmi.
+- **Checkout** — Fase 1: virtual account bank. Fase 2: pembiayaan syariah dan cicilan kartu.
+- **Dana di PJP** — Masuk sub-rekening penyedia jasa pembayaran berizin BI, bukan rekening umrohku.
+- **Verifikasi dua lapis** — DP: cair 1–3 hari kerja setelah kuitansi resmi PT dan bukti booking seat. Pelunasan: cair setelah bukti pendaftaran Siskopatuh.
+- **Split otomatis** — 95–96% ke rekening penampungan PPIU, 4–5% komisi ke umrohku.
+- **Ulasan terverifikasi** — Hanya jamaah yang checkout dapat menilai travel.
 
-- **Alur uang tetap sederhana** — Jamaah membayar langsung ke rekening penampungan PPIU (PP 38/2021). Umrohku tidak menerima, menyimpan, maupun mengatur transfer dana jamaah.
-- **Yang tidak kami janjikan** — Jaminan dana kembali, asuransi penggelapan, dan penahanan dana. Semuanya butuh bank atau penanggung berizin.
+- **Anti rekening pribadi** — Tujuan pencairan dikunci ke rekening penampungan atas nama PT PPIU, bukan rekening agen atau perorangan.
+- **Komisi tidak perlu ditagih** — Terpotong oleh sistem saat dana dicairkan. Tidak ada invoice yang bisa "terlupa".
+- **Arus kas travel aman** — Dana diterima travel dalam hitungan hari, sehingga modal kerja tiket, hotel, dan visa tidak terganggu.
+- **Sesuai keahlian founder** — Kartu, split payment, dan cicilan adalah pekerjaan harian founder sejak 2021.
 
-> **Arah Fase 2, bukan janji hari ini.** Tabungan atas nama jamaah dengan pelunasan mendekati keberangkatan, dan penahanan sebagian margin lewat escrow bank, baru dijajaki setelah ada volume transaksi dan PKS dengan bank syariah.
+### Skema biaya: menjaga komisi Rp1,35 jt tidak tergerus
+
+| Cara bayar | Tarif publik gateway | Pada paket Rp30 jt | Kebijakan umrohku |
+|---|---|---|---|
+| **Virtual account bank** | ±Rp4.000 per transaksi | ±Rp12 rb (3 kali bayar) | Utama Ditanggung umrohku; di bawah 1% komisi |
+| **Pembiayaan syariah** | Tanpa biaya gateway | +Rp360–480 rb fee rujukan | Didorong Dana cair penuh ke travel |
+| **QRIS** | 0,7% | Rp210 rb bila untuk seluruh paket | Terbatas Hanya untuk DP kecil |
+| **Kartu kredit** | 2,9% + Rp2.000 | ±Rp872 rb, setara 65% komisi | Bersyarat Aktif hanya jika pembagian biaya disepakati dalam PKS |
+| **Cicilan kartu** | Tarif kartu + biaya cicilan bank | Belum dipastikan | Menunggu Dibuka setelah ada penawaran resmi bank |
+
+> **Aturan margin:** biaya transaksi yang ditanggung umrohku dibatasi 10% dari komisi. Kartu kredit tidak pernah ditanggung sendiri, dan larangan surcharge kartu tetap dipatuhi.
+
+- **Bertahap** — Fase 0 masih manual: jamaah membayar langsung ke rekening PPIU. Checkout dan split payment dibangun di Fase 1 setelah ada bukti transaksi.
+- **Yang tidak kami janjikan** — Jaminan dana kembali, asuransi penggelapan, dan penahanan dana sampai hari keberangkatan. Itu butuh izin PPIU sendiri atau rekening terblokir di bank.
+
+Tarif gateway dari daftar harga publik Xendit dan Midtrans, belum termasuk PPN, dan dapat dinegosiasikan. Biaya split payment dan cicilan kartu belum terverifikasi. Rancangan ini perlu dikonfirmasi dengan PJP mitra dan konsultan hukum.
 
 ---
 
@@ -162,12 +242,12 @@ Alur lain (tabungan, pengajuan pembiayaan, portal travel) dapat dicoba di [start
 
 ## Kenapa jamaah membayar di umrohku, bukan langsung ke travel
 
-- **Akses multi-pembiayaan** — Satu pengajuan ke beberapa mitra syariah. Tidak tersedia jika membayar langsung ke travel.
+- **Cara bayar, bertahap** — **Fase 1:** checkout virtual account yang rapi dan tercatat. **Mulai Fase 2:** pembiayaan syariah dan cicilan kartu, yang tidak dimiliki kebanyakan travel.
 - **Pendampingan concierge** — Status dokumen, visa, dan keberangkatan dipantau satu kontak. Hanya untuk jamaah yang mendaftar lewat umrohku.
 - **Harga lebih untung** — Harga travel sama, ditambah potongan langsung dari komisi umrohku.
-- **Kurasi kinerja travel** — Skor ketepatan berangkat dan ulasan dari jamaah yang benar-benar berangkat.
+- **Ulasan terverifikasi** — Hanya jamaah yang checkout di umrohku yang dapat memberi nilai dan laporan ketepatan berangkat.
 
-> **Atribusi lewat kode booking, bukan janji di atas kertas.** Potongan harga dan pendampingan hanya aktif jika jamaah mendaftar dengan kode umrohku, sehingga jamaah sendiri yang berkepentingan menyebutkannya. Komisi ditagih per jamaah lunas berdasarkan manifest.
+> **Pengunci transaksi per fase.** Fase 1 mengandalkan potongan harga resmi, pendampingan, dan checkout yang tercatat. Pembiayaan syariah dan cicilan kartu menjadi pengunci utama mulai Fase 2. Komisi terpotong otomatis saat checkout; pada masa uji coba dihitung dari laporan jamaah berkode booking, sesuai LOI Pasal 3.
 
 ---
 
@@ -268,7 +348,7 @@ Hampir separuh pencarian ada di segmen yang paling butuh cicilan.
 - Instagram 18 · 3%
 - Google 7 · 1%
 
-"Langsung" mencakup klik dari aplikasi media sosial yang tidak mengirim referrer; akan dipilah dengan UTM. Google baru 1%.
+"Langsung" mencakup klik dari aplikasi media sosial tanpa referrer. Angka pengunjung belum disaring dari bot dan kunjungan pengembang; log dibersihkan sebelum uji tuntas.
 
 | Travel (5 teratas, belum bermitra) | Tampil | Klik WA | Klik situs | CTR |
 |---|---|---|---|---|
@@ -301,7 +381,7 @@ Seluruhnya organik, tanpa iklan, diproduksi sendiri oleh founder. Tangkapan laya
 | **Cari by budget & kalender** | Rekomendasi sesuai dana dan bulan berangkat | Data permintaan pasar yang tidak dimiliki travel |
 | **Simulasi manasik 3D** | Masjidil Haram, tawaf, dan sa'i | Menarik jamaah sejak tahap niat; pembeda dari katalog biasa |
 | **Checklist & perlengkapan** | 22 langkah persiapan, 24 produk afiliasi | Alasan kembali ke situs; pendapatan afiliasi sudah aktif |
-| **Akun & tabungan** | Login Google, paket tersimpan, target tabungan | Basis pengguna terdaftar untuk booking dan pembiayaan |
+| **Akun & kalkulator tabungan** | Login Google, paket tersimpan, pelacak target tabungan (bukan rekening bank) | Basis pengguna terdaftar untuk booking dan pembiayaan |
 | **Dasbor analitik per travel** | Tampil, klik WA, klik situs, dan CTR | Bukti nilai untuk negosiasi komisi dalam PKS |
 
 - [Gambar: Kartu rekomendasi paket](img/02-rekomendasi.jpg) — `Live` **Rekomendasi paket** Harga, DP, maskapai, jarak hotel.
@@ -327,7 +407,7 @@ Angka konversi 1–2% adalah asumsi untuk trafik dingin pada produk Rp30 jt, dan
 - Komisi agen 4–5% dari paket Rp30 jt; setara komisi agen hari ini +Rp1,2–1,5 jt
 - Fee rujukan pembiayaan 1,5–2% pokok; hanya 10% jamaah +±Rp40 rb
 - Potongan harga untuk jamaah −Rp250 rb
-- Biaya payment gateway −±Rp15 rb
+- Biaya virtual account & split ±3 kali bayar per jamaah; kartu kredit tidak ditanggung −±Rp15 rb
 - Laba kotor per jamaah Rp1,0–1,3 jt
 
 - **Efek keluarga** — Rata-rata 2 jamaah per transaksi: laba kotor Rp2,0–2,6 jt.
@@ -360,7 +440,7 @@ Asumsi internal, divalidasi lewat transaksi concierge. Umroh jarang diulang (1×
 
 - **600 jamaah lunas kumulatif:** 300 di Tahun 1, 300 di paruh pertama Tahun 2
 - **30 travel** dengan PKS
-- Angka yang sama dipakai di bagian 12 dan 14
+- **Paruh kedua Tahun 2 (±150/bln)** ditopang musim puncak umroh dan mulai aktifnya pembiayaan syariah
 
 ### Anggaran 18 bulan = Rp1,5 M
 
@@ -368,7 +448,7 @@ Asumsi internal, divalidasi lewat transaksi concierge. Umroh jarang diulang (1×
 - Paruh pertama Tahun 2: Rp600 jt
 - Sama dengan dana yang diminta; perusahaan hidup 18 bulan meski pendapatan nol
 
-Proyeksi bottom-up dari target jamaah, hanya dari komisi dan fee rujukan. SaaS dan rujukan modal kerja belum dihitung.
+Pendapatan dicatat bruto (komisi dan fee rujukan). Potongan harga Rp250 rb per jamaah dicatat sebagai biaya promosi di dalam biaya operasional: Rp75 jt, Rp300 jt, dan Rp1,25 M per tahun. SaaS dan rujukan modal kerja belum dihitung.
 
 ---
 
@@ -391,6 +471,7 @@ Fase 1 · Bulan 0–6 · Tahap 1
 
 - Pendirian PT baru; LOI, domain, dan kode dialihkan (novasi)
 - PKS dengan 15 travel PPIU, kode booking, komisi per jamaah lunas
+- Checkout virtual account, verifikasi dua lapis, dan split payment lewat PJP berizin BI
 - Skor rekam jejak travel dan layanan concierge
 - Target 100 jamaah lunas
 
@@ -427,7 +508,7 @@ Fase ekspansi · Tahun 3+
 |---|---|---|---|
 | **Badan usaha** | KBLI 63122, PSE Komdigi | Fase 0 memakai PT Institusi Jago Indonesia. PT baru didirikan saat Tahap 1, lalu LOI, domain, dan kode dialihkan sebagai syarat pencairan | Pra-pendanaan |
 | **Penjualan paket** | UU 8/2019 jo. UU 14/2025 | PPMSE dan mitra pemasaran; PKS tertulis dengan setiap PPIU; tidak mengorganisir rombongan | Fase 1 |
-| **Alur uang** | PP 38/2021 | Jamaah membayar langsung ke rekening penampungan PPIU. Umrohku tidak menerima, menyimpan, maupun mengatur dana; komisi ditagih lewat invoice (PPN, PPh 23) | Fase 1 |
+| **Alur uang** | PP 38/2021 | Dana diterima dan diteruskan oleh PJP berizin BI ke rekening penampungan PPIU; komisi terpotong lewat split payment. Umrohku tidak menyimpan dana di rekening sendiri | Fase 1 |
 | **Pendaftaran OJK** | POJK 3/2024 (ITSK) | Dikaji setelah volume transaksi memadai; prosesnya panjang dan butuh audit keamanan informasi | Tahun 2–3 |
 | **Tabungan & cicilan** | OJK; POJK 3/2024 (ITSK) | Umrohku hanya merujuk ke lembaga berizin; tidak menghimpun dana dan tidak memberi pinjaman | Fase 2 |
 | **Data pribadi** | UU 27/2022 (PDP) | Persetujuan eksplisit sebelum data dikirim ke mitra, dapat dicabut | Sudah di demo |
@@ -449,21 +530,24 @@ Fase ekspansi · Tahun 3+
 
 ### Struktur: bisnis agen yang sehat, bukan taruhan valuasi
 
-`Opsi A · utama`
-
 ### Saham biasa dengan dividen
 
 - Saham biasa PT, valuasi pre-money Rp2,5–3,5 M, ditetapkan setelah Fase 0 terbukti
-- Dividen tunai 30–50% dari laba bersih, mulai Tahun 2
+- Dividen tunai 30–50% dari laba bersih setelah pajak, mulai Tahun 2
 - Harga Tahap 2 mengikuti capaian Tahap 1
 
-`Opsi B`
+### Apa yang didapat investor
 
-### Bagi hasil pendapatan
+- **Pengaman:** dividen Tahun 3 setara ±7–12% per tahun atas dana Rp1,5 M, dengan porsi saham ±30%
+- **Imbal hasil utama:** kenaikan nilai saat lapisan SaaS dan rujukan modal kerja berjalan, atau lewat sinergi strategis
 
-- Persentase tetap dari pendapatan setiap bulan
-- Berlangsung sampai investor menerima 2× dana yang disetor
-- Tanpa dilusi kepemilikan
+### Investor yang kami cari: angel strategis
+
+- **Pemilik travel PPIU**, sebagai investor minoritas pasif
+- **Pengusaha muslim** yang memahami bisnis umroh
+- **Eksekutif perbankan syariah** dengan akses ke bank dan lembaga pembiayaan
+
+> **Aturan netralitas.** Pemilik travel hanya dapat masuk sebagai investor minoritas pasif, maksimal 10–15%, tanpa akses ke data lead dan transaksi travel lain. Co-founder bisnis harus figur independen: eks eksekutif bank syariah, eks manajer OTA, atau eks pengurus asosiasi yang tidak lagi memiliki travel aktif.
 
 **PENGGUNAAN DANA · 18 BULAN**
 
@@ -495,8 +579,9 @@ Anggaran tim sudah termasuk THR dan BPJS. Engineering dikerjakan founder.
 
 ### Imbal hasil, dihitung apa adanya
 
-- Laba Tahun 3 ±Rp1,6 M; dividen 30–50% berarti Rp480–800 jt dibagikan per tahun
-- Nilai usaha Tahun 3 pada 6–8× EBITDA: ±Rp10–13 M
+- EBITDA Tahun 3 ±Rp1,6 M; laba bersih setelah pajak ±Rp1,2 M
+- Dividen 30–50% dari laba bersih: ±Rp370–620 jt per tahun
+- Nilai usaha Tahun 3 pada 6–8× EBITDA: ±Rp10–13 M, dari komisi saja
 - SaaS dan rujukan modal kerja menjadi tambahan, belum dihitung
 
 ---
@@ -535,7 +620,7 @@ Surat ini mencatat kesepahaman awal Para Pihak untuk bekerja sama memasarkan pak
 1. Pihak Pertama menampilkan dan memasarkan paket umrah Pihak Kedua kepada calon jamaah.
 2. Setiap jamaah dari Pihak Pertama dicatat dengan kode booking unik yang disepakati Para Pihak.
 3. Pihak Kedua membayar imbal jasa pemasaran sebesar ________% (rencana 4–5%) dari harga paket untuk setiap jamaah yang lunas, berdasarkan tagihan Pihak Pertama.
-4. Pembayaran jamaah diterima langsung di rekening penampungan Pihak Kedua. Pihak Pertama tidak menerima, menyimpan, maupun mengelola dana jamaah.
+4. Pembayaran jamaah diterima langsung di rekening penampungan Pihak Kedua. Pihak Pertama tidak menerima, menyimpan, maupun mengelola dana jamaah. Apabila kelak tersedia fitur pembayaran melalui penyedia jasa pembayaran berizin Bank Indonesia, tujuan pencairannya tetap rekening penampungan Pihak Kedua.
 5. Pihak Pertama mendampingi jamaah dari pendaftaran sampai visa terbit, dan Pihak Kedua memberikan informasi status dokumen dan keberangkatan yang diperlukan.
 6. Pihak Kedua tetap menjadi penyelenggara perjalanan dan bertanggung jawab penuh atas keberangkatan, visa, dan layanan jamaah sesuai peraturan perundang-undangan.
 
@@ -543,8 +628,9 @@ Surat ini mencatat kesepahaman awal Para Pihak untuk bekerja sama memasarkan pak
 
 1. Para Pihak menjalankan uji coba selama 60 (enam puluh) hari sejak surat ini ditandatangani.
 2. Untuk setiap jamaah berkode booking Pihak Pertama yang melunasi paket selama masa uji coba, Pihak Kedua wajib membayar imbal jasa pemasaran sebesar ________% dari harga paket.
-3. Imbal jasa dibayar paling lambat 7 (tujuh) hari kerja setelah tagihan Pihak Pertama diterima, ke rekening atas nama Pihak Pertama.
-4. Kewajiban pada angka 2 dan 3 tetap berlaku untuk jamaah yang mendaftar selama masa uji coba dan melunasi setelahnya.
+3. Pihak Kedua wajib melaporkan secara tertulis setiap pelunasan jamaah berkode booking Pihak Pertama paling lambat 3 (tiga) hari kerja setelah pelunasan diterima.
+4. Imbal jasa dibayar paling lambat 7 (tujuh) hari kerja setelah tagihan Pihak Pertama diterima, ke rekening atas nama Pihak Pertama.
+5. Kewajiban pada angka 2 sampai dengan 4 tetap berlaku untuk jamaah yang mendaftar selama masa uji coba dan melunasi setelahnya.
 
 #### Pasal 4 Penggunaan Data dan Merek `[Mengikat]`
 
@@ -559,7 +645,7 @@ Para Pihak wajib menjaga kerahasiaan informasi bisnis yang diterima dari pihak l
 1. Kecuali Pasal 3 sampai dengan Pasal 8, surat ini merupakan pernyataan minat dan tidak menimbulkan kewajiban hukum bagi Para Pihak untuk menandatangani PKS.
 2. Kerja sama ini tidak eksklusif. Masing-masing pihak bebas bekerja sama dengan pihak lain.
 3. Masing-masing pihak menanggung biayanya sendiri sehubungan dengan surat ini.
-4. Pihak Pertama dapat mengalihkan hak dan kewajibannya dalam surat ini kepada badan hukum baru pengelola platform Umrohku dengan pemberitahuan tertulis kepada Pihak Kedua.
+4. Pihak Pertama dapat mengalihkan hak dan kewajibannya dalam surat ini kepada badan hukum baru pengelola platform Umrohku dengan persetujuan tertulis Pihak Kedua, yang tidak akan ditahan tanpa alasan yang wajar.
 
 #### Pasal 7 Jangka Waktu `[Mengikat]`
 
@@ -592,6 +678,8 @@ Draf disusun mengikuti praktik dokumen prakontrak di Indonesia: rencana kerja sa
 - [Sadar Travel: syarat dan simulasi pembiayaan umroh syariah](https://sadartravel.com/articles/panduan-pengajuan-pembiayaan-umroh-amitra-syariah-syarat-simulasi-tips)
 - [Hukumonline: perbedaan perjanjian dengan MoU dan kekuatan mengikatnya](https://www.hukumonline.com/klinik/a/perbedaan-antara-perjanjian-dengan-mou-lt514689463d4b2/)
 - [Baker McKenzie: dokumen pendahuluan dalam transaksi di Indonesia](https://resourcehub.bakermckenzie.com/en/resources/global-private-ma-guide-limited/asia-pacific/indonesia/topics/preliminary-documents)
+- [Xendit: daftar harga virtual account, kartu, dan QRIS](https://www.xendit.co/en/pricing)
+- [Midtrans: biaya per transaksi, belum termasuk PPN](https://docs.midtrans.com/docs/how-much-does-midtrans-charge-for-its-payment-service)
 - [PP 38/2021: rekening penampungan PPIU](https://peraturan.go.id/files/pp38-2021bt.pdf)
 - [SmartLegal: modal PJP kategori izin 1 Rp15 miliar](https://smartlegal.id/perizinan/2021/08/15/ingin-mendirikan-usaha-penyedia-jasa-pembayaran-ketahui-dulu-perizinannya/)
 - [Hukumonline: PPh final 25% atas hadiah undian](https://www.hukumonline.com/klinik/a/pemungutan-pph-atas-hadiah-undian-lt584127d3d0149/)
