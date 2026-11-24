@@ -1,0 +1,39 @@
+{{/* Bagian dinamis layar QR kasir (htmx tiap 2 detik selama menunggu bayar). */}}
+{{$c := .C}}
+<div id="ksst" {{if $c.Waiting}}hx-get="/toko/kasir/{{$c.Code}}/status" hx-trigger="every 2s" hx-swap="outerHTML"{{end}} data-status="{{$c.Status}}">
+{{if $c.Waiting}}
+    <div class="rounded-[2rem] bg-white shadow-2xl shadow-emerald-950/30 overflow-hidden">
+        <div class="px-6 pt-6 text-center">
+            <p class="text-sm text-gray-500">Total bayar</p>
+            <p class="text-4xl font-extrabold text-gray-900 tabular-nums">Rp {{rp $c.AmountIDR}}</p>
+            <p class="text-sm text-gray-500 tabular-nums">SAR {{$c.AmountSAR}} · kurs contoh Rp {{rp $c.Rate}}</p>
+        </div>
+        <div class="px-6 pt-4 flex items-center justify-between text-xs">
+            <span class="font-black tracking-tight text-gray-900 text-lg">QRIS</span>
+            <span class="text-gray-500 text-right">{{.M.Short}}<span class="block">NMID {{.NMID}}</span></span>
+        </div>
+        <div class="mx-auto mt-2 w-[min(78vw,300px)] aspect-square [&>svg]:w-full [&>svg]:h-full" role="img" aria-label="QRIS dinamis {{$c.Code}}">{{.QRSVG}}</div>
+        <div class="px-6 pb-6 text-center">
+            <p class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-800 px-3 py-1 text-sm font-semibold">Berlaku <span class="tabular-nums" data-exp="{{$c.ExpiresAt.UnixMilli}}">15:00</span></p>
+            <p class="mt-3 text-sm text-gray-600">Scan dengan aplikasi pembayaran apa pun</p>
+            <div class="mt-2 flex flex-wrap justify-center gap-1.5 text-xs font-semibold text-gray-700">{{range (list "DANA" "ShopeePay" "GoPay" "OVO" "LinkAja" "m-banking")}}<span class="rounded-full bg-gray-100 px-2.5 py-1">{{.}}</span>{{end}}</div>
+            <p class="mt-3 inline-flex items-center gap-2 text-xs text-gray-400"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Menunggu pembayaran…</p>
+        </div>
+    </div>
+{{else if eq $c.Status "dibayar"}}
+    <div class="rounded-[2rem] bg-white shadow-2xl shadow-emerald-950/30 px-6 py-10 text-center">
+        <span class="mx-auto w-24 h-24 rounded-full bg-emerald-500 text-white flex items-center justify-center {{if .Fresh}}animate-[bounce_1s_ease-out_1]{{end}}">
+            <svg class="w-14 h-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+        <p class="mt-5 text-lg font-bold text-emerald-700">Pembayaran diterima</p>
+        <p class="text-4xl font-extrabold text-gray-900 tabular-nums">Rp {{rp $c.AmountIDR}}</p>
+        <p class="text-sm text-gray-500 tabular-nums">SAR {{$c.AmountSAR}} · via {{$c.PaidVia}}</p>
+        <p class="mt-1 text-xs text-gray-400">{{with $c.PaidAt}}{{tglJam .}}{{end}} · Ref {{$c.Code}}</p>
+        <p class="mt-4 rounded-xl bg-emerald-50 text-emerald-800 text-xs px-4 py-2.5">Barang boleh diserahkan. Dana diteruskan ke rekening toko oleh payment gateway (simulasi).</p>
+    </div>
+{{else}}
+    <div class="rounded-[2rem] bg-white shadow-2xl shadow-emerald-950/30 px-6 py-10 text-center">
+        <p class="text-lg font-bold text-gray-900">{{if eq $c.Status "batal"}}Transaksi dibatalkan{{else}}QR sudah kedaluwarsa{{end}}</p>
+        <p class="mt-1 text-sm text-gray-500">SAR {{$c.AmountSAR}} · Rp {{rp $c.AmountIDR}}</p>
+    </div>
+{{end}}
+</div>

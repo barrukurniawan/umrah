@@ -228,9 +228,9 @@ func (m Merchant) CatList() []string { return strings.Split(m.Cats, ",") }
 
 // Display: nama toko tanpa akhiran "(contoh)" untuk kartu; label "Toko contoh" tampil terpisah.
 func (m Merchant) Display() string { return strings.TrimSuffix(m.Name, " (contoh)") }
-func (m Merchant) MainCat() string  { return m.CatList()[0] }
-func (m Merchant) Tone() string     { return CatTone(m.MainCat()) }
-func (m Merchant) CityKey() string  { return strings.ToLower(m.City) }
+func (m Merchant) MainCat() string { return m.CatList()[0] }
+func (m Merchant) Tone() string    { return CatTone(m.MainCat()) }
+func (m Merchant) CityKey() string { return strings.ToLower(m.City) }
 func (m Merchant) HasCat(k string) bool {
 	for _, c := range m.CatList() {
 		if c == k {
@@ -248,7 +248,9 @@ func (m Merchant) CatLabels() string {
 	}
 	return strings.Join(l, " · ")
 }
-func (m Merchant) RatingLabel() string { return strings.Replace(fmt.Sprintf("%.1f", m.Rating), ".", ",", 1) }
+func (m Merchant) RatingLabel() string {
+	return strings.Replace(fmt.Sprintf("%.1f", m.Rating), ".", ",", 1)
+}
 func (m Merchant) ReviewsLabel() string {
 	if m.Reviews >= 1000 {
 		return strings.Replace(fmt.Sprintf("%.1f rb", float64(m.Reviews)/1000), ".", ",", 1)
@@ -403,11 +405,11 @@ type MarketOrder struct {
 
 func init() { RegisterModels(&MarketOrder{}) }
 
-func (o MarketOrder) Lines() []Line        { return parseLines(o.Items) }
-func (o MarketOrder) Merchant() *Merchant  { return MerchantBySlug(o.MerchantSlug) }
-func (o MarketOrder) Waiting() bool        { return o.Status == "menunggu_bayar" }
-func (o MarketOrder) Paid() bool           { return o.PaidAt != nil }
-func (o MarketOrder) SecondsLeft() int     { return max(0, int(time.Until(o.ExpiresAt).Seconds())) }
+func (o MarketOrder) Lines() []Line       { return parseLines(o.Items) }
+func (o MarketOrder) Merchant() *Merchant { return MerchantBySlug(o.MerchantSlug) }
+func (o MarketOrder) Waiting() bool       { return o.Status == "menunggu_bayar" }
+func (o MarketOrder) Paid() bool          { return o.PaidAt != nil }
+func (o MarketOrder) SecondsLeft() int    { return max(0, int(time.Until(o.ExpiresAt).Seconds())) }
 func (o MarketOrder) ItemCount() (n int) {
 	for _, l := range o.Lines() {
 		n += l.Qty
@@ -532,6 +534,11 @@ func pickupDigits() string {
 // MarketQR: QRIS dinamis (format EMVCo MPM + CRC) untuk tagihan pesanan. Kode pesanan di tag 62
 // (bill number & reference) supaya pembayaran bisa dicocokkan. Penyelenggara & NMID FIKTIF.
 func MarketQR(o *MarketOrder, m *Merchant) string {
+	return merchantQR(m, o.Code, o.TotalIDR, "UMROHKU")
+}
+
+// merchantQR: QRIS dinamis atas nama toko (dipakai pesanan pickup & kasir). terminal = tag 62.07.
+func merchantQR(m *Merchant, code string, idr int64, terminal string) string {
 	t := func(tag, v string) string { return fmt.Sprintf("%s%02d%s", tag, len([]rune(v)), v) }
 	mid := strings.ToUpper(strings.ReplaceAll(m.Slug, "-", ""))
 	if len(mid) > 15 {
@@ -544,8 +551,8 @@ func MarketQR(o *MarketOrder, m *Merchant) string {
 		name = name[:25]
 	}
 	body := t("00", "01") + t("01", "12") + t("26", acq) + t("51", nmid) + t("52", m.MCC) + t("53", "360") +
-		t("54", strconv.FormatInt(o.TotalIDR, 10)) + t("58", "ID") + t("59", name) + t("60", strings.ToUpper(m.City)) +
-		t("62", t("01", o.Code)+t("05", o.Code)+t("07", "UMROHKU"))
+		t("54", strconv.FormatInt(idr, 10)) + t("58", "ID") + t("59", name) + t("60", strings.ToUpper(m.City)) +
+		t("62", t("01", code)+t("05", code)+t("07", terminal))
 	return qris.WithCRC(body)
 }
 

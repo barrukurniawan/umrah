@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>{{template "demo_head" (dict "Title" .Title)}}</head>
+<body class="min-h-screen bg-gradient-to-b from-emerald-700 via-emerald-800 to-emerald-950 text-white">
+<main class="max-w-md mx-auto px-4 pt-4 pb-10">
+    <div class="flex items-center justify-between gap-3">
+        <a href="/toko/kasir" class="inline-flex items-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 px-3.5 py-2 text-sm font-semibold">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Kasir</a>
+        <div class="min-w-0 text-right"><p class="font-bold truncate">{{.M.Display}}</p><p class="text-xs text-emerald-200 truncate">{{.M.Area}}, {{.M.City}} · toko contoh</p></div>
+    </div>
+    {{with .C.Note}}<p class="mt-4 text-center text-sm text-emerald-100">{{.}}</p>{{end}}
+    <div class="mt-4">{{template "demo/toko_kasir_status" .}}</div>
+
+    <div id="kasirActions" class="mt-5 grid gap-3">
+        {{if .C.Waiting}}
+        <div class="rounded-2xl border border-dashed border-amber-300/60 bg-white/5 p-3.5">
+            <p class="text-xs font-semibold text-amber-200">Demo: simulasikan jamaah membayar dari</p>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+                {{range (list "DANA" "ShopeePay" "GoPay" "OVO")}}<form method="POST" action="/toko/kasir/{{$.C.Code}}/simulasi"><input type="hidden" name="app" value="{{.}}"><button class="rounded-full bg-white text-gray-900 hover:bg-amber-100 px-3 py-1.5 text-xs font-semibold">{{.}}</button></form>{{end}}
+            </div>
+            <p class="mt-2 text-[11px] text-emerald-200/80">QR berformat QRIS asli, tetapi merchant & penyelenggaranya fiktif. Aplikasi sungguhan akan menolak, jadi tidak ada uang yang berpindah.</p>
+        </div>
+        <form method="POST" action="/toko/kasir/{{.C.Code}}/batal" class="text-center"><button class="text-sm font-semibold text-emerald-100 underline underline-offset-4 hover:text-white">Batalkan transaksi</button></form>
+        {{else}}
+        <a href="/toko/kasir" class="rounded-2xl bg-white text-emerald-800 text-center font-bold py-3.5 hover:bg-emerald-50">Transaksi baru</a>
+        {{end}}
+    </div>
+</main>
+<script>
+(function () {
+    function tick() {
+        var el = document.querySelector('[data-exp]');
+        if (!el) return;
+        var s = Math.max(0, Math.round((parseInt(el.dataset.exp, 10) - Date.now()) / 1000));
+        el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        if (s === 0 && !el.dataset.done) { el.dataset.done = '1'; location.reload(); }
+    }
+    tick(); setInterval(tick, 1000);
+    document.body.addEventListener('htmx:afterSwap', function () {
+        var b = document.getElementById('ksst');
+        if (b && b.dataset.status !== 'menunggu_bayar') location.reload(); // perbarui tombol di bawah
+    });
+})();
+</script>
+</body>
+</html>

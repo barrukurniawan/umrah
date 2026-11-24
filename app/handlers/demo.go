@@ -76,6 +76,7 @@ func RegisterDemo(app *fiber.App) {
 	registerDemoTanahSuci(app) // Fase 4 + toko mitra
 	registerDemoQRIS(app)      // bayar QRIS + navigasi bawah
 	registerDemoMarket(app)    // market Tanah Suci ala GoFood
+	registerDemoKasir(app)     // kasir toko: buat QR untuk belanja langsung
 }
 
 func DemoTour(c *fiber.Ctx) error {
@@ -114,7 +115,7 @@ func DemoSwitchRole(c *fiber.Ctx) error {
 		if demo.MerchantBySlug(slug) == nil {
 			return c.Redirect("/demo", fiber.StatusSeeOther)
 		}
-		next = "/toko"
+		next = "/toko/kasir"
 	default:
 		r = demo.Role{}
 	}

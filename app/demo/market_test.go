@@ -148,3 +148,34 @@ func TestDistLabel(t *testing.T) {
 		}
 	}
 }
+
+func TestKasirCharge(t *testing.T) {
+	marketTestDB(t)
+	DB.AutoMigrate(&StoreCharge{})
+	if _, err := CreateCharge("madinah-abaya", 0, ""); !errors.Is(err, ErrKasirAmount) {
+		t.Fatalf("nominal 0 harus ditolak, dapat %v", err)
+	}
+	if _, err := CreateCharge("madinah-abaya", KasirMaxSAR+1, ""); !errors.Is(err, ErrKasirAmount) {
+		t.Fatalf("nominal kelewat besar harus ditolak, dapat %v", err)
+	}
+	c, err := CreateCharge("madinah-abaya", 150, "gamis + kurma")
+	if err != nil {
+		t.Fatal(err)
+	}
+	q, err := qris.Decode(c.QRPayload)
+	if err != nil || !q.Dynamic || q.Amount != 150*SARRateDemo || q.Reference != c.Code || q.TerminalID != "KASIR01" {
+		t.Fatalf("QR kasir salah: %v %+v", err, q)
+	}
+	if ChargeFor("makkah-ajyad", c.Code) != nil {
+		t.Fatal("toko lain tidak boleh melihat tagihan ini")
+	}
+	if err := PayCharge(c, "DANA (simulasi)"); err != nil || c.Status != "dibayar" {
+		t.Fatalf("bayar gagal: %v", err)
+	}
+	if err := PayCharge(c, "OVO (simulasi)"); !errors.Is(err, ErrKasirState) {
+		t.Fatalf("bayar dua kali harus ditolak, dapat %v", err)
+	}
+	if len(ChargesToday("madinah-abaya")) != 1 {
+		t.Fatal("transaksi hari ini tidak tercatat")
+	}
+}

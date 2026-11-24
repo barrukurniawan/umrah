@@ -311,3 +311,96 @@ func TokoMarketAdvance(c *fiber.Ctx) error {
 	}
 	return c.Redirect("/toko/pesanan?ok="+urlq(c.Params("code")), fiber.StatusSeeOther)
 }
+
+// ---- Kasir (belanja langsung di toko): toko membuat QR, jamaah bayar dari aplikasi lain ----
+
+func registerDemoKasir(app *fiber.App) {
+	app.Get("/toko/kasir", TokoPage)
+	app.Post("/toko/kasir", TokoKasirCreate)
+	app.Get("/toko/kasir/:code", TokoKasirQR)
+	app.Get("/toko/kasir/:code/status", TokoKasirStatus)
+	app.Post("/toko/kasir/:code/simulasi", TokoKasirSimulate)
+	app.Post("/toko/kasir/:code/batal", TokoKasirCancel)
+}
+
+func TokoKasirCreate(c *fiber.Ctx) error {
+	if !accounts.SameOrigin(c) {
+		return c.SendStatus(fiber.StatusForbidden)
+	}
+	r, ok := requireRole(c, "merchant")
+	if !ok {
+		return c.Redirect("/toko", fiber.StatusSeeOther)
+	}
+	ch, err := demo.CreateCharge(r.Slug, int64(atoiDef(c.FormValue("sar"), 0)), c.FormValue("catatan"))
+	if err != nil {
+		return c.Redirect("/toko/kasir?err="+urlq(err.Error())+"&sar="+urlq(c.FormValue("sar")), fiber.StatusSeeOther)
+	}
+	return c.Redirect("/toko/kasir/"+ch.Code, fiber.StatusSeeOther)
+}
+
+func kasirCharge(c *fiber.Ctx) (*demo.StoreCharge, error) {
+	r, ok := requireRole(c, "merchant")
+	if !ok {
+		return nil, c.Redirect("/toko", fiber.StatusSeeOther)
+	}
+	ch := demo.ChargeFor(r.Slug, c.Params("code"))
+	if ch == nil {
+		return nil, c.Redirect("/toko/kasir", fiber.StatusSeeOther)
+	}
+	return ch, nil
+}
+
+func kasirData(ch *demo.StoreCharge, fresh bool) fiber.Map {
+	d := fiber.Map{"C": ch, "M": ch.Merchant(), "Fresh": fresh, "NMID": ch.NMID()}
+	if ch.Waiting() {
+		d["QRSVG"] = template.HTML(payments.QRSVG(ch.QRPayload, 300))
+	}
+	return d
+}
+
+func TokoKasirQR(c *fiber.Ctx) error {
+	ch, err := kasirCharge(c)
+	if ch == nil {
+		return err
+	}
+	d := kasirData(ch, c.Query("baru") == "1")
+	d["Title"] = "QR kasir " + ch.Code
+	return c.Render("demo/toko_kasir_qr", viewer(c, d))
+}
+
+func TokoKasirStatus(c *fiber.Ctx) error {
+	ch, err := kasirCharge(c)
+	if ch == nil {
+		return err
+	}
+	c.Set("Cache-Control", "no-store")
+	return c.Render("demo/toko_kasir_status", kasirData(ch, c.Get("HX-Request") == "true" && ch.Status == "dibayar"))
+}
+
+func TokoKasirSimulate(c *fiber.Ctx) error {
+	if !accounts.SameOrigin(c) {
+		return c.SendStatus(fiber.StatusForbidden)
+	}
+	ch, err := kasirCharge(c)
+	if ch == nil {
+		return err
+	}
+	app := c.FormValue("app")
+	if !marketSimApps[app] {
+		app = "aplikasi lain"
+	}
+	_ = demo.PayCharge(ch, app+" (simulasi)")
+	return c.Redirect("/toko/kasir/"+ch.Code+"?baru=1", fiber.StatusSeeOther)
+}
+
+func TokoKasirCancel(c *fiber.Ctx) error {
+	if !accounts.SameOrigin(c) {
+		return c.SendStatus(fiber.StatusForbidden)
+	}
+	ch, err := kasirCharge(c)
+	if ch == nil {
+		return err
+	}
+	_ = demo.CancelCharge(ch)
+	return c.Redirect("/toko/kasir", fiber.StatusSeeOther)
+}
