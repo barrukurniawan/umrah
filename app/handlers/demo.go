@@ -57,6 +57,7 @@ func RegisterDemo(app *fiber.App) {
 	app.Get("/demo", DemoTour)
 	// Proposal bisnis (statis, khusus subdomain demo)
 	app.Get("/proposal", func(c *fiber.Ctx) error { return c.SendFile("./web/proposal/index.html") })
+	app.Get("/proposal/ksa", func(c *fiber.Ctx) error { return c.SendFile("./web/proposal/ksa.html") })
 	app.Static("/proposal/img", "./web/proposal/img", fiber.Static{MaxAge: 86400})
 	app.Post("/demo/peran", DemoSwitchRole)
 	app.Get("/inbox", DemoInbox)

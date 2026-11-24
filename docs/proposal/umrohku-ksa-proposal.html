@@ -1,0 +1,595 @@
+<title>Proposal Umrohku KSA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Amiri:wght@700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column (proposal document) with wide bands for screenshots and the payment flow; brand = deep emerald + champagne gold, as in the umrohku videos */
+:root {
+  --bg: #F4F7F5; --paper: #FFFFFF; --ink: #0B231B; --muted: #4E6A60; --line: #D7E3DD;
+  --em: #0B6B4F; --em-soft: #E3F1EB; --gold: #A9801C; --gold-soft: #F7EED2; --warn: #B4471F; --warn-soft: #FBE8DF;
+  --hero-1: #062A20; --hero-2: #0B4A39; --hero-ink: #F3E5AB; --hero-text: #E2EFE9;
+  --display: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --body: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --arabic: "Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #07130F; --paper: #0D1D17; --ink: #E6F0EB; --muted: #9DB6AB; --line: #1F362D;
+  --em: #34C995; --em-soft: #10302A; --gold: #E2C068; --gold-soft: #2E2812; --warn: #FF8A64; --warn-soft: #34190F;
+  --hero-1: #03140F; --hero-2: #0A3A2D; --hero-ink: #F3E5AB; --hero-text: #D6E6DF; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #07130F; --paper: #0D1D17; --ink: #E6F0EB; --muted: #9DB6AB; --line: #1F362D;
+  --em: #34C995; --em-soft: #10302A; --gold: #E2C068; --gold-soft: #2E2812; --warn: #FF8A64; --warn-soft: #34190F;
+  --hero-1: #03140F; --hero-2: #0A3A2D; --hero-ink: #F3E5AB; --hero-text: #D6E6DF; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16.5px; line-height: 1.65; }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wide { max-width: 1120px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: -.01em; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--em); }
+.eyebrow { font: 600 12.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+section > .wrap { display: grid; gap: 20px; }
+.lead { font-size: 18.5px; color: var(--ink); }
+.muted { color: var(--muted); }
+.fill { background: var(--gold-soft); color: var(--gold); border: 1px dashed var(--gold); border-radius: 6px; padding: 0 6px; font-family: var(--mono); font-size: .86em; white-space: nowrap; }
+
+/* hero */
+.hero { background: radial-gradient(120% 90% at 50% 10%, var(--hero-2), var(--hero-1)); color: var(--hero-text); padding-block: 72px 64px; position: relative; overflow: hidden; }
+.hero .wrap { display: grid; gap: 22px; position: relative; }
+.hero .star { position: absolute; right: -60px; top: -40px; width: 360px; height: 360px; opacity: .14; pointer-events: none; }
+.hero .arabic { font-family: var(--arabic); font-size: 26px; color: var(--hero-ink); direction: rtl; }
+.hero h1 { font-size: clamp(44px, 9vw, 84px); font-weight: 800; letter-spacing: -.03em; color: #fff; }
+.hero h1 span { color: var(--hero-ink); }
+.hero .motto { font-size: clamp(20px, 3.4vw, 28px); font-weight: 700; color: var(--hero-ink); }
+.hero p { color: var(--hero-text); font-size: 18px; }
+.meta { display: flex; flex-wrap: wrap; gap: 10px 24px; font: 500 13.5px/1.4 var(--mono); color: var(--hero-text); opacity: .85; }
+
+/* numbers */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; align-content: start; }
+.stat b { font: 700 28px/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--em); }
+.stat span { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.stat small { font: 500 11.5px/1.3 var(--mono); color: var(--muted); }
+
+/* lists */
+.problems { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.problem { border-left: 3px solid var(--warn); padding: 4px 0 4px 16px; display: grid; gap: 6px; }
+.problem h3 { font-size: 17px; }
+.problem p { font-size: 15px; color: var(--muted); }
+
+/* screenshots */
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(44%, 180px), 1fr)); gap: 22px 16px; }
+figure { margin: 0; display: grid; gap: 10px; align-content: start; }
+.phone { border-radius: 26px; border: 6px solid var(--ink); overflow: hidden; background: var(--paper); aspect-ratio: 390 / 844; max-width: 100%; box-shadow: 0 14px 30px -18px rgba(0,0,0,.45); }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+figcaption { display: grid; gap: 2px; }
+figcaption b { font-size: 15px; }
+figcaption span { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.phone.todo { border-style: dashed; border-color: var(--gold); background: var(--gold-soft); display: grid; place-items: center; text-align: center; padding: 18px; }
+.phone.todo div { display: grid; gap: 8px; justify-items: center; }
+.phone.todo strong { font: 700 16px/1.3 var(--display); color: var(--ink); }
+.phone.todo em { font: 600 11.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-style: normal; }
+.tag { display: inline-block; font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; background: var(--em-soft); color: var(--em); justify-self: start; }
+.tag.next { background: var(--gold-soft); color: var(--gold); }
+
+/* flow */
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; counter-reset: s; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.step { padding: 18px; display: grid; gap: 6px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); counter-increment: s; }
+.step::before { content: counter(s); font: 700 13px/1 var(--mono); color: var(--paper); background: var(--em); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.step b { font-size: 15.5px; }
+.step span { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.note { background: var(--em-soft); border-radius: 12px; padding: 14px 18px; font-size: 15px; }
+.note.warn { background: var(--warn-soft); }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; min-width: 600px; font-size: 14.5px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td b { font-weight: 700; }
+
+/* two paths */
+.paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.path { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.path.primary { border: 2px solid var(--em); }
+.path ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+
+/* roadmap */
+.road { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 8px; }
+.phase { position: relative; padding: 0 0 26px 26px; display: grid; gap: 6px; }
+.phase::before { content: ""; position: absolute; left: -9px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 3px solid var(--em); }
+.phase.now::before { background: var(--em); }
+.phase .when { font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.phase ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; color: var(--muted); }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.box { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.box ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 15px; }
+.sources { font-size: 13.5px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
+footer { padding-block: 40px 56px; border-top: 1px solid var(--line); }
+footer .wrap { display: grid; gap: 6px; }
+/* feature icons (hero): one line-icon family, 32-grid, cream strokes + solid gold accent */
+.feats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
+.feat { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 10px; border-radius: 16px; background: rgba(243,229,171,.06); border: 1px solid rgba(243,229,171,.16); }
+.feat i { flex: none; width: 52px; height: 52px; border-radius: 13px; display: grid; place-items: center; color: #F3E5AB; background: linear-gradient(150deg, rgba(243,229,171,.22), rgba(243,229,171,.05)); border: 1px solid rgba(243,229,171,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+.feat svg { width: 32px; height: 32px; --acc: #E2C068; }
+.feat b { font-size: 14px; line-height: 1.3; font-weight: 700; color: #fff; }
+@media (max-width: 760px) { .feats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .feat { padding: 8px 10px 8px 8px; gap: 10px; } .feat i { width: 46px; height: 46px; } .feat svg { width: 28px; height: 28px; } .feat b { font-size: 13px; } }
+
+/* founder */
+.founder { display: grid; grid-template-columns: 140px 1fr; gap: 28px; align-items: start; }
+.avatar { width: 140px; height: 140px; border-radius: 28px; display: grid; place-items: center; font: 800 46px/1 var(--display); letter-spacing: -.02em; color: var(--hero-ink); background: radial-gradient(120% 120% at 30% 20%, var(--hero-2), var(--hero-1)); box-shadow: 0 18px 36px -22px rgba(0,0,0,.6); }
+.founder .role { font: 600 13px/1.5 var(--mono); color: var(--gold); letter-spacing: .04em; }
+.founder .bio { display: grid; gap: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 13.5px; padding: 5px 11px; border-radius: 999px; background: var(--em-soft); color: var(--em); font-weight: 600; }
+@media (max-width: 640px) { .founder { grid-template-columns: 1fr; gap: 18px; } .avatar { width: 96px; height: 96px; font-size: 32px; border-radius: 22px; } }
+
+/* shared icon system: one 32-grid line family; strokes = currentColor, accent = --acc */
+svg use { overflow: visible; }
+.feat svg, .ico svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico { flex: none; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: var(--em); background: var(--em-soft); }
+.ico svg { width: 26px; height: 26px; --acc: var(--gold); }
+.ico.warn { color: var(--warn); background: var(--warn-soft); }
+.ico.sm { width: 34px; height: 34px; border-radius: 10px; }
+.ico.sm svg { width: 20px; height: 20px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 14px; }
+.shots.four { grid-template-columns: repeat(auto-fill, minmax(min(44%, 230px), 1fr)); }
+.cards.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.card h3 { font-size: 16.5px; }
+.card p { font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+.card.row { display: flex; gap: 14px; align-items: flex-start; }
+.card.row > div { display: grid; gap: 4px; }
+.sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.sum > div { padding: 18px 20px; display: grid; gap: 6px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.sum b { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--em); }
+.sum p { font-size: 15px; }
+.journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 14px; counter-reset: j; }
+.leg { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; counter-increment: j; }
+.leg::after { content: "0" counter(j); position: absolute; top: 18px; right: 18px; font: 600 12px/1 var(--mono); color: var(--muted); opacity: .7; }
+.leg b { font: 800 19px/1.2 var(--display); }
+.pts, .leg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; color: var(--muted); }
+.pts li, .leg li { position: relative; padding-left: 20px; line-height: 1.5; }
+.pts li::before, .leg li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 9px; height: 5px; border-left: 2px solid var(--em); border-bottom: 2px solid var(--em); transform: rotate(-45deg); }
+.grp { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-top: 10px; }
+.src { font-size: 13.5px; color: var(--muted); }
+figcaption .tag { margin-bottom: 4px; }
+/* investor additions */
+.q { border-left: 3px solid var(--gold); padding: 4px 0 4px 16px; font-size: 16px; color: var(--muted); font-style: italic; }
+.q b { font-style: normal; color: var(--ink); }
+.ledger { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.ledger > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 18px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.ledger > div span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.ledger .minus span:last-child { color: var(--warn); }
+.ledger .total { background: var(--em-soft); font-weight: 800; border-bottom: 0; }
+.ledger .total span:last-child { color: var(--em); }
+.ledger small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+table.num th:not(:first-child), table.num td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+tr.hl td { background: var(--em-soft); font-weight: 800; }
+.neg { color: var(--warn); }
+.pos { color: var(--em); }
+.exp { border: 1.5px dashed var(--gold); background: var(--gold-soft); border-radius: 16px; padding: 18px 20px; display: grid; gap: 10px; }
+.exp .when { font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.exp ul { margin: 0; padding-left: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 6px 20px; font-size: 14.5px; }
+.ask { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.big { font: 800 clamp(36px, 6vw, 50px)/1 var(--display); color: var(--em); letter-spacing: -.02em; }
+.alloc { display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px; }
+.alloc i { display: block; height: 100%; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+.legend li { display: flex; align-items: center; gap: 10px; }
+.legend li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: none; }
+.legend li span { margin-left: auto; font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.commit { border: 2px solid var(--em); border-radius: 14px; padding: 14px 18px; display: flex; gap: 14px; align-items: flex-start; background: var(--paper); }
+.commit p { font-size: 15px; }
+.status { font: 600 10.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 7px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.status.go { background: var(--em-soft); color: var(--em); }
+.status.wait { background: var(--gold-soft); color: var(--gold); }
+.status.hold { background: var(--warn-soft); color: var(--warn); }
+
+/* light patterned hero (white to green, geometric pattern) */
+.hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%230B6B4F' stroke-opacity='.10' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(165deg, #FFFFFF 0%, #EEF8F2 45%, #CFEBDC 100%); color: var(--ink); }
+.hero .star { color: var(--em); opacity: .13; }
+.hero h1 { color: #0B4A39; }
+.hero h1 span { color: var(--gold); }
+.hero .motto { color: var(--em); }
+.hero p { color: var(--muted); }
+.feat { background: rgba(255,255,255,.88); border: 1px solid var(--line); box-shadow: 0 8px 20px -16px rgba(11,74,57,.55); }
+.feat i { color: var(--em); background: var(--em-soft); border: 1px solid rgba(11,107,79,.14); box-shadow: none; }
+.feat svg { --acc: var(--gold); }
+.feat b { color: var(--ink); }
+.hero-dark-fix { }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2334C995' stroke-opacity='.08' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), radial-gradient(120% 90% at 50% 10%, #0A3A2D, #03140F); } :root:not([data-theme="light"]) .hero h1 { color: #fff; } :root:not([data-theme="light"]) .feat, :root:not([data-theme="light"]) .lnk, :root:not([data-theme="light"]) .tr { background: rgba(255,255,255,.05); } }
+:root[data-theme="dark"] .hero { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2334C995' stroke-opacity='.08' stroke-width='1'%3E%3Crect x='19' y='19' width='26' height='26'/%3E%3Crect x='19' y='19' width='26' height='26' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Cpath d='M0 0l9 9M64 0l-9 9M0 64l9-9M64 64l-9-9'/%3E%3C/g%3E%3C/svg%3E"), radial-gradient(120% 90% at 50% 10%, #0A3A2D, #03140F); }
+:root[data-theme="dark"] .hero h1 { color: #fff; }
+:root[data-theme="dark"] .feat, :root[data-theme="dark"] .lnk, :root[data-theme="dark"] .tr { background: rgba(255,255,255,.05); }
+.stat.gold { background: var(--em); border-color: var(--em); }
+.stat.gold b { color: #F3E5AB; } .stat.gold span { color: #E2EFE9; } .stat.gold small { color: #BFE0D2; }
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; }
+.panel h4 { margin: 0; font: 700 15.5px/1.3 var(--display); }
+.panel .cap { font: 500 11.5px/1.4 var(--mono); color: var(--muted); }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; gap: 5px; font-size: 14px; }
+.bar > div { display: flex; justify-content: space-between; gap: 10px; }
+.bar > div span:last-child { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.bar i { display: block; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--em) var(--w), var(--em-soft) var(--w)); }
+.bar.top i { background: linear-gradient(90deg, var(--gold) var(--w), var(--gold-soft) var(--w)); }
+.bar.top > div span:first-child { font-weight: 700; }
+.evi { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #0f0f0f; }
+.evi img { display: block; width: 100%; height: auto; }
+.cols figure { align-content: start; }
+.doc { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: clamp(22px, 5vw, 56px); display: grid; gap: 18px; box-shadow: 0 24px 50px -34px rgba(0,0,0,.45); position: relative; overflow: hidden; }
+.doc::before { content: "DRAF"; position: absolute; top: 26px; right: -44px; transform: rotate(35deg); background: var(--gold-soft); color: var(--gold); font: 700 12px/1 var(--mono); letter-spacing: .3em; padding: 8px 60px; border: 1px dashed var(--gold); }
+.doc header { text-align: center; display: grid; gap: 6px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
+.doc header b { font: 800 clamp(17px, 2.6vw, 21px)/1.3 var(--display); letter-spacing: .04em; }
+.doc header span { font: 500 13px/1.4 var(--mono); color: var(--muted); }
+.doc p, .doc li { font-size: 14.5px; line-height: 1.7; max-width: none; }
+.doc h4 { margin: 6px 0 0; font: 700 14.5px/1.4 var(--display); text-align: center; }
+.doc h4 small { display: block; font: 600 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.doc ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.doc .party { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; font-size: 14.5px; padding: 12px 16px; background: var(--bg); border-radius: 8px; }
+.doc .party dt { color: var(--muted); } .doc .party dd { margin: 0; }
+.blank { display: inline-block; min-width: 150px; border-bottom: 1px dotted var(--muted); height: 1.1em; vertical-align: baseline; }
+.blank.s { min-width: 60px; }
+.bind { font: 600 10.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; background: var(--em-soft); color: var(--em); vertical-align: middle; margin-left: 6px; white-space: nowrap; }
+.bind.no { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.signs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 24px; margin-top: 10px; }
+.sign { display: grid; gap: 4px; font-size: 14.5px; }
+.sign .box { height: 92px; border: 1px dashed var(--line); border-radius: 8px; display: grid; place-items: center; font: 500 11px/1 var(--mono); color: var(--muted); padding: 0; background: none; }
+.sign .box { align-content: center; }
+@media (max-width: 640px) { .doc { padding-top: 58px; } .doc .party { grid-template-columns: 1fr; gap: 0 12px; } .doc .party dd { margin-bottom: 6px; } }
+.photo { width: 140px; height: 140px; border-radius: 28px; object-fit: cover; display: block; box-shadow: 0 18px 36px -22px rgba(0,0,0,.6); border: 3px solid var(--paper); outline: 1px solid var(--line); }
+@media (max-width: 640px) { .photo { width: 96px; height: 96px; border-radius: 22px; } }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--muted); }
+.facts span { display: inline-flex; align-items: center; gap: 6px; }
+.facts span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+.tl { display: grid; border-left: 2px solid var(--line); margin-left: 7px; }
+.job { position: relative; padding: 0 0 18px 22px; display: grid; gap: 2px; }
+.job:last-child { padding-bottom: 0; }
+.job::before { content: ""; position: absolute; left: -8px; top: 5px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); border: 3px solid var(--em); }
+.job.now::before { background: var(--em); }
+.job .when { font: 600 11.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.job b { font-size: 15.5px; }
+.job .co { font-size: 14.5px; color: var(--ink); }
+.job p { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(46%, 300px), 1fr)); gap: 18px; }
+.gal figure img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
+.gal.app figure img { aspect-ratio: 620 / 900; object-fit: cover; object-position: top; }
+.gal.six { grid-template-columns: repeat(auto-fill, minmax(min(46%, 300px), 1fr)); }
+.kicker { font: 600 11.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 10px; }
+.tr { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.92); border: 1px solid var(--line); }
+.seal { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--em); color: #fff; font: 800 12.5px/1 var(--display); letter-spacing: .02em; box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--gold); text-align: center; }
+.seal.sm { font-size: 10px; }
+.tr span { font-size: 13.5px; line-height: 1.4; color: var(--ink); }
+.tr span b { display: block; font-size: 14.5px; }
+.tr .ico { color: var(--em); }
+.fine, .hero .fine { font-size: 13.5px; color: var(--muted); }
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 185px), 1fr)); gap: 8px; counter-reset: l; }
+.lnk { display: flex; gap: 10px; align-items: center; padding: 9px 12px 9px 9px; border-radius: 13px; background: rgba(255,255,255,.88); border: 1px solid var(--line); text-decoration: none; color: var(--ink); min-width: 0; }
+.lnk i { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--em); color: #fff; }
+.lnk i svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.lnk div { min-width: 0; display: grid; gap: 2px; }
+.lnk small { font: 600 10.5px/1.1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.lnk b { font-size: 13.5px; line-height: 1.25; overflow-wrap: anywhere; }
+.lnk.own i { background: var(--gold); }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-budget" viewBox="0 0 32 32"><ellipse cx="11" cy="8" rx="6" ry="2.6"/><path d="M5 8v4.5c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V8"/><path d="M5 12.5V17c0 1.4 2.7 2.6 6 2.6"/><path d="M4 25.5h24"/><circle style="fill:var(--acc);stroke:none" cx="21" cy="25.5" r="3.2"/><path style="stroke:var(--acc)" d="M23 9.5l3 3-3 3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 32 32"><rect x="4.5" y="6.5" width="23" height="21" rx="4"/><path d="M4.5 12.5h23M11 4v5M21 4v5M9 17h2M9 21h2"/><path style="fill:var(--acc);stroke:none" d="M17.6 15.6a5.2 5.2 0 1 0 3.2 9.2 4.2 4.2 0 1 1-3.2-9.2z"/></symbol>
+  <symbol id="i-cicil" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path style="fill:var(--acc);stroke:none" d="M16 16V5a11 11 0 0 1 11 11z"/><path d="M16 16l7.8 7.8M16 16H5"/></symbol>
+  <symbol id="i-nabung" viewBox="0 0 32 32"><path d="M7 13.5h18v13H7z"/><path style="fill:var(--acc);stroke:none" d="M7 17h18v2.4H7z"/><path d="M13 13.5h6"/><circle cx="16" cy="6" r="3.2"/><path d="M16 9.6v2.2"/></symbol>
+  <symbol id="i-sim" viewBox="0 0 32 32"><path d="M12 11l4-2 4 2v7l-4 2-4-2z"/><path d="M12 11l4 2 4-2M16 13v7"/><path style="stroke:var(--acc)" d="M12 14.2l4 2 4-2"/><ellipse cx="16" cy="19" rx="12.5" ry="5"/><circle style="fill:var(--acc);stroke:none" cx="27.6" cy="20.6" r="2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 32 32"><path d="M4.5 9.5a2 2 0 0 1 2-2h19a2 2 0 0 1 2 2v3.2a3.3 3.3 0 0 0 0 6.6v3.2a2 2 0 0 1-2 2h-19a2 2 0 0 1-2-2v-3.2a3.3 3.3 0 0 0 0-6.6z"/><path d="M20 8v16" stroke-dasharray="2 2.4"/><path style="stroke:var(--acc)" d="M9 16.3l2.4 2.4 4.4-4.8"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 32 32"><path d="M6.5 6.5h15a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H13l-5 4v-4H6.5a3 3 0 0 1-3-3V9.5a3 3 0 0 1 3-3z"/><path style="fill:var(--acc);stroke:none" d="M14 9.2l1.2 3.1 3.1 1.2-3.1 1.2L14 17.8l-1.2-3.1-3.1-1.2 3.1-1.2zM25.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+  <symbol id="i-qris" viewBox="0 0 32 32"><path d="M5 10V7a2 2 0 0 1 2-2h3M22 5h3a2 2 0 0 1 2 2v3M27 22v3a2 2 0 0 1-2 2h-3M10 27H7a2 2 0 0 1-2-2v-3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="17.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="17.5" width="5" height="5" rx="1"/><path style="fill:var(--acc);stroke:none" d="M17.5 17.5h2.6v2.6h-2.6zM20.4 20.4H23V23h-2.6z"/></symbol>
+  <symbol id="i-compare" viewBox="0 0 32 32"><rect x="4" y="6" width="10" height="15" rx="2.5"/><rect x="18" y="11" width="10" height="15" rx="2.5"/><path d="M7 11h4M7 14.5h4M21 16h4M21 19.5h4"/><path style="stroke:var(--acc)" d="M12 25.5h-6l2-2M20 6.5h6l-2 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M16 10.5v7"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="21.5" r="1.7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path style="stroke:var(--acc)" d="M11.5 16l3.2 3.2 6-6.4"/></symbol>
+  <symbol id="i-list" viewBox="0 0 32 32"><rect x="6.5" y="6.5" width="19" height="21" rx="3"/><path d="M12 6.5V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1.5"/><path d="M15 13h6M15 18h6M15 23h4"/><path style="stroke:var(--acc)" d="M10 13l1.2 1.2L13 12M10 18l1.2 1.2L13 17"/></symbol>
+  <symbol id="i-hour" viewBox="0 0 32 32"><path d="M8 4h16M8 28h16"/><path d="M10 4c0 6 6 8 6 12s-6 6-6 12M22 4c0 6-6 8-6 12s6 6 6 12"/><path style="fill:var(--acc);stroke:none" d="M12.6 26h6.8L16 22.2z"/></symbol>
+  <symbol id="i-law" viewBox="0 0 32 32"><path d="M16 6v20M10 27h12M6 9.5h20"/><path d="M6 9.5l-3.2 7.5h6.4zM26 9.5l-3.2 7.5h6.4z"/><path d="M2.8 17a3.2 3.2 0 0 0 6.4 0M22.8 17a3.2 3.2 0 0 0 6.4 0"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="5.5" r="2"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 32 32"><path d="M4 12.5L16 5l12 7.5z"/><path d="M8 15v8M13 15v8M19 15v8M24 15v8M5 26.5h22"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="9.6" r="1.6"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 32 32"><rect x="5" y="11.5" width="22" height="6" rx="1.5"/><path d="M7 17.5v9h18v-9M16 11.5v15"/><path style="stroke:var(--acc)" d="M16 11.5c-1.5-4-6.5-5.5-6.5-2.3 0 1.6 2.5 2.3 6.5 2.3zM16 11.5c1.5-4 6.5-5.5 6.5-2.3 0 1.6-2.5 2.3-6.5 2.3z"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 32 32"><path d="M4.5 15.5V6.5a2 2 0 0 1 2-2h9l12 12-11 11z"/><circle style="fill:var(--acc);stroke:none" cx="10.5" cy="10.5" r="2.3"/><path style="stroke:var(--acc)" d="M13.5 21.5l7-7"/></symbol>
+  <symbol id="i-store" viewBox="0 0 32 32"><path d="M5 12.5h22l-2.2-6.5H7.2z"/><path d="M5 12.5a3.7 3.7 0 0 0 7.3 0 3.7 3.7 0 0 0 7.4 0 3.7 3.7 0 0 0 7.3 0"/><path d="M7 15.5V27h18V15.5"/><path style="fill:var(--acc);stroke:none" d="M13.5 20h5v7h-5z"/></symbol>
+  <symbol id="i-case" viewBox="0 0 32 32"><rect x="4" y="9.5" width="24" height="17" rx="3"/><path d="M12 9.5V7a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 20 7v2.5"/><path style="stroke:var(--acc)" d="M4 16.5h24"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16.5" r="2.2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 32 32"><path d="M5 27h22"/><rect x="7" y="16" width="4" height="8" rx="1"/><rect x="14" y="11" width="4" height="13" rx="1"/><rect style="fill:var(--acc);stroke:none" x="21" y="6" width="4" height="18" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 32 32"><rect x="3.5" y="7" width="25" height="18" rx="5"/><path style="fill:var(--acc);stroke:none" d="M13.5 11.8v8.4l7-4.2z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 32 32"><rect x="7" y="14" width="18" height="13" rx="3"/><path d="M11 14v-3.5a5 5 0 0 1 10 0V14"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="20.5" r="2.2"/></symbol>
+  <symbol id="i-kaaba" viewBox="0 0 32 32"><path d="M8 11l8-4 8 4v11l-8 4-8-4z"/><path d="M8 11l8 4 8-4M16 15v11"/><path style="stroke:var(--acc)" d="M8 14.6l8 4 8-4"/></symbol>
+  <symbol id="l-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3.5 9h17M3.5 15h17"/></symbol>
+  <symbol id="l-pitch" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7M7 12.5l3-3 2.5 2 4-4"/></symbol>
+  <symbol id="l-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="l-threads" viewBox="0 0 24 24"><path d="M16.4 11.3c-.4-2.4-2-3.7-4.3-3.7-2.6 0-4.3 1.8-4.3 4.3 0 2.6 1.7 4.4 4.2 4.4 2.3 0 3.9-1.4 3.9-3.5 0-3-4.6-3.3-5.9-1.2"/><path d="M19.6 7.6C18.1 4.9 15.4 3.3 12 3.3 6.9 3.3 3.6 7.1 3.6 12S6.9 20.7 12 20.7c3.6 0 6.2-1.7 7.5-4.4"/></symbol>
+  <symbol id="l-tiktok" viewBox="0 0 24 24"><path d="M14 3.5v11.3a3.9 3.9 0 1 1-3.9-3.9"/><path d="M14 3.5c.4 2.7 2.3 4.5 5 4.7"/></symbol>
+  <symbol id="l-yt" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.3v5.4l4.6-2.7z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="l-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 32 32"><path d="M27.5 5L4.5 14l8.5 3.5 3.5 9.5z"/><path style="stroke:var(--acc)" d="M13 17.5L27.5 5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 32 32"><rect x="7.5" y="4.5" width="17" height="23" rx="2.5"/><circle cx="16" cy="13" r="4.2"/><path d="M12 22.5h8"/><path style="stroke:var(--acc)" d="M11.8 13h8.4"/></symbol>
+  <symbol id="i-family" viewBox="0 0 32 32"><circle cx="11" cy="10" r="3.6"/><path d="M4.5 26.5V24a6.5 6.5 0 0 1 13 0v2.5"/><circle style="fill:var(--acc);stroke:none" cx="22.5" cy="13" r="3"/><path d="M19 26.5v-2a5 5 0 0 1 9 0v2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 32 32"><path d="M16 4.5l3.4 7 7.6 1.1-5.5 5.3 1.3 7.6L16 21.9l-6.8 3.6 1.3-7.6L5 12.6l7.6-1.1z"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="15.5" r="2.3"/></symbol>
+  <symbol id="i-target" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="6"/><circle style="fill:var(--acc);stroke:none" cx="16" cy="16" r="2.4"/></symbol>
+</svg>
+
+<header class="hero">
+  <svg class="star" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="40" y="40" width="120" height="120"/><rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="48"/><circle cx="100" cy="100" r="84"/></g></svg>
+  <div class="wrap">
+    <span class="eyebrow">Proposal ide startup · Indonesia → Arab Saudi · November 2026</span>
+    <h1>Umroh<span>ku</span> KSA</h1>
+    <div class="motto">Marketplace kebutuhan jamaah Indonesia di Makkah dan Madinah</div>
+    <p>Jamaah memesan oleh-oleh, makanan Indonesia, dan kebutuhan harian dari toko lokal Saudi lewat satu aplikasi berbahasa Indonesia: harga pasti, bayar dari HP, ambil di toko, antar ke lobi hotel, atau kirim langsung ke rumah di Indonesia.</p>
+    <span class="kicker">Jawaban untuk "siapa pelanggan pertamamu di Saudi?"</span>
+    <div class="trust">
+      <div class="tr"><span class="ico"><svg><use href="#i-family"/></svg></span><span><b>1,6 juta jamaah per tahun</b>Jamaah umroh Indonesia, 2025</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-play"/></svg></span><span><b>Dijangkau sejak di Indonesia</b>Lewat umrohku.web.id yang sudah live</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-store"/></svg></span><span><b>Penjualnya UMKM Saudi</b>Toko kurma, oleh-oleh, dan restoran</span></div>
+      <div class="tr"><span class="ico"><svg><use href="#i-law"/></svg></span><span><b>Wajib perusahaan Saudi</b>Kontrak toko dan pencairan dalam SAR</span></div>
+    </div>
+    <div class="feats" role="list" aria-label="Layanan utama">
+      <div class="feat" role="listitem"><i><svg><use href="#i-gift"/></svg></i><b>Oleh-oleh &amp; kurma</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-store"/></svg></i><b>Makanan Indonesia</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-case"/></svg></i><b>Ambil di toko</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-hour"/></svg></i><b>Antar ke lobi hotel</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-plane"/></svg></i><b>Kargo ke rumah</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-tag"/></svg></i><b>Voucher riyal</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-qris"/></svg></i><b>Bayar QRIS &amp; kartu</b></div>
+      <div class="feat" role="listitem"><i><svg><use href="#i-ai"/></svg></i><b>Bantuan berbahasa Indonesia</b></div>
+    </div>
+    <span class="kicker">Kanal resmi</span>
+    <nav class="links" aria-label="Kanal resmi umrohku">
+      <a class="lnk" href="https://umrohku.web.id"><i><svg><use href="#l-globe"/></svg></i><div><small>Live</small><b>umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://startup.umrohku.web.id"><i><svg><use href="#l-pitch"/></svg></i><div><small>Prototipe</small><b>startup.umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.instagram.com/umrohku.web.id"><i><svg><use href="#l-ig"/></svg></i><div><small>Instagram</small><b>@umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.tiktok.com/@umrohku.web.id"><i><svg><use href="#l-tiktok"/></svg></i><div><small>TikTok</small><b>@umrohku.web.id</b></div></a>
+      <a class="lnk" href="https://www.youtube.com/@umrohku.official"><i><svg><use href="#l-yt"/></svg></i><div><small>YouTube</small><b>@umrohku.official</b></div></a>
+      <a class="lnk own" href="https://www.linkedin.com/in/barru-kurniawan/"><i><svg><use href="#l-user"/></svg></i><div><small>Founder</small><b>Barru Kurniawan</b></div></a>
+    </nav>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">01 · Ringkasan</span>
+    <h2>Jamaah datang dari Indonesia. Uangnya dibelanjakan di toko Saudi.</h2>
+    <div class="sum">
+      <div><b>Masalah</b><p>Jamaah belanja dengan tunai dan tawar-menawar dalam bahasa asing, lalu pulang dengan koper kelebihan bagasi.</p></div>
+      <div><b>Solusi</b><p>Marketplace berbahasa Indonesia untuk toko lokal Saudi: pesan dulu, bayar dari HP, ambil, diantar, atau dikirim ke rumah.</p></div>
+      <div><b>Pelanggan pertama</b><p>Jamaah Indonesia yang sudah memakai umrohku.web.id sejak tahap persiapan di tanah air.</p></div>
+      <div><b>Kenapa Saudi</b><p>Kontrak toko, rekening SAR, dan izin pembayaran hanya bisa lewat perusahaan Saudi.</p></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>1,6 jt</b><span>jamaah umroh Indonesia per tahun</span><small>Siskopatuh, 2025</small></div>
+      <div class="stat"><b>508</b><span>paket umroh terdata di umrohku.web.id</span></div>
+      <div class="stat"><b>±185 rb</b><span>tayangan video organik</span><small>YouTube + TikTok</small></div>
+      <div class="stat"><b>Rp0</b><span>biaya iklan sejauh ini</span></div>
+    </div>
+    <p class="src">Analitik internal umrohku.web.id, 26 Okt–24 Nov 2026; YouTube dan TikTok per 24 Nov 2026.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">02 · Masalah</span>
+    <h2>Empat kerepotan jamaah Indonesia di Tanah Suci</h2>
+    <div class="cards">
+      <div class="card"><span class="ico warn"><svg><use href="#i-compare"/></svg></span><h3>Harga tidak pasti</h3><p>Belanja oleh-oleh berarti tawar-menawar dalam bahasa Arab, tanpa pembanding harga.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-budget"/></svg></span><h3>Repot uang tunai</h3><p>Menukar rupiah ke riyal, membawa tunai di keramaian, dan menghitung kurs sendiri.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-case"/></svg></span><h3>Kelebihan bagasi</h3><p>Kurma dan oleh-oleh untuk keluarga dan tetangga membuat koper melewati batas di bandara.</p></div>
+      <div class="card"><span class="ico warn"><svg><use href="#i-hour"/></svg></span><h3>Waktu ibadah terpakai</h3><p>Berjam-jam mencari toko dan makanan yang cocok, padahal waktu di Tanah Suci hanya 9–12 hari.</p></div>
+    </div>
+    <p class="note"><b>Di sisi toko:</b> pedagang lokal bergantung pada jamaah yang kebetulan lewat. Mereka tidak punya kanal untuk menjangkau jamaah Indonesia sebelum berangkat.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">03 · Solusi</span>
+    <h2>Pesan dari HP, terima dengan tiga cara</h2>
+    <div class="journey">
+      <div class="leg"><span class="ico"><svg><use href="#i-store"/></svg></span><b>Ambil di toko</b><ul><li>Pesan dan bayar di aplikasi</li><li>Harga pasti, tanpa tawar-menawar</li><li>Barang sudah dikemas saat diambil</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-hour"/></svg></span><b>Antar ke lobi hotel</b><ul><li>Pengiriman terjadwal 2 kali sehari</li><li>Di luar jam padat salat</li><li>Diserahkan di lobi hotel jamaah</li></ul></div>
+      <div class="leg"><span class="ico"><svg><use href="#i-plane"/></svg></span><b>Kargo ke rumah</b><ul><li>Pilih kurma dan oleh-oleh di Saudi</li><li>Dikirim ke alamat di Indonesia</li><li>Tanpa kelebihan bagasi</li></ul></div>
+    </div>
+    <p class="note"><b>Bukan antar instan 30 menit.</b> Kendaraan dibatasi di sekitar Masjidil Haram dan Masjid Nabawi, terutama di waktu salat. Karena itu modelnya pesan dulu dan kirim terjadwal, bukan kurir motor ke kamar.</p>
+    <div class="cards">
+      <div class="card"><span class="ico"><svg><use href="#i-qris"/></svg></span><h3>Bayar dari HP</h3><p>Kartu dan dompet digital lewat gateway berizin di Saudi; QRIS lintas negara saat tersedia.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-tag"/></svg></span><h3>Voucher riyal</h3><p>Dibeli dalam rupiah sebelum berangkat, dibelanjakan di toko mitra tanpa membawa tunai.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-ai"/></svg></span><h3>Berbahasa Indonesia</h3><p>Katalog, harga dalam rupiah dan riyal, serta bantuan pesanan dalam bahasa Indonesia.</p></div>
+      <div class="card"><span class="ico"><svg><use href="#i-star"/></svg></span><h3>Toko terkurasi</h3><p>Hanya toko berizin, dengan ulasan dari jamaah yang benar-benar bertransaksi.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">04 · Prototipe</span>
+    <h2>Sudah bisa dicoba, belum bertransaksi sungguhan</h2>
+    <p>Prototipe aplikasi berjalan di <a href="https://startup.umrohku.web.id"><b>startup.umrohku.web.id</b></a>. Tombol QRIS di tengah menu bawah membaca kode QR sungguhan; pembayaran dan data toko masih simulasi.</p>
+    <div class="gal app">
+      <figure><img src="img/k1-beranda.jpg" alt="Beranda aplikasi dengan menu bawah: Beranda, Market, QRIS, Riwayat, Profil"><figcaption><b>Satu aplikasi</b><span>Menu bawah: Beranda, Market, QRIS, Riwayat, Profil.</span></figcaption></figure>
+      <figure><img src="img/22-market.jpg" alt="Market: paket umroh, oleh-oleh, voucher Tanah Suci, pickup di toko, perlengkapan"><figcaption><b>Market</b><span>Oleh-oleh dikirim ke rumah, voucher, dan pickup di toko.</span></figcaption></figure>
+      <figure><img src="img/20-qris-bayar.jpg" alt="Konfirmasi pembayaran QRIS ke merchant" loading="lazy"><figcaption><b>Scan &amp; bayar</b><span>Membaca QR statis maupun dinamis.</span></figcaption></figure>
+      <figure><img src="img/k3-riwayat.jpg" alt="Riwayat: pembayaran QRIS, oleh-oleh dikirim ke Bandung, voucher Tanah Suci 465 SAR" loading="lazy"><figcaption><b>Riwayat terpadu</b><span>Pembayaran, oleh-oleh terkirim, dan voucher 465 SAR.</span></figcaption></figure>
+      <figure><img src="img/19-tanah-suci.jpg" alt="Layanan Tanah Suci: oleh-oleh, voucher riyal, pickup" loading="lazy"><figcaption><b>Layanan Tanah Suci</b><span>Oleh-oleh, voucher riyal, dan pickup.</span></figcaption></figure>
+      <figure><img src="img/k4-profil.jpg" alt="Profil jamaah dengan sumber dana bank dan ringkasan pesanan" loading="lazy"><figcaption><b>Profil jamaah</b><span>Sumber dana dari rekening bank, bukan saldo di aplikasi.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">05 · Kenapa Saudi</span>
+    <h2>Bisnis ini tidak bisa dijalankan dari Indonesia</h2>
+    <div class="cards two">
+      <div class="card row"><span class="ico"><svg><use href="#i-store"/></svg></span><div><h3>Kontrak dengan toko lokal</h3><p>Toko kurma, oleh-oleh, dan restoran butuh mitra berbadan hukum Saudi untuk bekerja sama dan menerima tagihan.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-bank"/></svg></span><div><h3>Pencairan dalam riyal</h3><p>Pedagang dibayar dalam SAR ke rekening bank Saudi. Itu butuh rekening perusahaan setempat.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-lock"/></svg></span><div><h3>Izin pembayaran</h3><p>Dana pembeli dan penjual diproses penyedia jasa pembayaran berizin bank sentral Saudi (SAMA). Umrohku tidak menampung dana.</p></div></div>
+      <div class="card row"><span class="ico"><svg><use href="#i-plane"/></svg></span><div><h3>Operasi di lapangan</h3><p>Pengemasan, pengantaran ke lobi hotel, dan kargo ke Indonesia dijalankan dari Makkah dan Madinah.</p></div></div>
+    </div>
+    <p class="note"><b>Selaras dengan Vision 2030.</b> Saudi menargetkan 30 juta jamaah umrah per tahun pada 2030. Umrohku KSA menambah pendapatan UMKM lokal dari jamaah asal negara pengirim terbesar, tanpa bersaing dengan pedagang setempat.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <span class="eyebrow">06 · Pelanggan pertama</span>
+    <h2>Kami bertemu jamaah berbulan-bulan sebelum mereka mendarat</h2>
+    <p class="q"><b>Keunggulan yang tidak dimiliki aplikasi lokal Saudi:</b> kanal akuisisi di Indonesia, sejak jamaah baru memilih paket dan menyiapkan dokumen.</p>
+    <div class="flow">
+      <div class="step"><b>Niat</b><span>Menonton video umrohku di YouTube dan TikTok.</span></div>
+      <div class="step"><b>Memilih paket</b><span>Membandingkan 508 paket di umrohku.web.id.</span></div>
+      <div class="step"><b>Persiapan</b><span>Checklist 22 langkah dan simulasi manasik 3D.</span></div>
+      <div class="step"><b>Pesan dari rumah</b><span>Voucher riyal dan pre-order oleh-oleh sebelum berangkat.</span></div>
+      <div class="step"><b>Di Tanah Suci</b><span>Ambil, diantar ke hotel, atau kirim ke rumah.</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat gold"><b>461</b><span>pencarian paket dalam 30 hari</span><small>situs berumur 1 bulan</small></div>
+      <div class="stat gold"><b>±185 rb</b><span>tayangan video organik</span><small>terbaik 124 rb</small></div>
+      <div class="stat gold"><b>78</b><span>klik ke travel per bulan</span></div>
+      <div class="stat gold"><b>Rp0</b><span>biaya iklan</span></div>
+    </div>
+    <div class="gal">
+      <figure><img src="img/g2-bandingkan.jpg" alt="Bandingkan detail paket umroh di umrohku.web.id" loading="lazy"><figcaption><b>Pembanding paket</b><span>Live di umrohku.web.id.</span></figcaption></figure>
+      <figure><img src="img/g7-checklist.jpg" alt="Checklist persiapan umroh 22 langkah" loading="lazy"><figcaption><b>Checklist persiapan</b><span>Titik masuk untuk menawarkan pre-order.</span></figcaption></figure>
+      <figure><img src="img/25-shorts.jpg" alt="Halaman Shorts @umrohku.official dengan tayangan hingga 124 rb" loading="lazy"><figcaption><b>Konten organik</b><span>Satu video menembus 124 rb tayangan.</span></figcaption></figure>
+    </div>
+    <p class="src">Angka di atas adalah minat di Indonesia, bukan transaksi di Saudi. Belum ada pesanan maupun toko mitra.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">07 · Model bisnis</span>
+    <h2>Komisi dari toko, bukan dari jamaah</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Sumber pendapatan</th><th>Pembayar</th><th>Mekanisme</th><th>Mulai</th></tr></thead>
+      <tbody>
+        <tr><td><b>Komisi penjualan</b></td><td>Toko mitra</td><td>Persentase dari setiap pesanan selesai</td><td>Fase 1</td></tr>
+        <tr><td><b>Voucher riyal</b></td><td>Toko mitra</td><td>Komisi saat voucher dibelanjakan</td><td>Fase 1</td></tr>
+        <tr><td><b>Biaya layanan antar</b></td><td>Jamaah</td><td>Tarif tetap per pengantaran ke lobi hotel</td><td>Fase 2</td></tr>
+        <tr><td><b>Kargo ke Indonesia</b></td><td>Jamaah</td><td>Selisih tarif dengan mitra kargo</td><td>Fase 2</td></tr>
+        <tr><td><b>Slot unggulan</b></td><td>Toko mitra</td><td>Biaya tampil di urutan atas</td><td>Fase 3</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ledger">
+      <div><span>Belanja oleh-oleh per jamaah<small>asumsi konservatif</small></span><span>Rp3,0 jt</span></div>
+      <div><span>Komisi toko 12–15%<small>target negosiasi</small></span><span>+Rp360–450 rb</span></div>
+      <div class="minus"><span>Biaya pembayaran &amp; operasional pesanan</span><span>−±Rp110 rb</span></div>
+      <div class="total"><span>Laba kotor per jamaah</span><span>±Rp250–340 rb</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>2.000</b><span>jamaah bertransaksi, target tahun pertama</span><small>0,13% jamaah Indonesia</small></div>
+      <div class="stat"><b>Rp6 M</b><span>nilai transaksi</span><small>±SAR 1,4 juta</small></div>
+      <div class="stat"><b>±Rp800 jt</b><span>pendapatan komisi</span></div>
+    </div>
+    <p class="src">Seluruh angka adalah asumsi internal, belum divalidasi dengan toko maupun jamaah. Besaran komisi ditentukan setelah negosiasi dengan toko mitra pertama.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">08 · Alur dana &amp; kepatuhan</span>
+    <h2>Umrohku tidak menampung uang, di kedua negara</h2>
+    <div class="flow">
+      <div class="step"><b>Jamaah membayar</b><span>Kartu, dompet digital, atau voucher yang dibeli dari Indonesia.</span></div>
+      <div class="step"><b>Diproses gateway berizin</b><span>Penyedia jasa pembayaran berizin SAMA dengan fitur split payment.</span></div>
+      <div class="step"><b>Pesanan selesai</b><span>Diambil, diantar, atau diserahkan ke kargo.</span></div>
+      <div class="step"><b>Split otomatis</b><span>Toko menerima SAR; komisi umrohku terpotong.</span></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Area</th><th>Posisi umrohku</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><b>Badan hukum Saudi</b></td><td>Perusahaan dengan Commercial Registration, lewat pendampingan program</td><td><span class="status wait">Belum ada</span></td></tr>
+        <tr><td><b>Pembayaran di Saudi</b></td><td>Lewat gateway berizin SAMA; umrohku tidak memegang dana pembeli maupun penjual</td><td><span class="status wait">Perlu mitra</span></td></tr>
+        <tr><td><b>Pembayaran dari Indonesia</b></td><td>Voucher dijual lewat penyedia jasa pembayaran berizin Bank Indonesia</td><td><span class="status wait">Perlu mitra</span></td></tr>
+        <tr><td><b>Pajak</b></td><td>PPN Saudi 15% pada barang dan jasa; faktur sesuai ketentuan otoritas pajak</td><td><span class="status wait">Fase 1</span></td></tr>
+        <tr><td><b>Kargo &amp; makanan</b></td><td>Lewat mitra kargo berizin; mengikuti aturan impor pangan Indonesia</td><td><span class="status wait">Fase 2</span></td></tr>
+        <tr><td><b>Data pribadi</b></td><td>Mengikuti aturan pelindungan data Saudi dan UU PDP Indonesia</td><td><span class="status go">Dirancang</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">Peta ini adalah pemahaman awal founder dan perlu dikonfirmasi bersama pendamping hukum di Saudi.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">09 · Rencana 12 bulan</span>
+    <h2>Mulai dari yang paling sederhana: pesan dulu, ambil di toko</h2>
+    <div class="road">
+      <div class="phase now"><span class="when">Fase 0 · Bulan 0–2 · dari Indonesia</span><h3>Validasi minat</h3><ul><li>Daftar tunggu pre-order oleh-oleh di umrohku.web.id</li><li>Survei belanja kepada jamaah yang baru pulang</li><li>Pendekatan awal ke 5 toko di Makkah dan Madinah</li></ul></div>
+      <div class="phase"><span class="when">Fase 1 · Bulan 3–6</span><h3>Perusahaan berdiri, pickup berjalan</h3><ul><li>Pendirian perusahaan Saudi dan rekening bank</li><li>Integrasi gateway pembayaran berizin</li><li>10 toko mitra, layanan ambil di toko dan voucher riyal</li><li>Target 300 pesanan</li></ul></div>
+      <div class="phase"><span class="when">Fase 2 · Bulan 7–12</span><h3>Antar ke hotel dan kargo</h3><ul><li>Pengantaran terjadwal ke lobi hotel di Makkah</li><li>Kargo oleh-oleh ke Indonesia lewat mitra</li><li>Perluasan ke Madinah, 30 toko mitra</li><li>Target 2.000 jamaah bertransaksi</li></ul></div>
+      <div class="phase"><span class="when">Fase 3 · Tahun 2+</span><h3>Negara pengirim lain</h3><ul><li>Jamaah Malaysia dan negara berbahasa Melayu</li><li>QRIS lintas negara saat sudah tersedia di Saudi</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">10 · Risiko</span>
+    <h2>Yang belum kami punya, disampaikan apa adanya</h2>
+    <div class="cards two">
+      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Belum ada toko mitra</h3><p>Belum ada kesepakatan dengan pedagang di Saudi. Ini pekerjaan pertama setelah program dimulai.</p></div></div>
+      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Belum ada transaksi</h3><p>Prototipe masih simulasi. Traksi yang ada adalah minat di Indonesia.</p></div></div>
+      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Logistik sekitar masjid</h3><p>Pembatasan kendaraan membuat pengantaran harus terjadwal. Karena itu fase pertama hanya ambil di toko.</p></div></div>
+      <div class="card row"><span class="ico warn"><svg><use href="#i-alert"/></svg></span><div><h3>Founder tunggal</h3><p>Kuat di teknologi dan pembayaran, belum punya mitra operasional di Saudi. Co-founder sedang dicari.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">11 · Founder &amp; yang kami butuhkan</span>
+    <h2>Insinyur pembayaran yang sudah membangun produknya</h2>
+    <div class="founder">
+      <img class="photo" src="img/founder.jpg" alt="Foto Barru Kurniawan">
+      <div class="bio">
+        <div><h3 style="font-size:24px">Barru Kurniawan</h3><div class="role">Founder umrohku · Backend Developer</div></div>
+        <p class="lead">Software Engineer dengan 9+ tahun pengalaman.</p>
+        <div class="facts"><span>Jakarta</span><span>Universitas Gadjah Mada</span><span><a href="https://www.linkedin.com/in/barru-kurniawan/">linkedin.com/in/barru-kurniawan</a></span></div>
+        <ul class="pts">
+          <li><b>Back End Developer, Financial Technology Startup</b> · Jun 2021–sekarang. Kartu kredit &amp; debit, QRIS lokal &amp; cross border, split payment, dan cicilan</li>
+          <li><b>Software developer</b> di Gigel.id, WE+, dan Blipcom · 2017–2021</li>
+          <li><b>Membangun umrohku seorang diri:</b> data paket, simulasi 3D, prototipe aplikasi, dan konten video</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="box" style="border:2px solid var(--em)">
+        <h3>Yang kami harapkan dari program</h3>
+        <ul class="pts">
+          <li>Pendampingan pendirian perusahaan dan perizinan di Saudi</li>
+          <li>Izin tinggal untuk founder dan satu co-founder</li>
+          <li>Perkenalan dengan toko, mitra kargo, dan penyedia pembayaran lokal</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Yang kami bawa</h3>
+        <ul class="pts">
+          <li>Produk dan prototipe yang sudah berjalan</li>
+          <li>Kanal ke jamaah Indonesia tanpa biaya iklan</li>
+          <li>Keahlian pembayaran lintas negara</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="eyebrow">Sumber data</span>
+    <ul class="sources">
+      <li>Data produk &amp; traksi: analitik internal umrohku.web.id 26 Okt–24 Nov 2026; YouTube dan TikTok per 24 November 2026. Model bisnis dan target: asumsi internal.</li>
+      <li><a href="https://infobanknews.com/bsi-genggam-pangsa-83-persen-jemaah-haji-indonesia">Infobank: 1,6 juta jamaah umrah Indonesia 2025</a></li>
+      <li><a href="https://english.news.cn/20260610/13e7c2733a8b4ab18cb7fba76bd7ff48/c.html">Xinhua: rencana QRIS lintas negara ke Arab Saudi</a></li>
+      <li>Saudi Vision 2030: target 30 juta jamaah umrah per tahun</li>
+    </ul>
+  </div>
+</footer>
