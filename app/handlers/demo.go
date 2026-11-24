@@ -66,6 +66,7 @@ func RegisterDemo(app *fiber.App) {
 	registerDemoPartner(app)  // mitra pembiayaan
 	registerDemoMandiri(app)  // Fase 3
 	registerDemoTanahSuci(app) // Fase 4 + toko mitra
+	registerDemoQRIS(app)      // bayar QRIS + navigasi bawah
 }
 
 func DemoTour(c *fiber.Ctx) error {

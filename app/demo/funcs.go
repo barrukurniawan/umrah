@@ -184,6 +184,24 @@ func MaskName(name string) string {
 	return first
 }
 
+// TabActive: tab navigasi bawah yang aktif untuk path ini.
+func TabActive(path string) string {
+	p, _, _ := strings.Cut(path, "?")
+	switch {
+	case p == "/" || p == "":
+		return "home"
+	case strings.HasPrefix(p, "/market") || strings.HasPrefix(p, "/tanah-suci") || strings.HasPrefix(p, "/mandiri") || strings.HasPrefix(p, "/perlengkapan") || strings.HasPrefix(p, "/travel/") || strings.HasPrefix(p, "/booking/baru"):
+		return "market"
+	case strings.HasPrefix(p, "/bayar"):
+		return "qr"
+	case strings.HasPrefix(p, "/riwayat") || strings.HasPrefix(p, "/akun/booking") || strings.HasPrefix(p, "/booking/"):
+		return "history"
+	case strings.HasPrefix(p, "/profil") || strings.HasPrefix(p, "/akun") || strings.HasPrefix(p, "/tabungan") || strings.HasPrefix(p, "/tersimpan") || strings.HasPrefix(p, "/persiapan") || strings.HasPrefix(p, "/inbox"):
+		return "user"
+	}
+	return ""
+}
+
 func TemplateFuncs() map[string]any {
 	return map[string]any{
 		"demoOn":    Enabled,
@@ -224,6 +242,23 @@ func TemplateFuncs() map[string]any {
 			return s
 		},
 		"daysUntil": DaysUntil,
+		"tabActive": TabActive,
+		"showTabbar": func(path, role string, hide any) bool {
+			if !enabled || hide == true {
+				return false
+			}
+			for _, p := range []string{"travel", "admin", "pembiayaan", "merchant"} {
+				if strings.HasPrefix(role, p) {
+					return false
+				}
+			}
+			for _, p := range []string{"/portal", "/admin", "/mitra-pembiayaan", "/toko", "/bayar"} {
+				if strings.HasPrefix(path, p) { // halaman bisnis & alur bayar tampil tanpa navigasi bawah
+					return false
+				}
+			}
+			return true
+		},
 		"dpOptions": func(min int64) []int64 { return []int64{min, min * 2, min * 4, min * 10} },
 		"atoi64": func(s string) int64 { n, _ := strconv.ParseInt(s, 10, 64); return n },
 		"addDays365": func() string { return AddDays(Today(), 365) },

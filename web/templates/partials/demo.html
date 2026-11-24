@@ -13,6 +13,8 @@
     </div>
 </div>
 {{template "demo_switcher" .}}
+{{$role := ""}}{{with .Demo}}{{$role = .Role}}{{end}}
+{{if showTabbar .Path $role .HideChat}}{{template "demo_tabbar" .}}{{end}}
 <div id="demoSheet" class="hidden fixed inset-0 z-[70]" role="dialog" aria-modal="true">
     <div class="absolute inset-0 bg-black/40" onclick="ukSheet.close()"></div>
     <div class="absolute inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:w-[440px] max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white shadow-2xl">
@@ -146,4 +148,51 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ukSh
     <form method="POST" action="/demo/peran" class="mt-4"><input type="hidden" name="peran" value="jamaah"><input type="hidden" name="goto" value="{{.Path}}">
         <button class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5">Masuk sebagai Siti (jamaah demo)</button></form>
 </div>
+{{end}}
+
+{{/* Ikon navigasi bawah (garis 2px, gaya Lucide). dict: N, C */}}
+{{define "tabicon"}}<svg class="{{.C}}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{{- if eq .N "home"}}<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+{{- else if eq .N "market"}}<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2 2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+{{- else if eq .N "qr"}}<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx=".5"/><rect x="13" y="7" width="4" height="4" rx=".5"/><rect x="7" y="13" width="4" height="4" rx=".5"/><path d="M13 13h1.5M17 13v1.5M13 17h4"/>
+{{- else if eq .N "history"}}<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
+{{- else if eq .N "user"}}<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+{{- end}}</svg>{{end}}
+
+{{/* Navigasi bawah aplikasi (mode demo, sisi jamaah). Tombol QR di tengah = scan & bayar QRIS. */}}
+{{define "demo_tabbar"}}
+{{$act := tabActive .Path}}
+<style>
+    body:has(#demoTabbar) { padding-bottom: 5.75rem; }
+    body:has(#demoTabbar) #demoSwitch { bottom: 6.25rem; }
+    body:has(#demoTabbar) #sc { bottom: 6.25rem; }
+    /* Di ponsel: pengalih peran jadi ikon saja, chat dukungan disembunyikan supaya bawah layar lega. */
+    @media (max-width: 639px) {
+        body:has(#demoTabbar) #sc { display: none; }
+        body:has(#demoTabbar) #demoSwitch summary > span.truncate { display: none; }
+        body:has(#demoTabbar) #demoSwitch summary { padding-right: .5rem; }
+    }
+</style>
+<nav id="demoTabbar" aria-label="Navigasi utama" class="fixed inset-x-0 bottom-0 z-[55] pointer-events-none">
+    <div class="pointer-events-auto mx-auto max-w-lg bg-white/95 backdrop-blur border-t border-gray-200 sm:border sm:rounded-t-3xl shadow-[0_-6px_24px_rgba(6,78,59,0.08)] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div class="grid grid-cols-5 items-end">
+            {{range (list "/|home|Beranda" "/market|market|Market" "/bayar|qr|Bayar" "/riwayat|history|Riwayat" "/profil|user|Profil")}}{{$p := splitPipe .}}
+            {{if eq (index $p 1) "qr"}}
+            <a href="/bayar" class="group flex flex-col items-center -mt-7 pb-1.5" aria-label="Scan & bayar QRIS">
+                <span class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center ring-[5px] ring-white shadow-lg shadow-emerald-900/25 group-active:scale-95 transition-transform">
+                    {{template "tabicon" (dict "N" "qr" "C" "w-7 h-7")}}
+                </span>
+                <span class="mt-1 text-[11px] font-semibold {{if eq $act "qr"}}text-emerald-700{{else}}text-gray-600{{end}}">QRIS</span>
+            </a>
+            {{else}}
+            {{$on := eq $act (index $p 1)}}
+            <a href="{{index $p 0}}" class="flex flex-col items-center gap-0.5 pt-2 pb-1.5 {{if $on}}text-emerald-700{{else}}text-gray-500 hover:text-emerald-700{{end}}" {{if $on}}aria-current="page"{{end}}>
+                <span class="flex items-center justify-center w-12 h-8 rounded-full {{if $on}}bg-emerald-100{{end}}">{{template "tabicon" (dict "N" (index $p 1) "C" "w-[22px] h-[22px]")}}</span>
+                <span class="text-[11px] {{if $on}}font-bold{{else}}font-medium{{end}}">{{index $p 2}}</span>
+            </a>
+            {{end}}
+            {{end}}
+        </div>
+    </div>
+</nav>
 {{end}}

@@ -1,0 +1,27 @@
+<main class="max-w-2xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-gray-900">Riwayat</h1>
+    <div class="mt-4 flex gap-2 overflow-x-auto text-sm font-semibold [scrollbar-width:none]">
+        {{range (list "|Semua" "qris|QRIS" "umroh|Umroh" "belanja|Belanja")}}{{$p := splitPipe .}}
+        <a href="/riwayat{{if index $p 0}}?jenis={{index $p 0}}{{end}}" class="whitespace-nowrap rounded-full px-4 py-2 ring-1 {{if eq (index $p 0) $.Kind}}bg-emerald-600 text-white ring-emerald-600{{else}}bg-emerald-50 text-emerald-800 ring-emerald-200 hover:bg-emerald-100{{end}}">{{index $p 1}}</a>
+        {{end}}
+    </div>
+    {{range .Groups}}
+    <p class="mt-6 mb-2 text-xs font-bold tracking-wider text-gray-400 uppercase">{{.Label}}</p>
+    <div class="rounded-3xl bg-white ring-1 ring-gray-200 divide-y divide-gray-100 overflow-hidden">
+        {{range .Items}}
+        <a href="{{.Link}}" class="flex items-center gap-3 px-4 py-3.5 hover:bg-emerald-50/50">
+            <span class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center {{if eq .Kind "qris"}}bg-emerald-50 text-emerald-700{{else if eq .Kind "umroh"}}bg-sky-50 text-sky-700{{else}}bg-amber-50 text-amber-700{{end}}">
+                {{if eq .Kind "qris"}}{{template "tabicon" (dict "N" "qr" "C" "w-5 h-5")}}{{else if eq .Kind "umroh"}}{{template "ic" (dict "N" "kaaba" "C" "w-5 h-5")}}{{else}}{{template "tabicon" (dict "N" "market" "C" "w-5 h-5")}}{{end}}
+            </span>
+            <span class="min-w-0 flex-1"><span class="block font-semibold text-gray-900 truncate">{{.Title}}</span><span class="block text-xs text-gray-500 truncate">{{.Sub}} · {{tglJam .At}}</span></span>
+            <span class="shrink-0 text-right"><span class="block font-semibold tabular-nums text-gray-900">−Rp {{rp .Amount}}</span><span class="block text-[11px] text-emerald-700">{{statusLabel .Status}}</span></span>
+        </a>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="mt-6 rounded-3xl border border-dashed border-gray-300 p-10 text-center">
+        <p class="text-sm text-gray-500">Belum ada transaksi.</p>
+        <a href="/bayar" class="inline-block mt-3 text-sm font-semibold text-emerald-700 hover:underline">Coba bayar QRIS →</a>
+    </div>
+    {{end}}
+</main>

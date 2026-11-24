@@ -352,8 +352,9 @@ func seedBusiness() {
 	}
 
 	DB.Exec("UPDATE promo_rules SET used = (SELECT COUNT(*) FROM promo_uses WHERE promo_uses.promo_id = promo_rules.id AND promo_uses.status <> 'batal')")
-	Notify("admin", "email", "admin", "Demo siap", "Data demo dibuat ulang. Gunakan pengalih peran (kanan bawah) untuk berpindah antara Jamaah, Travel, Admin, Mitra pembiayaan, dan Toko.", "/demo")
+	Notify("admin", "email", "admin", "Demo siap", "Data demo dibuat ulang. Gunakan pengalih peran (kiri bawah) untuk berpindah antara Jamaah, Travel, Admin, Mitra pembiayaan, dan Toko.", "/demo")
 	seedShop()
+	seedQR(main.ID, main.Name)
 	log.Println("[demo] seed selesai")
 }
 

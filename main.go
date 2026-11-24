@@ -195,7 +195,7 @@ func main() {
 	engine.AddFunc("cssV", func() string { return cssV })
 	// assetV: hash isi berkas di web/static (dihitung sekali saat boot) untuk ?v= skrip vendor.
 	assetVs := map[string]string{}
-	for _, f := range []string{"js/vendor/htmx-1.9.12.min.js", "js/vendor/lucide-icons.js", "admin/konten.js"} {
+	for _, f := range []string{"js/vendor/htmx-1.9.12.min.js", "js/vendor/lucide-icons.js", "admin/konten.js", "js/vendor/jsQR-1.4.0.min.js"} {
 		if b, err := os.ReadFile("web/static/" + f); err == nil {
 			assetVs[f] = fmt.Sprintf("%x", sha256.Sum256(b))[:10]
 		}
